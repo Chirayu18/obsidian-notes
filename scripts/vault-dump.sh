@@ -1,6 +1,10 @@
 #!/bin/bash
 # vault-dump.sh — commit & push whatever has been written into the vault.
 # Use from any lxplus session (live or new):  ~/obsidian-notes/scripts/vault-dump.sh "message"
+#
+# Convention (see CLAUDE.md): generated notes/docs -> Projects/<Project>/ ;
+# reference papers/PDFs -> References/<Project>/ (committed) ; regenerable plots/parquet/ROOT
+# stay on EOS and are linked, not committed.
 set -e
 VAULT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$VAULT"

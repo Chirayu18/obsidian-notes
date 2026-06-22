@@ -6,15 +6,16 @@ and lxplus (where analysis work happens) **via git** (GitHub remote `origin`).
 ## When running on lxplus — dump work into the vault
 
 When you generate notes, docs, or plots during a session on lxplus, **save them into
-this vault under `References/<ProjectName>/`** instead of scattering them in scratch
-dirs. Then commit and push so they reach the laptop's Obsidian.
+`Projects/<ProjectName>/`** instead of scattering them in scratch dirs. Then commit and
+push so they reach the laptop's Obsidian.
 
 `<ProjectName>` is the analysis you're working on (e.g. `HToWW`, `Alpaka`). Match the
-folder names already under `Projects/`. Create `References/<ProjectName>/` if absent.
+folder names already under `Projects/`. Put a session's dump in a clearly-labelled
+subfolder (e.g. `Projects/HToWW/lxplus-YYYY-MM-DD/`) so it doesn't clobber the curated notes.
 
-### What to write where
-- **Notes / docs / explanations** → `References/<ProjectName>/YYYY-MM-DD-<topic>.md`
-  with frontmatter:
+### What goes where
+- **Your generated notes / docs / explanations** → `Projects/<ProjectName>/...` as
+  `YYYY-MM-DD-<topic>.md` with frontmatter:
   ```yaml
   ---
   tags: [reference]
@@ -23,23 +24,26 @@ folder names already under `Projects/`. Create `References/<ProjectName>/` if ab
   source: lxplus
   ---
   ```
-- **Plot links** → append to `References/<ProjectName>/plots.md` as entries with
-  `tags: [plot]`, a `Date`, a `Description`, the `Path`, and a `Link`.
-  - Build the CERNBox `Link` from the EOS `Path` like this:
+- **Reference materials** (papers, the big analysis-note / paper **PDFs**, external
+  inputs) → `References/<ProjectName>/`. These reference PDFs **are committed** (they're
+  stable inputs you want to read offline in Obsidian). Add a `References/<ProjectName>/papers.md`
+  cataloguing them.
+- **Plot links** → append to `Projects/<ProjectName>/plots.md` (or a `*-plots.md`) as
+  entries with `tags: [plot]`, a `Date`, a `Description`, the `Path`, and a `Link`.
+  - Build the CERNBox `Link` from the EOS `Path`:
     `https://cernbox.cern.ch/files/spaces` + path, converting
     `/eos/home-c/cgupta` → `/eos/user/c/cgupta`.
-    Example: `/eos/user/c/cgupta/public/hww_x/` →
-    `https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/public/hww_x/`
   - These `#plot` entries auto-appear in the laptop's `Dashboard.md` and `Plots.md`.
 
 ### Sync discipline
 - **Start of session:** `git pull --rebase` (a SessionStart hook does this automatically;
-  if it didn't run, do it manually) so you build on the latest from the laptop.
+  if it didn't run, do it manually).
 - **After writing:** `git add -A && git commit -m "lxplus: <what>" && git push`.
-- Keep large binaries (plots, parquet, ROOT files) **out of git** — they stay on EOS.
-  Only the *link entries* go in the vault. The `.gitignore` already covers caches.
+- Keep **regenerable** large binaries (plot PNGs, parquet, ROOT files) **out of git** —
+  they stay on EOS; only the *link entries* go in the vault. Reference **PDFs/papers** are
+  the exception and may be committed under `References/`. The `.gitignore` already covers caches.
 
 ## General
 - Don't edit files under `Archive/` — that's a frozen snapshot.
-- Active project notes live under `Projects/`; lxplus dumps land under `References/`.
-- The laptop pulls these in and reviews/promotes them into `Projects/` as needed.
+- `Projects/<ProjectName>/` = your generated notes + curated work.
+- `References/<ProjectName>/` = external reference materials (papers, PDFs).
