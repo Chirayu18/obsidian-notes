@@ -1,19 +1,19 @@
----
-tags:
-  - plot
-Date: <% tp.date.now("YYYY-MM-DD") %>
-Description:
-Link: https://cernbox.cern.ch/files/spaces/
-Path:
----
-### Path → Link Conversion
-
-CERNBox URL format: `https://cernbox.cern.ch/files/spaces/eos/[path]`
-
-**Important:** Always convert `/home-c/cgupta` to `/user/c/cgupta` in the URL.
-
-### Name Extraction Convention
-
-- `ztomumu` → "Z TO MuMu"
-- `hww` → "H To WW"
-- Parse date from path if present (e.g., `10Feb_2026` → `2026-02-10`)
+<%*
+// Prompt for the EOS path + description, then auto-generate the CERNBox link.
+// Replaces the old copy-pasted "Path → Link Conversion" rules.
+const path = await tp.system.prompt("EOS path (e.g. /eos/user/c/cgupta/public/...)");
+const desc = await tp.system.prompt("Short description");
+// CERNBox needs /eos/user/c/... not /eos/home-c/..., rooted at /files/spaces
+const normalised = path.replace("/eos/home-c/cgupta", "/eos/user/c/cgupta");
+const link = "https://cernbox.cern.ch/files/spaces" + normalised;
+tR += "---\n";
+tR += "tags: [plot]\n";
+tR += "Date: " + tp.date.now("YYYY-MM-DD") + "\n";
+tR += "Description: " + desc + "\n";
+tR += "Link: " + link + "\n";
+tR += "Path: " + path + "\n";
+tR += "---\n";
+tR += "\n# " + tp.file.title + "\n\n";
+tR += "[🔗 Open in CERNBox](" + link + ")\n\n";
+tR += "> EOS path: `" + path + "`\n";
+-%>

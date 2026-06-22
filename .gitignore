@@ -1,1 +1,13 @@
+# Obsidian per-machine state (don't sync workspace layout / caches across machines)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.trash/
+
+# Local-only archive snapshot — kept on the laptop, never synced to GitHub/lxplus
+Archive/
+
+# OS cruft
+.DS_Store
+Thumbs.db
 nul

@@ -1,48 +1,18 @@
 ---
-tags:
-  - completed
 date: <% tp.date.now("YYYY-MM-DD") %>
+tags: [daily]
 ---
----
 
-## TODO
+# <% tp.date.now("dddd, MMMM Do YYYY") %>
 
-### HToWW Analysis
+> [[Dashboard]] · yesterday: [[<% tp.date.now("YYYY-MM-DD", -1, tp.file.title, "YYYY-MM-DD") %>]] · tomorrow: [[<% tp.date.now("YYYY-MM-DD", 1, tp.file.title, "YYYY-MM-DD") %>]]
 
+## 🎯 Focus
+- 
 
-- [ ] Take CERN security course: https://cern.ch/computersecuritycourse
-> [!important]
-> ```dataview
->TASK
->FROM "Projects/HToWW" AND #meeting
->WHERE !completed AND file.frontmatter.status = "active"
->GROUP BY file.link
->```
+## ✅ Tasks
+Tasks written here with `#today` show up on the Dashboard.
+- [ ] 
 
-> [!todo]
-> ```dataview
->TASK
->FROM "Projects/HToWW" AND -#meeting
->WHERE !completed AND file.frontmatter.status = "active"
->GROUP BY file.link
->```
-
-#### Alpaka
-> [!important]
-> ```dataview
->TASK
->FROM "Projects/Alpaka" AND #meeting
->WHERE !completed AND file.frontmatter.status = "active"
->GROUP BY file.link
->```
-
-> [!todo]
-> ```dataview
->TASK
->FROM "Projects/Alpaka" AND -#meeting
->WHERE !completed AND file.frontmatter.status = "active"
->GROUP BY file.link
->```
-## Log
-
--
+## 📝 Log
+- 

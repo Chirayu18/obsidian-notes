@@ -14,17 +14,10 @@ SORT Date DESC
 
 ## Adding New Plots
 
-To add a new plot entry, create a new note in `Research/HToWW/Plots/` with this frontmatter:
-
-```yaml
----
-tags: [plot]
-Date: YYYY-MM-DD
-Description: Brief description
-Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/public/...
-Path: /eos/user/c/cgupta/public/...
----
-```
+Create a new note in `Projects/HToWW/Plots/`, then run **Templater → Plot Entry**.
+It asks for the EOS path + a description and auto-builds the CERNBox link
+(handles the `/eos/home-c/cgupta` → `/eos/user/c/cgupta` conversion for you).
+No need to hand-write frontmatter or remember the URL format anymore.
 
 # Quick Commands
 
