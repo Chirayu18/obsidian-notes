@@ -9,14 +9,31 @@ tags: [dashboard]
 `BUTTON[new-daily]` `BUTTON[new-meeting]`
 
 ## 📌 Pinned
-Notes with `pinned: true` — always shown here, even when `done`. Toggle with the
-**📌 Pin / Unpin** and **✅ Done / 🔄 Active** buttons inside any note (Meta Bind).
+Notes with `pinned: true` — always shown here, even when `done`.
+Each row has its own **status** and **unpin** buttons (act on that note directly).
 
-```dataview
-TABLE WITHOUT ID file.link AS Note, status AS Status, file.mday AS Modified
-FROM -"Archive"
-WHERE pinned = true
-SORT status ASC, file.mday DESC
+```dataviewjs
+const pages = dv.pages('-"Archive"').where(p => p.pinned === true)
+  .sort(p => [p.status, -p.file.mtime], 'asc');
+
+const btn = (label, file, fn) => {
+  const b = this.container.createEl("button", { text: label, cls: "mod-cta" });
+  b.style.cssText = "padding:2px 8px;margin:0 4px 0 0;font-size:12px;cursor:pointer;";
+  b.onclick = async () => { await fn(file); };
+  return b;
+};
+const tf = (p) => app.vault.getAbstractFileByPath(p.file.path);
+const setStatus = async (p) => app.fileManager.processFrontMatter(tf(p), fm => {
+  fm.status = (fm.status === "active") ? "done" : "active"; });
+const unpin = async (p) => app.fileManager.processFrontMatter(tf(p), fm => { fm.pinned = false; });
+
+const rows = pages.map(p => {
+  const span = document.createElement("span");
+  span.appendChild(btn(p.status === "active" ? "✅ done" : "🔄 active", p, setStatus));
+  span.appendChild(btn("📌 unpin", p, unpin));
+  return [p.file.link, p.status ?? "—", span];
+});
+dv.table(["Note", "Status", "Actions"], rows.array());
 ```
 
 ---
@@ -59,13 +76,32 @@ GROUP BY file.link
 ---
 
 ## 📂 Active notes by project
-Quick index of every active note, grouped by project folder.
+Every active (or pinned) note. Each row toggles its own **status** and **pin** directly.
 
-```dataview
-TABLE WITHOUT ID file.link AS Note, file.frontmatter.status AS Status, file.mday AS Modified
-FROM "Projects" AND -"Archive"
-WHERE file.frontmatter.status = "active" OR pinned = true
-SORT file.mday DESC
+```dataviewjs
+const pages = dv.pages('"Projects" and -"Archive"')
+  .where(p => p.status === "active" || p.pinned === true)
+  .sort(p => -p.file.mtime, 'asc');
+
+const btn = (label, file, fn) => {
+  const b = this.container.createEl("button", { text: label });
+  b.style.cssText = "padding:2px 8px;margin:0 4px 0 0;font-size:12px;cursor:pointer;";
+  b.onclick = async () => { await fn(file); };
+  return b;
+};
+const tf = (p) => app.vault.getAbstractFileByPath(p.file.path);
+const setStatus = async (p) => app.fileManager.processFrontMatter(tf(p), fm => {
+  fm.status = (fm.status === "active") ? "done" : "active"; });
+const togglePin = async (p) => app.fileManager.processFrontMatter(tf(p), fm => {
+  fm.pinned = !(fm.pinned === true); });
+
+const rows = pages.map(p => {
+  const span = document.createElement("span");
+  span.appendChild(btn(p.status === "active" ? "✅ done" : "🔄 active", p, setStatus));
+  span.appendChild(btn(p.pinned === true ? "📌 unpin" : "📍 pin", p, togglePin));
+  return [p.file.link, p.status ?? "—", p.pinned === true ? "📌" : "", span];
+});
+dv.table(["Note", "Status", "Pin", "Actions"], rows.array());
 ```
 
 ---
@@ -125,6 +161,7 @@ id: new-meeting
 hidden: true
 style: default
 actions:
-  - type: command
-    command: templater-obsidian:create-new-note-from-template
+  - type: templaterCreateNote
+    templateFile: Templates/Meeting.md
+    openNote: true
 ```
