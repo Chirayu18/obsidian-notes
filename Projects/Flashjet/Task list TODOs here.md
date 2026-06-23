@@ -1,12 +1,13 @@
 ---
-tags: [hww]
+tags:
+  - hww
 status: active
 pinned: false
 related:
-date: <% tp.date.now("YYYY-MM-DD") %>
+date: 2026-06-23
 ---
 
-# <% tp.file.title %>
+# Untitled
 
 > `BUTTON[toggle-status, toggle-pin]`  `VIEW[{status}]` · pinned: `VIEW[{pinned}]`
 

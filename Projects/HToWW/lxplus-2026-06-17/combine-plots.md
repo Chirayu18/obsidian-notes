@@ -1,6 +1,7 @@
 ---
-tags: [plot]
-status: active
+tags:
+  - plot
+status: done
 date: 2026-06-17
 source: lxplus
 ---

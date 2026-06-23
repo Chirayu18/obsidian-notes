@@ -1,6 +1,7 @@
 ---
-tags: [reference]
-status: active
+tags:
+  - reference
+status: done
 date: 2026-06-17
 source: lxplus
 ---

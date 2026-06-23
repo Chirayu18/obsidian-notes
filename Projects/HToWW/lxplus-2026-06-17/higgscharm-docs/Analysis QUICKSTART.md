@@ -1,8 +1,10 @@
 ---
-tags: [reference]
+tags:
+  - reference
 status: active
 date: 2026-06-17
 source: lxplus
+pinned: true
 ---
 
 # Quickstart — H+c (H→WW) analysis on `migration-v2`
