@@ -72,13 +72,48 @@ scale = lumi·xsec/sumw = expected events per generator event.
   **selection efficiency**, not the numbers.
 - tt/st/diboson scales all O(1e-4), consistent within each process.
 
+## Tested 2026-06-23: shape-from-CR and rateParam — both fail (for instructive reasons)
+
+| config | full r₉₅ | stat | freeze SR autoMCStats |
+|---|---|---|---|
+| v4 baseline | 1742 | 771 | 1069 |
+| v4 + vjets rateParam (shared CR↔SR) | **1791** ⬆ | 783 | 1105 |
+| v5 shape-from-CR_vjets *(wrong axis)* | 1221 | 825 | 1135 |
+| v5 shape + rateParam | 1228 | 860 | 1141 |
+
+**rateParam is the wrong tool (proven).** vjets rateParam alone makes the limit *worse* (1742→1791);
+on top of the shape fix it does nothing (1221→1228). A rateParam floats the overall normalization but
+cannot change a bin's Σw² → it leaves every `prop_binSR_hplusc_bin*` (autoMCStats) untouched, which is
+the dominant term. Same failure mode as the earlier tt rateParam. **Do not pursue rateParams for this.**
+
+**Shape-from-CR_vjets does NOT work — the regions aren't compatible.** All argmax channels share the bin
+edges [0,0.2,…,1.0], but the *axis variable differs*: SR `D = P(hplusc)`, CR_vjets `D = P(vjets)`. A
+bin-by-bin transfer pastes the P(vjets) shape onto the P(hplusc) axis → physically meaningless. The
+1221 is only a **sensitivity bound**: "if the SR DY shape had CR-like per-bin precision, r₉₅ ≈ 1221"
+(prize ≈ −520). It is NOT claimable.
+
+**The orthogonality dilemma (why no cheap fix exists).** argmax channelization makes CR_vjets ⊥ SR_hplusc
+(an event wins exactly one class) — but orthogonality is *bought* by the winning class differing, i.e. a
+different discriminant. Conversely, any region on the right axis (P(hplusc) for all DY) reuses the SR's
+own events → not orthogonal/circular. So **"orthogonal" and "same discriminant" are mutually exclusive**
+within this construction; you cannot build a clean CR→SR shape transfer from the existing templates.
+
 ## Implication for the fix
-The limit is gated by **DY MC-stat in the SR**, which is a *sample/efficiency* problem, not xsec/sumw.
-Cross-era averaging (ruled out by user) would have helped because it adds DY events. Remaining honest
-levers, in order:
-1. **Data-driven DY** in the SR (CR→SR transfer, as AN-23-102 does) — removes the MC-stat entirely.
-2. **Take DY *shape* from the high-stats `CR_vjets`**, normalize to SR yield → kills the per-bin noise.
-3. **Drop `DYto2L_2Jets_10to50` from the SR** (N_eff=2.6, pure noise; only 0.7% of DY yield).
+The limit is gated by **DY MC-stat in the SR** — a *sample/efficiency* problem, not xsec/sumw, and not
+fixable by reshuffling the existing MC templates (shape-from-CR and rateParam both fail above). The
+achievable prize is bounded at ~520 in r₉₅ (1742→1221). Legitimate ways to claim it:
+1. **Data-driven DY** from a CR orthogonalized on a *physics* variable (same-flavor + Z-peak), NOT the
+   MVA argmax — the AN-23-102 method. This is the only construction that is both orthogonal to the SR and
+   on the SR discriminant. Needs upstream selection/parquets.
+2. **More DY MC** (cross-era added stats — ruled out by user; would directly add SR DY events).
+3. **Accept autoMCStats** as a genuine uncertainty (it is being honest: we really don't know the SR DY shape).
+4. Correctness (small effect): fix `TbarBQ/TBbarQ` xsec=0; pull in the dropped `-ext`/diboson samples.
+
+### Artifacts (reversible — originals untouched; delete to revert)
+- `higgscharm/outputs/combine/v11_hplusc_v5_vjetsCR.root` + `v11_hplusc_v5_vjetsCR.txt` (sensitivity test)
+- `…/v11_hplusc_v4_vjrp.txt`, `v11_hplusc_v5_vjrp.txt` (rateParam tests) + `*.ws.root` workspaces
+- `b-hive/scripts/vjets_shape_from_cr.py` (the transfer script)
+- baseline `v11_hplusc_v4.{txt,root}` and the parquets were NOT modified.
 4. Fix `TbarBQ/TBbarQ` xsec=0 and pull in the `-ext`/missing diboson samples (correctness; small effect).
 
 ## Files
