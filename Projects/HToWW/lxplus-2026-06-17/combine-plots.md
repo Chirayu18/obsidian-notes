@@ -10,6 +10,20 @@ source: lxplus
 
 Combine final plots (2022postEE, v11 & v32). Binaries live on EOS; links are CERNBox.
 
+### autoMCStats issue — DY/W+jets SR undersampling (2026-06-23)
+- **tags:** [plot]
+- **Description:** (A) SR stack + MC-stat band exploding under the signal peak; (B) per-bin N_eff (DY≈10 vs others 10³–10⁴); (C) DY ±10⁵ generator weights. See [[2026-06-23-automcstats-rootcause]].
+- **Embedded:** ![[automcstats_issue.png]]
+- **Path:** `/eos/home-c/cgupta/HToWW/b-hive/docs/plots/combine_final/automcstats_issue.png`
+- **Link:** https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/docs/plots/combine_final/automcstats_issue.png
+
+### autoMCStats fix — DY template smoothing (2026-06-23)
+- **tags:** [plot]
+- **Description:** (D) raw vs smoothed DY SR template; (E) limit bars 771/1742/1399/1148. Smoothing 1742→1399. See [[2026-06-23-automcstats-rootcause]].
+- **Embedded:** ![[automcstats_fix.png]]
+- **Path:** `/eos/home-c/cgupta/HToWW/b-hive/docs/plots/combine_final/automcstats_fix.png`
+- **Link:** https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/docs/plots/combine_final/automcstats_fix.png
+
 ### Limit comparison (stat + syst, 4-bar)
 - **tags:** [plot]
 - **Date:** 2026-06-17
