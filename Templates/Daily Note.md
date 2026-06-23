@@ -12,6 +12,7 @@ tags: [daily]
 
 ## ✅ Tasks
 Open tasks here show up under **Today** on the [[Dashboard]].
+Tag any task `#today` to pin it to Today from anywhere in the vault.
 - [ ] 
 
 ## 📝 Log

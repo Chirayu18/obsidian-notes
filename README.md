@@ -21,7 +21,7 @@ Start from [[Dashboard]] (pin it) for a live view of open work.
 ## Daily workflow
 
 1. **Open today's daily note** (Calendar plugin, or the daily-note hotkey). It's created from `Templates/Daily Note`.
-2. Write **Focus**, jot tasks as `- [ ]`, keep a **Log**. Open tasks here appear under **Today** on [[Dashboard]] — no tags needed.
+2. Write **Focus**, jot tasks as `- [ ]`, keep a **Log**. Open tasks here appear under **Today** on [[Dashboard]]. Tag any task `#today` (in any note) to pin it to Today too.
 3. Check [[Dashboard]] for meeting action items and open project tasks across everything.
 
 ## Recording a meeting

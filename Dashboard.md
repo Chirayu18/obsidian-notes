@@ -7,12 +7,14 @@ tags: [dashboard]
 > Live overview of open work. Pin this note (right-click tab → Pin). Nothing here needs editing — queries auto-discover projects.
 
 ## 🔥 Today
-Open tasks in today's daily note (just write `- [ ]` items there — no tags needed).
+Open tasks tagged `#today` anywhere, plus open tasks in today's daily note.
 
 ```dataview
 TASK
-FROM "Daily"
-WHERE !completed AND file.name = dateformat(date(today), "yyyy-MM-dd")
+FROM -"Archive"
+WHERE !completed
+  AND (contains(text, "#today") OR file.name = dateformat(date(today), "yyyy-MM-dd"))
+GROUP BY file.link
 ```
 
 ---
@@ -22,7 +24,7 @@ Open tasks from any meeting note across all projects.
 
 ```dataview
 TASK
-FROM "Projects" AND #meeting
+FROM "Projects" AND #meeting AND -"Archive"
 WHERE !completed AND file.frontmatter.status = "active"
 GROUP BY file.link
 ```
@@ -34,7 +36,7 @@ All open tasks in active project notes (excluding meetings — those are above).
 
 ```dataview
 TASK
-FROM "Projects" AND -#meeting
+FROM "Projects" AND -#meeting AND -"Archive"
 WHERE !completed AND file.frontmatter.status = "active"
 GROUP BY file.link
 ```
@@ -46,7 +48,7 @@ Quick index of every active note, grouped by project folder.
 
 ```dataview
 TABLE WITHOUT ID file.link AS Note, file.frontmatter.status AS Status, file.mday AS Modified
-FROM "Projects"
+FROM "Projects" AND -"Archive"
 WHERE file.frontmatter.status = "active"
 SORT file.mday DESC
 ```
