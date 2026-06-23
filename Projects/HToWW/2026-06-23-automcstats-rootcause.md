@@ -98,10 +98,36 @@ different discriminant. Conversely, any region on the right axis (P(hplusc) for 
 own events → not orthogonal/circular. So **"orthogonal" and "same discriminant" are mutually exclusive**
 within this construction; you cannot build a clean CR→SR shape transfer from the existing templates.
 
+## ✅ FIX THAT WORKS (2026-06-23): smooth the DY SR template
+
+| config | full r₉₅ | stat | freeze SR autoMCStats |
+|---|---|---|---|
+| v4 baseline | 1742 | 771 | 1069 |
+| **v6 DY-smooth** | **1399** (−20%) | 781 | 1173 |
+
+Regularize *only* the `SR_hplusc/vjets` template (nominal + every variation) with a 5-tap binomial
+smoothing kernel, on its **own axis** using its **own SR events**, with **proper linear error
+propagation** `Σw²ᵢ' = Σⱼ kᵢⱼ² Σw²ⱼ`, rescaled to preserve each template's yield (shape-only). This:
+- removes the unphysical zero-spikes (bin6 0±41 from ±79k NLO weight cancellation),
+- pools the DY's ~36 effective SR events across the smooth shape → per-bin rel error 32%→~20%,
+- drops the limit **1742 → 1399** and collapses the full−freezeSR gap 673→226 (most autoMCStats gone).
+
+**Why this is legitimate (unlike v5=1221):** no axis mismatch, no orthogonality problem, no CR — it's
+the DY's own SR distribution, just de-noised. The only assumption (stated): true DY shape ≈ its smoothed
+version, i.e. smoothing bias ≪ the MC-stat removed. Standard low-stat template regularization.
+**Caveat:** the kernel bandwidth is a knob; widening it lowers the limit further but increases shape
+bias. 1399 uses a conservative 5-tap. Could tune, or do the principled version (kernel-density / spline
+fit with a validated bandwidth).
+
+Implementation: `b-hive/scripts/dy_template_smooth.py` → `v11_hplusc_v6_dysmooth.{root,txt}`.
+Plots: `b-hive/docs/plots/combine_final/automcstats_issue.png` (the issue: SR band explosion, N_eff≈10,
+±10⁵ DY weights) and `automcstats_fix.png` (raw vs smoothed DY template + limit bars).
+
 ## Implication for the fix
-The limit is gated by **DY MC-stat in the SR** — a *sample/efficiency* problem, not xsec/sumw, and not
-fixable by reshuffling the existing MC templates (shape-from-CR and rateParam both fail above). The
-achievable prize is bounded at ~520 in r₉₅ (1742→1221). Legitimate ways to claim it:
+DY smoothing (above) is the cheap, legitimate win (−20%, no new data). Beyond it, the limit is gated by
+**DY MC-stat in the SR** — a *sample/efficiency* problem, not fixable further by reshuffling templates
+(shape-from-CR and rateParam both fail above). Larger gains (toward the ~1221 sensitivity bound or the
+AN's 1148) need real DY events. Ways to go further:
 1. **Data-driven DY** from a CR orthogonalized on a *physics* variable (same-flavor + Z-peak), NOT the
    MVA argmax — the AN-23-102 method. This is the only construction that is both orthogonal to the SR and
    on the SR discriminant. Needs upstream selection/parquets.
@@ -110,9 +136,10 @@ achievable prize is bounded at ~520 in r₉₅ (1742→1221). Legitimate ways to
 4. Correctness (small effect): fix `TbarBQ/TBbarQ` xsec=0; pull in the dropped `-ext`/diboson samples.
 
 ### Artifacts (reversible — originals untouched; delete to revert)
-- `higgscharm/outputs/combine/v11_hplusc_v5_vjetsCR.root` + `v11_hplusc_v5_vjetsCR.txt` (sensitivity test)
-- `…/v11_hplusc_v4_vjrp.txt`, `v11_hplusc_v5_vjrp.txt` (rateParam tests) + `*.ws.root` workspaces
-- `b-hive/scripts/vjets_shape_from_cr.py` (the transfer script)
+- **KEPT (the working fix):** `higgscharm/outputs/combine/v11_hplusc_v6_dysmooth.{root,txt}`;
+  `b-hive/scripts/dy_template_smooth.py`; `b-hive/scripts/plot_automcstats_issue.py` + the 2 PNGs.
+- **DELETED** (sensitivity/rateParam tests, 2026-06-23): `v11_hplusc_v5_vjetsCR.*`, `*_vjrp.txt`,
+  `vjets_shape_from_cr.py`, all `*.ws.root` + `higgsCombine{V4base,V5shape,V4rp,V5rp}*` outputs.
 - baseline `v11_hplusc_v4.{txt,root}` and the parquets were NOT modified.
 4. Fix `TbarBQ/TBbarQ` xsec=0 and pull in the `-ext`/missing diboson samples (correctness; small effect).
 
