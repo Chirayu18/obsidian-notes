@@ -1,6 +1,9 @@
 {
   "alwaysUpdateLinks": true,
   "vimMode": true,
+  "userIgnoreFilters": [
+    "Archive/"
+  ],
   "pdfExportSettings": {
     "includeName": true,
     "pageSize": "Letter",

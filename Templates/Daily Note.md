@@ -11,7 +11,7 @@ tags: [daily]
 - 
 
 ## ✅ Tasks
-Tasks written here with `#today` show up on the Dashboard.
+Open tasks here show up under **Today** on the [[Dashboard]].
 - [ ] 
 
 ## 📝 Log
