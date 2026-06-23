@@ -132,6 +132,31 @@ Implementation: `b-hive/scripts/dy_template_smooth.py` → `v11_hplusc_v6_dysmoo
 Plots: `b-hive/docs/plots/combine_final/automcstats_issue.png` (the issue: SR band explosion, N_eff≈10,
 ±10⁵ DY weights) and `automcstats_fix.png` (raw vs smoothed DY template + limit bars).
 
+## v32 overhaul — selection, LOWESS, JES/JER, smoothing (2026-06-23)
+
+Found v32 was on a DIFFERENT (looser) selection than v11: `hww_MVA` (25.7k DY events, no ≥1-cjet) vs v11's
+`hww_combine_fixed` (10.3k, tight). Fixed v32 to match v11 + enable object shifts. Changes (all in the
+b-hive builder/datacard, permanent):
+- `make_combine_histograms_v11_v32.py`: SAMPLE_DIR → **hww_combine_fixed** (model kept v9, per user);
+  **LOWESS variation-smoothing now OFF by default** (`--smooth` to enable — it sculpts variations, can bias);
+  **folded 6 object shifts** (JES/JER + lepton scale/res) by re-scoring the shifted parquets with frozen
+  prior/edges (STAGE 3.5).
+- `make_datacard_v11_v32.py`: emits the 6 `CMS_*_2022 shape` rows when present.
+- `dy_template_smooth.py`: now takes CLI args `[SRC.root] [DST.root]` (was v11-hardcoded).
+
+v32 progression (blind Asimov median r95):
+| variant | full | stat | freeze autoMCStats |
+|---|---|---|---|
+| old (hww_MVA, LOWESS on) | 1934 | 584 | 1130 |
+| fixed baseline (hww_combine_fixed, no LOWESS) | 1889 | 600 | 990 |
+| + JES/JER object shifts | 1935 | 600 | 1068 |
+| **+ vjets smoothing** | **1487** | 580 | 988 |
+
+JES/JER = ~22% syst for v32 (vs 4.8% v11; shifts migrate events across log-L channels). Smoothing
+1935→1487 (−23%, same as v11). Smoothed inputs: `combine_inputs/v11_hplusc_v32_v9_smooth.{root,txt}`.
+NB the LOWESS-off + hww_combine_fixed switch means the EARLIER v32 numbers (1934, Table 18 below) are the
+OLD hww_MVA+LOWESS config — superseded by the above.
+
 ## Table 18 — uncertainty breakdown + c-tag placeholder (2026-06-23)
 
 Added a **c-tag lnN placeholder** (5.9% = AN total, on all MC) → `v11_hplusc_v4_ctag.txt`,
