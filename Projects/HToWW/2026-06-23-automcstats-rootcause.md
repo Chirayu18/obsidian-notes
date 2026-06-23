@@ -98,6 +98,15 @@ different discriminant. Conversely, any region on the right axis (P(hplusc) for 
 own events → not orthogonal/circular. So **"orthogonal" and "same discriminant" are mutually exclusive**
 within this construction; you cannot build a clean CR→SR shape transfer from the existing templates.
 
+**Decisive test (2026-06-23): histogram P(hplusc) for the orthogonal CR_vjets events** (user's idea — the
+sharpest attempt: orthogonal CR *and* same axis). Result: CR_vjets P(hplusc) has N_eff 668 but **entirely
+at P(hplusc)<0.3, with ZERO events in the signal bins (0.40–0.52)**. Reason: argmax==vjets ⟹ P(vjets) is
+max ⟹ P(hplusc) forced low ⟹ the orthogonal region is empty exactly where the SR signal lives. General
+law: **any region orthogonal to the SR is, by construction, absent from the SR's discriminant range** —
+you cannot estimate the high-P(hplusc) vjets shape from an MVA-orthogonal CR; the info isn't there. This
+is why the AN orthogonalizes on a **physics** variable (same-flavor+Z-peak), which doesn't cut on
+P(hplusc) and so IS populated across the SR discriminant while staying orthogonal to the eμ SR.
+
 ## ✅ FIX THAT WORKS (2026-06-23): smooth the DY SR template
 
 | config | full r₉₅ | stat | freeze SR autoMCStats |
