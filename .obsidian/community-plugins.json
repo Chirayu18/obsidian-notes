@@ -2,5 +2,6 @@
   "dataview",
   "templater-obsidian",
   "slides-extended",
-  "calendar"
+  "calendar",
+  "obsidian-meta-bind-plugin"
 ]

@@ -6,6 +6,21 @@ tags: [dashboard]
 
 > Live overview of open work. Pin this note (right-click tab → Pin). Nothing here needs editing — queries auto-discover projects.
 
+`BUTTON[new-daily]` `BUTTON[new-meeting]`
+
+## 📌 Pinned
+Notes with `pinned: true` — always shown here, even when `done`. Toggle with the
+**📌 Pin / Unpin** and **✅ Done / 🔄 Active** buttons inside any note (Meta Bind).
+
+```dataview
+TABLE WITHOUT ID file.link AS Note, status AS Status, file.mday AS Modified
+FROM -"Archive"
+WHERE pinned = true
+SORT status ASC, file.mday DESC
+```
+
+---
+
 ## 🔥 Today
 Open tasks tagged `#today` anywhere, plus open tasks in today's daily note.
 
@@ -49,7 +64,7 @@ Quick index of every active note, grouped by project folder.
 ```dataview
 TABLE WITHOUT ID file.link AS Note, file.frontmatter.status AS Status, file.mday AS Modified
 FROM "Projects" AND -"Archive"
-WHERE file.frontmatter.status = "active"
+WHERE file.frontmatter.status = "active" OR pinned = true
 SORT file.mday DESC
 ```
 
@@ -91,4 +106,25 @@ dv.table(["Plot", "Date", "Description", "Open"],
     r.desc,
     r.link ? `[CERNBox](${r.link})` : r.note
   ]));
+```
+
+%% --- Dashboard buttons (Meta Bind) --- %%
+```meta-bind-button
+label: ＋ Daily note
+id: new-daily
+hidden: true
+style: default
+actions:
+  - type: command
+    command: daily-notes
+```
+
+```meta-bind-button
+label: ＋ Meeting
+id: new-meeting
+hidden: true
+style: default
+actions:
+  - type: command
+    command: templater-obsidian:create-new-note-from-template
 ```

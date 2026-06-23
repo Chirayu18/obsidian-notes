@@ -1,0 +1,48 @@
+{
+  "devMode": false,
+  "ignoreCodeBlockRestrictions": false,
+  "preferredDateFormat": "YYYY-MM-DD",
+  "firstWeekday": {
+    "index": 1,
+    "name": "Monday",
+    "shortName": "Mo"
+  },
+  "syncInterval": 200,
+  "enableJs": true,
+  "viewFieldDisplayNullAsEmpty": false,
+  "enableSyntaxHighlighting": true,
+  "enableEditorRightClickMenu": true,
+  "inputFieldTemplates": [],
+  "buttonTemplates": [
+    {
+      "label": "✅ Done / 🔄 Active",
+      "id": "toggle-status",
+      "hidden": true,
+      "tooltip": "Toggle this note's status between active and done",
+      "style": "primary",
+      "actions": [
+        {
+          "type": "inlineJS",
+          "code": "const file = app.workspace.getActiveFile();\nawait app.fileManager.processFrontMatter(file, fm => { fm.status = (fm.status === \"active\") ? \"done\" : \"active\"; });"
+        }
+      ]
+    },
+    {
+      "label": "📌 Pin / Unpin",
+      "id": "toggle-pin",
+      "hidden": true,
+      "tooltip": "Pin/unpin this note to the Dashboard (stays even when done)",
+      "style": "default",
+      "actions": [
+        {
+          "type": "inlineJS",
+          "code": "const file = app.workspace.getActiveFile();\nawait app.fileManager.processFrontMatter(file, fm => { fm.pinned = !(fm.pinned === true); });"
+        }
+      ]
+    }
+  ],
+  "excludedFolders": [
+    "Templates",
+    "Archive"
+  ]
+}

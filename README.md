@@ -42,12 +42,19 @@ Plots themselves stay on **EOS** — the vault stores *links*, not binaries.
   note with `tags: [plot]` frontmatter; each entry has `**Date:**`, `**Description:**`,
   `**Link:**`. Both styles surface on [[Dashboard]] and [[Plots]].
 
-## Tasks & the Dashboard
+## Tasks, status & pinning
 
 - Task = a Markdown checkbox `- [ ]` anywhere. `- [x]` marks it done.
 - A note is "active" if its frontmatter has `status: active` — that's what the Dashboard's
-  project-task and active-note queries filter on. Set `status: done`/remove it to retire a note.
-- The Dashboard needs Dataview's **JavaScript Queries** enabled (already on) for the plots table.
+  project-task and active-note queries filter on.
+- **Clickable controls** (Meta Bind buttons, at the top of project/meeting/log notes):
+  - **✅ Done / 🔄 Active** — flips `status` between `active` and `done` in one click.
+  - **📌 Pin / Unpin** — sets `pinned: true/false`. Pinned notes show in the Dashboard's
+    **Pinned** section *and stay there even when done* — for things you always want at hand.
+- The buttons are registered once in [[Note Controls]] (don't delete it). Any note can use
+  them by adding `` `BUTTON[toggle-status, toggle-pin]` ``.
+- Requirements (already configured): Dataview **JavaScript Queries** on (plots table),
+  Meta Bind **JS** on (buttons).
 
 ## Sync (laptop ⇄ lxplus)
 

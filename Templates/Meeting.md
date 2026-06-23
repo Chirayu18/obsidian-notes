@@ -14,10 +14,13 @@ await tp.file.move(folder + "/Meetings/" + filename);
 date: <% tp.date.now("YYYY-MM-DD") %>
 scheduled: <%* tR += meetingDate %>
 status: active
+pinned: false
 tags: [meeting]
 ---
 
 # <% tp.file.title %>
+
+> `BUTTON[toggle-status, toggle-pin]` &nbsp;·&nbsp; status: `VIEW[{status}]` · pinned: `VIEW[{pinned}]`
 
 ## Agenda
 - 
