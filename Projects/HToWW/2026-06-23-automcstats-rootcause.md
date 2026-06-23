@@ -132,6 +132,31 @@ Implementation: `b-hive/scripts/dy_template_smooth.py` → `v11_hplusc_v6_dysmoo
 Plots: `b-hive/docs/plots/combine_final/automcstats_issue.png` (the issue: SR band explosion, N_eff≈10,
 ±10⁵ DY weights) and `automcstats_fix.png` (raw vs smoothed DY template + limit bars).
 
+## Table 18 — uncertainty breakdown + c-tag placeholder (2026-06-23)
+
+Added a **c-tag lnN placeholder** (5.9% = AN total, on all MC) → `v11_hplusc_v4_ctag.txt`,
+`v11_hplusc_v32_v9_ctag.txt`. |Δr|/r % = sqrt(1−(r_frozen/r_nom)²)×100 (quadrature share of total unc.,
+r95 scale); statistical = r_stat/r_nom. Freeze-each-source via AsymptoticLimits.
+
+| source | v11 \|Δr\|/r % (r_nom 1743) | v32 \|Δr\|/r % (r_nom 1934) |
+|---|---|---|
+| **MC-stat (autoMCStats)** | **80.6** | **81.2** |
+| Signal theory (4FS5FS,PDF,αS,BR) | 46.2 | 46.6 |
+| Scale+PS | 30.7 | 40.9 |
+| Lepton | ~0 | 31.0 |
+| Bkg-Higgs (ggH-flav,xsec) | 13.9 | ~0 |
+| Other-bkg xsec | 9.0 | 13.6 |
+| **c-tag (placeholder)** | **3.4** | **12.4** |
+| JES/JER (v11 only) | 4.8 | — |
+| Pileup / Lumi | ~0 | 3.2 / ~0 |
+| **Statistical** | **44.2** | **30.2** |
+| Total systematic | 89.7 | 95.3 |
+
+MC-stat dominates both (~81%); v32 more syst-limited (stat 30%). **c-tag placeholder is small (3.4%/12.4%)
+because autoMCStats swamps it** — the urgent missing systematic barely moves the limit until MC-stat is
+fixed. NB |Δr|/r are quadrature shares, not linearly additive. Also: **v6 smoothing extended to ALL 6
+channels** (222 hists) → r95 1399 (SR-only) → **1361** (all channels); CR smoothing adds a small extra gain.
+
 ## Completeness check — no missing samples / events (2026-06-23)
 
 Verified DY processing→postprocessing (user asked "does sumw make sense / samples missing?"):
@@ -221,6 +246,25 @@ no effect (autoMCStats already pools all processes per bin into one total-Σw² 
 → rateParam (norm only, useless) or shared shape (axis mismatch). Only merging low-stat *bins* touches
 autoMCStats, and that's the binning scan above (dead).
 
+## FINAL COUNT: only 198 vjets MC events exist anywhere in the signal bins (2026-06-23)
+
+Counting *every* vjets event in the full sample by its P(hplusc), **regardless of channel** (no argmax cut):
+
+| D = P(hplusc) | raw vjets events (anywhere) | N_eff | in SR? |
+|---|---|---|---|
+| 0.40–0.44 | 90 | 9.8 | all 90 |
+| 0.44–0.48 | 70 | 10.7 | all 70 |
+| 0.48–0.52 | 38 | **0.1** (yield −14, cancellation) | all 38 |
+| **signal bins total** | **198** | ~10 | **198 / 198** |
+
+**All 198 are argmax==hplusc (already in the SR); every other channel has exactly zero.** The all-events
+P(hplusc) distribution in the signal bins is identical to the SR-only one. Reason: a vjets event with
+P(hplusc)≥0.40 essentially always wins hplusc (two of six softmax scores both >0.40 is rare). So there is
+**no reservoir of high-P(hplusc) vjets events in any other channel** — the SR vjets shape rests on ~198 raw
+MC events total (N_eff≈10/bin); bin6 (highest S/√B) is 38 events cancelling to −14±41, N_eff 0.1. That is
+*everything* 2022postEE MC has. Every reshuffling of existing events is ruled out by direct count; only
+more MC (binned W+jets, other eras) or data-driven (AN method) adds real information.
+
 ## Implication for the fix
 DY smoothing (above) is the cheap, legitimate win (−20%, no new data). Beyond it, the limit is gated by
 **DY MC-stat in the SR** — a *sample/efficiency* problem, not fixable further by reshuffling templates
@@ -235,9 +279,12 @@ AN's 1148) need real DY events. Ways to go further:
 
 ### Artifacts (reversible — originals untouched; delete to revert)
 - **KEPT (the working fix):** `higgscharm/outputs/combine/v11_hplusc_v6_dysmooth.{root,txt}`;
-  `b-hive/scripts/dy_template_smooth.py`; `b-hive/scripts/plot_automcstats_issue.py` + the 2 PNGs.
-- **DELETED** (sensitivity/rateParam tests, 2026-06-23): `v11_hplusc_v5_vjetsCR.*`, `*_vjrp.txt`,
-  `vjets_shape_from_cr.py`, all `*.ws.root` + `higgsCombine{V4base,V5shape,V4rp,V5rp}*` outputs.
+  `b-hive/scripts/dy_template_smooth.py`; `b-hive/scripts/plot_automcstats_issue.py` + the 2 PNGs
+  (`docs/plots/combine_final/automcstats_{issue,fix}.png`, also embedded in vault `combine-plots`).
+- **DELETED** (all failed/dishonest tests, 2026-06-23): v5 shape-from-CR (`v11_hplusc_v5_vjetsCR.*`,
+  `vjets_shape_from_cr.py`), rateParam (`*_vjrp.txt`, `card_rp*.txt`), binning (`v11_hplusc_rb_m*.*`,
+  `rebin_sr_optimize.py`), process-merge (`v11_hplusc_v7_dymerge.*`, `merge_dy_into_st.py`), floor-hack
+  (`v11_hplusc_v8_floorerr.*`, `floor_empty_errors.py`), and all their `*.ws.root` + `higgsCombine*` outputs.
 - baseline `v11_hplusc_v4.{txt,root}` and the parquets were NOT modified.
 4. Fix `TbarBQ/TBbarQ` xsec=0 and pull in the `-ext`/missing diboson samples (correctness; small effect).
 
