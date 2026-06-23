@@ -9,6 +9,7 @@ source: lxplus
 
 Self-contained summary of *why our combine limit is worse than AN-23-102* and what is/isn't the fix.
 Full detail: [[2026-06-17-combine-v11-v32-findings]], [[2026-06-17-systematics-reference]].
+**Root cause nailed (2026-06-23):** [[2026-06-23-automcstats-rootcause]] — autoMCStats = DY (vjets) SR undersampling (freeze SR autoMCStats: 1742→1069); + xsec/sumw audit (TbarBQ/TBbarQ xsec=0 bug).
 Plots: [[combine-plots]]. Benchmark paper: `References/HToWW/AN-23-102.pdf`.
 
 ## The numbers (2022postEE, 26.7 fb⁻¹, 1POI, blind Asimov)
