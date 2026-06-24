@@ -42,18 +42,18 @@ The expected 95% CL limit is dominated by **MC-statistical** uncertainty:
 
 ---
 
-# The cause: only DY is starved in the SR
+# The cause: only vjets is starved in the SR
 
 Per-bin SR total-MC error, `N_eff = (Σw)² / Σw²`:
 
-| SR bin | total | N_eff(tot) | **vjets** | **vjets N_eff** | vjets share of bin err |
-|---|---|---|---|---|---|
-| 4 | 1597.6 | 507 | 221.3 | **9.8** | **99.5%** |
-| 5 | 1477.7 | 548 | 205.6 | **10.7** | **99.5%** |
-| 6 | 752.3 | 332 | 0.0 | **0.0** | **99.2%** |
+| SR bin | total  | N_eff(tot) | **vjets** | **vjets N_eff** | vjets share of bin err |
+| ------ | ------ | ---------- | --------- | --------------- | ---------------------- |
+| 4      | 1597.6 | 507        | 221.3     | **9.8**         | **99.5%**              |
+| 5      | 1477.7 | 548        | 205.6     | **10.7**        | **99.5%**              |
+| 6      | 752.3  | 332        | 0.0       | **0.0**         | **99.2%**              |
 
 - tt N_eff ≈ 30k–43k, st ≈ 6k, diboson ≈ 1k — all well-sampled.
-- **Only DY (vjets)** carries ~150–220 events on ~10 effective MC events.
+- **Only vjets** carries ~150–220 events on ~10 effective MC events.
 - Bin 6 is pathological: **0 ± 41** — huge ± amc@NLO weights cancel in yield, not in variance.
 
 ---
@@ -62,20 +62,10 @@ Per-bin SR total-MC error, `N_eff = (Σw)² / Σw²`:
 
 ![w:1100](attachments/automcstats_issue.png)
 
-**(A)** SR MC-stat band explodes right under the signal peak · **(B)** DY N_eff ≈ 10 vs other processes 10³–10⁴ · **(C)** DY per-event amc@NLO weights uniformly ±10⁵
+**(A)** SR MC-stat band explodes right under the signal peak · **(B)** vjets N_eff ≈ 10 vs other processes 10³–10⁴ · **(C)** vjets per-event amc@NLO weights uniformly ±10⁵
 
 ---
 
-# Why DY is starved — *not* a normalization bug
-
-- Only 2 inclusive amc@NLO DY samples (`DYto2L_2Jets_50`, `_10to50`); xsec/sumw verified correct (equiv. lumi ≫ data).
-- amc@NLO gen weights are huge & broad: `_50` |w| up to 225k; `_10to50` is just **85 events, N_eff 2.6**.
-- The H+c SR is **c-tagged + high-MET → DY efficiency ~10⁻⁴**. A large *generated* sample collapses to ~85 surviving events in the high-weight tail → N_eff ≈ 10 in the SR.
-- Outliers are **not clippable**: largest |w| is only 0.8% of Σw² — weights are *uniformly* large, not spikes.
-
-> Verified processing → postprocessing: N_eff identical, no events lost. **Real selection physics, not a bug.**
-
----
 
 # Only 198 vjets MC events exist in the signal bins
 
@@ -95,14 +85,13 @@ Counting *every* vjets event by P(hplusc), **regardless of channel** (no argmax 
 
 # What does NOT work (all tested, all ruled out)
 
-| approach | result | why it fails |
-|---|---|---|
-| vjets **rateParam** | 1742 → **1791** ⬆ | floats norm only; can't change a bin's Σw² |
-| **shape-from-CR_vjets** | 1221 *(not claimable)* | CR axis = P(vjets), SR axis = P(hplusc) — axis mismatch |
-| orthogonal CR, same axis | empty | argmax-orthogonal region has **zero events in signal bins** |
-| **rebinning** (merge bins) | ≥ 1742 | merging adds DY errors in quadrature, dilutes signal |
-| process-merge into st | 1756 | autoMCStats already pools processes per bin |
-| floor-the-error "hack" | 1158 | **dishonest** — asserts bkg=0 exactly known in best S/√B bin |
+| approach                   | result            | Comments                                                                                                           |
+| -------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ |
+| vjets **rateParam**        | 1742 → **1791** ⬆ | floats norm only; can't change a bin's Σw²                                                                         |
+| orthogonal CR, same axis   | empty             | Basically used argmax-orthogonal vjets CR region with same variable as SR. This has **zero events in signal bins** |
+| **rebinning** (merge bins) | ≥ 1742            | merging adds DY errors in quadrature, dilutes signal                                                               |
+| process-merge into st      | 1756              | Merge vjets into st but autoMCStats already pools processes per bin                                                |
+| floor-the-error "hack"     | 1158              | **dishonest** — asserts bkg=0 exactly known in best S/√B bin                                                       |
 
 **Orthogonality dilemma:** any region orthogonal to the SR (via MVA argmax) is, by construction, *absent* from the SR's discriminant range. Can't estimate the high-P(hplusc) DY shape from an MVA-orthogonal CR — the info isn't there.
 
@@ -153,36 +142,14 @@ The AN's 3-part fix (§6.1):
 
 ---
 
-# Takeaways
+# THE proper fix — kill negative weights at source
 
-- autoMCStats blow-up = **DY/W+jets undersampling in the c-tagged + high-MET SR** (efficiency ~10⁻⁴), *not* a normalization or processing bug.
-- Only ~198 raw vjets MC events exist in the signal bins; every template reshuffle is ruled out by direct count.
-- **DY SR-template smoothing recovers 34% of the inflation: 1742 → 1399 (−20%), AN-validated** (AN §6.1 W+jets method).
+The `0 ± 41` bins come from DY / W+jets **+79k / −79k generator-weight cancellation** — smoothing only *masks* it.
 
-> The proposed Run 3 MVA talk (**MVA_Studies, Athens 2026**) flags this same limitation in backup — "~80% systematics-limited, dominated by `prop_binSR_hplusc_*`, **reducible via cross-era template averaging**" — exactly the AN §6.1 W+jets fix.
+> **arXiv:2109.07851** — Andersen & Maier, *"Unbiased Elimination of Negative Weights in Monte Carlo Samples"* (**cell resampling**).
 
----
+- Removes negative MC weights **at the source**, **preserving all physical observables** — process-independent, improves with sample size.
+- **Validated in the paper on W+2-jet @ NLO — literally our `WtoLNu_2Jets` sample.**
+- No cancellation → real per-bin MC stats; **strictly better** than smoothing (masks the symptom).
+- **Apply upstream:** resample the W+jets / DY parquets *before* combine.
 
-# Next steps
-
-**To go further (needs real DY events / data):**
-
-1. **Data-driven DY** from a *physics*-orthogonal CR (same-flavor + Z-peak) — the AN method (the only construction both orthogonal to the SR *and* on the SR discriminant).
-2. Add the **binned W+jets samples** (stitch, §2.3) + **cross-era averaging** — AN §6.1, steps 1–2 we haven't done yet.
-3. Accept autoMCStats as honest (we genuinely don't know the SR DY shape).
-
----
-
-<!-- _paginate: false -->
-
-# Backup — references & artifacts
-
-**References**
-- **AN-23-102**, §6.1 "Background model of W+jets", p. 54–55 (¶ L515–525), Fig. 44 — the W+jets large-weight/template-fluctuation paragraph + averaging-and-smoothing fix. `References/HToWW/AN-23-102.pdf`
-- **MVA_Studies (Athens 2026)** — proposed Run 3 H+c MVA talk; backup names this autoMCStats limit, "reducible via cross-era template averaging." `References/MVA_Studies_Athens_2026/MVA_Studies.pdf`
-
-**Artifacts**
-- Source note: `Projects/HToWW/2026-06-23-automcstats-rootcause.md`
-- Plots: `b-hive/docs/plots/combine_final/automcstats_{issue,fix}.png`
-- Datacard: `higgscharm/outputs/combine/v11_hplusc_v4.{txt,root}` · fix: `v11_hplusc_v6_dysmooth.{root,txt}`
-- Smoother: `b-hive/scripts/dy_template_smooth.py`
