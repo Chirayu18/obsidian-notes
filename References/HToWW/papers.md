@@ -28,5 +28,11 @@ open directly in Obsidian on the laptop.
   flags the **autoMCStats / W+jets-DY SR-undersampling limitation** (the [[2026-06-23-automcstats-rootcause]]
   issue) and names the fix: cross-era template averaging = AN-23-102 §6.1's W+jets method.
 
+### autoMCStats slides (Marp deck)
+- **Folder:** `References/HToWW/automcstats-slides/` — `2026-06-24-automcstats-slides.md` (+ embedded plot PNGs).
+- **Why:** the deck on the autoMCStats / DY-W+jets SR-undersampling issue and the DY-smoothing fix.
+  Renders to PDF via `npx @marp-team/marp-cli ... --pdf --allow-local-files`. Source note:
+  [[2026-06-23-automcstats-rootcause]]; cites AN-23-102 §6.1 + [[MVA_Studies.pdf]].
+
 > Convention: reference papers/PDFs live here under `References/<Project>/` (committed); generated
 > notes live under `Projects/<Project>/`; regenerable plots/data stay on EOS and are linked.
