@@ -29,16 +29,16 @@ Follow-up to the limit-issue investigation. Two questions: why does autoMCStats 
 
 The expected 95% CL limit is dominated by **MC-statistical** uncertainty:
 
-| config | r₉₅ |
-|---|---|
-| baseline full | **1742** |
-| freeze **SR** autoMCStats only (`prop_binSR_hplusc.*`) | 1069 |
-| freeze ALL autoMCStats (`prop_bin.*`) | 1032 |
-| stat-only (all constrained) | 771 |
+| config                                                 | r₉₅      |
+| ------------------------------------------------------ | -------- |
+| baseline full                                          | **1742** |
+| freeze **SR** autoMCStats only (`prop_binSR_hplusc.*`) | 1069     |
+| freeze ALL autoMCStats (`prop_bin.*`)                  | 1032     |
+| stat-only (all constrained)                            | 771      |
 
 - The **SR channel's autoMCStats alone** is ~the entire systematic inflation (1742 → 1069).
 - The other 5 channels' MC-stat barely matter (1069 → 1032).
-- MC-stat is **~81%** of the total systematic (Table 18, both v11 & v32).
+- MC-stat is **~81%** of the total systematic 
 
 ---
 
@@ -71,12 +71,12 @@ Per-bin SR total-MC error, `N_eff = (Σw)² / Σw²`:
 
 Counting *every* vjets event by P(hplusc), **regardless of channel** (no argmax cut):
 
-| D = P(hplusc) | raw vjets events (anywhere) | N_eff |
-|---|---|---|
-| 0.40–0.44 | 90 | 9.8 |
-| 0.44–0.48 | 70 | 10.7 |
-| 0.48–0.52 | 38 | **0.1** (yield −14, cancellation) |
-| **signal bins total** | **198** | ~10 |
+| D = P(hplusc)         | raw vjets events (anywhere) | N_eff                             |
+| --------------------- | --------------------------- | --------------------------------- |
+| 0.40–0.44             | 90                          | 9.8                               |
+| 0.44–0.48             | 70                          | 10.7                              |
+| 0.48–0.52             | 38                          | **0.1** (yield −14, cancellation) |
+| **signal bins total** | **198**                     | ~10                               |
 
 - **All 198 are already in the SR** (argmax==hplusc); every other channel has **exactly zero**.
 - No reservoir of high-P(hplusc) vjets events anywhere → **reshuffling existing events cannot win.**
@@ -93,7 +93,6 @@ Counting *every* vjets event by P(hplusc), **regardless of channel** (no argmax 
 | process-merge into st      | 1756              | Merge vjets into st but autoMCStats already pools processes per bin                                                |
 | floor-the-error "hack"     | 1158              | **dishonest** — asserts bkg=0 exactly known in best S/√B bin                                                       |
 
-**Orthogonality dilemma:** any region orthogonal to the SR (via MVA argmax) is, by construction, *absent* from the SR's discriminant range. Can't estimate the high-P(hplusc) DY shape from an MVA-orthogonal CR — the info isn't there.
 
 ---
 
@@ -107,17 +106,16 @@ Counting *every* vjets event by P(hplusc), **regardless of channel** (no argmax 
 
 # Why the fix is legitimate
 
-| config | full r₉₅ | freeze SR autoMCStats |
-|---|---|---|
-| v4 baseline | 1742 | 1069 |
-| **v6 DY-smooth** | **1399 (−20%)** | 1173 |
-| (all 6 channels smoothed) | **1361** | — |
+| config                    | full r₉₅        | freeze SR autoMCStats |
+| ------------------------- | --------------- | --------------------- |
+| v4 baseline               | 1742            | 1069                  |
+| **v6 DY-smooth**          | **1399 (−20%)** | 1173                  |
+| (all 6 channels smoothed) | **1361**        | —                     |
 
 - Removes the unphysical zero-spikes (bin 6: 0 ± 41 from ±79k NLO cancellation).
 - Pools DY's ~36 effective SR events across a smooth shape → per-bin rel error 32% → ~20%.
 - Collapses the full − freeze-SR gap **673 → 226** — most autoMCStats gone.
 
-**No axis mismatch, no orthogonality problem, no CR** — the DY's own SR distribution, de-noised. Standard low-stat template regularization. Only assumption: smoothing bias ≪ MC-stat removed.
 
 ---
 
