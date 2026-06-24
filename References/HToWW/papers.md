@@ -34,5 +34,16 @@ open directly in Obsidian on the laptop.
   Renders to PDF via `npx @marp-team/marp-cli ... --pdf --allow-local-files`. Source note:
   [[2026-06-23-automcstats-rootcause]]; cites AN-23-102 §6.1 + [[MVA_Studies.pdf]].
 
+### Negative-weight elimination — arXiv:2109.07851  ← THE fix for our neg-weight problem
+- **URL:** https://arxiv.org/abs/2109.07851
+- **Title:** *Unbiased Elimination of Negative Weights in Monte Carlo Samples* — Andersen & Maier.
+- **Method:** cell resampling — removes negative MC event weights while preserving all physical
+  observables, process-independent, improves as sample size grows.
+- **Why it's our fix:** the autoMCStats blow-up is driven by the DY/**W+jets** +79k/−79k generator-weight
+  **cancellation** that makes SR bins like `0 ± 41` (see [[2026-06-23-automcstats-rootcause]]). This kills
+  the negative weights at the source → no cancellation → real per-bin MC stats. **Validated in the paper on
+  W+2-jet @ NLO — literally our `WtoLNu_2Jets` sample.** Strictly better than our template smoothing
+  (which only masks the symptom). Apply upstream (resample the W+jets/DY parquets) before combine.
+
 > Convention: reference papers/PDFs live here under `References/<Project>/` (committed); generated
 > notes live under `Projects/<Project>/`; regenerable plots/data stay on EOS and are linked.

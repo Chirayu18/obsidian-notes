@@ -157,6 +157,17 @@ JES/JER = ~22% syst for v32 (vs 4.8% v11; shifts migrate events across log-L cha
 NB the LOWESS-off + hww_combine_fixed switch means the EARLIER v32 numbers (1934, Table 18 below) are the
 OLD hww_MVA+LOWESS config — superseded by the above.
 
+**v32 data look (why it trails v11):** the 13-class model saturates P(hplusc) at ~5.4% (max log-L 1.30),
+so the discriminant has almost no dynamic range — signal is crushed into [1.06,1.30] and uniform bins dump
+55% of it in ONE bin. Tried **signal-quantile binning** (16 bins, `--quantile`): r95 1487→**1515 WORSE**
+(freeze-autoMCStats 988→1087) — fine high-D bins raise autoMCStats; v32 is MC-stat-walled like v11. Reverted
+to uniform. Deeper lever would be a higher-dynamic-range discriminant (e.g. hplusc-vs-tt LR), not binning.
+
+**THE proper negative-weights fix — arXiv:2109.07851** (cell resampling, [[papers]]): the 0±41 bins come
+from DY/W+jets +79k/−79k generator-weight **cancellation**. This paper removes negative weights at the
+source while preserving observables (validated on W+2-jet @ NLO = our `WtoLNu_2Jets`). Strictly better than
+template smoothing (which only masks it). Apply upstream to the W+jets/DY parquets before combine.
+
 ## Table 18 — uncertainty breakdown + c-tag placeholder (2026-06-23)
 
 Added a **c-tag lnN placeholder** (5.9% = AN total, on all MC) → `v11_hplusc_v4_ctag.txt`,
