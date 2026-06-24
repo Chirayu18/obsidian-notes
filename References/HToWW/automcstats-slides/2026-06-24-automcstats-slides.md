@@ -151,3 +151,29 @@ The `0 ± 41` bins come from DY / W+jets **+79k / −79k generator-weight cancel
 - No cancellation → real per-bin MC stats; **strictly better** than smoothing (masks the symptom).
 - **Apply upstream:** resample the W+jets / DY parquets *before* combine.
 
+---
+
+<!-- _paginate: false -->
+
+# Backup — references (papers)
+
+**Negative-weight fix papers**
+- **arXiv:2109.07851** — Andersen & Maier, *Unbiased Elimination of Negative Weights in MC Samples* (cell resampling; model-free, lower-effort).
+- **arXiv:2510.16217** — Palmer & Kronheim, *Improving statistical precision in MC samples with negative weights via reweighting and UQ* (PRD 2025; DNN reweighting + PCA fit-level uncertainty, demonstrated on Sherpa V+jets in a SR).
+
+**Analysis note**
+- **AN-23-102**, §6.1 "Background model of W+jets" (p. 54–55, Fig. 44) — the W+jets large-weight / template-fluctuation paragraph + averaging-and-smoothing fix.
+
+---
+
+<!-- _paginate: false -->
+
+# Backup — references (talks)
+
+- **HWW meeting — H+c analysis status:**
+  https://indico.cern.ch/event/1624988/#25-hc-analysis-status
+- **Thomas's presentation (Higgs–charm workshop, 2026-06-23):**
+  https://indico.cern.ch/event/1645713/contributions/7022780/attachments/3300867/5905182/2026_06_23_Higgs_charm_workshop%20(9).pdf
+- **MVA studies (this work, Athens 2026):**
+  `References/MVA_Studies_Athens_2026/MVA_Studies.pdf`
+
