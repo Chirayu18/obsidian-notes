@@ -7,6 +7,9 @@
 # Local-only archive snapshot — kept on the laptop, never synced to GitHub/lxplus
 Archive/
 
+# Overleaf analysis-note clone — has its own Overleaf git remote, never push to this GitHub repo
+Projects/HToWW/AnalysisNote/
+
 # OS cruft
 .DS_Store
 Thumbs.db
