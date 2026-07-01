@@ -281,38 +281,7 @@ hierarchical_loss:
     k_fine: 7.0   # weight on the fine-separation term
 ```
 
-### 6.2 ⚠️ Bug to fix as part of the PR: `tau` / `k_fine` are dropped
-
-`tasks/training.py` (≈ lines 389–393) constructs
-
-```python
-significance_config = {
-    "signal_idx": signal_idx,
-    "lam": sig_cfg.get("lam", 1.0),
-    "mode": sig_mode,
-}
-```
-
-It does **not** copy `tau` or `k_fine`. But `_kappa_hce_forward` reads
-`self.significance_config.get("tau", 1.0)` and `forward` reads
-`.get("k_fine", 7.0)`. **Consequence:** `tau: 0.3` in the YAML is ignored (the
-loss actually runs at $\tau=1.0$), and `k_fine` only happens to match its default.
-Fix — forward the keys:
-
-```python
-significance_config = {
-    "signal_idx": signal_idx,
-    "lam": sig_cfg.get("lam", 1.0),
-    "mode": sig_mode,
-    "tau": sig_cfg.get("tau", 1.0),
-    "k_fine": sig_cfg.get("k_fine", 7.0),
-}
-```
-
-(Re-run v32 after this fix; the documented $\tau=0.3$ number is really a
-$\tau=1.0$ result until then.)
-
-### 6.3 Using it for jet-flavour tagging
+### 6.2 Using it for jet-flavour tagging
 
 The loss is generic — it only needs (a) softmax posteriors over $C$ classes and
 (b) a final linear layer whose rows are per-class templates. To repurpose it from
