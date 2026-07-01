@@ -319,8 +319,8 @@ The loss is generic — it only needs (a) softmax posteriors over $C$ classes an
 event-level MVA to **per-jet flavour tagging** (DeepJet/ParticleTransformer heads
 in b-hive):
 
-1. **Truths = jet flavours.** Set `truths:` to the flavour one-hots
-   (e.g. `is_b, is_c, is_uds, is_g`, or a finer `is_bb, is_lepb, is_c, …`).
+1. **Truths = jet flavours.** Set `truths:` to the flavour  fine one-hots
+   (e.g. `is_bb, is_lepb, is_c, …`).
    `signal_class` = the flavour you want to tag (e.g. `is_c` for a c-tagger).
 2. **Model head.** Any model ending in an `nn.Linear(h, C)` works
    (`simple_mlp_multiclass`, or the transformer taggers
