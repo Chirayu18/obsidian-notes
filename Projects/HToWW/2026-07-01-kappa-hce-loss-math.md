@@ -18,6 +18,15 @@ Implementation: `utils/loss/HierarchicalCrossEntropyLoss.py`
 (`_kappa_hce_forward`, mode `"kappa_hce"`). Config:
 `config/HPlusCHToWW_kappa_hce.yml`. See also [[MVA]] for the full version history.
 
+**PR / upstream:** clean loss-focused branch `kappa-hce-loss` (commit `1be29da`)
+pushed to the `gitlab` fork `cgupta/b-hive`. Open the MR at
+<https://gitlab.cern.ch/cgupta/b-hive/-/merge_requests/new?merge_request%5Bsource_branch%5D=kappa-hce-loss>
+(target `cgupta/b-hive:master` ← `kappa-hce-loss`). Branch contents:
+`HierarchicalCrossEntropyLoss.py`, `LossFunctionLoader.py`,
+`utils/weighting/batches.py` (`compute_hierarchical_weights`), `tasks/training.py`
+wiring (incl. the `tau`/`k_fine` forwarding fix), `config/HPlusCHToWW_kappa_hce.yml`,
+and `docs/kappa_hce_loss.md`.
+
 ---
 
 ## 1. Setup and notation
