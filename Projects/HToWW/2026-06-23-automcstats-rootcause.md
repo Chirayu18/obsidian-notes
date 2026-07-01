@@ -1,8 +1,10 @@
 ---
-tags: [reference]
+tags:
+  - reference
 status: active
 date: 2026-06-23
 source: lxplus
+pinned: false
 ---
 
 # H+c → WW — autoMCStats root cause + xsec/sumw audit

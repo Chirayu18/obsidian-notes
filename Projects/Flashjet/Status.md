@@ -2,7 +2,7 @@
 tags:
   - hww
 status: active
-pinned: false
+pinned: true
 related:
 date: 2026-06-23
 ---
@@ -23,7 +23,7 @@ date: 2026-06-23
 
 ## Tasks
 
-- [ ] 
+- [ ] See latest report [[report.pdf]] by alex and advice claude to proceed
 
 ---
 
