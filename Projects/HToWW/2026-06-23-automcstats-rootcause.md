@@ -1,7 +1,7 @@
 ---
 tags:
   - reference
-status: active
+status: done
 date: 2026-06-23
 source: lxplus
 pinned: false

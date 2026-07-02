@@ -23,7 +23,7 @@ date: 2026-06-30
 
 ## Tasks
 
-- [ ] 
+- [ ] Finish tasks by claude [[2026-06-30]]
 
 ---
 

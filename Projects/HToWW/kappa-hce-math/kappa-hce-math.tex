@@ -1,0 +1,255 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+
+\newcommand{\Pset}{\mathcal{P}}
+\newcommand{\Nset}{\mathcal{N}}
+\newcommand{\invfreq}{\widehat{\mathrm{invfreq}}}
+\DeclareMathOperator{\softmax}{softmax}
+
+\title{\textbf{Kappa HCE Loss --- Complete Mathematics}}
+\author{H+c ($H\to WW$) analysis}
+\date{2026-07-01}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+The \textbf{kappa hierarchical cross-entropy (kappa HCE)} loss is the current best loss for the
+$H\to WW$ $H+c$ MVA (v32: \texttt{hplusc\_vs\_all} AUC \textbf{0.975}). It replaces
+manually-defined hierarchical groups with \emph{dynamic} groups derived from the geometry of the
+classifier's own output layer, and couples them to a differentiable significance term. This note
+derives all of the mathematics.
+\end{abstract}
+
+\section{Setup and notation}
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}c l@{}}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$C$ & number of classes (13 for $H\to WW$) \\
+$s$ & signal class index (hplusc) \\
+$z \in \mathbb{R}^{C}$ & logits from the network for one event \\
+$p_i = \softmax(z)_i$ & predicted posterior $P(\text{class } i \mid x)$, $\sum_i p_i = 1$ \\
+$W \in \mathbb{R}^{C \times h}$ & weight matrix of the final linear layer ($h=32$) \\
+$W_j \in \mathbb{R}^{h}$ & row $j$ of $W$ --- the learned \emph{template vector} for class $j$ \\
+$y$ & integer truth label of the event \\
+$N_j$ & number of training events in class $j$ \\
+$\tau$ & temperature for soft group membership \\
+$\lambda$ & weight of the significance term (\texttt{lam}) \\
+$k_\text{fine}$ & weight of the fine-separation term \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The logit for class $j$ is $z_j = W_j \cdot \phi(x) + b_j$, where $\phi(x)$ is the penultimate
+activation. So \textbf{each row $W_j$ is the direction in feature space that the network
+associates with class $j$.} Two classes whose templates point in similar directions are
+``confusable'' --- this is the geometric intuition the loss exploits.
+
+\section{Dynamic groups from cosine similarity}
+Define the cosine similarity between the signal template and every class template:
+\begin{equation}
+c_j \;=\; \cos\!\big(W_s, W_j\big) \;=\; \frac{W_s \cdot W_j}{\lVert W_s\rVert \, \lVert W_j\rVert},
+\qquad c_s = 1 .
+\end{equation}
+This is recomputed \textbf{every forward pass} from the live weights, so the grouping evolves as
+the model trains.
+
+\subsection{Hard split (used by the group term)}
+\begin{equation}
+\Pset = \{\, j : c_j \ge 0 \,\} \quad(\text{signal-like, includes } s), \qquad
+\Nset = \{\, j : c_j < 0 \,\}, \qquad n_\Nset = |\Nset| .
+\end{equation}
+
+\subsection{Soft membership (used by the fine and significance terms)}
+\begin{equation}
+\alpha_j \;=\; \sigma\!\left(\frac{c_j}{\tau}\right) \;=\; \frac{1}{1 + e^{-c_j/\tau}}
+\;\in (0,1).
+\end{equation}
+$\alpha_j$ is the \textbf{soft ``kappa''} --- the degree to which class $j$ is treated as
+belonging to the signal-like fine group. $\tau$ controls sharpness: at $\tau = 0.3$,
+$\alpha > 0.5$ once $c_j > 0$ and $\alpha < 0.05$ by $c_j < -0.6$. Smaller $\tau$ gives harder
+(step-like) membership.
+
+\begin{tcolorbox}[colback=blue!4,colframe=blue!40,title=Stop-gradient]
+In code $\alpha$ is computed from a \emph{detached} $c_j$, so $\alpha$ acts as a read-out gate,
+not a free parameter driven by the loss. The template geometry ($c_j$) is shaped \textbf{only} by
+the CE terms below; the significance term cannot push $\alpha$ around. This is precisely why the
+kappa HCE loss does \textbf{not} suffer the kappa-collapse ($\to 0$) or kappa-convergence
+($\to 1$) pathologies of the earlier learned-kappa losses.
+\end{tcolorbox}
+
+\section{The three loss terms}
+\begin{tcolorbox}[colback=black!3,colframe=black!50]
+\begin{equation*}
+\mathcal{L} \;=\; \mathcal{L}_\text{group} \;+\; k_\text{fine}\,\mathcal{L}_\text{fine}
+\;+\; \lambda\,\mathcal{L}_\text{sig}
+\end{equation*}
+\end{tcolorbox}
+
+\subsection{Group term --- hard-split coarse CE}
+Collapse the $\Pset$ classes into a single merged column and keep each $\Nset$ class separate.
+Grouped probabilities $q \in \mathbb{R}^{n_\Nset+1}$:
+\begin{equation}
+q_k = p_{\Nset_k}\ (k < n_\Nset), \qquad q_{n_\Nset} = \sum_{j \in \Pset} p_j .
+\end{equation}
+Map each event's truth to a group index $g(y)$: its own column if $y \in \Nset$, else the merged
+column $n_\Nset$. Then
+\begin{equation}
+\mathcal{L}_\text{group} \;=\; -\,\frac{\sum_x w_{g(y)} \, \log q_{g(y)}(x)}{\sum_x w_{g(y)}} ,
+\end{equation}
+a weighted NLL. The group weights are inverse-frequency:
+\begin{equation}
+w_k = \invfreq(\Nset_k)\ (k<n_\Nset),
+\qquad
+w_{n_\Nset} = \frac{1}{\sum_{j\in\Pset} N_j},
+\end{equation}
+where $\invfreq(j) = \dfrac{\sum_i N_i}{N_j}$ normalised so $\max_j = 1$.
+
+\paragraph{Why merge the positives?} A merged column contributes no term that pushes the $\Pset$
+templates \emph{apart}. If each positive class had its own softmax column, the CE gradient would
+repel their weight vectors, destabilising the very cosine structure that defines the groups.
+Merging keeps the signal-like cluster cohesive.
+
+\subsection{Fine term --- soft-membership conditional CE}
+Build an $\alpha$-gated conditional distribution over classes:
+\begin{equation}
+\tilde p_i(x) \;=\; \frac{\alpha_i \, p_i(x)}{\sum_j \alpha_j \, p_j(x)} .
+\end{equation}
+Per-event fine loss (inverse-frequency weighted NLL), then each event weighted by $\alpha$ of its
+own true class:
+\begin{equation}
+\ell_\text{fine}(x) = -\,\invfreq(y)\,\log \tilde p_y(x),
+\qquad
+\mathcal{L}_\text{fine} \;=\; \frac{\sum_x \alpha_{y(x)}\,\ell_\text{fine}(x)}{\sum_x \alpha_{y(x)}} .
+\end{equation}
+The double appearance of $\alpha$ --- inside $\tilde p$ (softens the denominator to the
+signal-like region) and as the per-event weight $\alpha_{y(x)}$ (down-weights background events)
+--- is what makes this term focus purely on separating the signal from its near neighbours. Its
+final contribution is scaled by $k_\text{fine}$.
+
+\subsection{Significance term --- kappa discriminant}
+Define the \textbf{kappa discriminant} with $\alpha$ playing the role of $\kappa$:
+\begin{equation}
+D(x) \;=\; \frac{p_s(x)}{\,p_s(x) + \displaystyle\sum_{j \ne s} \alpha_j \, p_j(x)\,} \;\in (0,1].
+\end{equation}
+Signal-like classes ($\alpha_j \to 1$) stay in the denominator and \textbf{dilute} $D$ --- so $D$
+only grows when $p_s$ genuinely dominates its near neighbours. Background-like classes
+($\alpha_j \to 0$) drop out and cannot inflate the denominator. The term is a \textbf{batch-mean}
+on each half (composition-invariant, spike-free):
+\begin{equation}
+\mathcal{L}_\text{sig} \;=\;
+\underbrace{\frac{1}{n_\text{sig}} \sum_{x:\,y=s} -\log D(x)}_{\text{push } D \uparrow \text{ for signal}}
+\;+\;
+\underbrace{\frac{1}{n_\text{bkg}} \sum_{x:\,y\ne s} \log\!\big(1 + D(x)\big)}_{\text{push } D \downarrow \text{ for background}} .
+\end{equation}
+\begin{itemize}[nosep]
+  \item $-\log D$ diverges as $D\to 0$: strong pull to raise $p_s$ on true signal.
+  \item $\log(1+D)$ is bounded and floored at $0$ (unlike the old $\log B$ which ran to
+        $-\infty$): it gently suppresses $p_s$ on backgrounds without dominating.
+  \item Both gradients act on $p$ (via $z$), aligned with the CE terms --- no
+        probability-suppression artefact.
+\end{itemize}
+The $\tfrac{1}{n_\text{sig}}, \tfrac{1}{n_\text{bkg}}$ normalisation (with a guard for
+signal-empty batches) removes the batch-composition dependence that made the older summed
+significance losses spike on signal-heavy batches.
+
+\section{Why it works: the natural curriculum}
+The grouping is emergent, so training passes through phases automatically:
+\begin{enumerate}[nosep]
+  \item \textbf{Early (random $W$):} cosines are scattered around $0$; many classes land in
+        $\Pset$. $\mathcal{L}_\text{fine}$ is effectively a broad multiclass CE over most of the
+        13 classes $\to$ the model first learns coarse structure.
+  \item \textbf{Middle:} $\mathcal{L}_\text{group}$ drives dissimilar backgrounds' templates to
+        anti-align ($c_j < 0$), so they leave $\Pset$. The fine term's support shrinks toward the
+        signal-like cluster.
+  \item \textbf{Late:} only the genuinely signal-like classes remain positive. In v32 by epoch 49
+        that is just \textbf{hplusb, ggH, VBF}. $\mathcal{L}_\text{fine}$ has converged to a
+        near-binary hplusc-vs-near-neighbour problem.
+\end{enumerate}
+So a \emph{single} objective interpolates from coarse multiclass to fine binary discrimination
+without any manual schedule.
+
+\subsection{v32 learned membership (from \texttt{best\_model.pt}, $\tau=0.3$)}
+\begin{center}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{@{}l r r c@{}}
+\toprule
+\textbf{Class} & $c_j$ & $\alpha_j$ & \textbf{Group} \\
+\midrule
+H+c      & $+1.000$ & $0.966$ & signal \\
+H+b      & $+0.355$ & $0.765$ & $\Pset$ \\
+VBF      & $+0.277$ & $0.716$ & $\Pset$ \\
+ggH      & $+0.097$ & $0.580$ & $\Pset$ \\
+V+Jets   & $-0.244$ & $0.307$ & $\Nset$ \\
+ttHtoBB  & $-0.434$ & $0.191$ & $\Nset$ \\
+ZH       & $-0.478$ & $0.169$ & $\Nset$ \\
+ttHnonBB & $-0.498$ & $0.160$ & $\Nset$ \\
+ggZH     & $-0.522$ & $0.149$ & $\Nset$ \\
+tt       & $-0.621$ & $0.112$ & $\Nset$ \\
+Diboson  & $-0.670$ & $0.097$ & $\Nset$ \\
+WH       & $-0.708$ & $0.086$ & $\Nset$ \\
+ST       & $-0.733$ & $0.080$ & $\Nset$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+The model discovers, without being told, that H+b / VBF / ggH are the charm-like Higgs
+backgrounds that matter, and rejects everything else.
+
+\section{Inference / post-training discriminant}
+At inference the trained templates give fixed $\kappa_j$ (via $\alpha_j$ or a
+separately-optimised vector). The event score is the same discriminant:
+\begin{equation}
+D_\text{sig}(x) = \frac{p_s(x)}{p_s(x) + \sum_{j\ne s}\kappa_j\, p_j(x)} .
+\end{equation}
+Two ways to set $\kappa$:
+\begin{itemize}[nosep]
+  \item \textbf{From the model:} $\kappa_j = \alpha_j = \sigma(c_j/\tau)$ (or the smooth mapping
+        $(1+c_j)/2$, or clamp $\max(0,c_j)$).
+  \item \textbf{Optimised per working point:} maximise $S/\sqrt{B}$ at a target signal efficiency
+        via differential evolution, $\kappa_j \in [0,5]$. For v32/v20 this gives only
+        $\sim{+}1.2\%$ over uniform $\kappa$, because the trained posteriors already encode the
+        structure.
+\end{itemize}
+$S/\sqrt{B}$ at a working point uses \textbf{raw event counts} (no inverse-frequency):
+$S = \sum_{x\in\text{sig}} \mathbb{1}[D(x)>t]$,
+$B = \sum_{x\in\text{bkg}} \mathbb{1}[D(x)>t]$, with threshold $t$ set to the target signal
+efficiency.
+
+\section{Relation to earlier losses}
+\begin{center}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}l l l l c@{}}
+\toprule
+\textbf{Loss} & \textbf{Groups} & \textbf{$\kappa$ source} & \textbf{Failure mode} & \textbf{AUC} \\
+\midrule
+Flat CE (v10)              & none    & ---            & 13-class imbalance collapse & 0.51 \\
+Hierarchical CE (v12--v15) & manual  & ---            & needs hand-tuned groups     & $\le 0.965$ \\
+$-S/\sqrt B$ (v18s)        & manual  & learned, clamp & $\kappa$ collapse $\to 0$    & 0.928 \\
+$\log B$ (v18/19logB)      & manual  & learned, smooth& $\kappa$ converge $\to 1$    & 0.961 \\
+Discriminant-aware (v20)   & manual  & learned, smooth& --- (best fixed-group)      & 0.973 \\
+\textbf{Kappa HCE (v32)}   & \textbf{dynamic} & $\alpha=\sigma(c/\tau)$, \textbf{detached} & --- & \textbf{0.975} \\
+\bottomrule
+\end{tabular}
+\end{center}
+The kappa HCE loss keeps v20's discriminant-aware significance term but (i) replaces manual groups
+with emergent cosine groups and (ii) detaches $\kappa$ so the significance objective can never
+destabilise the grouping --- giving the best AUC and a hyperparameter-light, self-scheduling
+training.
+
+\end{document}

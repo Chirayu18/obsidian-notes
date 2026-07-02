@@ -22,16 +22,16 @@ git checkout migration-v2
 
 ## What's different vs upstream `uacms/MVA`
 
-| Area | Change |
-|---|---|
-| **Parquet output** | Self-normalising shards — `sumw`/`xsec`/`era` stored in the parquet schema metadata, plus an `event` id column. No external bookkeeping needed. |
+| Area                         | Change                                                                                                                                                                                        |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Parquet output**           | Self-normalising shards — `sumw`/`xsec`/`era` stored in the parquet schema metadata, plus an `event` id column. No external bookkeeping needed.                                               |
 | **Object-shift systematics** | One Condor job per dataset emits the nominal **plus every** JES/JER/lepton scale+resolution shift in a single NanoAOD read (`object_shifts: true`). Shifts land in `<dataset>/base/<shift>/`. |
-| **Shift merge** | `merge_shifted_parquets_by_sample` collapses them to `<year>/<shift>/<sample>.parquet`. |
-| **MVA** | Train/test split + inference extracted into `scripts/mva/{prep_training_inputs,run_inference}.py`; 6-class model, order `[hplusc, higgsbkg, tt, st, diboson, vjets]`. |
-| **Combine** | New `scripts/combine/` pipeline + a `combine:` block in the workflow yaml (6 argmax channels, 12 shape systs, 9 lnNs). |
-| **Variables** | 53 MVA/histogram variables (mirrored into `hww.yaml` + `hww_MVA.yaml`). |
-| **Selection** | Single category `base`, now requiring **`atleast_one_cjet`** (SR category dropped). |
-| **Fixes** | muon `pt_resol` clamp; empty-parquet failsafes; **2022postEE JEC tags bumped V3→V4 / JRV1→JRV2** (cvmfs `latest` drift — see Gotcha). |
+| **Shift merge**              | `merge_shifted_parquets_by_sample` collapses them to `<year>/<shift>/<sample>.parquet`.                                                                                                       |
+| **MVA**                      | Train/test split + inference extracted into `scripts/mva/{prep_training_inputs,run_inference}.py`; 6-class model, order `[hplusc, higgsbkg, tt, st, diboson, vjets]`.                         |
+| **Combine**                  | New `scripts/combine/` pipeline + a `combine:` block in the workflow yaml (6 argmax channels, 12 shape systs, 9 lnNs).                                                                        |
+| **Variables**                | 53 MVA/histogram variables (mirrored into `hww.yaml` + `hww_MVA.yaml`).                                                                                                                       |
+| **Selection**                | Single category `base`, now requiring **`atleast_one_cjet`** (SR category dropped).                                                                                                           |
+| **Fixes**                    | muon `pt_resol` clamp; empty-parquet failsafes; **2022postEE JEC tags bumped V3→V4 / JRV1→JRV2** (cvmfs `latest` drift — see Gotcha).                                                         |
 
 Two workflow files, identical except one knob:
 `hww_MVA.yaml` (`object_shifts: false`, nominal) and `hww_combine.yaml`
@@ -108,3 +108,7 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
   the datacard** — that's the one remaining wiring step in
   `scripts/combine/make_combine_inputs.py` (loop the `<year>/<shift>/mva/` dirs and
   emit shape rows).
+-  Asked contact for cjet WP and scale factors after response , implement them
+  
+# Links
+![[links]]

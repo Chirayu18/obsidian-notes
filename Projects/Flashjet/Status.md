@@ -32,7 +32,8 @@ Repo: `../flashjet/FlastJetDemo/` (branch `benchmarking`). Report: [[report.pdf]
 ## Tasks
 
 - [x] See latest report [[report.pdf]] by Alex and advise how to proceed
-- [ ] Get Alex's unpushed commits, then explore code + try a basic CMSSW integration
+- [x] Get Alex's unpushed commits, then explore code + try a basic CMSSW integration
+- [ ] Implement new features
 
 ---
 
@@ -75,3 +76,5 @@ has **local commits he never pushed** → hence the message asking for them.
 - T2.3 crossover — **re-measure on the actual GPU first** (`scripts/tune_large.py`), don't hardcode 16 on faith; the A100 rationale artifacts aren't present.
 - T3.1 collation — must stay bitwise-identical to NumPy collation.
 
+---
+- Forget the things above, as discussed with alex, the next task would be to implement some new things for kT and CA algorithm. Alex pushed latest comments and apparently he already started working on that. ![[PXL_20260702_123224004.MP.jpg]]

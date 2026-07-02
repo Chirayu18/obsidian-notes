@@ -1,8 +1,10 @@
 ---
-tags: [reference]
-status: active
+tags:
+  - reference
+status: done
 date: 2026-07-01
 source: lxplus
+pinned: true
 ---
 
 # Kappa HCE Loss — Complete Mathematics & b-hive Integration
