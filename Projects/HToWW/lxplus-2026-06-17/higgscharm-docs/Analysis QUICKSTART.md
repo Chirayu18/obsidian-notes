@@ -112,6 +112,10 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
 
 ## Reference numbers
 
+- **Signal sample production (NanoAOD inputs):** [[2026-07-08-hplusc-hplusb-crab-status]] —
+  hplusc/hplusb CRAB status across all 4 campaigns: 5/8 published (full DAS dataset
+  names per step), 3 pending step1 (2023 postBPix c+b, preBPix b), blocked on an
+  expired CRAB myproxy delegation.
 - **Cutflow (2022postEE):** [[2026-07-07-cutflow-2022postEE]] — weighted events per
   selection step, all samples (`base` workflow).
 - **Trigger efficiency (2022postEE):** [[2026-07-07-trigger-efficiency]] — per-sample ε
