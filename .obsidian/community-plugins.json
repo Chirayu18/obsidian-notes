@@ -3,5 +3,6 @@
   "templater-obsidian",
   "slides-extended",
   "calendar",
-  "obsidian-meta-bind-plugin"
+  "obsidian-meta-bind-plugin",
+  "obsidian-git"
 ]

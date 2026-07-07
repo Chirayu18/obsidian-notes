@@ -22,10 +22,10 @@ date: 2026-07-02
 ---
 
 ## Tasks
- - [ ] Wait for Alex's instructions
+
+- [ ] Keep checking linkedIn for contact from https://www.linkedin.com/in/diana-leyva-pernia-937772a8/ 
 
 ---
 
 ## Log
 - 
-- Wait for alex to respond with a solution

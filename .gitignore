@@ -10,6 +10,9 @@ Archive/
 # Overleaf analysis-note clone — has its own Overleaf git remote, never push to this GitHub repo
 Projects/HToWW/AnalysisNote/
 
+# Private, machine-local notes (keyring/secrets/paths, laptop-side workflows) — never synced
+References/Private/
+
 # OS cruft
 .DS_Store
 Thumbs.db

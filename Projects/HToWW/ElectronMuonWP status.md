@@ -23,7 +23,7 @@ date: 2026-06-30
 
 ## Tasks
 
-- [x]  [completion:: 2026-06-30]
+- [ ]  Read through these
 
 ---
 
@@ -33,3 +33,5 @@ I have some results for getting the electron WP from the main HWW analysis with 
 ![[Screenshot 2026-06-29 at 12.16.32.png]]
 ![[Screenshot 2026-06-29 at 12.16.40.png]]![[Screenshot 2026-06-29 at 12.16.29.png]]- I am also a bit confused by how at the last cut for the signal (H+c) events, the [#events](https://mattermost.web.cern.ch/cms-exp/channels/hc-with-h-ww-2l-2#) with only the new muon wp is higher than for the old wps, as the cut before leaves less events for the new wp. Could that be that new dilepton pairs are made, due to new muon wp and that we therefore have different dilepton masses, leaving now more events/dilepton lpairs surviving the dilepton mass cut?
 - I think I have found the issue with the working points. It was actually in the definition of our standard working points for the electron ID. We had `"Medium": events.Electron.cutBased == 3,`, but this cutBased number is exclusively defined. So this would include medium electrons but exclude tight ones. So it should be `"Medium": events.Electron.cutBased >= 3,`. Now I have what you can see in the two right most columns in the attached picture. Now I just need to add the mvaTTH working point again :)![[Screenshot 2026-07-02 at 16.37.12.png]]
+An update. The number of events looks better. Now a cut witha factor of about 3 to 4 w.r.t. when only the Muon WP was changed. The MC does overshoot the data now a bit more: for high mass CR the MC/data ratio is 1.18 . I will check some other cuts in the working point as well. Perhaps implementing the proper triggers and trigger SFs, will help
+![[Screenshot 2026-07-03 at 16.34.37.png]]![[Screenshot 2026-07-03 at 16.34.17.png]]![[Screenshot 2026-07-03 at 16.34.13.png]]

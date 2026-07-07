@@ -109,6 +109,11 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
   `scripts/combine/make_combine_inputs.py` (loop the `<year>/<shift>/mva/` dirs and
   emit shape rows).
 -  Asked contact for cjet WP and scale factors after response , implement them
-  
+
+## Reference numbers
+
+- **Trigger efficiency (2022postEE):** [[2026-07-07-trigger-efficiency]] — per-sample ε
+  from the `base` cutflow (signal H+c ≈ 37.5%). No trigger SF applied yet.
+
 # Links
 ![[links]]
