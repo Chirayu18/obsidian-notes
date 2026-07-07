@@ -5,83 +5,106 @@ date: 2026-07-08
 source: lxplus
 ---
 
-# HPlusC / HPlusB CRAB production status (run_steps* sweep)
+# HPlusC / HPlusB CRAB production — datasets & run steps
 
-Ran the `run_steps*` / `run_workflow.sh` chains for **hplusc** (charm) and **hplusb**
-(bottom) across all campaigns. The scripts are idempotent: per step they check CRAB
-status, skip completed steps, and only submit the *next* not-started step.
+**8 samples** = hplusc (charm) + hplusb (bottom), each in 4 campaigns
+(2022preEE, 2022postEE, 2023preBPix, 2023postBPix).
+**5 complete** (all steps published to DAS), **3 pending step1**.
 
-Workspaces under `/eos/home-c/cgupta/HToWW/freshprod/`.
+Workspaces: `/eos/home-c/cgupta/HToWW/freshprod/<campaign>[/hplusb]/`
+DAS UI: https://cmsweb.cern.ch/das/  · query with `instance=prod/phys03`.
 
-## Result per workspace
+---
 
-| Campaign | Sample | Driver | Result |
-|---|---|---|---|
-| 2022postEE | hplusc | `run_steps123` + `run_steps45` | ✅ **ALL 5 STEPS COMPLETED** (NanoAODv13 published) |
-| 2022postEE | hplusb | `hplusb/run_steps123` | ✅ **ALL 5 STEPS COMPLETED** |
-| 2022preEE  | hplusc | `run_steps123` | ✅ **ALL 5 STEPS COMPLETED** |
-| 2022preEE  | hplusb | `hplusb/run_steps123` | ✅ **ALL 5 STEPS COMPLETED** (step5 reuses tvanlaer's NanoAOD) |
-| 2023preBPix | hplusc | `run_workflow.sh` | ✅ **ALL 5 STEPS COMPLETED** |
-| 2023postBPix | hplusc | `run_workflow.sh` | ⛔ step1 crab dir exists from a *failed* delegation → "Working area already exists"; never actually submitted |
-| 2023postBPix | hplusb | `hplusb/run_workflow.sh` | ⛔ step1 NOT_STARTED → submit failed: **Problems delegating My-proxy** |
-| 2023preBPix | hplusb | `hplusb/run_workflow.sh` | ⛔ step1 NOT_STARTED → submit failed: **Problems delegating My-proxy** |
+## Completed samples — published datasets (per step)
 
-**Bottom line:** all 2022 samples (c + b, pre + post) and 2023preBPix charm are fully
-done. The **three remaining 2023 submissions are blocked by an expired CRAB myproxy**,
-not by any config problem.
+DAS link = `https://cmsweb.cern.ch/das/request?input=<dataset>&instance=prod/phys03`
 
-## Root cause of the 2023 blocks: expired myproxy
+### hplusc 2022postEE
+| Step | Dataset |
+|---|---|
+| 1 GEN-SIM  | `/HPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/cgupta-Run3Summer22EEwmLHEGS-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-961d567f3b28739d7d3304cf1c19e16d/USER` |
+| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer22EEDRPremix-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-31b3ee15c0b04cb98bdf3666445e3e75/USER` |
+| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer22EEDRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_postEE_v1-v1-4cb6268f68760f7ffbcfed10319ec573/USER` |
+| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer22EEMiniAODv4-HToWW-130X_mcRun3_2022_realistic_postEE_v6-v1-0fd187a8655a412b0c23134e39ea2b39/USER` |
+| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78/USER` |
 
-A local grid proxy exists (`voms-proxy-init -voms cms` was done; `voms-proxy-info` shows
-~191h left). But CRAB's first submit **delegates a long-lived myproxy** to
-`myproxy.cern.ch`, and that credential is expired:
+### hplusc 2022preEE
+| Step | Dataset |
+|---|---|
+| 1 GEN-SIM  | `/HPlusCharm_.../cgupta-Run3Summer22wmLHEGS-HToWW-124X_mcRun3_2022_realistic_v12-v6-f04f7d9f45dbc50cf6f740b9d47c558e/USER` |
+| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer22DRPremix-HToWW-124X_mcRun3_2022_realistic_v12-v6-b722d1cf11a99a4476f09a94f34c768e/USER` |
+| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer22DRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_v12-v6-0190a31f56290269056b5583a84fa4cc/USER` |
+| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer22MiniAODv4-HToWW-130X_mcRun3_2022_realistic_v5-v6-3c2e9ed2594fb101fac62691334d2f84/USER` |
+| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v4-8653679c76b04a5edd42171c9a5e3f96/USER` |
 
-```
-myproxy-info -s myproxy.cern.ch -l 81e20e4ae67b2089f71293220f37b00971e33c59
-  owner:   .../CN=cgupta/...
-  timeleft: 0:00:00          <-- EXPIRED
-```
+### hplusc 2023preBPix
+| Step | Dataset |
+|---|---|
+| 1 GEN-SIM  | `/HPlusCharm_.../cgupta-Run3Summer23wmLHEGS-HToWW-130X_mcRun3_2023_realistic_v15-v1-64a3e6699f1fcde747888ed384bf5a6b/USER` |
+| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer23DRPremix-HToWW-130X_mcRun3_2023_realistic_v15-v1-c8a51e44625b3c15c549596559b6ff82/USER` |
+| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer23DRPremix-HToWW-RECO-130X_mcRun3_2023_realistic_v15-v1-93541c315341c0b0958208c5a365b22c/USER` |
+| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer23MiniAODv4-HToWW-130X_mcRun3_2023_realistic_v15-v1-d64cae098ec4867fb5ede51e14ecff7d/USER` |
+| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer23NanoAODv13-HToWW-133X_mcRun3_2023_realistic_ForNanov13_v1-v1-666a5f9beb603dd857705c0ae1d4d5d7/USER` |
 
-Renewing it runs `myproxy-init ... -C ~/.globus/usercert.pem -y ~/.globus/userkey.pem`,
-which must **read the encrypted userkey.pem and therefore prompts for the GRID pass
-phrase**. That prompt cannot be answered from a non-interactive Claude/ssh session
-(`Couldn't read user key ... grid-proxy-init failed`), so every fresh CRAB submit aborts
-with *"Problems delegating My-proxy."*
+### hplusb 2022postEE
+| Step | Dataset |
+|---|---|
+| 1 GEN-SIM  | `/HPlusBottom_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/cgupta-Run3Summer22EEwmLHEGS-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-c654de23a73dda62a53feebc8f86aea4/USER` |
+| 2 DRPremix | `/HPlusBottom_.../cgupta-Run3Summer22EEDRPremix-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-31b3ee15c0b04cb98bdf3666445e3e75/USER` |
+| 3 RECO     | `/HPlusBottom_.../cgupta-Run3Summer22EEDRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_postEE_v1-v1-4cb6268f68760f7ffbcfed10319ec573/USER` |
+| 4 MiniAOD  | `/HPlusBottom_.../cgupta-Run3Summer22EEMiniAODv4-HToWW-130X_mcRun3_2022_realistic_postEE_v6-v1-0fd187a8655a412b0c23134e39ea2b39/USER` |
+| 5 NanoAOD  | `/HPlusBottom_.../cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78/USER` |
 
-The `2023postBPix` charm step1 crab dir
-(`crab_HPlusC_HToWW_Step1_GEN_SIM_2023BPix_v1`) is a *leftover from a failed delegation*
-on 2026-07-07 — the task never reached the grid, but the dir now blocks resubmit.
+### hplusb 2022preEE  (step5 published by tvanlaer)
+| Step | Dataset |
+|---|---|
+| 1 GEN-SIM  | `/HPlusBottom_.../cgupta-Run3Summer22wmLHEGS-HToWW-124X_mcRun3_2022_realistic_v12-v1-9dfa018e54fff8405c257c1f94e11cf5/USER` |
+| 2 DRPremix | `/HPlusBottom_.../cgupta-Run3Summer22DRPremix-HToWW-124X_mcRun3_2022_realistic_v12-v1-b722d1cf11a99a4476f09a94f34c768e/USER` |
+| 3 RECO     | `/HPlusBottom_.../cgupta-Run3Summer22DRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_v12-v1-0190a31f56290269056b5583a84fa4cc/USER` |
+| 4 MiniAOD  | `/HPlusBottom_.../cgupta-Run3Summer22MiniAODv4-HToWW-130X_mcRun3_2022_realistic_v5-v1-3c2e9ed2594fb101fac62691334d2f84/USER` |
+| 5 NanoAOD  | `/HPlusBottom_.../tvanlaer-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v1-8653679c76b04a5edd42171c9a5e3f96/USER` |
 
-## What Chirayu needs to do (one interactive step)
+---
 
-In a real terminal on lxplus, with the CMSSW_13 env + crab-setup sourced:
+## Pending samples — step1 not yet submitted (3)
 
+| Sample | Workspace |
+|---|---|
+| hplusc 2023postBPix | `2023postBPix/` |
+| hplusb 2023postBPix | `2023postBPix/hplusb/` |
+| hplusb 2023preBPix  | `2023preBPix/hplusb/` |
+
+---
+
+## How to run each step
+
+The `run_steps*` / `run_workflow.sh` scripts are **idempotent**: per step they check
+CRAB status, skip completed steps, and submit only the *next* not-started step. Re-run
+after each step finishes to advance the chain 1→2→3→4→5. All need a valid grid proxy +
+delegated CRAB myproxy first.
+
+**0. Proxy (once, in a real terminal — the myproxy prompts for the GRID pass phrase):**
 ```bash
-# 1. fresh local proxy (192h)
 voms-proxy-init -voms cms -rfc -valid 192:00
-
-# 2. (re)delegate the CRAB myproxy — THIS prompts for the GRID pass phrase
-#    Easiest: just re-run a crab submit; crab does the myproxy-init for you.
-#    Or force it explicitly:
-myproxy-init -d -n -s myproxy.cern.ch \
-  -C ~/.globus/usercert.pem -y ~/.globus/userkey.pem \
-  -x -R '.../CN=Robot: cms crab...' -x -Z '.../CN=Robot: cms crab...' \
-  -l 81e20e4ae67b2089f71293220f37b00971e33c59 -t 168 -c 720:00
 ```
 
-Then the three blocked submits go through. For **2023postBPix charm**, first clear the
-dead step1 dir (it was never submitted) so the workflow can resubmit:
+**2022 campaigns** — split by CMSSW version (steps 1-3 need CMSSW_12 el8 container,
+steps 4-5 need CMSSW_13):
+```bash
+cd /eos/home-c/cgupta/HToWW/freshprod/<2022campaign>[/hplusb]
+bash run_steps123.sh    # advances steps 1-3
+bash run_steps45.sh     # advances steps 4-5
+```
 
+**2023 campaigns** — one script does all steps (CMSSW_13):
+```bash
+cd /eos/home-c/cgupta/HToWW/freshprod/<2023campaign>[/hplusb]
+bash run_workflow.sh    # advances whichever step is next
+```
+
+**For the pending 2023postBPix charm:** its step1 crab dir is a leftover from a *failed*
+myproxy delegation (never reached the grid) and blocks resubmit — remove it first:
 ```bash
 rm -rf /eos/home-c/cgupta/HToWW/freshprod/2023postBPix/crab_projects_2023postBPix/crab_HPlusC_HToWW_Step1_GEN_SIM_2023BPix_v1
-cd /eos/home-c/cgupta/HToWW/freshprod/2023postBPix        && bash run_workflow.sh   # hplusc
-cd /eos/home-c/cgupta/HToWW/freshprod/2023postBPix/hplusb && bash run_workflow.sh   # hplusb
-cd /eos/home-c/cgupta/HToWW/freshprod/2023preBPix/hplusb  && bash run_workflow.sh   # hplusb
 ```
-
-Each `run_workflow.sh` submits only step1; re-run later to chain steps 2→5 as each
-completes.
-
-## Log
-- 2026-07-08: swept all 8 workspaces. 5 fully complete, 3 (2023 postBPix c+b, preBPix b)
-  blocked on expired myproxy — needs one interactive `myproxy-init` from Chirayu.
