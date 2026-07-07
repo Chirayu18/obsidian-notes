@@ -5,65 +5,34 @@ date: 2026-07-08
 source: lxplus
 ---
 
-# HPlusC / HPlusB CRAB production — datasets & run steps
+# HPlusC / HPlusB CRAB production — NanoAOD datasets & run steps
 
 **8 samples** = hplusc (charm) + hplusb (bottom), each in 4 campaigns
 (2022preEE, 2022postEE, 2023preBPix, 2023postBPix).
-**5 complete** (all steps published to DAS), **3 pending step1**.
+**5 NanoAOD published** (table below), **3 pending step1** (2023 postBPix c+b, preBPix b).
 
 Workspaces: `/eos/home-c/cgupta/HToWW/freshprod/<campaign>[/hplusb]/`
 DAS UI: https://cmsweb.cern.ch/das/  · query with `instance=prod/phys03`.
 
 ---
 
-## Completed samples — published datasets (per step)
+## NanoAOD samples (final analysis inputs)
 
-DAS link = `https://cmsweb.cern.ch/das/request?input=<dataset>&instance=prod/phys03`
+Event counts from `dasgoclient` (queried 2026-07-08). DAS links resolve on
+`prod/phys03`. All datasets:
+`/HPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/<processing>/USER` (and
+`HPlusBottom_...` for hplusb).
 
-### hplusc 2022postEE
-| Step | Dataset |
-|---|---|
-| 1 GEN-SIM  | `/HPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/cgupta-Run3Summer22EEwmLHEGS-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-961d567f3b28739d7d3304cf1c19e16d/USER` |
-| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer22EEDRPremix-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-31b3ee15c0b04cb98bdf3666445e3e75/USER` |
-| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer22EEDRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_postEE_v1-v1-4cb6268f68760f7ffbcfed10319ec573/USER` |
-| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer22EEMiniAODv4-HToWW-130X_mcRun3_2022_realistic_postEE_v6-v1-0fd187a8655a412b0c23134e39ea2b39/USER` |
-| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78/USER` |
+| Sample | Campaign | Events | NanoAOD (`<processing>` tag) | DAS |
+|---|---|---:|---|---|
+| hplusc | 2022postEE | 277,345 | `cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78` | [das](https://cmsweb.cern.ch/das/request?instance=prod/phys03&input=%2FHPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8%2Fcgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78%2FUSER) |
+| hplusc | 2022preEE | 328,838 | `cgupta-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v4-8653679c76b04a5edd42171c9a5e3f96` | [das](https://cmsweb.cern.ch/das/request?instance=prod/phys03&input=%2FHPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8%2Fcgupta-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v4-8653679c76b04a5edd42171c9a5e3f96%2FUSER) |
+| hplusc | 2023preBPix | 280,356 | `cgupta-Run3Summer23NanoAODv13-HToWW-133X_mcRun3_2023_realistic_ForNanov13_v1-v1-666a5f9beb603dd857705c0ae1d4d5d7` | [das](https://cmsweb.cern.ch/das/request?instance=prod/phys03&input=%2FHPlusCharm_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8%2Fcgupta-Run3Summer23NanoAODv13-HToWW-133X_mcRun3_2023_realistic_ForNanov13_v1-v1-666a5f9beb603dd857705c0ae1d4d5d7%2FUSER) |
+| hplusb | 2022postEE | 298,177 | `cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78` | [das](https://cmsweb.cern.ch/das/request?instance=prod/phys03&input=%2FHPlusBottom_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8%2Fcgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78%2FUSER) |
+| hplusb | 2022preEE | 809,802 | `tvanlaer-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v1-8653679c76b04a5edd42171c9a5e3f96` | [das](https://cmsweb.cern.ch/das/request?instance=prod/phys03&input=%2FHPlusBottom_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8%2Ftvanlaer-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v1-8653679c76b04a5edd42171c9a5e3f96%2FUSER) |
 
-### hplusc 2022preEE
-| Step | Dataset |
-|---|---|
-| 1 GEN-SIM  | `/HPlusCharm_.../cgupta-Run3Summer22wmLHEGS-HToWW-124X_mcRun3_2022_realistic_v12-v6-f04f7d9f45dbc50cf6f740b9d47c558e/USER` |
-| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer22DRPremix-HToWW-124X_mcRun3_2022_realistic_v12-v6-b722d1cf11a99a4476f09a94f34c768e/USER` |
-| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer22DRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_v12-v6-0190a31f56290269056b5583a84fa4cc/USER` |
-| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer22MiniAODv4-HToWW-130X_mcRun3_2022_realistic_v5-v6-3c2e9ed2594fb101fac62691334d2f84/USER` |
-| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v4-8653679c76b04a5edd42171c9a5e3f96/USER` |
-
-### hplusc 2023preBPix
-| Step | Dataset |
-|---|---|
-| 1 GEN-SIM  | `/HPlusCharm_.../cgupta-Run3Summer23wmLHEGS-HToWW-130X_mcRun3_2023_realistic_v15-v1-64a3e6699f1fcde747888ed384bf5a6b/USER` |
-| 2 DRPremix | `/HPlusCharm_.../cgupta-Run3Summer23DRPremix-HToWW-130X_mcRun3_2023_realistic_v15-v1-c8a51e44625b3c15c549596559b6ff82/USER` |
-| 3 RECO     | `/HPlusCharm_.../cgupta-Run3Summer23DRPremix-HToWW-RECO-130X_mcRun3_2023_realistic_v15-v1-93541c315341c0b0958208c5a365b22c/USER` |
-| 4 MiniAOD  | `/HPlusCharm_.../cgupta-Run3Summer23MiniAODv4-HToWW-130X_mcRun3_2023_realistic_v15-v1-d64cae098ec4867fb5ede51e14ecff7d/USER` |
-| 5 NanoAOD  | `/HPlusCharm_.../cgupta-Run3Summer23NanoAODv13-HToWW-133X_mcRun3_2023_realistic_ForNanov13_v1-v1-666a5f9beb603dd857705c0ae1d4d5d7/USER` |
-
-### hplusb 2022postEE
-| Step | Dataset |
-|---|---|
-| 1 GEN-SIM  | `/HPlusBottom_HToWW_M-125_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/cgupta-Run3Summer22EEwmLHEGS-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-c654de23a73dda62a53feebc8f86aea4/USER` |
-| 2 DRPremix | `/HPlusBottom_.../cgupta-Run3Summer22EEDRPremix-HToWW-124X_mcRun3_2022_realistic_postEE_v1-v1-31b3ee15c0b04cb98bdf3666445e3e75/USER` |
-| 3 RECO     | `/HPlusBottom_.../cgupta-Run3Summer22EEDRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_postEE_v1-v1-4cb6268f68760f7ffbcfed10319ec573/USER` |
-| 4 MiniAOD  | `/HPlusBottom_.../cgupta-Run3Summer22EEMiniAODv4-HToWW-130X_mcRun3_2022_realistic_postEE_v6-v1-0fd187a8655a412b0c23134e39ea2b39/USER` |
-| 5 NanoAOD  | `/HPlusBottom_.../cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v1-0a036fde9f2884965a184344aedbed78/USER` |
-
-### hplusb 2022preEE  (step5 published by tvanlaer)
-| Step | Dataset |
-|---|---|
-| 1 GEN-SIM  | `/HPlusBottom_.../cgupta-Run3Summer22wmLHEGS-HToWW-124X_mcRun3_2022_realistic_v12-v1-9dfa018e54fff8405c257c1f94e11cf5/USER` |
-| 2 DRPremix | `/HPlusBottom_.../cgupta-Run3Summer22DRPremix-HToWW-124X_mcRun3_2022_realistic_v12-v1-b722d1cf11a99a4476f09a94f34c768e/USER` |
-| 3 RECO     | `/HPlusBottom_.../cgupta-Run3Summer22DRPremix-HToWW-RECO-124X_mcRun3_2022_realistic_v12-v1-0190a31f56290269056b5583a84fa4cc/USER` |
-| 4 MiniAOD  | `/HPlusBottom_.../cgupta-Run3Summer22MiniAODv4-HToWW-130X_mcRun3_2022_realistic_v5-v1-3c2e9ed2594fb101fac62691334d2f84/USER` |
-| 5 NanoAOD  | `/HPlusBottom_.../tvanlaer-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v1-8653679c76b04a5edd42171c9a5e3f96/USER` |
+`hplusb 2022preEE` NanoAOD was published by **tvanlaer** (not cgupta). The intermediate
+step datasets (GEN-SIM → MiniAOD) are not listed — only the NanoAOD inputs are needed.
 
 ---
 
