@@ -23,7 +23,7 @@ date: 2026-07-02
 
 ## Tasks
 
-- [ ] Keep checking linkedIn for contact from https://www.linkedin.com/in/diana-leyva-pernia-937772a8/ 
+- [x] Keep checking linkedIn for contact from https://www.linkedin.com/in/diana-leyva-pernia-937772a8/ [completion:: 2026-07-07]
 
 ---
 
