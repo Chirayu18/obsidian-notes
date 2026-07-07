@@ -9,7 +9,9 @@ source: lxplus
 
 **8 samples** = hplusc (charm) + hplusb (bottom), each in 4 campaigns
 (2022preEE, 2022postEE, 2023preBPix, 2023postBPix).
-**5 NanoAOD published** (table below), **3 pending step1** (2023 postBPix c+b, preBPix b).
+**5 NanoAOD published** (table below); the **other 3 had step1 submitted 2026-07-08**
+(2023 postBPix c+b, preBPix b) — now running on the grid, re-run `run_workflow.sh` to
+advance them 2→5.
 
 Workspaces: `/eos/home-c/cgupta/HToWW/freshprod/<campaign>[/hplusb]/`
 DAS UI: https://cmsweb.cern.ch/das/  · query with `instance=prod/phys03`.
@@ -36,13 +38,33 @@ step datasets (GEN-SIM → MiniAOD) are not listed — only the NanoAOD inputs a
 
 ---
 
-## Pending samples — step1 not yet submitted (3)
+## Step1 submitted 2026-07-08 (3) — now running on grid
 
-| Sample | Workspace |
+| Sample | CRAB task |
 |---|---|
-| hplusc 2023postBPix | `2023postBPix/` |
-| hplusb 2023postBPix | `2023postBPix/hplusb/` |
-| hplusb 2023preBPix  | `2023preBPix/hplusb/` |
+| hplusc 2023postBPix | `260707_231145:cgupta_crab_HPlusC_HToWW_Step1_GEN_SIM_2023BPix_v1` |
+| hplusb 2023postBPix | `260707_231145:cgupta_crab_HPlusB_HToWW_Step1_GEN_SIM_2023BPix_v1` |
+| hplusb 2023preBPix  | `260707_225850:cgupta_crab_HPlusB_HToWW_Step1_GEN_SIM_2023_v1` |
+
+Re-run each workspace's `run_workflow.sh` after step1 completes to chain 2→5.
+
+### Two gotchas hit while submitting these (fix before rerunning)
+1. **Run submits detached.** A submit over a one-shot `ssh lxplus '<cmd>'` gets killed
+   mid-submission when the session closes (task never registers, leaves an empty stub
+   dir). Launch with `setsid nohup bash run_workflow.sh > submit.log 2>&1 < /dev/null &`
+   and poll the log for `Task name:` + `.requestcache`.
+2. **2023postBPix had no CMSSW release.** `2023postBPix/CMSSW_13_0_17` didn't exist →
+   submits died with `ModuleNotFoundError: No module named 'FWCore'`. Created it to match
+   the working 2023preBPix release's arch **`el9_amd64_gcc11`** (first tried el8 — wrong
+   for el9 nodes). Recreate if missing:
+   ```bash
+   source /cvmfs/cms.cern.ch/cmsset_default.sh
+   cd /eos/home-c/cgupta/HToWW/freshprod/2023postBPix
+   export SCRAM_ARCH=el9_amd64_gcc11 && scramv1 project CMSSW_13_0_17
+   ```
+- Failed/half submits leave a stub crab dir (empty `inputs/`+`results/`, no
+  `.requestcache`) that blocks resubmit with *"Working area already exists"* — `rm -rf`
+  it first.
 
 ---
 
