@@ -112,6 +112,8 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
 
 ## Reference numbers
 
+- **Cutflow (2022postEE):** [[2026-07-07-cutflow-2022postEE]] — weighted events per
+  selection step, all samples (`base` workflow).
 - **Trigger efficiency (2022postEE):** [[2026-07-07-trigger-efficiency]] — per-sample ε
   from the `base` cutflow (signal H+c ≈ 37.5%). No trigger SF applied yet.
 
