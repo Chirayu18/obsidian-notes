@@ -17,14 +17,16 @@ Repo: `../flashjet/FlastJetDemo/` (branch `benchmarking`). Report: [[report.pdf]
 
 ## Blocked on
 
-- Waiting on **Alex's latest commits** before proceeding (see 2026-07-01 log).
+- ~~Waiting on Alex's latest commits~~ — arrived 2026-07-08 (commit `29c9da8`), FF'd. Now unblocked.
 
 ---
 
 ## Commands
 
 ```bash
-
+# work lives at /eos/home-c/cgupta/flashjet/FlastJetDemo (branch benchmarking)
+# tests run in micromamba env b_hive (torch 2.5.1; pytest pip-installed there)
+micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (CUDA)
 ```
 
 ---
@@ -33,11 +35,41 @@ Repo: `../flashjet/FlastJetDemo/` (branch `benchmarking`). Report: [[report.pdf]
 
 - [x] See latest report [[report.pdf]] by Alex and advise how to proceed
 - [x] Get Alex's unpushed commits, then explore code + try a basic CMSSW integration
-- [ ] Implement new features
+- [x] Implement new features — kt & C/A substructure (F1/F2/F3), see 2026-07-08 log
+- [ ] Have Alex review the working-tree changes (NOT committed to repo per instruction)
+- [ ] GPU-node follow-up: these are pure-torch so run on CUDA unchanged, but the Triton `decode=False` parity tests still need a GPU node
 
 ---
 
 ## Log
+
+### 2026-07-08 — Alex's commit landed + new kt/C-A substructure features (Claude, lxplus)
+**Alex pushed `29c9da8` "Adding new bench and opt"** to `origin/benchmarking`
+(FF'd into local). It turned out to be exactly the four items the 2026-07-01
+audit flagged as "in the report but missing from code" — so his unpushed local
+work is now in: `decode=False` (T2.1), `ClusterOutput.splitting_scales()` +
+`splitting_scales_from_history` (T2.2), the `N<=32 → N<=16` auto crossover
+(T2.3), GPU-side collation `_scatter_gpu` (T3.1), plus the A100 profiling
+artifacts. User then said: skip re-validating that; **implement the new features**.
+
+**Implemented three substructure features** (all pure-torch reads of the merge
+history Alex added — no kernel changes, CPU-runnable), each pinned to an
+independent NumPy tree-walk + physical anchors:
+- **F1 exclusive jets (kt)** — `exclusive_jets_from_history(..., n_jets=|d_cut=)`
+  + `ClusterOutput.exclusive_jets`. Reduces to inclusive at the trivial cut.
+- **F2 C/A declustering grooming** — `groom_from_history(...)` soft-drop / mMDT /
+  mass-drop (`μ`), walking each jet down the harder branch (the O(log₂n) in the
+  photo); `ClusterOutput.groomed_jets` / `mass_drop`.
+- **F3 Lund coordinates** — `lund_coordinates_from_history(...)` → (B,J,S,6):
+  z, ΔR, kt, ln1/ΔR, ln kt, d (the `Σℓw/Σw` weighted-recomb picture);
+  `ClusterOutput.lund_coordinates`. d-channel ties exactly to splitting_scales.
+
+Added `ClusterOutput.mask` (needed to map slots→ids), `tests/test_substructure.py`,
+README + `__init__` exports. **Full suite: 85 passed, 13 skipped (CUDA-only).**
+
+**NOT committed to the flashjet repo** (per user instruction) — changes are in
+the working tree at `/eos/home-c/cgupta/flashjet/FlastJetDemo` for review:
+`src/flashjet/{history,api,__init__}.py`, `README.md`, `tests/test_substructure.py`.
 
 ### 2026-07-01 — Message sent to Alex
 Sent to **Alexandre De Moor**:
