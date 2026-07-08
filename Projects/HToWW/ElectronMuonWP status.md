@@ -23,7 +23,8 @@ date: 2026-06-30
 
 ## Tasks
 
-- [ ]  Read through these
+- [x]  Read through these
+- [ ] Wait for thomas to give code update
 
 ---
 
