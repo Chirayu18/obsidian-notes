@@ -75,3 +75,38 @@ from `cjet_cand_cvsl_pnet` / `cjet_cand_cvsb_pnet` (and `leadingjet_*`) — no B
 reprocessing of NanoAOD. Truth label for optimizing the bins = `cjet_cand_flavour`
 (0=light, 4=c, 5=b), which is already present.
 
+---
+
+## Official 2D calibration scheme (AN-25-222 / SFbc-2D docs)
+
+Docs page (CERN SSO): https://etsai.web.cern.ch/2DCalibration/SFbc-2D/docs.html — snapshotted PDF
+committed at `References/HToWW/2D-SFbc-calibration-AN-25-222.pdf`. **Use the official frozen
+edges below so the published SFs apply** (don't invent our own edges as `ctag.py` does — that
+re-randomizes bins each run and would break SF lookup).
+
+**Axes & discriminator definitions** (from docs, tagger = **UParT v2**, NanoAODv15):
+- x-axis **HFvLF** = score(HF vs LF) = `(B + C) / (B + C + S + UDG)` where
+  `B = (1 − CvB)·C / CvB`, `C = CvL·(S+UDG)/(1 − CvL)` (UParT raw probs).
+- y-axis **BvC** = score(B vs C) = `1 − btagUParTAK4CvB`.
+
+**Frozen bin edges (latest, 2026.06.29):**
+```
+HFvLF (x): [0.0, 0.250, 0.452, 0.808, 1.000]                              # 4 columns: L/C0, C1, ... , HF band
+BvC   (y): [0.0, 0.006, 0.017, 0.055, 0.761, 0.944, 0.985, 0.995, 1.000]  # 8 rows
+```
+**Categories:** L0, C0, C1, C2, C3, C4, B0, B1, B2, B3, B4 (11). These are the `wp` argument in
+`evaluate("central", hadronFlavour, wp, abs_eta, pt)`. SF json (2024):
+`/eos/cms/store/group/phys_top/Run3Vcb/flavTagSFs/20260428/flavTaggingSF_2024.json.gz`
+(2025 also available under same dir, "very preliminary").
+
+### Mapping onto our stored PNet scores
+Both axes are functions of the stored `cvsl` (CvL) and `cvsb` (CvB) via the recovered
+3-simplex (see finding above):
+```
+BvC  (y) = 1 − CvB
+HFvLF(x) = P_b + P_c = 1 − P_L,   P_L = CvB·(CvL−1)/(CvB·CvL − CvB − CvL)
+         = CvL / (CvL + CvB·(1 − CvL))          # equals pB+C
+```
+Apply the **official frozen edges** above to these two axes and assign the 11 categories
+(L0,C0–C4,B0–B4) as an integer `ctag_2d_cat` column appended to each parquet.
+

@@ -228,6 +228,55 @@ are in the fileset (the 35-slice above). 9 jobs submitted: clusters **9071462**
 (DY-50), **9071463** (DY-10to50), **9071464** (W). Flavour `longlunch`, 6 GB, coffea
 0.7.30 singularity. Output → `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/`.
 
+## ✅✅ PHASE-2 DONE — CLOSURE + N_eff LIFT PASS (2026-07-12 00:45)
+
+**The method works.** 20-model HistGBDT ensemble trained on 9.72M rows (all 502 parquet
+files incl. straggler), label `weight_nominal>0` (frac+ = 0.836). Output:
+`/eos/user/c/cgupta/HToWW/b-hive/negrw_out/negrw_models.joblib` (8 MB, 20 clf + feature
+list + meta). Log: `.../negrw_out/train.log`.
+
+**g(x⃗):** mean 0.672 (= 2·0.836−1 ✓), range [−0.99, +0.99]. Ensemble std (the shape
+systematic): mean 0.006, max 0.424 — tight where stats rich, widens in sparse tails.
+
+**YIELD CLOSURE — PASS:** total reweighted Σ|w|·g / nominal Σw = **0.994** (0.6% off).
+Per-bin reweighted ≈ nominal across all of lhe_vpt → reweighting preserves the physical
+distribution, just removes the ±w cancellation.
+
+**N_eff LIFT — PASS (the whole point):** total **N_eff 2.91M → 4.67M (+60%)**, and the
+lift is BIGGEST in the starved hard-Vpt tail (exactly where the autoMCStats blow-up lives):
+
+| lhe_vpt | Neff_nom | Neff_rw | gain |
+|--------:|---------:|--------:|-----:|
+|   40    | 125k     | 356k    | 2.8× |
+|  100    | 15.3k    | 48.1k   | 3.1× |
+|  200    | 1.33k    | 4.24k   | 3.2× |
+|  360    | 84       | 325     | 3.9× |
+
+The high-Vpt bins (SR-relevant tail, N_eff was ~80–300) get **3–4×** — the direct fix for
+the "0 ± 41" starved SR bins that drove r₉₅=1742.
+
+**→ NEXT (Phase 3 — SR inference + combine):**
+1. Apply the ensemble on the tight SR parquets: score P₊ for each SR vjets event on its
+   gen features, form the per-event reweight `|w|·g` and the ensemble band `|w|·(g±δg)`.
+   Script `scripts/negweight_reweight_histograms.py` (the inference pass — verify it loads
+   `negrw_models.joblib` and reads the SR parquets' gen cols; the current SR parquets
+   `hww_combine_fixed/` may NOT carry gen cols → may need a SR re-run with the gen axes,
+   OR join gen features by `event` id from a gen-augmented SR pass).
+2. Build combine histograms with the reweighted vjets template + the ensemble-spread
+   shape nuisance (PCA over per-bin covariance across the 20 members).
+3. Re-run the limit; expect autoMCStats contribution (was ~81% of syst) to collapse and
+   r₉₅ to drop sharply from 1742.
+
+Run command that worked (gotchas baked in):
+```
+ssh lxplus 'export MAMBA_EXE=/eos/user/c/cgupta/EPR_task/b-hive/micromamba/micromamba
+$MAMBA_EXE run -n b_hive python scripts/negweight_reweight_train.py \
+  --train "/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/*/train/*.parquet" \
+  --outdir /eos/user/c/cgupta/HToWW/b-hive/negrw_out'
+```
+
+---
+
 ## ✅ PHASE-1 RESULTS + COVERAGE PASS (2026-07-12 00:20)
 
 **Phase-1 production is DONE** (8/9 jobs finished; 1 DY_50 straggler still running but
