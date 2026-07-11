@@ -228,6 +228,46 @@ are in the fileset (the 35-slice above). 9 jobs submitted: clusters **9071462**
 (DY-50), **9071463** (DY-10to50), **9071464** (W). Flavour `longlunch`, 6 GB, coffea
 0.7.30 singularity. Output → `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/`.
 
+## ✅ PHASE-1 RESULTS + COVERAGE PASS (2026-07-12 00:20)
+
+**Phase-1 production is DONE** (8/9 jobs finished; 1 DY_50 straggler still running but
+its ~1M rows don't change any verdict). Ran the veto-integrity + coverage analysis on the
+9.65M rows landed so far. **Both gates PASS — cleared to launch Phase 2.**
+
+Analysis scripts: `~/.claude/jobs/af76ec6a/tmp/analyze_genrw.py` (rows+veto+features) and
+`.../coverage_genrw.py` (coverage), both copied to `/tmp/*.py` on lxplus, run via
+`micromamba run -n b_hive python`.
+
+**Row count:** **9.65M training rows** (497 parquet files; higher than the ~5M estimate —
+more stats, good). Split: 8.76M no-pair + 833k same-flavor-pair rows.
+
+**Veto integrity — PERFECT:** **0 eμ-pair rows leaked** among 833k rows-with-a-pair (all
+same-flavor). Train/infer disjoint-by-construction confirmed at scale.
+
+**Weights:** `weight_nominal` 100% non-null, frac>0 = 0.836 (=`genweight_sign` frac>0),
+mean|w| ≈ 148k. This is the classifier label/weight column (NOT weight_genweight).
+
+**COVERAGE CHECK — PASS.** SR-proxy = the **same-flavor dilepton pairs** (flavor-blind gen
+analog of the eμ SR: same W/Z+jets ME, lhe_* are ME-level so identical support). Every one
+of 9 gen features (lhe_vpt/ht/nc/nb/njets/npnlo, genparton1_pt, dilepton_pt, met_pt) has
+SR-proxy max ≤ training-domain max → **no extrapolation, only interpolation**. Highlights:
+- lhe_vpt: SR-proxy p99=223 max=1127 ⊂ train p99=161 max=1296 ✓ (SR lives in the hard
+  tail — median 49 vs 2.3 GeV — but that tail IS populated in training).
+- lhe_ht: SR max 2542 ⊂ train max 3479 ✓. lhe_nc: SR needs up to 3, train has up to 3 ✓
+  (SR nc≥1 frac 8.96% vs train 6.44% — training carries the c-enriched support).
+- Tail extrapolation risk tiny: only ~3% of SR-proxy events beyond train-p99, and the max
+  still fits (interpolation).
+
+**N_eff (the whole point):** full training N_eff = **2.76M / 9.65M**; SR-proxy N_eff =
+**180k / 833k** (frac>0 only 0.738 — the pair region is the negatively-weighted, starved
+regime the paper targets). The rich training pool is what lets g(x⃗) lift the SR N_eff.
+
+**→ NEXT: Phase 2** — run `/eos/user/c/cgupta/HToWW/b-hive/scripts/negweight_reweight_train.py`
+(20× HistGradientBoostingClassifier ensemble, label `weight_nominal>0`, features = the 20
+lhe_*/genparton* cols). Then closure gate (Σ|w|·g reproduces nominal; SR N_eff up).
+
+---
+
 ## ⏳ RESUME STATE (2026-07-11 22:53 — read this first if picking up cold)
 
 **Where we are:** Phase-1 training-pass Condor jobs SUBMITTED, all 9 **idle** in a busy
