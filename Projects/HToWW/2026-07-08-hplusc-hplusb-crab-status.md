@@ -9,9 +9,9 @@ source: lxplus
 
 **8 samples** = hplusc (charm) + hplusb (bottom), each in 4 campaigns
 (2022preEE, 2022postEE, 2023preBPix, 2023postBPix).
-**5 NanoAOD published** (table below); the **other 3 had step1 submitted 2026-07-08**
-(2023 postBPix c+b, preBPix b) — now running on the grid, re-run `run_workflow.sh` to
-advance them 2→5.
+**5 NanoAOD published** (table below); the **other 3** (2023 postBPix c+b, preBPix b)
+are mid-chain — step1 GEN-SIM published, **step2 DRPremix running** (2026-07-11).
+Re-run `run_workflow.sh` to advance them 3→5.
 
 Workspaces: `/eos/home-c/cgupta/HToWW/freshprod/<campaign>[/hplusb]/`
 DAS UI: https://cmsweb.cern.ch/das/  · query with `instance=prod/phys03`.
@@ -38,17 +38,26 @@ step datasets (GEN-SIM → MiniAOD) are not listed — only the NanoAOD inputs a
 
 ---
 
-## Step1 submitted 2026-07-08 (3) — now running on grid
+## 2023 chain progress (3 samples)
 
-| Sample | CRAB task |
-|---|---|
-| hplusc 2023postBPix | `260707_231145:cgupta_crab_HPlusC_HToWW_Step1_GEN_SIM_2023BPix_v1` |
-| hplusb 2023postBPix | `260707_231145:cgupta_crab_HPlusB_HToWW_Step1_GEN_SIM_2023BPix_v1` |
-| hplusb 2023preBPix  | `260707_225850:cgupta_crab_HPlusB_HToWW_Step1_GEN_SIM_2023_v1` |
+**Step1 (GEN-SIM): complete & published** (2026-07-08). A few jobs failed with exit
+50664 (wall-clock timeout) but 96–100% published — good enough to chain on.
+**Step2 (DRPremix): submitted 2026-07-11**, now running.
 
-Re-run each workspace's `run_workflow.sh` after step1 completes to chain 2→5.
+| Sample | Step1 GEN-SIM (published) | Step2 DRPremix (running) |
+|---|---|---|
+| hplusc 2023postBPix | `260707_231145:...HPlusC_..._Step1_GEN_SIM_2023BPix_v1` (100/100) | `260711_195727:...HPlusC_..._Step2_DRPremix_2023BPix_v1` |
+| hplusb 2023postBPix | `260707_231145:...HPlusB_..._Step1_GEN_SIM_2023BPix_v1` (99/100) | `260711_195728:...HPlusB_..._Step2_DRPremix_2023BPix_v1` |
+| hplusb 2023preBPix  | `260707_225850:...HPlusB_..._Step1_GEN_SIM_2023_v1` (96/100) | `260711_195728:...HPlusB_..._Step2_DRPremix_2023_v1` |
 
-### Two gotchas hit while submitting these (fix before rerunning)
+Step1 output datasets (DRPremix input):
+- hplusc 2023postBPix: `/HPlusCharm_.../cgupta-Run3Summer23BPixwmLHEGS-HToWW-130X_mcRun3_2023_realistic_postBPix_v6-v1-dacb523b56f64076a1210fb7b5034c87/USER`
+- hplusb 2023postBPix: `/HPlusBottom_.../cgupta-Run3Summer23BPixwmLHEGS-HToWW-130X_mcRun3_2023_realistic_postBPix_v6-v1-3c64e55b0564436e3344518b1f813480/USER`
+- hplusb 2023preBPix:  `/HPlusBottom_.../cgupta-Run3Summer23wmLHEGS-HToWW-130X_mcRun3_2023_realistic_v15-v1-e3ed8bd4616088f541f67e6538a70fe4/USER`
+
+Re-run each workspace's `run_workflow.sh` after step2 completes to chain 3→4→5.
+
+### Gotchas hit while submitting these (fix before rerunning)
 1. **Run submits detached.** A submit over a one-shot `ssh lxplus '<cmd>'` gets killed
    mid-submission when the session closes (task never registers, leaves an empty stub
    dir). Launch with `setsid nohup bash run_workflow.sh > submit.log 2>&1 < /dev/null &`
@@ -62,6 +71,10 @@ Re-run each workspace's `run_workflow.sh` after step1 completes to chain 2→5.
    cd /eos/home-c/cgupta/HToWW/freshprod/2023postBPix
    export SCRAM_ARCH=el9_amd64_gcc11 && scramv1 project CMSSW_13_0_17
    ```
+3. **Grid proxy expires between sessions.** `crab status`/`dasgoclient` both need a live
+   voms proxy; when it lapses they prompt for the GRID passphrase (uncatchable here).
+   Re-run `voms-proxy-init -voms cms -rfc -valid 192:00` in a real terminal. The myproxy
+   (30-day) keeps *jobs* running regardless — only status queries need the local proxy.
 - Failed/half submits leave a stub crab dir (empty `inputs/`+`results/`, no
   `.requestcache`) that blocks resubmit with *"Working area already exists"* — `rm -rf`
   it first.
