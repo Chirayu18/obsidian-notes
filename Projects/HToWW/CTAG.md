@@ -39,9 +39,21 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
       `cvsl`/`cvsb` scores **removed** and the 11 one-hot features **added** (replacement, per plan).
 - [x] New driver `train_v11_2dcats.sh` (copy of `train_v11.sh`, all versions suffixed `_2dcats`
       so it won't clobber baseline v11 outputs/caches). Both in `b-hive/` on lxplus + vault copy.
-- [ ] **Run the retrain:** `cd b-hive && ./train_v11_2dcats.sh` (law: DatasetConstructor →
-      Training → Inference → ROC). Compare ROC vs baseline `hwwcom_multiclass_v11`.
+- [x] **Retrain submitted to HTCondor** (H100 GPU) — cluster **9071501.0**, submitted 2026-07-12 01:17.
+      Same batch path as production: `submitter_mva_2dcats.sub` → `job_mva_2dcats.sh` (cd b-hive,
+      activate b_hive, source setup.sh, law index, `./train_v11_2dcats.sh`). Runs the 5-step law
+      chain. Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+- [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
+
+### How the MVA is trained (batch recipe, from AFS)
+Production trains on **HTCondor with an H100 GPU** via `~/submitter_mva.sub` → `~/job_mva.sh`.
+For the 2D-cats variant I added parallel files (don't touch the originals):
+- `~/job_mva_2dcats.sh` — runs `./train_v11_2dcats.sh` (rest identical to `job_mva.sh`).
+- `~/submitter_mva_2dcats.sub` — H100 / AlmaLinux9, `+JobFlavour="nextweek"`, separate log names.
+- Submit: `condor_submit ~/submitter_mva_2dcats.sub`. Monitor: `condor_q <cluster>`;
+  logs `~/job_2dcats.<cluster>.{out,err,log}`.
+Both files also copied to this vault folder.
 
 ### Column layout written to each parquet
 - `cjet_cand_ctag_2d_cat` — int8, 0..10 (L0,C0,C1,C2,C3,C4,B0,B1,B2,B3,B4), no nulls. Diagnostics/SF.
