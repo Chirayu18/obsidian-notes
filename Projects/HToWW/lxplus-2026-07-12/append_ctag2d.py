@@ -41,6 +41,11 @@ Y_BvC   = np.array([0.0, 0.006, 0.017, 0.055, 0.761, 0.944, 0.985, 0.995, 1.0])
 CATEGORIES = ["L0", "C0", "C1", "C2", "C3", "C4", "B0", "B1", "B2", "B3", "B4"]
 CAT_ID = {k: i for i, k in enumerate(CATEGORIES)}
 
+# Prefix for the per-category one-hot columns fed to the MVA (11 int8 0/1 columns):
+#   cjet_cand_ctag2d_L0 ... cjet_cand_ctag2d_B4
+ONEHOT_PREFIX = "cjet_cand_ctag2d_"
+ONEHOT_COLS = [ONEHOT_PREFIX + c for c in CATEGORIES]
+
 # Jet collections to process: (cvsl_col, cvsb_col, output_col).
 # The MVA (config/HPlusCHToWW.yml) consumes ONLY the cjet_cand collection, which
 # is null-free in hww_combine_fixed. We therefore build the 2D category from it
@@ -106,12 +111,21 @@ def process_file(path: Path, dry_run: bool = False) -> str:
         if n_unassigned:
             print(f"    WARNING {path.name}:{out} has {n_unassigned} unassigned "
                   f"(-1) rows — cjet_cand was expected null-free", file=sys.stderr)
-        arr = pa.array(cat, type=pa.int8())
-        if out in table.column_names:                 # idempotent overwrite
-            table = table.set_column(table.column_names.index(out), out, arr)
-        else:
-            table = table.append_column(out, arr)
+        def put(name, values):
+            a = pa.array(values, type=pa.int8())
+            nonlocal table
+            if name in table.column_names:            # idempotent overwrite
+                table = table.set_column(table.column_names.index(name), name, a)
+            else:
+                table = table.append_column(name, a)
+
+        # integer category id (diagnostics / SF lookup)
+        put(out, cat)
         added.append(out)
+        # one-hot columns for the MVA (0/1 int8). -1 (should not occur) -> all zeros.
+        for k, col in zip(CATEGORIES, ONEHOT_COLS):
+            put(col, (cat == CAT_ID[k]).astype(np.int8))
+        added.append(f"{ONEHOT_PREFIX}{{{','.join(CATEGORIES)}}}")
     if not added:
         return f"skip (no PNet cols): {path.name}"
     if dry_run:

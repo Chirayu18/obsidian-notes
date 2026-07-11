@@ -33,10 +33,20 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
 - [x] Write append script for 2D-CTAG category column (`b-hive/scripts/append_ctag2d.py`)
 - [x] Append `cjet_cand_ctag_2d_cat` to all 57 files in `hww_combine_fixed/2022postEE`
       (8.1M rows, zero nulls, range 0..10 — verified)
-- [ ] Add `cjet_cand_ctag_2d_cat` to MVA feature list in `config/HPlusCHToWW.yml`
-      (currently uses `cjet_cand_cvsl_pnet`, `cjet_cand_cvsb_pnet`). Decide: keep both continuous
-      scores AND the category, or swap. Retrain both MVA versions and compare.
+- [x] Store category as **11 one-hot columns** `cjet_cand_ctag2d_{L0..B4}` (int8 0/1) + keep the
+      int `cjet_cand_ctag_2d_cat`. Appended to all 57 files (verified: every row sums to 1).
+- [x] New training config `config/HPlusCHToWW_2dcats.yml` = multiclass config with the raw PNet
+      `cvsl`/`cvsb` scores **removed** and the 11 one-hot features **added** (replacement, per plan).
+- [x] New driver `train_v11_2dcats.sh` (copy of `train_v11.sh`, all versions suffixed `_2dcats`
+      so it won't clobber baseline v11 outputs/caches). Both in `b-hive/` on lxplus + vault copy.
+- [ ] **Run the retrain:** `cd b-hive && ./train_v11_2dcats.sh` (law: DatasetConstructor →
+      Training → Inference → ROC). Compare ROC vs baseline `hwwcom_multiclass_v11`.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
+
+### Column layout written to each parquet
+- `cjet_cand_ctag_2d_cat` — int8, 0..10 (L0,C0,C1,C2,C3,C4,B0,B1,B2,B3,B4), no nulls. Diagnostics/SF.
+- `cjet_cand_ctag2d_L0 … cjet_cand_ctag2d_B4` — 11× int8 one-hot (exactly one =1 per row). **MVA input.**
+- The MVA (`HPlusCHToWW_2dcats.yml`) uses ONLY the 11 one-hot cols; raw PNet scores are dropped.
 
 ---
 
