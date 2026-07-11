@@ -23,7 +23,7 @@ date: 2026-06-30
 
 ## Tasks
 
-- [ ] Train a model after verifying everything
+- [ ] Implement trained model on the datas. (Need gen features to infer)
 
 ---
 
