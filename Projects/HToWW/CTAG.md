@@ -16,14 +16,27 @@ date: 2026-07-11
 ## Commands
 
 ```bash
-
+# Append 2D-CTAG category column to the MVA-input parquets (idempotent, atomic writes).
+# Script: /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py
+micromamba activate b_hive
+python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
+    /eos/home-c/cgupta/higgscharm/outputs/hww_combine_fixed/2022postEE
+# add --dry-run to preview. Builds cjet_cand_ctag_2d_cat (int8, 0..10, no nulls) from
+# cjet_cand_cvsl_pnet / cjet_cand_cvsb_pnet using official SFbc-2D frozen edges.
 ```
 
 ---
 
 ## Tasks
 
-- [ ] Implement WP 
+- [x] Verify B is recoverable from CvsL/CvsB (done 2026-07-12 — see finding below)
+- [x] Write append script for 2D-CTAG category column (`b-hive/scripts/append_ctag2d.py`)
+- [x] Append `cjet_cand_ctag_2d_cat` to all 57 files in `hww_combine_fixed/2022postEE`
+      (8.1M rows, zero nulls, range 0..10 — verified)
+- [ ] Add `cjet_cand_ctag_2d_cat` to MVA feature list in `config/HPlusCHToWW.yml`
+      (currently uses `cjet_cand_cvsl_pnet`, `cjet_cand_cvsb_pnet`). Decide: keep both continuous
+      scores AND the category, or swap. Retrain both MVA versions and compare.
+- [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
 
 ---
 

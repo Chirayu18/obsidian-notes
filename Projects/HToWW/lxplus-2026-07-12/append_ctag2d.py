@@ -41,10 +41,13 @@ Y_BvC   = np.array([0.0, 0.006, 0.017, 0.055, 0.761, 0.944, 0.985, 0.995, 1.0])
 CATEGORIES = ["L0", "C0", "C1", "C2", "C3", "C4", "B0", "B1", "B2", "B3", "B4"]
 CAT_ID = {k: i for i, k in enumerate(CATEGORIES)}
 
-# jet collections to process: (cvsl_col, cvsb_col, output_col)
+# Jet collections to process: (cvsl_col, cvsb_col, output_col).
+# The MVA (config/HPlusCHToWW.yml) consumes ONLY the cjet_cand collection, which
+# is null-free in hww_combine_fixed. We therefore build the 2D category from it
+# alone -> the appended column has NO nulls. (leadingjet/second/third carry padding
+# nulls and are not MVA inputs, so we deliberately skip them.)
 COLLECTIONS = [
     ("cjet_cand_cvsl_pnet", "cjet_cand_cvsb_pnet", "cjet_cand_ctag_2d_cat"),
-    ("leadingjet_cvsl_pnet", "leadingjet_cvsb_pnet", "leadingjet_ctag_2d_cat"),
 ]
 
 
@@ -99,6 +102,10 @@ def process_file(path: Path, dry_run: bool = False) -> str:
         cvl = table.column(cvsl).to_numpy(zero_copy_only=False)
         cvb = table.column(cvsb).to_numpy(zero_copy_only=False)
         cat = assign_category(cvl, cvb)
+        n_unassigned = int(np.sum(cat < 0))
+        if n_unassigned:
+            print(f"    WARNING {path.name}:{out} has {n_unassigned} unassigned "
+                  f"(-1) rows — cjet_cand was expected null-free", file=sys.stderr)
         arr = pa.array(cat, type=pa.int8())
         if out in table.column_names:                 # idempotent overwrite
             table = table.set_column(table.column_names.index(out), out, arr)
