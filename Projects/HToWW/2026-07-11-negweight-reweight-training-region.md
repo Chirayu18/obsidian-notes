@@ -262,9 +262,20 @@ SR-proxy max ≤ training-domain max → **no extrapolation, only interpolation*
 **180k / 833k** (frac>0 only 0.738 — the pair region is the negatively-weighted, starved
 regime the paper targets). The rich training pool is what lets g(x⃗) lift the SR N_eff.
 
-**→ NEXT: Phase 2** — run `/eos/user/c/cgupta/HToWW/b-hive/scripts/negweight_reweight_train.py`
-(20× HistGradientBoostingClassifier ensemble, label `weight_nominal>0`, features = the 20
-lhe_*/genparton* cols). Then closure gate (Σ|w|·g reproduces nominal; SR N_eff up).
+**→ Phase 2 LAUNCHED (2026-07-12 00:30)** — running in background on lxplus:
+- PID 1739281, log `/eos/user/c/cgupta/HToWW/b-hive/negrw_out/train.log`, output
+  `.../negrw_out/negrw_models.joblib`.
+- Command (note the two gotchas): `micromamba` not on the nohup PATH → use
+  `$MAMBA_EXE=/eos/user/c/cgupta/EPR_task/b-hive/micromamba/micromamba run -n b_hive`.
+  The script's `glob.glob` is NON-recursive → pass `--train ".../2022postEE/*/train/*.parquet"`
+  (quoted; files are at depth-2 `<dataset>/train/*.parquet`, 499 files, no sumw).
+- Trains on 9.65M rows (straggler DY_50 partition excluded — its ~1M rows won't shift
+  g(x); retrain to fold in if desired). 20× HistGBDT on 60% subsamples.
+- **Check:** `ssh lxplus 'pgrep -af negweight_reweight_train; tail -40 <log>'`. Done when
+  it prints the CLOSURE table + "saved 20-model ensemble".
+- **Phase-2 gate:** closure table shows reweighted Σ|w|·g ≈ nominal Σw per lhe_vpt bin
+  AND Neff_rw ≫ Neff_nom (the N_eff lift). Then wire into SR inference
+  (`scripts/negweight_reweight_histograms.py`) and re-run combine.
 
 ---
 
