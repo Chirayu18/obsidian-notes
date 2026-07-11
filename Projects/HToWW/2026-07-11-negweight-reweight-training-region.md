@@ -188,12 +188,52 @@ they're irrelevant to training and could be pruned in a later cleanup.
 
 ---
 
+## Phase-1 production run — what was done (2026-07-11)
+
+**NOT the full datasets — deliberately capped at 35 files/dataset.** The full vjets
+samples are 286 (`DYto2L_2Jets_50`) + 322 (`_10to50`) + 381 (`WtoLNu_2Jets`) = 989
+files ≈ 600M raw events ≈ 136M feature rows. That is **overkill** for a 20× classifier
+ensemble (the paper trains on ~millions), and processing all 989 files is a multi-hour
+job for **zero statistical gain** — the c-enriched corner (~8.5%) is already saturated
+at a few M rows. So we capped:
+
+| dataset | full files | **used** | Condor partitions |
+|---|---:|---:|---:|
+| DYto2L_2Jets_50 | 286 | **35** | 3 |
+| DYto2L_2Jets_10to50 | 322 | **35** | 3 |
+| WtoLNu_2Jets | 381 | **35** | 3 |
+| **total** | 989 | **105** | **9 jobs** |
+
+→ ~105 files × ~660k entries ≈ **~24M raw → ~5M training rows** (~430k c-enriched) at
+the verified 22.7% efficiency. Enough for the ensemble; the cap can be lifted later if
+the coverage check shows a sparse corner.
+
+**How the cap was applied:** the live fileset
+`analysis/filesets/fileset_2022postEE_nanov12_lxplus.json` had been truncated to just
+the 1 signal sample. Restored the 3 vjets samples into it from
+`.bak_presiteredir`, sliced to the **first 35 URLs each** (`bak[name][:35]`). Prior
+live fileset backed up to `.bak_pre_genrw`. Used the **grid redirectors** (FNAL/gridka/
+RWTH) — the earlier "no proxy on lxplus" note is STALE: a valid CMS VOMS proxy exists
+(`/tmp/x509up_u151861`, ~191h left), so DY-50/DY-10to50 (which have no `eoscms` copies)
+open fine over grid. Only WtoLNu has eoscms URLs (35 of them).
+
+**Submission:**
+```
+python runner.py -w hww_genrw_train -y 2022postEE --output_format parquet \
+    --eos --nfiles 12 --memory 6000 --submit
+```
+`--nfiles 12` = files per Condor partition (→ 3 partitions × 35 files). NOTE `--nfiles`
+is the *partition size*, NOT a total cap — the total is controlled by how many files
+are in the fileset (the 35-slice above). 9 jobs submitted: clusters **9071462**
+(DY-50), **9071463** (DY-10to50), **9071464** (W). Flavour `longlunch`, 6 GB, coffea
+0.7.30 singularity. Output → `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/`.
+
 ## Next step
 
-Phase-1 production: submit the `hww_genrw_train` Condor jobs over ~35 files across the
-3 vjets datasets (`DYto2L_2Jets_50`, `_10to50`, `WtoLNu_2Jets`) → ~5M rows, then run
-the **coverage check** (training `x⃗` vs eμ-SR `x⃗` on `lhe_vpt`/`ht`/`nc≥1`) before
-Phase-2 classifier training.
+When the 9 jobs finish: count rows, confirm the veto held at scale (0 eμ leaked), then
+run the **coverage check** — training `x⃗` vs eμ-SR `x⃗` on `lhe_vpt`/`ht`/`nc≥1` — the
+gate before Phase-2 classifier training. If a corner (esp. c-enriched or high-Vpt) is
+under-covered, lift the 35-file cap for that dataset and resubmit.
 
 Related: [[2026-06-23-automcstats-rootcause]] · [[ProposedFix-Automcstats]] ·
 [[2026-07-07-cutflow-2022postEE]] · [[Analysis QUICKSTART]]
