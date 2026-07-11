@@ -228,12 +228,56 @@ are in the fileset (the 35-slice above). 9 jobs submitted: clusters **9071462**
 (DY-50), **9071463** (DY-10to50), **9071464** (W). Flavour `longlunch`, 6 GB, coffea
 0.7.30 singularity. Output → `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/`.
 
-## Next step
+## ⏳ RESUME STATE (2026-07-11 22:53 — read this first if picking up cold)
 
-When the 9 jobs finish: count rows, confirm the veto held at scale (0 eμ leaked), then
-run the **coverage check** — training `x⃗` vs eμ-SR `x⃗` on `lhe_vpt`/`ht`/`nc≥1` — the
-gate before Phase-2 classifier training. If a corner (esp. c-enriched or high-Vpt) is
-under-covered, lift the 35-file cap for that dataset and resubmit.
+**Where we are:** Phase-1 training-pass Condor jobs SUBMITTED, all 9 **idle** in a busy
+queue (22k idle cluster-wide), no parquet output yet. Everything below is durable; the
+plan file `~/.claude/plans/for-the-fix-of-logical-wadler.md` has the full pipeline.
+
+**Live job handles:**
+- Clusters: **9071462** (DYto2L_2Jets_50), **9071463** (DYto2L_2Jets_10to50),
+  **9071464** (WtoLNu_2Jets). 3 jobs each = 9 total.
+- Check: `ssh lxplus 'condor_q 9071462 9071463 9071464 -totals'`
+- Output: `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train/2022postEE/`
+- Count parquet: `find <output> -name '*.parquet' | grep -v sumw_records | wc -l`
+
+**Resume connection if dropped (do NOT ask user for password/kinit):**
+`python3 ~/bin/lxplus-connect.py` (now self-heals stale sockets) → verify
+`ssh lxplus 'echo OK'`, `ls ~/mnt/lxplus` non-empty. See [[lxplus-workflow]] memory.
+
+**NEXT STEPS in order:**
+1. **Wait for the 9 jobs** to finish (idle → running → done). If HELD, `condor_q -held`
+   for the reason (likely xrootd auth if the AFS proxy `private/x509up_u151861` expired —
+   re-run the runner build step to refresh it, then `condor_release`).
+2. **Merge + load** the parquet output, count rows (~5M expected).
+3. **Veto integrity at scale:** confirm 0 eμ pairs leaked (`lepton1/2_pdgId`: no
+   exactly-one |11|+|13| pair among rows with a pair).
+4. **COVERAGE CHECK (the Phase-2 gate):** compare the training `x⃗` distribution against
+   the **eμ-SR** `x⃗` on `lhe_vpt`, `lhe_ht`, `lhe_nc≥1` (+ `genparton1_pt`). The eμ-SR
+   reference = the existing `hww_combine_fixed` parquets (they lack gen cols yet — either
+   read gen cols from a small eμ-SR test run, OR the plan's Phase-1 step 2 "inference
+   pass" produces `hww_combine_fixed_genrw/` with gen cols; that pass is NOT yet run).
+   Pass criterion: SR `x⃗` inside the training domain (no extrapolation), esp. the
+   c-enriched and high-Vpt tails. If under-covered → lift the 35-file cap for that
+   dataset (edit the fileset slice `bak[name][:N]`) and resubmit.
+5. **Phase 2** (only after coverage passes): run
+   `/eos/user/c/cgupta/HToWW/b-hive/scripts/negweight_reweight_train.py` — 20×
+   HistGradientBoostingClassifier ensemble on the gen features, label `weight_nominal>0`
+   (or `genweight_sign`), emit `g=2·mean(P₊)−1` + ensemble spread. Then closure gate
+   (reweighted `Σ|w|·g` reproduces nominal within stat err; N_eff up in SR bins 4–6).
+
+**Files touched this session (all durable):**
+- `analysis/workflows/hww_genrw_train.yaml` — `veto_emu_sr` selection (+ None-safe fix),
+  `train` category, stripped weights/syst axis, `lepton1/2_pdgId` axes.
+- `analysis/filesets/fileset_2022postEE_nanov12_lxplus.json` — restored 3 vjets samples
+  @ 35 files each (prior backed up to `.bak_pre_genrw`).
+- `~/bin/lxplus-connect.py` — self-healing stale-socket fix (unrelated infra).
+- Plan: `~/.claude/plans/for-the-fix-of-logical-wadler.md`.
+- Test driver (throwaway): `/afs/cern.ch/user/c/cgupta/test_genrw_veto.py`.
+
+## Next step (short form)
+
+Jobs finish → count rows → veto integrity → coverage check → Phase-2 training.
 
 Related: [[2026-06-23-automcstats-rootcause]] · [[ProposedFix-Automcstats]] ·
 [[2026-07-07-cutflow-2022postEE]] · [[Analysis QUICKSTART]]
