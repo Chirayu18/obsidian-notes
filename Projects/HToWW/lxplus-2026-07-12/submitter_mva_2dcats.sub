@@ -13,7 +13,7 @@ getenv = True
 
 request_GPUs = 1
 request_CPUs = 1
-request_memory = 16384
+request_memory = 8000
 
 requirements = regexp("H100", TARGET.GPUs_DeviceName) && (TARGET.OpSysAndVer =?= "AlmaLinux9")
 

@@ -53,11 +53,18 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
       `request_memory`, so it defaulted to 3000 MB; DatasetConstructor peaks higher reading the
       big parquets (tt = 3.2M rows). **Fix:** added `request_memory = 16384` (16 GB) to
       `submitter_mva_2dcats.sub`, removed the held job, resubmitted.
-- [x] **Retrain re-submitted with 16 GB** (H100 GPU) — cluster **9071503.0**, 2026-07-12 03:34.
-      Same batch path: `submitter_mva_2dcats.sub` (now 16 GB) → `job_mva_2dcats.sh` → 5-step law
-      chain. Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
-      NB: baseline `submitter_mva.sub` has no request_memory either — if the old MVA jobs ran
-      fine at 3000 MB it's because DatasetConstructor was already cached; a clean run needs more.
+- [x] Third submit **9071503** (16 GB) sat IDLE ~2h — never matched. `condor_q -analyze`:
+      *"0 slots match … Job did not match any machines' constraints"* (RequestMemory rounded to
+      **18000**). H100 slots advertise memory in tiers (12000/18000/24000/…); requiring
+      ≥18000 **and** a free H100 GPU **and** AlmaLinux9 over-constrained it — only the large tiers
+      qualified, and free H100 GPUs are scarce. **Over-corrected on memory.**
+- [x] **Retrain re-submitted with 8 GB** — cluster **9071507.0**, 2026-07-12 05:41; matched in
+      ~8 s and **RUNNING** on b9pgpun102 (RequestMemory rounded to 9000, 5 slots matched).
+      8 GB safely covers the 4.2 GB DatasetConstructor peak while fitting far more H100 slots.
+      `submitter_mva_2dcats.sub` now sets `request_memory = 8000`. Same batch path → 5-step law
+      chain → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+      **Lesson:** on the H100 pool, request memory ≤ the smallest useful slot tier (≈8–12 GB);
+      don't inflate it — it silently blocks matching against the (scarce) GPU slots.
 - [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
 
