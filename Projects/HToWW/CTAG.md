@@ -48,10 +48,16 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
       3 years, 38 files, 4.08M rows) — verified 11 one-hot present, every row sums to 1, no nulls.
       (Recomputes from the still-present cjet_cand_cvsl/cvsb, so no re-labeling/re-split needed.)
       Removed the empty partial dataset dir so law re-runs clean.
-- [x] **Retrain re-submitted** (H100 GPU) — cluster **9071502.0**, 2026-07-12 02:17.
-      Same batch path: `submitter_mva_2dcats.sub` → `job_mva_2dcats.sh` (cd b-hive, activate
-      b_hive, source setup.sh, law index, `./train_v11_2dcats.sh`). 5-step law chain.
-      Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+- [x] Second submit **9071502** was HELD ~3 min in (02:20): *"Job has gone over cgroup memory
+      limit of 3000 MB. Last measured usage: 4227 MB."* (Code 34.102). The submitter had no
+      `request_memory`, so it defaulted to 3000 MB; DatasetConstructor peaks higher reading the
+      big parquets (tt = 3.2M rows). **Fix:** added `request_memory = 16384` (16 GB) to
+      `submitter_mva_2dcats.sub`, removed the held job, resubmitted.
+- [x] **Retrain re-submitted with 16 GB** (H100 GPU) — cluster **9071503.0**, 2026-07-12 03:34.
+      Same batch path: `submitter_mva_2dcats.sub` (now 16 GB) → `job_mva_2dcats.sh` → 5-step law
+      chain. Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+      NB: baseline `submitter_mva.sub` has no request_memory either — if the old MVA jobs ran
+      fine at 3000 MB it's because DatasetConstructor was already cached; a clean run needs more.
 - [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
 
