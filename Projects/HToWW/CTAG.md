@@ -59,12 +59,49 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
       ≥18000 **and** a free H100 GPU **and** AlmaLinux9 over-constrained it — only the large tiers
       qualified, and free H100 GPUs are scarce. **Over-corrected on memory.**
 - [x] **Retrain re-submitted with 8 GB** — cluster **9071507.0**, 2026-07-12 05:41; matched in
-      ~8 s and **RUNNING** on b9pgpun102 (RequestMemory rounded to 9000, 5 slots matched).
+      ~8 s, ran on b9pgpun102, **finished 06:04:10 (return value 0, no failed tasks).**
       8 GB safely covers the 4.2 GB DatasetConstructor peak while fitting far more H100 slots.
-      `submitter_mva_2dcats.sub` now sets `request_memory = 8000`. Same batch path → 5-step law
-      chain → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+      `submitter_mva_2dcats.sub` sets `request_memory = 8000`. Full 5-step law chain completed.
       **Lesson:** on the H100 pool, request memory ≤ the smallest useful slot tier (≈8–12 GB);
       don't inflate it — it silently blocks matching against the (scarce) GPU slots.
+
+---
+
+## ✅ RESULT — 2D-cat MVA retrain vs baseline (2026-07-12)
+
+Training `hwwcom_multiclass_v11_2dcats` (features = **11 one-hot** `cjet_cand_ctag2d_*`, raw PNet
+cvsl/cvsb **removed**) vs baseline `hwwcom_multiclass_v11` (same inputs, raw PNet scores). Both
+6-class SimpleMLP_MultiClass, 30 epochs, same cross-era train/test filelists. **Test-set AUC:**
+
+| Discriminant        | 2D-cats (one-hot) | Baseline (raw PNet) | Δ (2D − base) |
+|---------------------|-------------------|---------------------|---------------|
+| **hplusc_vs_all**   | **0.9322**        | 0.9284              | **+0.0038**   |
+| hplusc_vs_higgsbkg  | 0.8302            | 0.8506              | −0.0204       |
+| hplusc_vs_tt        | 0.9438            | 0.9375              | +0.0063       |
+| hplusc_vs_st        | 0.9334            | 0.9287              | +0.0047       |
+| hplusc_vs_diboson   | 0.8855            | 0.8840              | +0.0015       |
+| hplusc_vs_vjets     | 0.9425            | 0.9348              | +0.0077       |
+
+**Takeaway:** replacing the two continuous PNet scores with the 11 one-hot 2D-categories is
+**≈ equivalent to baseline** — overall hplusc-vs-all AUC is marginally *better* (+0.004), and 4 of
+5 background-specific ROCs improve. The one regression is **vs higgs-background (−0.020)**:
+separating H+c from other Higgs processes leans on fine charm-tag gradients that the coarse
+11-bin scheme discards. Matches the note's hypothesis ("hopefully not much difference"). No
+catastrophic loss from discarding the continuous scores.
+
+**AUC source:** `AUC_default_all.npy` in each ROCCurveTask dir (loaded directly).
+
+### Output locations (EOS)
+- 2D-cats ROCs (6 PNG+PDF+npy): `…/ROCCurveTask/HPlusCHToWW_2dcats/hwwcom_v11_2dcats_train/hwwcom_v11_2dcats_test/hwwcom_multiclass_v11_2dcats/SimpleMLP_MultiClass/epochs_30/nominal/test_attack_nominal/`
+- Baseline ROCs: same tree under `HPlusCHToWW_multiclass/hwwcom_v11_train/hwwcom_v11_test/hwwcom_multiclass_v11/…`
+- Trained model: `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`
+- Full job log: `~/job_2dcats.9071507.0.out` (14188 lines, all 5 law steps).
+
+### Open follow-ups
+- If the higgsbkg regression matters, consider the *additive* variant (keep cvsl/cvsb AND the
+  one-hot) rather than pure replacement — would recover the fine-gradient info.
+- Append one-hot cols + retrain for `2023preBPix` era once ready.
+- 2D categories are also SF-ready (official SFbc-2D edges) if/when calibrated SFs are wanted.
 - [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
 
