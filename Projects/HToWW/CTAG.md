@@ -39,10 +39,19 @@ python3 /eos/user/c/cgupta/HToWW/b-hive/scripts/append_ctag2d.py \
       `cvsl`/`cvsb` scores **removed** and the 11 one-hot features **added** (replacement, per plan).
 - [x] New driver `train_v11_2dcats.sh` (copy of `train_v11.sh`, all versions suffixed `_2dcats`
       so it won't clobber baseline v11 outputs/caches). Both in `b-hive/` on lxplus + vault copy.
-- [x] **Retrain submitted to HTCondor** (H100 GPU) — cluster **9071501.0**, submitted 2026-07-12 01:17.
-      Same batch path as production: `submitter_mva_2dcats.sub` → `job_mva_2dcats.sh` (cd b-hive,
-      activate b_hive, source setup.sh, law index, `./train_v11_2dcats.sh`). Runs the 5-step law
-      chain. Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
+- [x] First submit **9071501** FAILED at Step 1a (DatasetConstructorTask, ~142s):
+      `ValueError: key "cjet_cand_ctag2d_L0" does not exist (not in record)`.
+      **Root cause:** training reads from `hww_combine_fixed/<year>/mva_labeled/{train,test}/`
+      (output of make_mva_labeled.py + split_train_test.py), NOT the top-level parquets I'd
+      appended to. Those labeled/split copies (all 3 years: 2022postEE, 2022preEE, 2023preBPix)
+      had 0 one-hot cols. **Fix:** ran `append_ctag2d.py` on all 6 mva_labeled dirs (train+test ×
+      3 years, 38 files, 4.08M rows) — verified 11 one-hot present, every row sums to 1, no nulls.
+      (Recomputes from the still-present cjet_cand_cvsl/cvsb, so no re-labeling/re-split needed.)
+      Removed the empty partial dataset dir so law re-runs clean.
+- [x] **Retrain re-submitted** (H100 GPU) — cluster **9071502.0**, 2026-07-12 02:17.
+      Same batch path: `submitter_mva_2dcats.sub` → `job_mva_2dcats.sh` (cd b-hive, activate
+      b_hive, source setup.sh, law index, `./train_v11_2dcats.sh`). 5-step law chain.
+      Output → `output/TrainingTask/HPlusCHToWW_2dcats/hwwcom_multiclass_v11_2dcats/`.
 - [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
 - [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
 
