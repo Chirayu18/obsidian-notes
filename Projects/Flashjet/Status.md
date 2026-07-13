@@ -43,14 +43,20 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
-### 2026-07-13 — Justification plots for the substructure features (Claude, lxplus)
-Toy-MC validation plots (QCD-like vs W-like fat jets, pt=500, R=0.8) demonstrating
-each feature does what its defining paper says: Lund plane (F3), soft-drop mass
-(F2), √d12 + exclusive-subjet z (F1), plus a parity panel (matches an independent
-NumPy declustering to 1.7e-13 GeV) and CPU cost (decoders are 10–100× cheaper than
-clustering). See [[2026-07-13-substructure-plots]] + [[plots.md]]; PNGs + script at
-`/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/`. Paper basis of each
-algorithm catalogued in `References/Flashjet/papers.md` (reader PDF bundled).
+### 2026-07-13 — Justification plots + paper-figure reproductions (Claude, lxplus)
+Two plot scripts on EOS (`.../plots/2026-07-13-substructure/`):
+- `make_plots.py` — justification plots on ad-hoc QCD/W toys: Lund plane (F3),
+  soft-drop mass (F2), √d12 + exclusive-subjet z (F1), parity (matches independent
+  NumPy declustering to 1.7e-13 GeV) + CPU cost (decoders 10–100× cheaper than
+  clustering).
+- `make_paper_plots.py` — reproduces the papers' signature figures using a toy
+  leading-log parton shower: anti-kt Fig 1 jet areas, Lund Fig 2 triangle closure
+  (flat interior 0.17±0.02), Soft-Drop z_g vs analytic 1/z (near-perfect), ρ vs β.
+Notes: [[2026-07-13-substructure-plots]], [[plots.md]], and **[[2026-07-13-how-it-works]]**
+(explains the toy simulation — none of it pre-existing — and a step-by-step path to
+understanding the implementation). Paper basis: `References/Flashjet/papers.md`.
+NOTE: the toy generators are mine, in the plot scripts (outside the repo); flashjet
+itself only clusters, it does not generate events.
 
 ### 2026-07-08 — Alex's commit landed + new kt/C-A substructure features (Claude, lxplus)
 **Alex pushed `29c9da8` "Adding new bench and opt"** to `origin/benchmarking`

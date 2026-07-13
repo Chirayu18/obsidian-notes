@@ -48,3 +48,21 @@ Link entries with previews: [[plots.md]].
 EOS: `/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/`
 (These complement `tests/test_substructure.py`, which pins the same algorithms to
 independent NumPy tree-walks exactly, over all three algorithms and 30 random events.)
+
+## Paper-figure reproductions (make_paper_plots.py)
+
+A second script reproduces the *signature figures* of the papers themselves, for
+side-by-side comparison — jet areas (anti-kt Fig 1), the Lund triangle closure
+(Lund Fig 2), z_g vs analytic 1/z (Soft Drop), and groomed-mass ρ vs β (Soft Drop
+Figs 3–4). Link entries + previews in [[plots.md]].
+
+## The simulation
+
+flashjet does not generate events; it only clusters them. The toy events in every
+plot are hand-written generators I added in the plot scripts (NOT in the repo — the
+only pre-existing event maker is `conftest.random_event`, uncorrelated noise for
+tests). The paper-figure script uses a **toy leading-log parton shower**: emissions
+sampled uniformly in the Lund plane (the fixed-coupling QCD picture the analytic
+predictions assume), so the closure tests are quantitative. Full explanation of the
+simulation and a step-by-step path to understanding the whole implementation:
+[[2026-07-13-how-it-works]].

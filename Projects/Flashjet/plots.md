@@ -55,3 +55,52 @@ i.e. exact). Right: CPU µs/event vs N — all four history decoders cost 10–1
 clustering itself (they are pure post-reads of the merge tree; on GPU they batch identically).
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/parity_timing.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/parity_timing.png
+
+---
+
+## Paper-figure reproductions (make_paper_plots.py)
+
+These are built to compare panel-by-panel with the original paper figures, using a
+toy leading-log parton shower (see [[2026-07-13-substructure-plots#The simulation]]).
+
+### Jet catchment areas — anti-kt paper Fig. 1
+
+tags: [plot]
+Date: 2026-07-13
+Description: One hard event + a uniform grid of soft "ghosts", clustered with kt / C-A / anti-kt
+(R=1, via the repo's `nn_reference`). kt and C/A give irregular jagged jet areas; anti-kt gives
+clean circles around each hard particle. Direct reproduction of Fig. 1 of arXiv:0802.1189 — the
+figure that made anti-kt the LHC default.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/jet_areas.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/jet_areas.png
+
+### Primary Lund plane closure — Lund paper Fig. 2
+
+tags: [plot]
+Date: 2026-07-13
+Description: Emissions sampled uniformly in the Lund triangle (density abar=0.25/unit area) are
+recovered by `lund_coordinates_from_history` (C/A) as a flat interior plateau bounded by the three
+physical edges (z=1/2, kt cutoff, θ_max). Interior 0.17±0.02 — flat to ~12%; the residual offset
+below 0.25 is genuine wide-angle reclustering migration, not a bug. Structure of arXiv:1807.04758 Fig 2.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/lund_triangle.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/lund_triangle.png
+
+### Soft-drop z_g vs analytic 1/z — Soft Drop paper
+
+tags: [plot]
+Date: 2026-07-13
+Description: The soft-drop momentum fraction z_g from `groom_from_history` (z_cut=0.1, β=0) tracks
+the leading-log QCD prediction p(z_g) = (1/z_g)/ln(1/2z_cut) across the full range — a clean closure
+test. 77% of jets tagged. cf. arXiv:1402.2657.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/zg_distribution.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/zg_distribution.png
+
+### Soft-drop groomed mass ρ vs β — Soft Drop paper Figs. 3–4
+
+tags: [plot]
+Date: 2026-07-13
+Description: Groomed-mass ρ=m²/(pt²R²) for β=0,1,2 vs ungroomed, from `groomed_jets`. Grooming shifts
+mass to lower ρ; smaller β grooms more aggressively (β=0 curve reaches furthest left), reproducing
+the β-ordering of arXiv:1402.2657 Figs 3–4.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/softdrop_rho.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/softdrop_rho.png
