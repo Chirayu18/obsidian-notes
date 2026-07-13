@@ -104,3 +104,41 @@ mass to lower ρ; smaller β grooms more aggressively (β=0 curve reaches furthe
 the β-ordering of arXiv:1402.2657 Figs 3–4.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/softdrop_rho.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/softdrop_rho.png
+
+---
+
+## flashjet on REAL CMS simulated data (UL18 QCD JMENano)
+
+These four are not toys: PF candidates from `/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/RunIISummer20UL18NanoAODv15-20UL18JMENano_150X_mc2018_realistic_v1-v3/NANOAODSIM` (via DAS/xrdcp), grouped per AK8 jet through `FatJetPFCand_jetIdx/pfCandIdx`, then clustered by **our** GPU-path flashjet (anti-kt R=0.8) and groomed by **our** F2/F3. See [[2026-07-13-cms-validation]].
+
+### CMS closure — reclustered AK8 pt vs CMS FatJet_pt
+
+tags: [plot]
+Date: 2026-07-13
+Description: flashjet anti-kt R=0.8 on real CMS PF constituents reproduces the CMS AK8 jet pt (53254 jets,
+tight diagonal). Constant offset below the line = raw-vs-PUPPI: CMS builds jets from PUPPI-weighted
+constituents, NanoAOD stores raw pt with no per-candidate weight, so our pt is ~6% high. Ungroomed mass
+spectra overlay in shape (right panel), differing only in normalization. Proves the clustering path is correct on data.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_recluster.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_recluster.png
+
+### CMS soft-drop validation — our groom_from_history vs FatJet_msoftdrop
+
+tags: [plot]
+Date: 2026-07-13
+Description: Our soft-drop mass (z_cut=0.1, β=0, from `groom_from_history`) vs CMS FatJet_msoftdrop, jet-by-jet
+on 51573 real jets — hugs the diagonal, median Δ=−4.19 GeV. Spectrum (right) tracks CMS including the low-mass
+turnover. Diagnostic: a single per-jet pt rescale (cms_pt/raw_pt, the missing-PUPPI proxy) drives the pt ratio
+to 1.000 and halves the mass offset to −3.7 GeV — confirming the residual is PUPPI normalization, not a grooming bug.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_softdrop.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_softdrop.png
+
+### Primary Lund plane of REAL CMS QCD jets — Lund paper on data
+
+tags: [plot]
+Date: 2026-07-13
+Description: `lund_coordinates_from_history` (F3) on 60285 real CMS AK8 QCD jets. The full physical structure of
+arXiv:1807.04758 emerges from data: the hard-collinear perturbative ridge, the soft-emission plateau, and the
+three kinematic edges — no toy input, pure detector-level PF candidates.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_lund.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_lund.png

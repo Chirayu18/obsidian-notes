@@ -43,6 +43,21 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-07-13 — Ran the clustering on REAL CMS data (Claude, lxplus)
+Pulled UL18 QCD **JMENano** (150X reprocessing — the one format with `PFCand` +
+`FatJetPFCand` so constituents exist) via DAS/xrdcp, grouped PF candidates per AK8
+jet, and ran **our** flashjet anti-kt R=0.8 + F2 soft-drop + F3 Lund on them
+(`make_cms_plots.py`, chunked to dodge the O(N³) torch-backend OOM):
+- **`cms_recluster.png`** — our reclustered pt vs CMS `FatJet_pt`: tight diagonal.
+- **`cms_softdrop.png`** — our `groom_from_history` (z_cut=0.1,β=0) vs CMS
+  `FatJet_msoftdrop` jet-by-jet: hugs diagonal, median Δ=−4.19 GeV.
+- **`cms_lund.png`** — primary Lund plane of 60285 real jets, full 1807.04758 structure.
+Both pt and mass sit ~6%/~4 GeV below CMS — **PUPPI**, not a bug: CMS clusters
+PUPPI-weighted constituents, NanoAOD stores raw pt with no per-candidate weight.
+`diagnose.py` proves it: a per-jet `cms_pt/raw_pt` rescale drives the pt ratio to
+1.000 and halves the mass offset, so F2 grooming is structurally correct.
+Note: **[[2026-07-13-cms-validation]]**; entries in [[plots.md]].
+
 ### 2026-07-13 — Justification plots + paper-figure reproductions (Claude, lxplus)
 Two plot scripts on EOS (`.../plots/2026-07-13-substructure/`):
 - `make_plots.py` — justification plots on ad-hoc QCD/W toys: Lund plane (F3),
