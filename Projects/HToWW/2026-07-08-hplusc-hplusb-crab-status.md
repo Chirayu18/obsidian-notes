@@ -42,13 +42,23 @@ step datasets (GEN-SIM → MiniAOD) are not listed — only the NanoAOD inputs a
 
 **Step1 (GEN-SIM): complete & published** (2026-07-08). A few jobs failed with exit
 50664 (wall-clock timeout) but 96–100% published — good enough to chain on.
-**Step2 (DRPremix): submitted 2026-07-11**, now running.
+**Step2 (DRPremix): first submit 2026-07-11 FAILED on memory** (42–70% of jobs died
+with exit 50660 — *"killed by HTCondor due to excessive memory use"*). The step2 config
+requested `maxMemoryMB=4000` (2 cores) but DRPremix peaks at **4.3–8.1 GB RSS** (avg 4.2).
+**Fixed 2026-07-13:**
+- `crab resubmit --maxmemory=6000` was **rejected** — CMS policy caps at **2500 MB/core**,
+  so a 2-core job's ceiling is **5000 MB**. Resubmit **can't change cores** (only `--maxmemory`).
+- Resubmitted the failed jobs at **`--maxmemory=5000`** (the 2-core ceiling) — recovers the
+  already-finished 30–58% into the same dataset and re-runs failed jobs; jobs peaking >5 GB
+  may still fail (small tail — resubmit again or use the 3-core config below).
+- **Bumped step2 + step3 to `memory: 7500 / cores: 3`** in all 4 `multicrab_workflow_2023.py`
+  (backups `*.bak-precore`). Takes effect only on a **fresh** submit (3-core ceiling = 7500 MB).
 
-| Sample | Step1 GEN-SIM (published) | Step2 DRPremix (running) |
+| Sample | Step1 GEN-SIM (published) | Step2 DRPremix |
 |---|---|---|
-| hplusc 2023postBPix | `260707_231145:...HPlusC_..._Step1_GEN_SIM_2023BPix_v1` (100/100) | `260711_195727:...HPlusC_..._Step2_DRPremix_2023BPix_v1` |
-| hplusb 2023postBPix | `260707_231145:...HPlusB_..._Step1_GEN_SIM_2023BPix_v1` (99/100) | `260711_195728:...HPlusB_..._Step2_DRPremix_2023BPix_v1` |
-| hplusb 2023preBPix  | `260707_225850:...HPlusB_..._Step1_GEN_SIM_2023_v1` (96/100) | `260711_195728:...HPlusB_..._Step2_DRPremix_2023_v1` |
+| hplusc 2023postBPix | `260707_231145:...HPlusC_..._Step1_GEN_SIM_2023BPix_v1` (100/100) | `260711_195727:...Step2_DRPremix_2023BPix_v1` — 58% done, 42 failed resubmitted @5GB |
+| hplusb 2023postBPix | `260707_231145:...HPlusB_..._Step1_GEN_SIM_2023BPix_v1` (99/100) | `260711_195728:...Step2_DRPremix_2023BPix_v1` — 30% done, 69 failed resubmitted @5GB |
+| hplusb 2023preBPix  | `260707_225850:...HPlusB_..._Step1_GEN_SIM_2023_v1` (96/100) | `260711_195728:...Step2_DRPremix_2023_v1` — 40% done, 58 failed resubmitted @5GB |
 
 Step1 output datasets (DRPremix input):
 - hplusc 2023postBPix: `/HPlusCharm_.../cgupta-Run3Summer23BPixwmLHEGS-HToWW-130X_mcRun3_2023_realistic_postBPix_v6-v1-dacb523b56f64076a1210fb7b5034c87/USER`
@@ -58,6 +68,22 @@ Step1 output datasets (DRPremix input):
 Re-run each workspace's `run_workflow.sh` after step2 completes to chain 3→4→5.
 
 ### Gotchas hit while submitting these (fix before rerunning)
+0. **DRPremix (step2) needs more than the config's 4 GB.** `multicrab_workflow_2023.py`
+   sets step2 `memory: 4000` / `cores: 2`, but DRPremix jobs peak at **4.3–8.1 GB RSS**
+   (avg 4.2) → jobs die with exit **50660** (*"killed by HTCondor due to excessive memory
+   use"*). **CMS policy caps memory at 2500 MB/core** (https://cmssi.docs.cern.ch/policies/memory/),
+   so a 2-core job maxes at **5000 MB** — a `--maxmemory=6000` resubmit is rejected.
+   `crab resubmit` can raise memory but **cannot change cores**. Two fixes:
+   ```bash
+   # (a) recover failed jobs at the 2-core ceiling (keeps finished jobs; source cmsenv first):
+   crab resubmit -d <crab_..._Step2_DRPremix_...> --maxmemory=5000
+   # (b) for headroom >5 GB, bump cores in the config BEFORE a fresh submit:
+   #     step2 (and step3 RECO, same 4000) -> memory: 7500, cores: 3   (3-core ceiling = 7500 MB)
+   ```
+   Already applied (b) to all 4 `multicrab_workflow_2023.py` (backups `*.bak-precore`);
+   only affects fresh submits, not the in-flight resubmit. `crab status` also needs `cmsenv`
+   (`cd CMSSW_13_0_17/src && eval $(scramv1 runtime -sh)`) or it errors *"CMSSW is missing.
+   You must do cmsenv first"*.
 1. **Run submits detached.** A submit over a one-shot `ssh lxplus '<cmd>'` gets killed
    mid-submission when the session closes (task never registers, leaves an empty stub
    dir). Launch with `setsid nohup bash run_workflow.sh > submit.log 2>&1 < /dev/null &`
