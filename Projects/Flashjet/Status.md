@@ -43,6 +43,15 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-07-13 — Justification plots for the substructure features (Claude, lxplus)
+Toy-MC validation plots (QCD-like vs W-like fat jets, pt=500, R=0.8) demonstrating
+each feature does what its defining paper says: Lund plane (F3), soft-drop mass
+(F2), √d12 + exclusive-subjet z (F1), plus a parity panel (matches an independent
+NumPy declustering to 1.7e-13 GeV) and CPU cost (decoders are 10–100× cheaper than
+clustering). See [[2026-07-13-substructure-plots]] + [[plots.md]]; PNGs + script at
+`/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/`. Paper basis of each
+algorithm catalogued in `References/Flashjet/papers.md` (reader PDF bundled).
+
 ### 2026-07-08 — Alex's commit landed + new kt/C-A substructure features (Claude, lxplus)
 **Alex pushed `29c9da8` "Adding new bench and opt"** to `origin/benchmarking`
 (FF'd into local). It turned out to be exactly the four items the 2026-07-01
