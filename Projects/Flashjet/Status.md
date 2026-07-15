@@ -37,13 +37,23 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [x] Get Alex's unpushed commits, then explore code + try a basic CMSSW integration
 - [x] Implement new features — kt & C/A substructure (F1/F2/F3), see 2026-07-08 log
 - [x] Have Alex review the working-tree changes (NOT committed to repo per instruction) [completion:: 2026-07-15]
-- [ ] Commit changes
+- [x] Commit changes — pushed to `origin/benchmarking` as `2e912ef` [completion:: 2026-07-15]
 - [ ] Add lund plane plot for ttbar and make more proper comparision against fastjet
 - [ ] 
 
 ---
 
 ## Log
+
+### 2026-07-15 — Committed substructure to benchmarking + presentation update (Claude, lxplus)
+Committed the F1/F2/F3 working-tree changes to the flashjet repo and pushed:
+`29c9da8..2e912ef` on `origin/benchmarking` (`src/flashjet/{history,api,__init__}.py`,
+`README.md`, `tests/test_substructure.py`; 85 passed / 13 skipped confirmed green first).
+Reworked the Marp deck for Alex (`presentation/flashjet-substructure.md`, now 25 slides):
+**re-added** the CMS `FatJet_pt` reclustering and `FatJet_msoftdrop` soft-drop comparison
+slides (with the PUPPI caveat), and added a **"How this plot was made"** block to every
+correctness slide — dataset/toy generator, real-constituents-vs-toy input class (A/B/C),
+selection cuts, R/z_cut/β, event counts, seed. Next: ttbar Lund + proper FastJet comparison.
 
 ### 2026-07-13 — Ran the clustering on REAL CMS data (Claude, lxplus)
 Pulled UL18 QCD **JMENano** (150X reprocessing — the one format with `PFCand` +
