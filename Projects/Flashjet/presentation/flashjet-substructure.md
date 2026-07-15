@@ -175,33 +175,55 @@ which is what makes the closure *quantitative*, not just qualitative.
 
 *each feature reproduces the signature figure of the paper it implements*
 
+<span class="small">Every slide states its **input**. Three input classes appear:
+**(A)** ad-hoc QCD/W toys (`make_plots.py`), **(B)** a leading-log toy shower (`make_paper_plots.py`),
+**(C)** real CMS PF-candidate constituents (`make_cms_plots.py`). All seed `20260713`.</span>
+
 ---
 
 ## anti-kt jet shapes — reproduces [0802.1189] Fig. 1
 
-![w:960](img/jet_areas.png)
+![w:820](img/jet_areas.png)
 
-Same event + soft-ghost grid, $R=1$. **kt** and **C/A** give ragged, area-fluctuating jets;
-**anti-kt** gives rigid **circles** around each hard particle — the defining result of the anti-kt paper,
-here from flashjet's own clustering.
+<div class="cols">
+<div>
+
+**What:** each algorithm's **jet catchment area**. kt & C/A give ragged, area-fluctuating
+jets; **anti-kt** gives rigid **circles** around each hard particle — the defining anti-kt result,
+from flashjet's own clustering.
+
+</div>
+<div>
+
+**How made — input (B), no substructure feature, clustering only.**
+1 synthetic event: **10 hard massless particles** ($p_T$ 10–400 GeV, random $y,\phi$) + a
+**uniform grid of ~3200 "ghosts"** ($p_T=10^{-8}$, spacing 0.125 in $y,\phi$). Clustered at
+**$R=1$** with `cluster_event_nn` for $p=+1/0/-1$; each ghost is coloured by the jet it lands in.
+
+</div>
+</div>
 
 ---
 
 ## F1 — kt substructure separates 2-prong from QCD [0802.1189, 1111.6097]
 
-![w:880](img/kt_observables.png)
+![w:820](img/kt_observables.png)
 
 <div class="cols">
 <div>
 
-**Left — $\sqrt{d_{12}}$** (`splitting_scales_from_history`):
-kt scale of the last merge. W-like peaks at $\sim m_W/2$, QCD sits low.
+**Left — $\sqrt{d_{12}}$** (`splitting_scales_from_history`): kt scale of the last merge.
+W-like peaks at $\sim m_W/2$, QCD low.
+**Right — exclusive 2-subjet $z$** (`exclusive_jets_from_history`, $n_{\rm jets}=2$):
+W-like balanced ($z\!\approx\!0.35$), QCD lopsided ($z\!\to\!0$).
 
 </div>
 <div>
 
-**Right — exclusive 2-subjet $z$** (`exclusive_jets_from_history`, $n_{\rm jets}=2$):
-W-like balanced ($z\!\approx\!0.35$), QCD lopsided ($z\!\to\!0$) — the tagging split.
+**How made — input (A), leading jet, kt clustering.**
+1500 **QCD-like** + 1500 **W-like** toy fat-jets ($p_T\!\approx\!500$ GeV, $R=0.8$); each is a
+bag of massive-pion 4-vectors from `_spray` — **not real constituents, synthetic particles**.
+W pair-mass fixed to 80.4 GeV. Both observables read the merge history of the **kt** clustering.
 
 </div>
 </div>

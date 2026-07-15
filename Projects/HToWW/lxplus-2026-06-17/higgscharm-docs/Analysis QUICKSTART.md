@@ -114,8 +114,8 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
 
 - **Signal sample production (NanoAOD inputs):** [[2026-07-08-hplusc-hplusb-crab-status]] —
   hplusc/hplusb CRAB status across all 4 campaigns: 5/8 NanoAOD published (event counts
-  + DAS links); the other 3 (2023 postBPix c+b, preBPix b) are mid-chain — step1 done,
-  step2 DRPremix running (2026-07-11).
+  + DAS links); the other 3 (2023 postBPix c+b, preBPix b) are mid-chain — step1+step2 done
+  (step2 needed 5 GB/job, 67–96% published), **step3 RECO submitted 2026-07-15**.
 - **Cutflow (2022postEE):** [[2026-07-07-cutflow-2022postEE]] — weighted events per
   selection step, all samples (`base` workflow).
 - **Trigger efficiency (2022postEE):** [[2026-07-07-trigger-efficiency]] — per-sample ε

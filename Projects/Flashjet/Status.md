@@ -36,8 +36,10 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [x] See latest report [[report.pdf]] by Alex and advise how to proceed
 - [x] Get Alex's unpushed commits, then explore code + try a basic CMSSW integration
 - [x] Implement new features — kt & C/A substructure (F1/F2/F3), see 2026-07-08 log
-- [ ] Have Alex review the working-tree changes (NOT committed to repo per instruction)
-- [ ] GPU-node follow-up: these are pure-torch so run on CUDA unchanged, but the Triton `decode=False` parity tests still need a GPU node
+- [x] Have Alex review the working-tree changes (NOT committed to repo per instruction) [completion:: 2026-07-15]
+- [ ] Commit changes
+- [ ] Add lund plane plot for ttbar and make more proper comparision against fastjet
+- [ ] 
 
 ---
 

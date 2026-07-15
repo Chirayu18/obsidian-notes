@@ -103,7 +103,7 @@ catastrophic loss from discarding the continuous scores.
 - Append one-hot cols + retrain for `2023preBPix` era once ready.
 - 2D categories are also SF-ready (official SFbc-2D edges) if/when calibrated SFs are wanted.
 - [ ] Compare ROC vs baseline `HPlusCHToWW_multiclass / hwwcom_multiclass_v11` once done.
-- [ ] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed).
+- [x] Repeat append for `2023preBPix` once ready (other year present in hww_combine_fixed). [completion:: 2026-07-15]
 
 ### How the MVA is trained (batch recipe, from AFS)
 Production trains on **HTCondor with an H100 GPU** via `~/submitter_mva.sub` → `~/job_mva.sh`.
