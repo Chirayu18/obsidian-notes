@@ -104,20 +104,6 @@ $d$-channel ties **exactly** to `splitting_scales`.
 
 ---
 
-## Design: everything is a cheap post-read
-
-All three reuse two batched **pointer-jumping** primitives that resolve parents / roots of the
-tree in $O(\log N)$ gathers (`_resolve_parents`, `_resolve_roots`) — no Python-side per-jet loop.
-
-![w:760](img/parity_timing.png)
-
-<span class="small"><b>Left (input A):</b> 150 W-like toy jets — F2 groomed mass vs an independent per-event NumPy
-declustering — agree to <b>max |Δ| = 1.71×10⁻¹³ GeV</b> (float64 round-off). <b>Right:</b> per-event CPU
-cost on random $N$-particle events ($B=256$) — the decoders are <b>10–100× cheaper</b> than the
-clustering they read; not on the critical path.</span>
-
----
-
 <!-- _class: lead -->
 
 # How the toys were generated
@@ -297,33 +283,6 @@ F3 emits $(\ln 1/\Delta R,\ \ln k_t)$ for every primary split of the leading jet
 
 ---
 
-## F3 — Lund-triangle closure [1807.04758 Fig. 2]
-
-<div class="cols">
-<div>
-
-Emissions sampled **uniformly** in the Lund triangle (input $\bar\alpha=0.25$/unit area) are
-recovered by `lund_coordinates_from_history` as a **flat interior plateau** bounded by the three
-physical edges ($z=\tfrac12$, $k_t$ cutoff, $\theta_{\max}$).
-
-- Interior density **0.17 ± 0.02** — flat to ~12%; uniform input recovered.
-- The offset below 0.25 is genuine **wide-angle reclustering migration** (C/A reassigns some
-  wide emissions), **not** a bug — a property of the observable, reproduced honestly.
-
-<span class="small">**How made — input (B), closure test.** Emissions Poisson-sampled *uniformly* in the
-$(\ln 1/\theta,\ \ln k_t)$ triangle at density $\bar\alpha=0.25$, hung off a hard spine; C/A clustered;
-F3 must return that *same* flat density — it does.</span>
-
-</div>
-<div>
-
-![w:520](img/lund_triangle.png)
-
-</div>
-</div>
-
----
-
 <!-- _class: lead -->
 
 # On **real CMS data** — input (C)
@@ -343,16 +302,20 @@ DAS/`xrdcp` → `data/qcd_jmenano_150x.root` (1.7 GB). Ordinary NanoAOD has no c
 
 **These plots use *real jet constituents*, not toys:**
 1. Pick every CMS **AK8 FatJet** with $p_T>300$, $|\eta|<2.4$.
-2. Gather its **PF candidates** via `FatJetPFCand_jetIdx→pfCandIdx→PFCand_{pt,η,φ,m}`; build each 4-vector.
+2. Gather its **PF candidates** via `FatJetPFCand_jetIdx→pfCandIdx→PFCand_{pt,η,φ,m}`.
+   **`PFCand_pt/mass` are already PUPPI-weighted** (the branch titles say so) — the weighted
+   4-vectors are stored directly, which is why no separate weight branch exists.
 3. Feed *those constituents* to **our** `cluster(R=0.8, antikt)` — CMS AK8 **is** anti-kt $R=0.8$.
 
 </div>
 <div>
 
-4. Leading jet → **F2** `groomed_jets(z_cut=0.1, β=0)` — CMS's exact `msoftdrop` definition — and **F3** Lund.
+4. Leading jet → **F2** soft drop ($z_{\rm cut}=0.1, β=0$, declustering the **C/A** tree, as
+   FastJet's SoftDrop does) — and **F3** Lund.
 5. Chunked at 3000 jets (torch backend is $O(N^3)$; each AK8 jet is one independent event, so chunking is exact).
 
-**Selection yield:** 60 285 AK8 jets ($2\le n_{\rm const}\le128$).
+**The stored CMS values are JEC-corrected**: raw jet = `FatJet_pt×(1−rawFactor)`;
+`FatJet_msoftdrop` = m(sub1+sub2) **with subjet JECs** (proven from data: Δ = +0.0002 GeV).
 
 </div>
 </div>
@@ -365,12 +328,15 @@ DAS/`xrdcp` → `data/qcd_jmenano_150x.root` (1.7 GB). Ordinary NanoAOD has no c
 <div>
 
 **What:** feed CMS's own AK8 constituents to **our** anti-kt $R=0.8$ and compare the reclustered
-jet $p_T$ (and ungroomed mass) to CMS's stored `FatJet_pt` / `FatJet_mass`, **jet-by-jet**.
+jet $p_T$ to CMS's stored `FatJet_pt`, **jet-by-jet**.
 
-**Result:** tight diagonal — the clustering itself is correct. A constant ~6% low offset remains
-(see next slide: PUPPI).
+**Result — EXACT:** vs the **raw** jet pt (`FatJet_pt×(1−rawFactor)`) the ratio is
+**median 0.999999, σ = 2×10⁻⁴** — pure NanoAOD storage precision. The apparent ~6% offset
+vs the stored value **is the L1L2L3 JEC**, nothing else: CMS stores corrected $p_T$, we
+recompute the raw one.
 
-<span class="small">**Input (C).** 2D $p_T$–$p_T$ histogram + overlaid mass spectra, real constituents, no toy content.</span>
+<span class="small">**Input (C).** 2D $p_T$–$p_T$ histogram + mass spectra, real constituents; exactness numbers
+from `exact_match2.py` (20 079 jets).</span>
 
 </div>
 <div>
@@ -390,13 +356,15 @@ jet $p_T$ (and ungroomed mass) to CMS's stored `FatJet_pt` / `FatJet_mass`, **je
 **What:** **our** F2 soft-drop mass ($z_{\rm cut}=0.1,\beta=0$) vs CMS's own `FatJet_msoftdrop`,
 **jet-by-jet** — the direct grooming validation on real jets.
 
-**Result:** hugs the diagonal, spectrum tracks CMS incl. the low-mass turnover; **median Δ = −4.19 GeV**.
+**The offset was NOT PUPPI.** The constituents are already PUPPI-weighted, and `FatJet_msoftdrop`
+is the **JEC-corrected** subjet-pair mass (data-proven: $m(\text{sub}_1{+}\text{sub}_2)_{\rm corr}$ = stored, Δ=+0.0002 GeV).
+The correct comparison is **raw-to-raw**: our soft-drop mass vs $m$ of the **raw** subjets.
 
-**The one caveat — PUPPI, not a bug:** CMS clusters **PUPPI-weighted** constituents; NanoAOD stores
-**raw** $p_T$ with **no per-candidate weight** → our jets are uniformly a bit heavier.
-`diagnose.py`: a per-jet `cms_pt/raw_pt` rescale drives $p_T$ ratio→1.000 and **halves** the mass gap
-(−7.5→−3.7 GeV). A flat scale absorbs 100% of $p_T$ and half the mass → confirms **F2 is structurally correct**;
-the residual is PUPPI's non-uniform shape reweighting a flat scale can't touch.
+**Two things had to match:** (1) undo the subjet JEC on the reference; (2) decluster the **C/A**
+tree — FastJet's SoftDrop reclusters the jet C/A first, which we now do (`make_cms_plots.py`).
+
+<span class="small">Raw-to-raw C/A-tree numbers finalized in `exact_match2.py`; plot regenerated as
+`cms_exact_match.png`. (The old −4.19 GeV was subjet JEC + wrong-tree grooming, not PUPPI.)</span>
 
 </div>
 <div>
@@ -428,44 +396,6 @@ the soft plateau, and the three kinematic edges.
 
 </div>
 </div>
-
----
-
-## Validation ladder & test suite
-
-Each feature is pinned at every level, top to bottom:
-
-1. **FastJet** (where applicable) → **NumPy reference** (`cluster_event`) — the single-event ground truth
-2. **torch backend** matches the reference
-3. **Triton kernels** match the torch backend (`decode=False` parity)
-4. **each feature** matches an **independent naive NumPy tree-walk** (`_ref_*` in `test_substructure.py`)
-5. **physics anchors**: $z_g$ vs analytic $1/z$; $\sqrt{d_{12}}\to m_W/2$; Lund hard-split position; groomed-mass parity to $10^{-13}$ GeV
-
-```
-micromamba run -n b_hive python -m pytest -q     →   85 passed, 13 skipped (CUDA-only)
-```
-
-<span class="small">The 13 skips are the Triton `decode=False` parity tests, which need a GPU node.</span>
-
----
-
-## Status & next steps
-
-**Done**
-- F1/F2/F3 implemented as pure-torch reads of the merge history — no kernel changes
-- Independent-reference parity to float64 round-off; full suite green (85 passed)
-- Reproduced the signature figures of anti-kt, Soft Drop, and Lund papers
-- F3 demonstrated end-to-end on real CMS UL18 QCD PF candidates
-
-**Open / for Alex**
-- **Pushed** to `origin/benchmarking` (`2e912ef`): `src/flashjet/{history,api,__init__}.py`,
-  `README.md`, `tests/test_substructure.py` — review at your convenience
-- GPU-node follow-up: the Triton `decode=False` parity tests still need CUDA (13 skips)
-- Next: ttbar Lund plane + a proper jet-by-jet comparison against FastJet
-- Optional: expose secondary Lund planes; wire the exclusive-jet API into a tagging demo
-
-<span class="small">Repo: `flashjet/FlastJetDemo` (branch `benchmarking`). Plots + scripts:
-`plots/2026-07-13-substructure/`. Papers: `References/Flashjet/papers.md`.</span>
 
 ---
 
