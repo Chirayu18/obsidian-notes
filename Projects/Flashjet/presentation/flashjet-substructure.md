@@ -28,7 +28,7 @@ style: |
 exclusive jets · soft-drop grooming · Lund coordinates
 
 **Chirayu Gupta** — for Alexandre De Moor
-2026-07-13 · branch `benchmarking` (working tree, not committed)
+2026-07-13 · branch `benchmarking` (pushed: commit `2e912ef`)
 
 <span class="small">Every claim below is closed against an independent reference and/or the
 defining paper. All plots regenerable: `plots/2026-07-13-substructure/`.</span>
@@ -111,9 +111,10 @@ tree in $O(\log N)$ gathers (`_resolve_parents`, `_resolve_roots`) — no Python
 
 ![w:760](img/parity_timing.png)
 
-<span class="small"><b>Left:</b> groomed mass from F2 vs an independent per-event NumPy declustering — agree to
-<b>max |Δ| = 1.71×10⁻¹³ GeV</b> (float64 round-off). <b>Right:</b> per-event CPU cost — the decoders are
-<b>10–100× cheaper</b> than the clustering they read; they are not on the critical path.</span>
+<span class="small"><b>Left (input A):</b> 150 W-like toy jets — F2 groomed mass vs an independent per-event NumPy
+declustering — agree to <b>max |Δ| = 1.71×10⁻¹³ GeV</b> (float64 round-off). <b>Right:</b> per-event CPU
+cost on random $N$-particle events ($B=256$) — the decoders are <b>10–100× cheaper</b> than the
+clustering they read; not on the critical path.</span>
 
 ---
 
@@ -220,10 +221,10 @@ W-like balanced ($z\!\approx\!0.35$), QCD lopsided ($z\!\to\!0$).
 </div>
 <div>
 
-**How made — input (A), leading jet, kt clustering.**
-1500 **QCD-like** + 1500 **W-like** toy fat-jets ($p_T\!\approx\!500$ GeV, $R=0.8$); each is a
-bag of massive-pion 4-vectors from `_spray` — **not real constituents, synthetic particles**.
-W pair-mass fixed to 80.4 GeV. Both observables read the merge history of the **kt** clustering.
+<span class="small">**How made — input (A), leading jet, kt clustering.**
+1500 **QCD-like** + 1500 **W-like** toy fat-jets ($p_T\!\approx\!500$ GeV, $R=0.8$); each a bag of
+massive-pion 4-vectors from `_spray` — **synthetic particles, not real constituents**. W pair-mass
+= 80.4 GeV. Both observables read the **kt** merge history.</span>
 
 </div>
 </div>
@@ -240,10 +241,13 @@ The soft-drop momentum fraction $z_g$ from `groom_from_history`
 
 $$ p(z_g)=\frac{1/z_g}{\ln(1/2z_{\rm cut})} $$
 
-across the **entire range**, with no free parameters. 72% of jets tagged.
+across the **entire range**, no free parameters. 72% of jets tagged.
 
-> This is the **decisive grooming-correctness plot**: the target curve is
-> *the* right answer, so lying on it is unambiguous closure.
+> **Decisive grooming-correctness plot**: the target curve is *the* right
+> answer, so lying on it is unambiguous closure.
+
+<span class="small">**How made — input (B).** 20 000 toy-shower jets ($p_{T0}=1$ TeV, $R=0.4$), leading jet
+per event, soft-dropped by F2; the black curve is the analytic $1/z$ with *no* fit.</span>
 
 </div>
 <div>
@@ -267,6 +271,9 @@ Groomed mass $\rho=m^2/(p_T^2R^2)$ for $\beta=0,1,2$ vs ungroomed.
 
 Reproduces the $\beta$-ordering of the Soft Drop paper.
 
+<span class="small">**How made — input (B).** Same 20 000 toy-shower jets; F2 `groom_from_history` re-run at
+$\beta=0,1,2$ (all $z_{\rm cut}=0.1$) on the leading jet, $\rho$ from the groomed 4-vector.</span>
+
 </div>
 <div>
 
@@ -279,11 +286,14 @@ Reproduces the $\beta$-ordering of the Soft Drop paper.
 
 ## F3 — primary Lund plane [1807.04758]
 
-![w:940](img/lund_plane.png)
+![w:760](img/lund_plane.png)
 
 `lund_coordinates_from_history` (C/A, $R=0.8$). **QCD** fills the soft-collinear region smoothly.
 **W-like** shows the same background **plus an isolated hard-splitting spot** exactly where the
 2-body $m_W$ decay must sit (red ★ = predicted position).
+
+<span class="small">**How made — input (A).** Same 1500+1500 QCD/W toy fat-jets as the F1 slide, **C/A** clustered;
+F3 emits $(\ln 1/\Delta R,\ \ln k_t)$ for every primary split of the leading jet, histogrammed over all jets.</span>
 
 ---
 
@@ -298,7 +308,11 @@ physical edges ($z=\tfrac12$, $k_t$ cutoff, $\theta_{\max}$).
 
 - Interior density **0.17 ± 0.02** — flat to ~12%; uniform input recovered.
 - The offset below 0.25 is genuine **wide-angle reclustering migration** (C/A reassigns some
-  wide emissions), **not** a bug — it is a property of the observable, reproduced honestly.
+  wide emissions), **not** a bug — a property of the observable, reproduced honestly.
+
+<span class="small">**How made — input (B), closure test.** Emissions Poisson-sampled *uniformly* in the
+$(\ln 1/\theta,\ \ln k_t)$ triangle at density $\bar\alpha=0.25$, hung off a hard spine; C/A clustered;
+F3 must return that *same* flat density — it does.</span>
 
 </div>
 <div>
@@ -310,21 +324,102 @@ physical edges ($z=\tfrac12$, $k_t$ cutoff, $\theta_{\max}$).
 
 ---
 
-## F3 runs on **real CMS data** — primary Lund plane of 60 285 QCD jets
+<!-- _class: lead -->
+
+# On **real CMS data** — input (C)
+
+*not toys any more: real detector-level PF-candidate constituents*
+
+---
+
+## The real-data pipeline (`make_cms_plots.py`)
+
+**Sample:** `QCD_Pt-15to7000_Flat2018_pythia8`, **UL18 JMENano** (150X reprocessing) — the one
+NanoAOD flavour that stores the `PFCand` table + the `FatJetPFCand` constituent→AK8 map. Pulled via
+DAS/`xrdcp` → `data/qcd_jmenano_150x.root` (1.7 GB). Ordinary NanoAOD has no constituents and is useless here.
 
 <div class="cols">
 <div>
 
-Not a toy: **PF candidates** from CMS UL18 QCD **JMENano** (the format that carries the
-`PFCand` + `FatJetPFCand` constituent map), grouped per AK8 jet, clustered by our anti-kt
-$R=0.8$, read by **F3**.
+**These plots use *real jet constituents*, not toys:**
+1. Pick every CMS **AK8 FatJet** with $p_T>300$, $|\eta|<2.4$.
+2. Gather its **PF candidates** via `FatJetPFCand_jetIdx→pfCandIdx→PFCand_{pt,η,φ,m}`; build each 4-vector.
+3. Feed *those constituents* to **our** `cluster(R=0.8, antikt)` — CMS AK8 **is** anti-kt $R=0.8$.
 
-The full physical structure of [1807.04758] emerges straight from detector-level simulation:
-the hard-collinear perturbative ridge, the soft plateau, and the three kinematic edges — with
-**no toy input**.
+</div>
+<div>
 
-<span class="small">The pipeline was also validated jet-by-jet vs CMS AK8 $p_T$ / $m_{\rm SD}$ (omitted here — a
-known raw-vs-PUPPI offset, accounted for by a per-jet rescale; the algorithm is correct).</span>
+4. Leading jet → **F2** `groomed_jets(z_cut=0.1, β=0)` — CMS's exact `msoftdrop` definition — and **F3** Lund.
+5. Chunked at 3000 jets (torch backend is $O(N^3)$; each AK8 jet is one independent event, so chunking is exact).
+
+**Selection yield:** 60 285 AK8 jets ($2\le n_{\rm const}\le128$).
+
+</div>
+</div>
+
+---
+
+## CMS (1) — reclustering closes: our $p_T$ vs CMS `FatJet_pt`
+
+<div class="cols">
+<div>
+
+**What:** feed CMS's own AK8 constituents to **our** anti-kt $R=0.8$ and compare the reclustered
+jet $p_T$ (and ungroomed mass) to CMS's stored `FatJet_pt` / `FatJet_mass`, **jet-by-jet**.
+
+**Result:** tight diagonal — the clustering itself is correct. A constant ~6% low offset remains
+(see next slide: PUPPI).
+
+<span class="small">**Input (C).** 2D $p_T$–$p_T$ histogram + overlaid mass spectra, real constituents, no toy content.</span>
+
+</div>
+<div>
+
+![w:560](img/cms_recluster.png)
+
+</div>
+</div>
+
+---
+
+## CMS (2) — soft-drop mass vs CMS `FatJet_msoftdrop`
+
+<div class="cols">
+<div>
+
+**What:** **our** F2 soft-drop mass ($z_{\rm cut}=0.1,\beta=0$) vs CMS's own `FatJet_msoftdrop`,
+**jet-by-jet** — the direct grooming validation on real jets.
+
+**Result:** hugs the diagonal, spectrum tracks CMS incl. the low-mass turnover; **median Δ = −4.19 GeV**.
+
+**The one caveat — PUPPI, not a bug:** CMS clusters **PUPPI-weighted** constituents; NanoAOD stores
+**raw** $p_T$ with **no per-candidate weight** → our jets are uniformly a bit heavier.
+`diagnose.py`: a per-jet `cms_pt/raw_pt` rescale drives $p_T$ ratio→1.000 and **halves** the mass gap
+(−7.5→−3.7 GeV). A flat scale absorbs 100% of $p_T$ and half the mass → confirms **F2 is structurally correct**;
+the residual is PUPPI's non-uniform shape reweighting a flat scale can't touch.
+
+</div>
+<div>
+
+![w:520](img/cms_softdrop.png)
+
+</div>
+</div>
+
+---
+
+## CMS (3) — primary Lund plane of 60 285 real QCD jets
+
+<div class="cols">
+<div>
+
+**What:** **F3** `lund_coordinates` on the same real AK8 jets. Needs no comparison curve — it *is* a
+clean, publication-quality primary Lund plane straight from detector-level simulation.
+
+The full [1807.04758] structure emerges with **no toy input**: the hard-collinear perturbative ridge,
+the soft plateau, and the three kinematic edges.
+
+<span class="small">**Input (C).** 60 285 AK8 jets, $p_T>300$ GeV; every primary split of each leading jet histogrammed.</span>
 
 </div>
 <div>
@@ -363,9 +458,10 @@ micromamba run -n b_hive python -m pytest -q     →   85 passed, 13 skipped (CU
 - F3 demonstrated end-to-end on real CMS UL18 QCD PF candidates
 
 **Open / for Alex**
-- Review the working-tree changes — **not committed** to the repo, per instruction
-  (`src/flashjet/{history,api,__init__}.py`, `README.md`, `tests/test_substructure.py`)
-- GPU-node follow-up: the Triton `decode=False` parity tests still need CUDA
+- **Pushed** to `origin/benchmarking` (`2e912ef`): `src/flashjet/{history,api,__init__}.py`,
+  `README.md`, `tests/test_substructure.py` — review at your convenience
+- GPU-node follow-up: the Triton `decode=False` parity tests still need CUDA (13 skips)
+- Next: ttbar Lund plane + a proper jet-by-jet comparison against FastJet
 - Optional: expose secondary Lund planes; wire the exclusive-jet API into a tagging demo
 
 <span class="small">Repo: `flashjet/FlastJetDemo` (branch `benchmarking`). Plots + scripts:
