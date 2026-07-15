@@ -48,6 +48,72 @@ max_iter ceiling**; loss still descending. There is headroom (more iters / deepe
 Top features by permutation importance: `lhe_npnlo` (dominant), `lhe_njets`, `lhe_nglu`,
 `genparton1_pt`, `lhe_alphas` — physically sensible (amc@NLO merging/subtraction regions).
 
+## 🐞 TWO REAL BUGS FOUND + FIXED BEFORE THE SR SUBMIT (2026-07-15)
+
+**1. The dataset gate was substring-matching and would have reweighted SIGNAL.**
+`_dataset_matches` did `any(p in dataset for p in patterns)` with `datasets: [DYto2L, WtoLNu]`.
+`"WtoLNu" in "WplusH_WtoLNu_Hto2Wto2L2Nu"` → **True** → the WH **signal** sample would have
+been reweighted with a V+jets generator model, silently corrupting a signal template.
+**Fix:** `_dataset_matches` now does **exact** matching (`dataset in set(names)`), and the
+yaml lists exact names: `DYto2L_2Jets_10to50`, `DYto2L_2Jets_50`, `WtoLNu_2Jets`.
+Verified: the 3 vjets samples → REWEIGHT; `WplusH_WtoLNu_Hto2Wto2L2Nu`, `TTto2L2Nu`,
+`HplusCharm_HtoWW`, `GluGluHto2Wto2L2Nu` → untouched.
+
+**2. The model path was on EOS, which the worker container CANNOT read.**
+`joblib.load("/eos/user/c/cgupta/...")` inside the singularity image →
+`PermissionError [Errno 13]`. Every Condor job would have died.
+**Fix:** model staged to **AFS** `/afs/cern.ch/user/c/cgupta/negrw_model/negrw_models.joblib`
+and yaml repointed there (workers read AFS fine — `submit.sh` cds into the AFS repo).
+Master copy still on EOS in `negrw_out_img/`.
+
+**Also note:** `b_hive` (sklearn 1.4.2) can **no longer load this model** (it's 1.7.2) —
+`TypeError: __generator_ctor()`. Local processor tests must now run **inside the image**:
+`singularity exec -B /afs -B /cvmfs -B /tmp -B /eos --env X509_USER_PROXY=/tmp/x509up_u151861 $IMG python3 ...`
+
+**Smoke test PASSED (in-image, real processor → parquet, DYto2L_2Jets_50, 200k events):**
+13 event shards (nominal + 12 JEC/JER/scale shifts) + 1 `sumw_records/` file → **143 SR rows**,
+`weight_negrw` **0 NaN**, all g∈[−1,1], range [−0.336, 0.709], mean 0.333, 12 distinct;
+`weight_negrw_std` mean 0.009 max 0.024; frac w>0 in SR = **0.545** (vs 0.836 inclusive —
+the SR concentrates the negative-weight region, which is exactly why this fix matters).
+⚠️ **Gotcha when validating parquets:** a recursive `**/*.parquet` glob also picks up
+`sumw_records/*.parquet` (single `sumw` column); concatenating it with event shards
+manufactures an all-NaN row. Filter to files that have `weight_nominal`.
+
+## 📦 FILESET REGENERATED (2026-07-15)
+Live `fileset_2022postEE_nanov12_lxplus.json` was the **truncated Phase-1** one (4 datasets,
+vjets capped at 35 files each = 105). Re-ran:
+`python3 fetch.py --year 2022postEE --samples DYto2L_2Jets_50 DYto2L_2Jets_10to50 WtoLNu_2Jets`
+→ now **3 datasets, 989 files**: DYto2L_2Jets_50 **286**, DYto2L_2Jets_10to50 **322**,
+WtoLNu_2Jets **381** (matches the full `.bak_presiteredir` counts).
+NOTE `make_filesets.py` **overwrites** (open "w"), it does not merge — the fileset now holds
+only these 3 vjets samples. Backups: `.bak_pre_srererun_20260715`, `.bak_presiteredir` (53 datasets).
+
+## 🐞 BUG #3 (found on first submit) + a data-safety lesson (2026-07-15)
+
+**The exact-match gate was TOO strict and silently produced NO reweighting.**
+condor/submit.sh runs `--dataset <name>_$JOBID`, so the processor sees
+`DYto2L_2Jets_50_7`, not `DYto2L_2Jets_50`. The exact `dataset in set(names)` gate
+rejected every partitioned name → first submit (clusters 9087046/47/48, REMOVED) wrote
+121-col parquets with NO weight_negrw. **Fix:** `_dataset_matches` now strips a trailing
+`_\d+` partition suffix before matching (`re.sub(r"_\d+$","",dataset)`), still anchored so
+`WplusH_WtoLNu_Hto2Wto2L2Nu` stays untouched. Verified against 14 cases incl. suffixed vjets
+(match) and suffixed WH signal (untouched). `import re` added to base.py.
+
+**⚠️ DATA-SAFETY LESSON:** Condor jobs write straight into `<dataset>_<N>/base/` on EOS,
+**overwriting** whatever is there. Submitting the (buggy) run overwrote the pre-existing
+vjets SR production; then I `rm -rf`'d those partition dirs. No permanent loss (vjets SR is
+regenerable = this very re-run), and only the 3 vjets sample names were touched — the other
+435 dirs / 125k parquets (base/, CMS_* shifts, all non-vjets samples) are intact. But the
+destructive act was the SUBMIT (overwrite-on-write), not the delete. **Rule going forward:
+run ONE canary job and verify columns before a full submit over live data.**
+
+## ✅ RE-RUN SUBMITTED + VALIDATED (clusters 9087051/9087052/9087053)
+20/22/26 jobs (DYto2L_2Jets_50 / _10to50 / WtoLNu_2Jets), parquet→EOS, nfiles 15, 989 files.
+**Verified in fresh output:** weight_negrw present, 0 NaN, all g∈[−1,1], per-event varying;
+weight_negrw_std mean ~0.012; sample closure Σ|w|g/Σw ≈ 0.98 (tightens with more shards).
+Output: `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_fixed/2022postEE/{DYto2L_2Jets_50,
+_10to50,WtoLNu_2Jets}_<N>/`. Check: `condor_q 9087051 9087052 9087053 -totals`.
+
 ## ▶️ NEXT STEPS (Phase-3 continuation)
 1. **Re-smoke the SR injection with the NEW model** — run one vjets SR file through the
    processor (now that yaml points at negrw_out_img) and confirm `weight_negrw` /
