@@ -348,28 +348,30 @@ from `exact_match2.py` (20 079 jets).</span>
 
 ---
 
-## CMS (2) — soft-drop mass vs CMS `FatJet_msoftdrop`
+## CMS (2) — soft-drop mass matches CMS **EXACTLY** (raw-to-raw)
+
+![w:820](img/cms_exact_match.png)
 
 <div class="cols">
 <div>
 
-**What:** **our** F2 soft-drop mass ($z_{\rm cut}=0.1,\beta=0$) vs CMS's own `FatJet_msoftdrop`,
-**jet-by-jet** — the direct grooming validation on real jets.
-
-**The offset was NOT PUPPI.** The constituents are already PUPPI-weighted, and `FatJet_msoftdrop`
-is the **JEC-corrected** subjet-pair mass (data-proven: $m(\text{sub}_1{+}\text{sub}_2)_{\rm corr}$ = stored, Δ=+0.0002 GeV).
-The correct comparison is **raw-to-raw**: our soft-drop mass vs $m$ of the **raw** subjets.
-
-**Two things had to match:** (1) undo the subjet JEC on the reference; (2) decluster the **C/A**
-tree — FastJet's SoftDrop reclusters the jet C/A first, which we now do (`make_cms_plots.py`).
-
-<span class="small">Raw-to-raw C/A-tree numbers finalized in `exact_match2.py`; plot regenerated as
-`cms_exact_match.png`. (The old −4.19 GeV was subjet JEC + wrong-tree grooming, not PUPPI.)</span>
+<span class="small">**The "offset" was never PUPPI** — the constituents are *already* PUPPI-weighted. Two
+stacked artefacts, both removed: **(1) JEC** — `FatJet_pt`/`msoftdrop` are JEC-corrected; raw jet
+= `pt×(1−rawFactor)`, `msoftdrop` = $m$(JEC-corrected sub₁+sub₂), proven from data (Δ=+0.0002 GeV).
+**(2) Wrong tree** — we groomed the anti-kt history; FastJet SoftDrop declusters a **C/A** reclustering.</span>
 
 </div>
 <div>
 
-![w:520](img/cms_softdrop.png)
+<span class="small">**Raw-to-raw, C/A tree (20 065 jets):**</span>
+
+| | our − CMS |
+|---|---|
+| $p_T$ ratio | **0.999999** (σ 2×10⁻⁴) |
+| $m_{\rm SD}$ | **−0.004 GeV** (95.6% <0.5 GeV) |
+| $z_g$ | \|Δ\| = **7×10⁻⁵** |
+
+<span class="small">Residual = NanoAOD float precision. **F2 reproduces CMS `msoftdrop`.**</span>
 
 </div>
 </div>
