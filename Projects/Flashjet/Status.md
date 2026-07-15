@@ -39,7 +39,10 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [x] Have Alex review the working-tree changes (NOT committed to repo per instruction) [completion:: 2026-07-15]
 - [x] Commit changes — pushed to `origin/benchmarking` as `2e912ef` [completion:: 2026-07-15]
 - [ ] Add lund plane plot for ttbar and make more proper comparision against fastjet
-- [ ] 
+- [ ] Compare using all Jet candidates in a event as constituents
+- [ ] Fix `make_cms_plots.py` to compare RAW-to-RAW (use `FatJet_rawFactor` + raw subjets), regenerate `cms_recluster.png` / `cms_softdrop.png` (still show old JEC-corrected 6%/−4 GeV)
+- [ ] Re-title `cms_recluster.png` (the standalone pt plot still says 6% mean — it's the JEC)
+- [ ] Regenerate `cms_lund.png` on the C/A tree (currently anti-kt-tree Lund)
 
 ---
 

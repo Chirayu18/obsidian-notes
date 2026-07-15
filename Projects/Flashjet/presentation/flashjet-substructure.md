@@ -407,6 +407,24 @@ the soft plateau, and the three kinematic edges.
 
 ---
 
+## Open follow-ups (CMS plots)
+
+The **CMS (2)** exact-match figure (`cms_exact_match.png`) is final and raw-to-raw. The other
+CMS display plots still use the **old JEC-corrected** reference and need a pass:
+
+- [ ] **`make_cms_plots.py` → compare RAW-to-RAW** — use `FatJet_rawFactor` for the jet pt and
+  `SubJet_rawFactor` + `subJetIdx1/2` for the soft-drop reference (as `exact_match2.py` does).
+- [ ] **`cms_recluster.png`** — currently vs JEC-corrected `FatJet_pt` (title says "6% mean");
+  regenerate vs raw pt → should read ≈ 0.
+- [ ] **`cms_softdrop.png`** — currently anti-kt-tree grooming vs corrected msoftdrop (−4 GeV);
+  regenerate on the **C/A tree** vs raw subjet mass → should read ≈ 0.
+- [ ] **`cms_lund.png`** — regenerate on the C/A tree (currently anti-kt-tree Lund).
+
+<span class="small">Deferred deliberately — the exact-match plot already proves the physics; these are cosmetic
+consistency fixes for the deck. Tracked in `Projects/Flashjet/Status.md`.</span>
+
+---
+
 ## Function reference (added)
 
 ```text
