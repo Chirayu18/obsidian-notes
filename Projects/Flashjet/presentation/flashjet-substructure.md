@@ -401,6 +401,29 @@ the soft plateau, and the three kinematic edges.
 
 ---
 
+## CMS (4) — full-event clustering recovers CMS's own AK8 jets
+
+![w:900](img/fullevent_match.png)
+
+<div class="cols">
+<div>
+
+**What:** the realistic path — feed **every PF candidate in the event** to flashjet anti-kt $R=0.8$
+(no `FatJetPFCand` per-jet pre-grouping), then match the resulting inclusive jets to CMS's **stored**
+AK8 jets (`FatJet_*`, which CMS clustered with FastJet) by $\Delta R<0.4$.
+
+</div>
+<div>
+
+**Result (7 701 matched jets, $p_T>300$, raw-to-raw):** pt **median 1.0000, 100% within 2%**;
+match **$\Delta R$ median 0.0019**; mass spectra identical. Full-event flashjet reproduces CMS's own
+FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
+
+</div>
+</div>
+
+---
+
 <!-- _class: lead -->
 
 # Backup
