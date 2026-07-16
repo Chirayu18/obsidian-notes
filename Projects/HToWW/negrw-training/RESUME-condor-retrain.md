@@ -5,6 +5,26 @@ date: 2026-07-15
 source: lxplus
 ---
 
+# NEGRW — ✅✅ LIMIT IMPROVED: r95 1742 → 1343 (−23%)
+
+## 🎯 FINAL RESULT (2026-07-17)
+Neg-weight reweighting wired into the canonical combine builder
+(`scripts/combine/make_combine_inputs.py`, `is_vjets` path: fill = |w|·weight_negrw·renorm,
+REPLACES smoothing). Limit on `outputs/combine/v11_hplusc_v4.txt`:
+
+| | baseline (pre-negrw) | **negrw** | Δ |
+|---|---|---|---|
+| full (all syst) | **1742** | **1343** | **−23%** |
+| stat-only floor | 771 | 788 | ~flat |
+| freeze autoMCStats | 1032 | 1100 | +7% |
+
+**autoMCStats inflation (full − freeze) collapsed 710 → 243 (−66%)** — the reweighting
+raised SR N_eff at the source, exactly as designed. Stat-only ~unchanged = central template
+undistorted. Per-sample renorm: DYto2L_50 ×0.986, WtoLNu ×0.900, DYto2L_10to50 ×0.446
+(74-evt sample). Baseline datacard backed up `v11_hplusc_v4.{txt,root}.bak_pre_negrw`.
+
+---
+
 # NEGRW RETRAIN — ✅ DONE (Condor, 2026-07-15)
 
 ## ✅ RESULT: sklearn blocker RESOLVED, model + plots + deck delivered
