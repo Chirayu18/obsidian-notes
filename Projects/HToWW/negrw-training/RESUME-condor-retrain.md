@@ -114,6 +114,24 @@ weight_negrw_std mean ~0.012; sample closure Σ|w|g/Σw ≈ 0.98 (tightens with 
 Output: `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_fixed/2022postEE/{DYto2L_2Jets_50,
 _10to50,WtoLNu_2Jets}_<N>/`. Check: `condor_q 9087051 9087052 9087053 -totals`.
 
+## ✅ RE-RUN COMPLETE + FULL VALIDATION (2026-07-15)
+All 68 jobs (9087051/52/53) done. weight_negrw/std in all 3 datasets, **0 NaN / 10,205 SR rows**,
+all g∈[−1,1]. 0-SR-event partitions (esp. low-mass DYto2L_10to50) still wrote sumw_records =
+jobs ran fine, just few events pass the eμ SR (physical).
+**SR N_eff gain = 3.44× (455 → 1563)** — bigger than the +60% on the training region because
+the SR is exactly the starved regime the method targets.
+
+**⚠️ OPEN PHYSICS QUESTION — SR closure offset:** per-dataset Σ|w|g/Σw:
+DYto2L_50 **1.014**, WtoLNu **1.133**, DYto2L_10to50 2.24 (only 74 rows = noise); **TOTAL 1.058**
+(6% high). Training-region closure was 0.994 on 9.8M events. The SR is a small (~10k events),
+kinematically-biased corner of the training domain, so per-event g doesn't perfectly average to
+the local positive fraction → normalization drifts a few %. **DECISION NEEDED before the limit:**
+(a) accept as-is (small vs the 1742 problem), (b) renormalize the reweighted vjets template to the
+nominal yield (reweighting is meant to fix VARIANCE, not change the central yield — a post-hoc
+Σ|w|g→Σw rescale is defensible and standard), or (c) investigate the WtoLNu 13% before trusting.
+Recommendation: **(b) renormalize per dataset** — preserves the N_eff gain while keeping the
+central yield = nominal, which is what closure should give in the large-N limit anyway.
+
 ## ▶️ NEXT STEPS (Phase-3 continuation)
 1. **Re-smoke the SR injection with the NEW model** — run one vjets SR file through the
    processor (now that yaml points at negrw_out_img) and confirm `weight_negrw` /
