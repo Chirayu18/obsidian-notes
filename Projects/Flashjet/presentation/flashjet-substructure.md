@@ -331,12 +331,12 @@ DAS/`xrdcp` → `data/qcd_jmenano_150x.root` (1.7 GB). Ordinary NanoAOD has no c
 jet $p_T$ to CMS's stored `FatJet_pt`, **jet-by-jet**.
 
 **Result — EXACT:** vs the **raw** jet pt (`FatJet_pt×(1−rawFactor)`) the ratio is
-**median 0.999999, σ = 2×10⁻⁴** — pure NanoAOD storage precision. The apparent ~6% offset
+**median 1.000000, σ = 2.5×10⁻⁴** — pure NanoAOD storage precision. The apparent ~6% offset
 vs the stored value **is the L1L2L3 JEC**, nothing else: CMS stores corrected $p_T$, we
 recompute the raw one.
 
-<span class="small">**Input (C).** 2D $p_T$–$p_T$ histogram + mass spectra, real constituents; exactness numbers
-from `exact_match2.py` (20 079 jets).</span>
+<span class="small">**Input (C).** 2D raw-$p_T$ histogram + raw-mass spectra, real constituents (60 257 jets);
+run on HTCondor (cluster 9087059).</span>
 
 </div>
 <div>
@@ -378,7 +378,7 @@ stacked artefacts, both removed: **(1) JEC** — `FatJet_pt`/`msoftdrop` are JEC
 
 ---
 
-## CMS (3) — primary Lund plane of 60 285 real QCD jets
+## CMS (3) — primary Lund plane of 60 257 real QCD jets
 
 <div class="cols">
 <div>
@@ -389,7 +389,7 @@ clean, publication-quality primary Lund plane straight from detector-level simul
 The full [1807.04758] structure emerges with **no toy input**: the hard-collinear perturbative ridge,
 the soft plateau, and the three kinematic edges.
 
-<span class="small">**Input (C).** 60 285 AK8 jets, $p_T>300$ GeV; every primary split of each leading jet histogrammed.</span>
+<span class="small">**Input (C).** 60 257 AK8 jets, $p_T>300$ GeV, **C/A** reclustering; every primary split of each jet histogrammed.</span>
 
 </div>
 <div>
@@ -407,21 +407,20 @@ the soft plateau, and the three kinematic edges.
 
 ---
 
-## Open follow-ups (CMS plots)
+## Reproducibility & full-statistics numbers
 
-The **CMS (2)** exact-match figure (`cms_exact_match.png`) is final and raw-to-raw. The other
-CMS display plots still use the **old JEC-corrected** reference and need a pass:
+All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
+(`make_cms_plots.py`, vectorized loader; run on **HTCondor** cluster 9087059, 60 257 jets):
 
-- [ ] **`make_cms_plots.py` → compare RAW-to-RAW** — use `FatJet_rawFactor` for the jet pt and
-  `SubJet_rawFactor` + `subJetIdx1/2` for the soft-drop reference (as `exact_match2.py` does).
-- [ ] **`cms_recluster.png`** — currently vs JEC-corrected `FatJet_pt` (title says "6% mean");
-  regenerate vs raw pt → should read ≈ 0.
-- [ ] **`cms_softdrop.png`** — currently anti-kt-tree grooming vs corrected msoftdrop (−4 GeV);
-  regenerate on the **C/A tree** vs raw subjet mass → should read ≈ 0.
-- [ ] **`cms_lund.png`** — regenerate on the C/A tree (currently anti-kt-tree Lund).
+| observable | comparison | result |
+|---|---|---|
+| jet $p_T$ | our anti-kt vs `FatJet_pt×(1−rawFactor)` | median **1.000000**, σ 2.5×10⁻⁴ |
+| soft-drop mass | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.004 GeV**, 95.7% <0.5 GeV |
+| $z_g$ | our vs raw subjet $z$ | \|Δ\| = **7×10⁻⁵** |
 
-<span class="small">Deferred deliberately — the exact-match plot already proves the physics; these are cosmetic
-consistency fixes for the deck. Tracked in `Projects/Flashjet/Status.md`.</span>
+<span class="small">The residual is NanoAOD float-storage precision throughout. `make_cms_plots.py` clusters anti-kt
+$R=0.8$ for the jet + a big-$R$ **C/A** reclustering of the same constituents for grooming/Lund
+(FastJet SoftDrop and the primary Lund plane are both defined on C/A).</span>
 
 ---
 
