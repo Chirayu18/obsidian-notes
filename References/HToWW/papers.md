@@ -45,5 +45,19 @@ open directly in Obsidian on the laptop.
   W+2-jet @ NLO — literally our `WtoLNu_2Jets` sample.** Strictly better than our template smoothing
   (which only masks the symptom). Apply upstream (resample the W+jets/DY parquets) before combine.
 
+### Negative-weight REWEIGHTING — arXiv:2510.16217  ← THE method we implemented
+- **File:** [[2510.16217-negweight-reweighting.pdf]]
+- **Title:** *Reweighting negative-weight Monte Carlo events with uncertainty quantification* — Palmer & Kronheim.
+- **Method:** train a classifier for P₊(x⃗)=P(weight>0|gen kinematics); reweight by g(x⃗)=2P₊−1 so the
+  estimator is `Σ|w|·g` (no ±cancellation) → higher N_eff. Ensemble → observable-level shape uncertainty.
+- **Key results we use:** normalization preserved **exactly by construction for the true g** (Eqs. 2–6,
+  "PDF = PDF_reweight"); closure demonstrated on **training variables** (§V C); uncertainty from an
+  ensemble (§IV B), applied event-level (§IV C) or observable-level (§IV D). Validated on a **V+jets Sherpa
+  sample, ~70% positive weights** in the hard-Vpt region — our exact regime.
+- **Our implementation + a subtlety:** we see a finite-stat SR closure offset (~6%) and renormalize the
+  reweighted vjets template per dataset — an **extension beyond** the paper (theirs closed cleanly enough
+  to skip it). Full reasoning: [[2026-07-17-closure-renormalization-decision]]. Training deck +
+  results: `Projects/HToWW/negrw-training/slides.md`.
+
 > Convention: reference papers/PDFs live here under `References/<Project>/` (committed); generated
 > notes live under `Projects/<Project>/`; regenerable plots/data stay on EOS and are linked.
