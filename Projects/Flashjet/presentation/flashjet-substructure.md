@@ -426,6 +426,85 @@ FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
 
 <!-- _class: lead -->
 
+# On a **ttbar** sample
+
+*boosted-top jets · comparison against the sample's own stored FastJet branches*
+
+<span class="small">CMS `TTTo2L2Nu` UL18 JMENano 150X, 344 k events → 12 561 leading AK8 jets ($p_T>300$, $|\eta|<2.4$).
+"Comparison against FastJet" = comparison against CMS's **stored** `FatJet_*`/`SubJet_*`/`tau*` branches
+(CMS clustered them with FastJet), **not** a FastJet re-run.</span>
+
+---
+
+## ttbar — flashjet = stored FastJet branches (raw-to-raw)
+
+![w:820](img/ttbar_exact.png)
+
+<div class="cols">
+<div>
+
+**pt** (our anti-kt $R=0.8$ vs `FatJet_pt×(1−rawFactor)`): median **1.000002**, σ 2.2×10⁻⁴.
+
+</div>
+<div>
+
+**soft-drop mass** (our C/A tree vs $m$(raw sub₁+sub₂)): median Δ **−0.041 GeV**, 94.2% <0.5 GeV.
+
+</div>
+</div>
+
+<span class="small">The exact match holds on a completely different final state (boosted tops + b-jets), not just QCD —
+same conclusion, same NanoAOD-precision residual.</span>
+
+---
+
+## ttbar — primary Lund plane (F3)
+
+<div class="cols">
+<div>
+
+`lund_coordinates_from_history` (C/A, $R=0.8$) on 12 561 real ttbar AK8 jets.
+
+The full [1807.04758] structure appears, and — unlike QCD — an **enhanced hard-splitting region**
+around $\ln 1/\Delta R\!\approx\!1,\ \ln k_t\!\approx\!1$: the wide-angle, hard prongs from
+boosted top / $b$ decays that QCD jets don't have.
+
+<span class="small">Clean, publication-quality Lund plane straight from detector-level ttbar simulation, entirely from our F3.</span>
+
+</div>
+<div>
+
+![w:520](img/ttbar_lund.png)
+
+</div>
+</div>
+
+---
+
+## ttbar — our substructure vs stored FastJet observables
+
+![w:900](img/ttbar_substr.png)
+
+<div class="cols">
+<div>
+
+**Left (F1):** our exclusive-2-subjet $\sqrt{d_{12}}$ (kt splitting scale) on ttbar jets, with $m_W/m_t$ marks.
+**Middle (F2):** our soft-drop $z_g$ vs CMS's **raw subjet** $z$, jet-by-jet — median \|Δ\| = **1.6×10⁻⁴**.
+
+</div>
+<div>
+
+**Right (context):** the sample's stored FastJet **N-subjettiness** ratios — $\tau_2/\tau_1$ (W-tag),
+$\tau_3/\tau_2$ (top-tag). Our $z_g$ tracking CMS's stored subjet $z$ to 10⁻⁴ closes F2 directly
+against FastJet's SoftDrop output.
+
+</div>
+</div>
+
+---
+
+<!-- _class: lead -->
+
 # Backup
 
 ---

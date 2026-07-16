@@ -38,11 +38,11 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [x] Implement new features — kt & C/A substructure (F1/F2/F3), see 2026-07-08 log
 - [x] Have Alex review the working-tree changes (NOT committed to repo per instruction) [completion:: 2026-07-15]
 - [x] Commit changes — pushed to `origin/benchmarking` as `2e912ef` [completion:: 2026-07-15]
-- [ ] Add lund plane plot for ttbar + compare to the sample's STORED FastJet branches
-      (FastJet comparison = CMS's own `FatJet_*`/`SubJet_*`/`tau*`/`n2b1,n3b1`, NOT re-running
-      FastJet): (a) ttbar Lund plane (F3, boosted-top 3-prong); (b) pt + m_SD raw-to-raw vs
-      stored branches; (c) our substructure vs stored subjets + N-subjettiness. **Blocked: needs
-      a ttbar UL18 JMENano sample → grid proxy at `~/x509up`.**
+- [x] Add lund plane plot for ttbar + compare to the sample's STORED FastJet branches — done on
+      HTCondor 9098883 (`make_ttbar_plots.py`, TTTo2L2Nu UL18 JMENano 150X, 12561 leading AK8 jets):
+      (a) ttbar Lund plane w/ enhanced hard-splitting region; (b) pt 1.000002 / m_SD −0.041 GeV
+      raw-to-raw vs stored `FatJet_*`/`SubJet_*`; (c) our z_g vs CMS subjet z |Δ|=1.6e-4, F1 √d12,
+      stored τ ratios. [completion:: 2026-07-17]
 - [x] Compare using all Jet candidates in an event as constituents — full-event anti-kt R=0.8
       on ALL PFCands/event, matched by dR to CMS's stored AK8 jets (`make_fullevent_plots.py`).
       Result: 7701 jets, pt median 1.0000 (100% within 2%), match dR 0.0019. [completion:: 2026-07-17]
