@@ -132,6 +132,22 @@ nominal yield (reweighting is meant to fix VARIANCE, not change the central yiel
 Recommendation: **(b) renormalize per dataset** — preserves the N_eff gain while keeping the
 central yield = nominal, which is what closure should give in the large-N limit anyway.
 
+## ⚠️ 689 / 10325 vjets SR events (~7%) missing due to xrootd errors
+(re-run vs Jul-12 production; `jobs_status.py` = 0 missing jobs since loss is intra-job;
+transient `XRootD Operation expired` on ~53 input files, mostly ruhex-osgce.rutgers.edu).
+Proceeding anyway per user — background template, yield renormalized to nominal.
+
+## ✅ MERGE DONE (2026-07-17) — via repo's own merge_parquet_files
+Merged the 3 vjets samples' fresh shards → the combine inputs, using
+`analysis.postprocess.utils.merge_parquet_files` (the repo's tested flat-concat +
+sumw-aggregation merger), scoped to vjets only (NOT the full merge). Wrote:
+`SAMPLE_DIR/<sample>.parquet` (nominal) + `SAMPLE_DIR/<shift>/<sample>.parquet` (12 shifts)
+= 39 files, all with `weight_negrw`, verified 0 bad. Old files backed up `.bak_pre_negrw`.
+Driver: `/tmp/merge_vjets_via_repo.py` (takes sample names as argv; idempotent; 6× retry on
+the EOS footer-read race that aborted the first WtoLNu run).
+**ctag2d SKIPPED per user** (combine histo-maker doesn't read those cols; append_ctag2d not run).
+Nominal rows: DYto2L_50=9646, DYto2L_10to50=74, WtoLNu=469 (~7% below Jul-12 due to xrootd).
+
 ## ▶️ NEXT STEPS (Phase-3 continuation)
 1. **Re-smoke the SR injection with the NEW model** — run one vjets SR file through the
    processor (now that yaml points at negrw_out_img) and confirm `weight_negrw` /
