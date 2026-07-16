@@ -79,10 +79,18 @@ deferred: worth a look (feature coverage of the W SR corner) but the total 6% is
 the r₉₅=1742 problem and shouldn't block the limit.
 
 ## Implementation note
-Do the rescale where the vjets SR template is built
-(`make_combine_histograms_v11_v32.py`, filling with `|weight_nominal|·weight_negrw`), BEFORE
-`dy_template_smooth.py` runs — smoothing already re-pins to its input yield, so as long as
-the input is the renormalized template, the datacard rate stays = nominal. The ±weight_negrw_std
-ensemble spread still provides the PCA/shape nuisance on top.
+**USER DECISION (2026-07-17): reweighting REPLACES smoothing — do NOT run both.**
+The reweighting fixes the SR variance at the source (real N_eff gain, 3.44×), whereas
+`dy_template_smooth.py` only masks the symptom (pools the sparse tail into a smooth shape).
+Stacking them double-counts the regularization and muddies the interpretation of the result.
+So: build the vjets SR template with `|weight_nominal|·weight_negrw`, apply the per-dataset
+renorm (→ rate = nominal), and **SKIP the smoothing step entirely** (do not call
+`dy_template_smooth.py` on the reweighted templates). The ±weight_negrw_std ensemble spread
+provides the shape nuisance instead of / on top of nothing-else.
+
+Do the renorm where the vjets SR template is built
+(`make_combine_histograms_v11_v32.py`, filling with `|weight_nominal|·weight_negrw`). Compare
+the final limit against BOTH baselines: nominal (r₉₅=1742) and the old smoothed template, to
+show reweighting alone is at least as good without the smoothing bias.
 
 See [[hww-negweight-reweight-fix]] · paper: `References/HToWW/2510.16217-negweight-reweighting.pdf`

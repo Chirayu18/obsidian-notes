@@ -289,6 +289,70 @@ The trained ensemble is applied **inside the coffea processor**, adding **2 colu
 
 ---
 
+## Validation on the actual signal region
+
+The model was trained on the veto-eμ region; these plots test it on the **real eμ SR**
+(10,205 vjets events) it never saw — actual weights vs the classifier's prediction.
+
+<div class="cols">
+<div>
+
+![w:430](img/V1_calibration.png)
+
+</div>
+<div class="small">
+
+**Calibration.** Bin SR events by predicted $P_+$; plot the **observed** fraction with
+$w>0$ in each bin. Points land on the diagonal across the full range
+($P_+ \approx 0.15 \to 0.93$) → the classifier's predicted positive-rate **is** the
+realised one, out-of-training-region.
+
+</div>
+</div>
+
+---
+
+## Predicted reweight factor tracks the realised sign
+
+<div class="cols">
+<div>
+
+![w:520](img/V2_g_vs_sign.png)
+
+</div>
+<div class="small">
+
+Predicted $\langle g\rangle = \langle 2P_+-1\rangle$ (blue) vs the **actual**
+$\langle\mathrm{sign}(w)\rangle$ (red), in bins of $p_T^V$. Every actual point sits on
+the predicted curve — the reweight factor reproduces the realised weight sign at **every**
+$p_T^V$, including the hard tail.
+
+</div>
+</div>
+
+---
+
+## Closure & sign separation in the SR
+
+<div class="cols">
+<div>
+
+![w:470](img/V3_closure_renorm.png)
+<span class="small">After per-sample renorm (×0.945): reweighted $\sum|w|g$ tracks nominal $\sum w$, ratio ≈ 1.</span>
+
+</div>
+<div>
+
+![w:470](img/V4_pplus_by_actual_sign.png)
+<span class="small">True $w>0$ (blue) peak at high $P_+$; true $w<0$ (red) shift low — clean separation on SR events.</span>
+
+</div>
+</div>
+
+<span class="small">The SR closes to ~6% before renormalisation (finite-stat residual on ~10⁴ SR events; training-region closure was 0.994 on 9.8M). We rescale each reweighted vjets template to its nominal yield — variance-fix only, yield preserved — consistent with the paper's exact-closure guarantee for the true $g$.</span>
+
+---
+
 ## Reproducibility note
 
 The ensemble is trained **inside the same Singularity image the analysis workers run**
