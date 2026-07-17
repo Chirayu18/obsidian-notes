@@ -22,14 +22,25 @@ Both: autoMCStats inflation collapsed (~-60%), stat-only ~flat (template undisto
 v32 baseline datacard backed up `combine_inputs/v11_hplusc_v32_v9.{txt,root}.bak_pre_negrw`;
 builder `.bak2_pre_negrw`.
 
-## ⚠️ OPEN: METHOD UNCERTAINTY NOT YET IN THE LIMIT
-Both numbers above are **central-value only**. The reweighting's OWN systematic —
-`weight_negrw_std` = 2·std(P+) (ensemble spread, mean ~0.012, already in the parquets,
-validated) — is NOT yet added as a datacard shape nuisance. arXiv:2510.16217 §IV B–D
-prescribes it (event-level ±g_std → vjets template Up/Down shape, or PCA over the ensemble
-per-bin covariance). This WILL pull the limit back up somewhat from 1343/1491 — the honest
-cost of the method. **TODO before quoting a final number.** The `weight_negrw_std` column is
-currently unused.
+## ✅ METHOD UNCERTAINTY NOW INCLUDED — and it is NEGLIGIBLE
+Added `CMS_negrw_vjets` as a **vjets-only shape nuisance** in BOTH builders, from the
+20-model ensemble spread: Up/Down = |w_nom|·clip(g ± weight_negrw_std, −1, 1), each
+renormalised to the nominal yield ⇒ **shape-only** (arXiv:2510.16217 §IV C, event-level).
+Verified in the workspace as a real fitted nuisance (`CMS_negrw_vjets`, `..._In`).
+
+**Limits are UNCHANGED with it in: v11 1343 → 1343, v32 1491 → 1491.**
+Why: the nuisance is tiny — max per-bin effect **±1.3%** (SR vjets Up 730.5 / nom 735.4 /
+Down 740.5), against per-bin MC-stat still ~20%. δg mean ≈ 0.012 (very tight 20-model
+agreement) ⇒ combine profiles it away; it is utterly subdominant to the statistical error.
+**So 1343 / 1491 are the honest numbers INCLUDING the method's own uncertainty.**
+
+Implementation: v11 `make_combine_inputs.py` (sentinel col `__negrw__` in `variations`,
+handled in `process_sample`, `negrw_shape_name` arg; datacard row = "1" for vjets, "-" else).
+v32 `make_combine_histograms_v11_v32.py` (`NEGRW_SHAPE`, same sentinel) +
+`make_datacard_v11_v32.py` (row emitted iff templates exist). Object-shift call sites do NOT
+get negrw Up/Down (no double counting).
+Future refinement: PCA over the per-bin ensemble covariance (§IV D) would need per-model P+
+per event re-dumped (parquets store only mean + std).
 
 ## 🎯 FINAL RESULT (2026-07-17)
 Neg-weight reweighting wired into the canonical combine builder
