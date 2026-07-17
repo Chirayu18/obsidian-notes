@@ -47,9 +47,10 @@ CPU/CUDA identical, negligible cost.
 |---|---|---|
 | unit tests | independent NumPy tree-walks | 85 passed (13 CUDA-only skipped) |
 | paper closures | analytic predictions, toy shower | $z_g$ on the $1/z$ curve; areas; $\beta$-ordering |
-| **real CMS QCD** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000000**; $m_{SD}$ **−0.004 GeV** |
-| **real CMS ttbar** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000002**; $m_{SD}$ **−0.041 GeV** |
+| **real CMS QCD** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000000**; $m_{SD}$ **−0.004 GeV**; $R_g$ 99.2% <0.01 |
+| **real CMS ttbar** ×2 | stored FastJet branches (raw-to-raw) | dileptonic UL18 **and** fully-hadronic Run 3 close |
 | full-event | ΔR-match to CMS's own AK8 jets | 100% within 2%, median ΔR 0.0019 |
+| physics regimes | QCD vs b-jets vs boosted tops | $m_W$/$m_t$ peaks, top blob in the Lund plane |
 
 **flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision.**
 The remaining ~4% $m_{SD}$ tail is fully attributed (soft constituents missing from the stored
@@ -548,6 +549,98 @@ against FastJet's SoftDrop output.
 
 <!-- _class: lead -->
 
+# Three samples side by side
+
+*QCD vs dileptonic ttbar vs **fully-hadronic** ttbar — the first sample with real boosted W/top decays*
+
+<span class="small">**(1)** `QCD_Pt-15to7000_Flat2018` UL18 JMENano (13 TeV) — 160 393 jets ·
+**(2)** `TTTo2L2Nu` UL18 JMENano (13 TeV) — 8 639 jets ·
+**(3)** `TTto4Q` **RunIII2024Summer24 JMENanoV15** (13.6 TeV, 2024 pileup) — 16 516 jets.
+All: leading AK8 jet/event, raw $p_T>300$ GeV, $|\eta|<2.4$, ≤200 constituents, full files
+(`make_compare_plots.py`, HTCondor 9099026). Same schema everywhere: PUPPI-weighted `PFCand` + `FatJetPFCand` map.</span>
+
+---
+
+## Lund planes: QCD → b-jets → boosted tops (F3)
+
+![w:1080](img/compare_lund.png)
+
+<span class="small">**The top-decay scale appears exactly where it must**: the $t\bar t \to 4q$ plane grows a hard-splitting
+blob at $\ln k_t \approx \ln(m_W/2) \approx 3.7$, wide-angle ($\ln 1/\Delta R \lesssim 1$) — over **2×** QCD in the
+ratio panel (right). The dileptonic sample (b-jets, no hadronic top) shows only a mild version. Same clustering,
+same F3, three physics regimes.</span>
+
+---
+
+## Spectra: $m_W$ / $m_t$ peaks from our grooming (F1 + F2)
+
+![w:1080](img/compare_spectra.png)
+
+<span class="small">**Left (F2):** our raw soft-drop mass — the fully-hadronic sample peaks at $m_W$ with a top
+shoulder at $m_t$; dileptonic peaks broad and lower (b + extra radiation); QCD falls. **Middle (F2):** $z_g$ —
+ttbar flatter than QCD's $\sim 1/z$ (hard 2-body splits). **Right (F1):** kt splitting scale $\sqrt{d_{12}}$ —
+hadronic tops bump near $m_W/2$ and beyond, QCD collapses to low scales.</span>
+
+---
+
+## $R_g$ — a second jet-by-jet exact match (F2 vs stored subjets)
+
+![w:840](img/compare_rg.png)
+
+<div class="cols">
+<div>
+
+<span class="small">**What:** our split angle $R_g$ (`groom_from_history`'s `dR`) vs stored
+$\Delta R$(sub₁,sub₂), **jet-by-jet**: median Δ ≤ 2×10⁻⁴ — with $z_g$, both grooming observables close.
+**Run 3 = the outlier-anatomy mechanism at a higher dose**: same floor/precision, but 2024 pileup →
+**90%** of jets have $p_T$ ratio < 1 (UL18: 50%), **99%** of Δm outliers negative; relative agreement
+stays **0.14%** — its jets are just heavy (median 93 GeV), so the 0.5 GeV window bites.</span>
+
+</div>
+<div>
+
+<span class="small">
+
+| sample | $p_T$ ratio | $m_{SD}$ Δ | $R_g$ \|Δ\|<0.01 |
+|---|---|---|---|
+| QCD UL18 | 0.999999 | −0.004 (95.7%<0.5) | **99.2%** |
+| $t\bar t$ 2ℓ2ν | 0.999998 | −0.033 (94.1%<0.5) | 95.9% |
+| $t\bar t$ 4q '24 | 0.999556 | −0.077 (69.3%<0.5) | 87.0% |
+
+</span>
+
+</div>
+</div>
+
+---
+
+## Soft-drop $\beta$-family on real QCD jets (F2)
+
+<div class="cols">
+<div>
+
+The toy-shower closure, repeated on **164 292 real CMS jets**: re-groom the same C/A trees at
+$\beta = 0, 1, 2$ ($z_{\rm cut}=0.1$) and plot $\rho = m^2/(p_T^2 R^2)$.
+
+- grooming pushes mass **down**; **smaller $\beta$ grooms harder** — the exact ordering
+  of Soft Drop [1402.2657] Figs. 3–4;
+- $\beta=0$ (mMDT) develops the characteristic flat low-$\rho$ tail.
+
+<span class="small">**Input (C)** — real constituents; grooming re-run 3× on the *same* merge histories
+(a pure post-read: no re-clustering needed, which is the point of the history design).</span>
+
+</div>
+<div>
+
+![w:560](img/qcd_beta_family.png)
+
+</div>
+</div>
+
+---
+
+<!-- _class: lead -->
+
 # Backup
 
 ---
@@ -565,6 +658,8 @@ All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
 | jet $p_T$ (ttbar 2L2Nu) | 12 561 leading jets, HTCondor 9098883 | median **1.000002**, σ 2.2×10⁻⁴ |
 | soft-drop mass (ttbar) | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.041 GeV**, 94.2% <0.5 GeV |
 | full-event (QCD) | all PFCands → anti-kt, ΔR-match to `FatJet_*` | 7 701 jets, pt **1.0000**, ΔR med **0.0019** |
+| $R_g$ (3 samples) | our groomed `dR` vs ΔR(sub₁,sub₂), HTCondor 9099026 | median Δ ≤ 2×10⁻⁴; 99.2/95.9/87.0% <0.01 |
+| TTto4Q Run 3 2024 | 16 516 leading jets, raw-to-raw | pt 0.999556, $m_{SD}$ −0.077 GeV — table-floor effect ↑ w/ pileup, rel. agreement 0.14% |
 
 <span class="small">The residual is NanoAOD float-storage precision throughout. `make_cms_plots.py` clusters anti-kt
 $R=0.8$ for the jet + a big-$R$ **C/A** reclustering of the same constituents for grooming/Lund

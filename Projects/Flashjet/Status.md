@@ -54,12 +54,31 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
       C/A trees, 7% z≈z_cut prong flips); relative agreement ~0.1% at all masses; NOT an
       algorithm error, not fixable from NanoAOD. See [[2026-07-17-msd-outlier-anatomy]].
       [completion:: 2026-07-17]
-- [ ] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund overlay/ratio,
-      R_g exact match, spectra, β-family on data (`make_compare_plots.py`, condor)
+- [x] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund planes + 4q/QCD ratio
+      (top-decay blob at ln kt≈3.7, >2× QCD), m_SD spectra w/ m_W peak + m_t shoulder, z_g,
+      √d12, NEW R_g jet-by-jet exact match (99.2/95.9/87.0% within 0.01), β-family on 164k
+      real QCD jets. HTCondor 9099026, full files. Run3 TTto4Q closes too — its bigger m_SD
+      tail is the table-floor effect at 2024 pileup (90% pt<1, 99% Δm<0, rel. agreement 0.14%).
+      [completion:: 2026-07-17]
 
 ---
 
 ## Log
+
+### 2026-07-17 — Outlier anatomy + three-sample comparison + Run3 TTto4Q (Claude, lxplus)
+Two big items, both in the deck (now 34 slides) and pushed:
+1. **m_SD outliers explained** (`outliers.py` + 3 follow-ups, HTCondor 9098953): the 4.4%
+   |Δm|>0.5 GeV tail = 50% soft candidates missing from `FatJetPFCand` (~0.1 GeV table
+   floor; proven via one-sided groomed-pt deficit, corr 0.42 with Δm) + 23% storage
+   rounding + 20% rounding-sensitive C/A trees + 7% z≈z_cut prong flips. Relative
+   agreement ~0.1% at all masses. NOT fixable from NanoAOD, not an algorithm error.
+   Note: [[2026-07-17-msd-outlier-anatomy]].
+2. **Three-sample comparison** (`make_compare_plots.py`, HTCondor 9099026): pulled Run3
+   2024 `TTto4Q` JMENanoV15 (only other JMENano-with-constituents dataset anywhere;
+   UL18 v9 TTToHadronic has NO PFCands). Lund planes QCD/2ℓ2ν/4q + ratio (top blob at
+   ln kt≈ln(m_W/2), >2×), m_W/m_t peaks in our m_SD, NEW R_g jet-by-jet match
+   (Δ ≤ 2×10⁻⁴), β-ordering on real data. Run3's larger tail = the same table-floor
+   mechanism at 2024 pileup (90% jets pt<1, 99% Δm<0; rel. agreement 0.14%).
 
 ### 2026-07-15 — Committed substructure to benchmarking + presentation update (Claude, lxplus)
 Committed the F1/F2/F3 working-tree changes to the flashjet repo and pushed:

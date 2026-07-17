@@ -154,3 +154,44 @@ C/A trees, 7% z≈z_cut prong flips. Relative agreement ~0.1% in every mass bin 
 property, not an algorithm error. See [[2026-07-17-msd-outlier-anatomy]]. HTCondor 9098953.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png
+
+### Lund planes across physics: QCD vs dileptonic vs fully-hadronic ttbar + ratio
+
+tags: [plot]
+Date: 2026-07-17
+Description: Primary Lund planes (F3, C/A) of the leading AK8 jet in three real samples — UL18 QCD flat
+(164k jets), UL18 TTTo2L2Nu (8.9k), Run3 2024 TTto4Q 13.6 TeV (16.6k) — plus the 4q/QCD ratio. The
+fully-hadronic sample grows a hard wide-angle blob at ln kt ≈ ln(m_W/2) ≈ 3.7, >2× QCD in the ratio;
+the dileptonic (b-jet) sample shows only a mild version. HTCondor 9099026, make_compare_plots.py.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_lund.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_lund.png
+
+### Sample-comparison spectra — m_W/m_t peaks from our grooming
+
+tags: [plot]
+Date: 2026-07-17
+Description: Our soft-drop mass (raw), z_g and kt √d12 for QCD / TTTo2L2Nu / TTto4Q. Fully-hadronic ttbar
+peaks at m_W with a m_t shoulder in m_SD and bumps near m_W/2 in √d12; ttbar z_g flatter than QCD's ~1/z.
+All observables computed by flashjet F1/F2 on real PUPPI-weighted constituents.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_spectra.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_spectra.png
+
+### R_g exact match — our soft-drop split angle vs stored subjet ΔR, jet-by-jet
+
+tags: [plot]
+Date: 2026-07-17
+Description: New exact-match observable: our groomed split angle R_g vs the stored ΔR(SubJet1,SubJet2),
+per sample. Median Δ ≤ 2×10⁻⁴ everywhere; within 0.01 for 99.2% (QCD) / 95.9% (2L2Nu) / 87.0% (Run3 4q —
+the reduced rate is the table-floor/pileup effect, see [[2026-07-17-msd-outlier-anatomy]]).
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_rg.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_rg.png
+
+### Soft-drop β-family on 164k REAL QCD jets
+
+tags: [plot]
+Date: 2026-07-17
+Description: ρ = m²/(pt²R²) at β=0,1,2 (z_cut=0.1) + ungroomed, on real UL18 QCD constituents — the
+Soft Drop paper β-ordering (smaller β grooms harder; β=0 flat low-ρ tail) reproduced on data, by re-running
+groom_from_history 3× on the SAME merge histories (pure post-read, no re-clustering).
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/qcd_beta_family.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/qcd_beta_family.png
