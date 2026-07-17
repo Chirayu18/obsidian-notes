@@ -54,6 +54,10 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
       C/A trees, 7% z≈z_cut prong flips); relative agreement ~0.1% at all masses; NOT an
       algorithm error, not fixable from NanoAOD. See [[2026-07-17-msd-outlier-anatomy]].
       [completion:: 2026-07-17]
+- [ ] Explore the merge history for **tagger inputs**: combine C/A variables (Lund coordinates,
+      groomed z_g/R_g, declustering sequence) with jet understanding from kT (splitting scales
+      √d12/√d23, exclusive-subjet structure) — idea: feed kT + C/A history-derived variables
+      into jet taggers (all are cheap post-reads of the same histories, GPU-batchable)
 - [x] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund planes + 4q/QCD ratio
       (top-decay blob at ln kt≈3.7, >2× QCD), m_SD spectra w/ m_W peak + m_t shoulder, z_g,
       √d12, NEW R_g jet-by-jet exact match (99.2/95.9/87.0% within 0.01), β-family on 164k
