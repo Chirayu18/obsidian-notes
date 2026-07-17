@@ -531,7 +531,9 @@ fully-hadronic sample, next section).
 <div class="cols">
 <div>
 
-**Left (F1):** our exclusive-2-subjet $\sqrt{d_{12}}$ (kt splitting scale) on ttbar jets, with $m_W/m_t$ marks.
+**Left (F1):** our exclusive-2-subjet $\sqrt{d_{12}}$ (kt splitting scale) on ttbar jets; the
+$m_W/m_t$ lines are **mass-scale references only** — a decay splitting sits at
+$\sqrt{d_{12}} = m\sqrt{z/(1-z)} \approx m/2$, and this dileptonic sample has no hadronic decays.
 **Middle (F2):** our soft-drop $z_g$ vs CMS's **raw subjet** $z$, jet-by-jet — median \|Δ\| = **1.6×10⁻⁴**.
 
 </div>
@@ -577,8 +579,9 @@ same F3, three physics regimes.</span>
 
 <span class="small">**Left (F2):** our raw soft-drop mass — the fully-hadronic sample peaks at $m_W$ with a top
 shoulder at $m_t$; dileptonic peaks broad and lower (b + extra radiation); QCD falls. **Middle (F2):** $z_g$ —
-ttbar flatter than QCD's $\sim 1/z$ (hard 2-body splits). **Right (F1):** kt splitting scale $\sqrt{d_{12}}$ —
-hadronic tops bump near $m_W/2$ and beyond, QCD collapses to low scales.</span>
+ttbar flatter than QCD's $\sim 1/z$ (hard 2-body splits). **Right (F1):** kt splitting scale $\sqrt{d_{12}} = m\sqrt{z/(1-z)}$ — checked in $m_{SD}$ slices:
+W-window jets peak at **39 ≈ $m_W/2$**, top-window jets at **81 ≈ $m_t/2$** (which coincidentally $\approx m_W$!);
+QCD collapses to low scales.</span>
 
 ---
 
