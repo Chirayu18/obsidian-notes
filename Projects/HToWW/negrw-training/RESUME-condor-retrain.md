@@ -7,6 +7,30 @@ source: lxplus
 
 # NEGRW — ✅✅ LIMIT IMPROVED: r95 1742 → 1343 (−23%)
 
+## 🎯 RESULT (2026-07-17) — BOTH v11 AND v32, central value only
+
+| builder | metric | baseline | negrw | Δ |
+|---|---|---|---|---|
+| **v11** (make_combine_inputs.py) | full | 1742 | **1343** | −23% |
+| | stat-only | 771 | 788 | +2% |
+| | freeze-autoMCStats | 1032 | 1100 | |
+| **v32** (make_combine_histograms_v11_v32.py, v32_v9 model) | full | 1935 | **1491** | −23% |
+| | stat-only | 600 | 599 | flat |
+| | freeze-autoMCStats | 1068 | 1083 | |
+
+Both: autoMCStats inflation collapsed (~-60%), stat-only ~flat (template undistorted).
+v32 baseline datacard backed up `combine_inputs/v11_hplusc_v32_v9.{txt,root}.bak_pre_negrw`;
+builder `.bak2_pre_negrw`.
+
+## ⚠️ OPEN: METHOD UNCERTAINTY NOT YET IN THE LIMIT
+Both numbers above are **central-value only**. The reweighting's OWN systematic —
+`weight_negrw_std` = 2·std(P+) (ensemble spread, mean ~0.012, already in the parquets,
+validated) — is NOT yet added as a datacard shape nuisance. arXiv:2510.16217 §IV B–D
+prescribes it (event-level ±g_std → vjets template Up/Down shape, or PCA over the ensemble
+per-bin covariance). This WILL pull the limit back up somewhat from 1343/1491 — the honest
+cost of the method. **TODO before quoting a final number.** The `weight_negrw_std` column is
+currently unused.
+
 ## 🎯 FINAL RESULT (2026-07-17)
 Neg-weight reweighting wired into the canonical combine builder
 (`scripts/combine/make_combine_inputs.py`, `is_vjets` path: fill = |w|·weight_negrw·renorm,
@@ -19,9 +43,19 @@ REPLACES smoothing). Limit on `outputs/combine/v11_hplusc_v4.txt`:
 | freeze autoMCStats | 1032 | 1100 | +7% |
 
 **autoMCStats inflation (full − freeze) collapsed 710 → 243 (−66%)** — the reweighting
-raised SR N_eff at the source, exactly as designed. Stat-only ~unchanged = central template
-undistorted. Per-sample renorm: DYto2L_50 ×0.986, WtoLNu ×0.900, DYto2L_10to50 ×0.446
-(74-evt sample). Baseline datacard backed up `v11_hplusc_v4.{txt,root}.bak_pre_negrw`.
+raised SR N_eff at the source, exactly as designed. Per-sample renorm: DYto2L_50 ×0.986,
+WtoLNu ×0.900, DYto2L_10to50 ×0.446 (74-evt sample). Baseline datacard backed up
+`v11_hplusc_v4.{txt,root}.bak_pre_negrw`.
+
+**THE SMOKING GUN (SR_hplusc_vjets bin-6):** baseline `0.000 ± 4.1e9 %` (the ±79k
+cancellation → 0±∞, the bin that drove 1742) → negrw **`91.5 ± 24.7 %`** (real, finite).
+SR mean rel MC-stat err/bin: ~∞ → **0.203**; CR_vjets: 0.193 → 0.126. Every bin's error
+shrank, contents stayed physical, yield preserved by renorm.
+**Why stat-only floor moved 771→788 (not flat):** the "stat-only" limit freezes
+allConstrainedNuisances but KEEPS autoMCStats `prop_bin*` floating — so it INCLUDES per-bin
+MC-stat error. The reweighting changes those errors (bin6 0±∞ → 91±25%), so stat-only SHOULD
+move; +2% is the net rebalance = expected, not a distortion. ("freeze autoMCStats" is the
+separate line that removes prop_bin*.)
 
 ---
 
