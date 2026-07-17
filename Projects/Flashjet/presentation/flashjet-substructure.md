@@ -52,10 +52,9 @@ CPU/CUDA identical, negligible cost.
 | full-event | ΔR-match to CMS's own AK8 jets | 100% within 2%, median ΔR 0.0019 |
 | physics regimes | QCD vs b-jets vs boosted tops | $m_W$/$m_t$ peaks, top blob in the Lund plane |
 
-**flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision.**
-The remaining ~4% $m_{SD}$ tail is fully attributed (soft constituents missing from the stored
-table + storage rounding + threshold flips — see the outlier-anatomy slide); relative agreement
-is ~0.1% at all masses.
+**flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision.** The ~4% $m_{SD}$
+tail is fully attributed (missing soft constituents + storage rounding + threshold flips — see
+outlier anatomy); relative agreement is ~0.1% at all masses.
 
 ---
 
@@ -647,6 +646,11 @@ $\beta = 0, 1, 2$ ($z_{\rm cut}=0.1$) and plot $\rho = m^2/(p_T^2 R^2)$.
 
 ## Reproducibility & full-statistics numbers
 
+<style scoped>
+table { font-size: 14.5px; }
+section { font-size: 18px; }
+</style>
+
 All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
 (`make_cms_plots.py`, vectorized loader; run on **HTCondor** cluster 9087059, 60 257 jets):
 
@@ -659,11 +663,9 @@ All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
 | soft-drop mass (ttbar) | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.041 GeV**, 94.2% <0.5 GeV |
 | full-event (QCD) | all PFCands → anti-kt, ΔR-match to `FatJet_*` | 7 701 jets, pt **1.0000**, ΔR med **0.0019** |
 | $R_g$ (3 samples) | our groomed `dR` vs ΔR(sub₁,sub₂), HTCondor 9099026 | median Δ ≤ 2×10⁻⁴; 99.2/95.9/87.0% <0.01 |
-| TTto4Q Run 3 2024 | 16 516 leading jets, raw-to-raw | pt 0.999556, $m_{SD}$ −0.077 GeV — table-floor effect ↑ w/ pileup, rel. agreement 0.14% |
+| TTto4Q Run 3 2024 | 16 516 leading jets, raw-to-raw | pt 0.999556, $m_{SD}$ −0.077 GeV — table-floor effect ↑ w/ pileup, rel. 0.14% |
 
-<span class="small">The residual is NanoAOD float-storage precision throughout. `make_cms_plots.py` clusters anti-kt
-$R=0.8$ for the jet + a big-$R$ **C/A** reclustering of the same constituents for grooming/Lund
-(FastJet SoftDrop and the primary Lund plane are both defined on C/A).</span>
+<span class="small">Residual = NanoAOD float storage throughout. Jets: anti-kt $R=0.8$; grooming/Lund: big-$R$ **C/A** reclustering (as FastJet).</span>
 
 ---
 
