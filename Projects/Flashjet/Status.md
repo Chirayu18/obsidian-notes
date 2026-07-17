@@ -49,6 +49,13 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [x] Fix `make_cms_plots.py` to compare RAW-to-RAW (`FatJet_rawFactor` + raw subjets), regenerate all CMS plots — done on HTCondor 9087059 (pt 1.000000, m_SD −0.004 GeV) [completion:: 2026-07-17]
 - [x] Re-title `cms_recluster.png` — now vs raw pt, median 1.000000 [completion:: 2026-07-17]
 - [x] Regenerate `cms_lund.png` on the C/A tree [completion:: 2026-07-17]
+- [x] Explain the ~4% m_SD outliers — fully attributed (50% missing soft constituents in
+      `FatJetPFCand` [~0.1 GeV table floor], 23% storage rounding, 20% rounding-sensitive
+      C/A trees, 7% z≈z_cut prong flips); relative agreement ~0.1% at all masses; NOT an
+      algorithm error, not fixable from NanoAOD. See [[2026-07-17-msd-outlier-anatomy]].
+      [completion:: 2026-07-17]
+- [ ] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund overlay/ratio,
+      R_g exact match, spectra, β-family on data (`make_compare_plots.py`, condor)
 
 ---
 

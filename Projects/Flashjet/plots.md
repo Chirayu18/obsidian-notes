@@ -115,10 +115,10 @@ These four are not toys: PF candidates from `/QCD_Pt-15to7000_TuneCP5_Flat2018_1
 
 tags: [plot]
 Date: 2026-07-13
-Description: flashjet anti-kt R=0.8 on real CMS PF constituents reproduces the CMS AK8 jet pt (53254 jets,
-tight diagonal). Constant offset below the line = raw-vs-PUPPI: CMS builds jets from PUPPI-weighted
-constituents, NanoAOD stores raw pt with no per-candidate weight, so our pt is ~6% high. Ungroomed mass
-spectra overlay in shape (right panel), differing only in normalization. Proves the clustering path is correct on data.
+Description: (regenerated 2026-07-17, raw-to-raw) flashjet anti-kt R=0.8 on real CMS PF constituents
+(which ARE PUPPI-weighted — branch titles) vs the RAW jet pt = FatJet_pt×(1−rawFactor): median ratio
+1.000000, σ 2.5×10⁻⁴, 60 257 jets (HTCondor 9087059). The earlier "~6% PUPPI offset" story was wrong —
+it was the L1L2L3 JEC on the stored pt, nothing else.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_recluster.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_recluster.png
 
@@ -126,10 +126,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026
 
 tags: [plot]
 Date: 2026-07-13
-Description: Our soft-drop mass (z_cut=0.1, β=0, from `groom_from_history`) vs CMS FatJet_msoftdrop, jet-by-jet
-on 51573 real jets — hugs the diagonal, median Δ=−4.19 GeV. Spectrum (right) tracks CMS including the low-mass
-turnover. Diagnostic: a single per-jet pt rescale (cms_pt/raw_pt, the missing-PUPPI proxy) drives the pt ratio
-to 1.000 and halves the mass offset to −3.7 GeV — confirming the residual is PUPPI normalization, not a grooming bug.
+Description: (regenerated 2026-07-17, raw-to-raw + C/A tree) Our soft-drop mass (z_cut=0.1, β=0, declustering
+the big-R C/A reclustering like FastJet SoftDrop) vs m(raw SubJet1+SubJet2): median Δ=−0.004 GeV, 95.7%
+within 0.5 GeV (HTCondor 9087059). The old −4 GeV offset was two stacked artefacts, both removed: subjet
+JECs (msoftdrop = m of JEC-corrected subjets) and grooming the anti-kt tree instead of the C/A tree.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_softdrop.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_softdrop.png
 
@@ -142,3 +142,15 @@ arXiv:1807.04758 emerges from data: the hard-collinear perturbative ridge, the s
 three kinematic edges — no toy input, pure detector-level PF candidates.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_lund.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/cms_lund.png
+
+### m_SD outlier anatomy — the residual 4.4% tail fully attributed
+
+tags: [plot]
+Date: 2026-07-17
+Description: Why 4.4% of jets have |Δm_SD|>0.5 GeV vs the stored subjets: 50% soft constituents missing
+from FatJetPFCand (effective ~0.1 GeV table floor; one-sided Δm<0, groomed-pT deficit correlates with Δm,
+δm² ≈ pT·pT_lost·ΔR²), 23% storage rounding (SubJet ~9-bit pt, rawFactor ~5-bit), 20% rounding-sensitive
+C/A trees, 7% z≈z_cut prong flips. Relative agreement ~0.1% in every mass bin — the tail is a NanoAOD
+property, not an algorithm error. See [[2026-07-17-msd-outlier-anatomy]]. HTCondor 9098953.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png

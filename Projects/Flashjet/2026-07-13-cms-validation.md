@@ -75,6 +75,11 @@ The residual is **NanoAOD float storage precision**, nothing physical. `make_cms
 now clusters anti-kt R=0.8 for the jet and a big-R **C/A** reclustering of the same
 constituents for soft-drop / Lund.
 
+**Update 2026-07-17:** the remaining ~4.4% tail of |Δm_SD|>0.5 GeV jets is now *fully
+attributed* — 50% soft constituents missing from `FatJetPFCand` (~0.1 GeV table floor),
+23% storage rounding, 20% rounding-sensitive C/A trees, 7% z≈z_cut prong flips.
+Relative agreement is ~0.1% in every mass bin. Details: [[2026-07-17-msd-outlier-anatomy]].
+
 ## Bottom line
 
 Our clustering and substructure, written against a toy validation ladder, drop onto real CMS

@@ -4,7 +4,7 @@ theme: default
 paginate: true
 size: 16:9
 header: 'flashjet — GPU substructure (F1/F2/F3)'
-footer: 'C. Gupta · 2026-07-13'
+footer: 'C. Gupta · 2026-07-17'
 style: |
   section { font-size: 21px; padding: 48px 60px 60px; }
   h1 { color: #b00020; font-size: 32px; }
@@ -28,10 +28,33 @@ style: |
 exclusive jets · soft-drop grooming · Lund coordinates
 
 **Chirayu Gupta** — for Alexandre De Moor
-2026-07-13 · branch `benchmarking` (pushed: commit `2e912ef`)
+2026-07-17 · branch `benchmarking` (pushed: commit `2e912ef`)
 
 <span class="small">Every claim below is closed against an independent reference and/or the
 defining paper. All plots regenerable: `plots/2026-07-13-substructure/`.</span>
+
+---
+
+## Summary — what this deck shows
+
+**Three substructure features** (F1 exclusive-kt jets, F2 soft-drop/mMDT grooming, F3 Lund
+coordinates), all **pure-torch post-reads of the existing merge history** — no kernel changes,
+CPU/CUDA identical, negligible cost.
+
+**Validation ladder**, each rung closed:
+
+| rung | reference | headline result |
+|---|---|---|
+| unit tests | independent NumPy tree-walks | 85 passed (13 CUDA-only skipped) |
+| paper closures | analytic predictions, toy shower | $z_g$ on the $1/z$ curve; areas; $\beta$-ordering |
+| **real CMS QCD** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000000**; $m_{SD}$ **−0.004 GeV** |
+| **real CMS ttbar** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000002**; $m_{SD}$ **−0.041 GeV** |
+| full-event | ΔR-match to CMS's own AK8 jets | 100% within 2%, median ΔR 0.0019 |
+
+**flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision.**
+The remaining ~4% $m_{SD}$ tail is fully attributed (soft constituents missing from the stored
+table + storage rounding + threshold flips — see the outlier-anatomy slide); relative agreement
+is ~0.1% at all masses.
 
 ---
 
@@ -378,6 +401,22 @@ stacked artefacts, both removed: **(1) JEC** — `FatJet_pt`/`msoftdrop` are JEC
 
 ---
 
+## CMS (2b) — anatomy of the residual $m_{SD}$ tail (the 4.4%)
+
+![w:1050](img/outlier_anatomy.png)
+
+<span class="small">**Every input branch is stored with reduced mantissa** (`PFCand_pt` ~10 bits ≈ 10⁻³,
+`SubJet_pt/mass` ~9 bits, `SubJet_rawFactor` ~5 bits ≈ 2%) while CMS ran FastJet at full precision.
+Attribution (per-jet tests, 19 695 jets): **50%** — soft candidates **missing from `FatJetPFCand`**
+(the table has an effective ~0.1 GeV floor; the tail is one-sided, its groomed-$p_T$ deficit correlates
+with $\Delta m$, and $\delta m^2\!\approx\!p_T^{jet} p_T^{lost}\Delta R^2$ matches); **23%** within 3σ of
+storage rounding; **20%** rounding-sensitive C/A trees (half-ulp jitter moves them); **7%** genuine
+$z\!\approx\!z_{\rm cut}$ prong flips (14× enriched vs core). **Not fixable from NanoAOD — and not an
+algorithm error**: the fixed 0.5 GeV cut just selects high-mass jets; relative agreement is ~0.1% everywhere.
+Scripts: `outliers.py`, `analyze_outliers*.py`, `rerun_rest.py` (HTCondor 9098953).</span>
+
+---
+
 ## CMS (3) — primary Lund plane of 60 257 real QCD jets
 
 <div class="cols">
@@ -428,11 +467,13 @@ FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
 
 # On a **ttbar** sample
 
-*boosted-top jets · comparison against the sample's own stored FastJet branches*
+*a second, independent final state · comparison against the sample's own stored FastJet branches*
 
 <span class="small">CMS `TTTo2L2Nu` UL18 JMENano 150X, 344 k events → 12 561 leading AK8 jets ($p_T>300$, $|\eta|<2.4$).
 "Comparison against FastJet" = comparison against CMS's **stored** `FatJet_*`/`SubJet_*`/`tau*` branches
-(CMS clustered them with FastJet), **not** a FastJet re-run.</span>
+(CMS clustered them with FastJet), **not** a FastJet re-run.
+Note: `TTTo2L2Nu` is **dileptonic** (both $W\to\ell\nu$), so these AK8 jets are mostly **b-jets + ISR**,
+not hadronic top decays — a fully-hadronic sample follows in the next section.</span>
 
 ---
 
@@ -466,8 +507,10 @@ same conclusion, same NanoAOD-precision residual.</span>
 `lund_coordinates_from_history` (C/A, $R=0.8$) on 12 561 real ttbar AK8 jets.
 
 The full [1807.04758] structure appears, and — unlike QCD — an **enhanced hard-splitting region**
-around $\ln 1/\Delta R\!\approx\!1,\ \ln k_t\!\approx\!1$: the wide-angle, hard prongs from
-boosted top / $b$ decays that QCD jets don't have.
+around $\ln 1/\Delta R\!\approx\!1,\ \ln k_t\!\approx\!1$. Since this sample is **dileptonic**
+(no hadronic top/W decays), the enhancement comes from the different jet composition —
+**b-jets from the top decays + ISR** — not from prongy top decays (those appear in the
+fully-hadronic sample, next section).
 
 <span class="small">Clean, publication-quality Lund plane straight from detector-level ttbar simulation, entirely from our F3.</span>
 
@@ -516,9 +559,12 @@ All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
 
 | observable | comparison | result |
 |---|---|---|
-| jet $p_T$ | our anti-kt vs `FatJet_pt×(1−rawFactor)` | median **1.000000**, σ 2.5×10⁻⁴ |
-| soft-drop mass | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.004 GeV**, 95.7% <0.5 GeV |
-| $z_g$ | our vs raw subjet $z$ | \|Δ\| = **7×10⁻⁵** |
+| jet $p_T$ (QCD) | our anti-kt vs `FatJet_pt×(1−rawFactor)` | median **1.000000**, σ 2.5×10⁻⁴ |
+| soft-drop mass (QCD) | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.004 GeV**, 95.7% <0.5 GeV |
+| $z_g$ (QCD) | our vs raw subjet $z$ | \|Δ\| = **7×10⁻⁵** |
+| jet $p_T$ (ttbar 2L2Nu) | 12 561 leading jets, HTCondor 9098883 | median **1.000002**, σ 2.2×10⁻⁴ |
+| soft-drop mass (ttbar) | our C/A-tree vs $m$(raw sub₁+sub₂) | median **−0.041 GeV**, 94.2% <0.5 GeV |
+| full-event (QCD) | all PFCands → anti-kt, ΔR-match to `FatJet_*` | 7 701 jets, pt **1.0000**, ΔR med **0.0019** |
 
 <span class="small">The residual is NanoAOD float-storage precision throughout. `make_cms_plots.py` clusters anti-kt
 $R=0.8$ for the jet + a big-$R$ **C/A** reclustering of the same constituents for grooming/Lund
@@ -555,6 +601,12 @@ cd /eos/home-c/cgupta/flashjet/plots/2026-07-13-substructure
 micromamba run -n b_hive python make_plots.py        # F1/F2/F3 toy justification + parity
 micromamba run -n b_hive python make_paper_plots.py  # anti-kt/SoftDrop/Lund paper figures
 micromamba run -n b_hive python make_cms_plots.py    # real CMS UL18 QCD (needs qcd_jmenano_150x.root)
+micromamba run -n b_hive python make_fullevent_plots.py  # full-event clustering vs stored AK8
+micromamba run -n b_hive python make_ttbar_plots.py  # ttbar (needs ttbar_jmenano_150x.root)
+micromamba run -n b_hive python make_compare_plots.py # QCD vs 2L2Nu vs TTto4Q comparisons
+micromamba run -n b_hive python outliers.py          # m_SD outlier anatomy
+# long jobs run on HTCondor: submit dir ~/flashjet_condor (AFS; /eos paths are
+# rejected in submit files), executables cd to EOS + `micromamba run -n b_hive`
 
 # tests
 cd /eos/home-c/cgupta/flashjet/FlastJetDemo
