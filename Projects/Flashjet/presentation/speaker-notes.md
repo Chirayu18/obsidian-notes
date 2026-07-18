@@ -5,7 +5,7 @@ date: 2026-07-17
 source: lxplus
 ---
 
-# Speaker notes — flashjet-substructure deck (35 pages)
+# Speaker notes — flashjet-substructure deck (36 pages)
 
 One entry per slide: what it shows, how it was made, the line to say. Deep-dive
 companions: [[2026-07-17-plots-explained]] (theory + method per plot),
@@ -49,6 +49,13 @@ companions: [[2026-07-17-plots-explained]] (theory + method per plot),
     (no gen-match, linear, cross-era) — the point: this input vector is free once the history
     exists. Line: *the history isn't just for validation — it's the tagger input.*
     See [[2026-07-18-tagger-inputs]]. Condor 9128460.
-33. **Reproducibility table** — every headline number + condor ID + jet count.
-34. **Function reference** — added API surface.
-35. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.
+33. **Outlook II: functions + full history** — 13 dimensionless physics functions of the 18
+    vars (grooming survival, √(z/(1−z)), closure χ<1 for massive prongs, ψ₁/ψ₂
+    emission-vs-decay scale): functions-only 0.813; **mass-decorrelated set 0.797 with no
+    explicit mass input** (sculpting-safe). Full history → b-hive: a history is a padded
+    token sequence = the cpf/npf/vtx contract; C/A Lund list (LundNet input) + kT scales as
+    new groups, tree via ParT's pairwise channel. Design only ([[2026-07-18-history-tagger-design]]).
+    Line: *compress to physics functions today; feed the raw sequence tomorrow.*
+34. **Reproducibility table** — every headline number + condor ID + jet count.
+35. **Function reference** — added API surface.
+36. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.

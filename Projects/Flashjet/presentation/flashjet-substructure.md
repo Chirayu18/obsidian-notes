@@ -677,6 +677,34 @@ information is free once the history exists. Condor 9128460.</span>
 
 ---
 
+## Outlook II: physics functions & the full history as tagger input
+
+<div class="cols">
+<div>
+
+**Compress to 13 dimensionless functions** — lnρ, $m_{SD}/m_{ung}$,
+$\sqrt{d_{12}}/m_{SD}=\sqrt{z/(1-z)}$, prong ratios, closure
+$\chi=\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$ (<1 ⇒ massive prongs: top),
+$\psi_{1,2}=\ln k_t^{(1,2)}-\ln m_{SD}$, SD-split match, counting:
+
+- functions-only **0.813**; with raw vars 0.831;
+- **mass-decorrelated set: 0.797** with *no explicit mass input* — the sculpting-safe option.
+
+<span class="small">**Full history → b-hive**: a merge history is a padded token sequence —
+exactly the cpf/npf/vtx input contract. C/A primary Lund list (= LundNet input) + kT scales
+as two new groups; tree structure via ParT's pairwise channel. Config + ntuple branches +
+~20 lines of `InputEmbed` — design note in the vault, not implemented.</span>
+
+</div>
+<div>
+
+![w:640](img/tagger_functions.png)
+
+</div>
+</div>
+
+---
+
 ## Reproducibility & full-statistics numbers
 
 <style scoped>
