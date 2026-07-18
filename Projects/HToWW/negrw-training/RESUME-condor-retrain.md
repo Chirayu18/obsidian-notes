@@ -42,6 +42,18 @@ get negrw Up/Down (no double counting).
 Future refinement: PCA over the per-bin ensemble covariance (§IV D) would need per-model P+
 per event re-dumped (parquets store only mean + std).
 
+## ⛔ v32 OPTIMIZATION — 4 NEGATIVE RESULTS (2026-07-18), DO NOT RETRY
+See [[2026-07-18-v32-optimization-negative-results]] for numbers + why each failed.
+Tried and all WORSE or no-op: (1) pruning empty/low-N_eff bins 1491→1512; (2) rebinning /
+"log transform" of D — current binning is bracketed optimal on both sides; (3) blaming the
+CRs for the MC-stat tax — it is 87% in the SR; (4) tt rateParam 1491→1542 (and 1581 with
+tt theory shapes dropped).
+Two lessons worth keeping: **combine's `autoMCStats N` already skips sub-threshold bins**,
+so empty bins cost nothing; and **freezing a nuisance ≠ constraining it better** — the
+"theory recovers 315" scan does NOT mean 315 is recoverable.
+v32 `v9` is at a local optimum (1491). v11 (1343) remains the better analysis. The only
+open lever is more vjets/tt MC stats at high D.
+
 ## 🎯 FINAL RESULT (2026-07-17)
 Neg-weight reweighting wired into the canonical combine builder
 (`scripts/combine/make_combine_inputs.py`, `is_vjets` path: fill = |w|·weight_negrw·renorm,
