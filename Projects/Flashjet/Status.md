@@ -43,6 +43,72 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-07-18 — Tagger-inputs study: the declustering sequence is the payload (Claude, lxplus)
+Closed the tagger-inputs TODO. Per-jet extraction of kT scales (√d12/√d23/√d34) + C/A
+grooming + Lund summaries on all three samples (HTCondor 9128460), then a weighted-logistic
+AUC ladder on TTto4Q vs pt-reweighted QCD: mass-scale vars saturate at 0.794 (they're
+0.8–0.97 correlated); adding the sequence/counting variables lifts it to **0.827** and
+doubles QCD rejection at 30% eff. Best single non-mass variable: **n_drop** (0.764) —
+decay jets pass soft drop in 0–1 declusterings, QCD needs many. ln kt of the 2nd-hardest
+emission resolves the second decay splitting. Counting alone (no mass) matches the
+mass-scale set. Signal has *fewer* Lund emissions than QCD despite higher pileup, so the
+effect is physical. Note: [[2026-07-18-tagger-inputs]].
+
+### 2026-07-17 — Outlier anatomy + three-sample comparison + Run3 TTto4Q (Claude, lxplus)
+Two big items, both in the deck (now 34 slides) and pushed:
+1. **m_SD outliers explained** (`outliers.py` + 3 follow-ups, HTCondor 9098953): the 4.4%
+   |Δm|>0.5 GeV tail = 50% soft candidates missing from `FatJetPFCand` (~0.1 GeV table
+   floor; proven via one-sided groomed-pt deficit, corr 0.42 with Δm) + 23% storage
+   rounding + 20% rounding-sensitive C/A trees + 7% z≈z_cut prong flips. Relative
+   agreement ~0.1% at all masses. NOT fixable from NanoAOD, not an algorithm error.
+   Note: [[2026-07-17-msd-outlier-anatomy]].
+2. **Three-sample comparison** (`make_compare_plots.py`, HTCondor 9099026): pulled Run3
+   2024 `TTto4Q` JMENanoV15 (only other JMENano-with-constituents dataset anywhere;
+   UL18 v9 TTToHadronic has NO PFCands). Lund planes QCD/2ℓ2ν/4q + ratio (top blob at
+   ln kt≈ln(m_W/2), >2×), m_W/m_t peaks in our m_SD, NEW R_g jet-by-jet match
+   (Δ ≤ 2×10⁻⁴), β-ordering on real data. Run3's larger tail = the same table-floor
+   mechanism at 2024 pileup (90% jets pt<1, 99% Δm<0; rel. agreement 0.14%).
+
+### 2026-07-15 — Committed substructure to benchmarking + presentation update (Claude, lxplus)
+Committed the F1/F2/F3 working-tree changes to the flashjet repo and pushed:
+`29c9da8..2e912ef` on `origin/benchmarking` (`src/flashjet/{history,api,__init__}.py`,
+`README.md`, `tests/test_substructure.py`; 85 passed / 13 skipped confirmed green first).
+Reworked the Marp deck for Alex (`presentation/flashjet-substructure.md`, now 25 slides):
+**re-added** the CMS `FatJet_pt` reclustering and `FatJet_msoftdrop` soft-drop comparison
+slides (with the PUPPI caveat), and added a **"How this plot was made"** block to every
+correctness slide — dataset/toy generator, real-constituents-vs-toy input class (A/B/C),
+selection cuts, R/z_cut/β, event counts, seed. Next: ttbar Lund + proper FastJet comparison.
+
+### 2026-07-13 — Ran the clustering on REAL CMS data (Claude, lxplus)
+Pulled UL18 QCD **JMENano** (150X reprocessing — the one format with `PFCand` +
+`FatJetPFCand` so constituents exist) via DAS/xrdcp, grouped PF candidates per AK8
+jet, and ran **our** flashjet anti-kt R=0.8 + F2 soft-drop + F3 Lund on them
+(`make_cms_plots.py`, chunked to dodge the O(N³) torch-backend OOM):
+- **`cms_recluster.png`** — our reclustered pt vs CMS `FatJet_pt`: tight diagonal.
+- **`cms_softdrop.png`** — our `groom_from_history` (z_cut=0.1,β=0) vs CMS
+  `FatJet_msoftdrop` jet-by-jet: hugs diagonal, median Δ=−4.19 GeV.
+- **`cms_lund.png`** — primary Lund plane of 60285 real jets, full 1807.04758 structure.
+Both pt and mass sit ~6%/~4 GeV below CMS — **PUPPI**, not a bug: CMS clusters
+PUPPI-weighted constituents, NanoAOD stores raw pt with no per-candidate weight.
+`diagnose.py` proves it: a per-jet `cms_pt/raw_pt` rescale drives the pt ratio to
+1.000 and halves the mass offset, so F2 grooming is structurally correct.
+Note: **[[2026-07-13-cms-validation]]**; entries in [[plots.md]].
+
+### 2026-07-13 — Justification plots + paper-figure reproductions (Claude, lxplus)
+Two plot scripts on EOS (`.../plots/2026-07-13-substructure/`):
+- `make_plots.py` — justification plots on ad-hoc QCD/W toys: Lund plane (F3),
+  soft-drop mass (F2), √d12 + exclusive-subjet z (F1), parity (matches independent
+  NumPy declustering to 1.7e-13 GeV) + CPU cost (decoders 10–100× cheaper than
+  clustering).
+- `make_paper_plots.py` — reproduces the papers' signature figures using a toy
+  leading-log parton shower: anti-kt Fig 1 jet areas, Lund Fig 2 triangle closure
+  (flat interior 0.17±0.02), Soft-Drop z_g vs analytic 1/z (near-perfect), ρ vs β.
+Notes: [[2026-07-13-substructure-plots]], [[plots.md]], and **[[2026-07-13-how-it-works]]**
+(explains the toy simulation — none of it pre-existing — and a step-by-step path to
+understanding the implementation). Paper basis: `References/Flashjet/papers.md`.
+NOTE: the toy generators are mine, in the plot scripts (outside the repo); flashjet
+itself only clusters, it does not generate events.
+
 ### 2026-07-08 — Alex's commit landed + new kt/C-A substructure features (Claude, lxplus)
 **Alex pushed `29c9da8` "Adding new bench and opt"** to `origin/benchmarking`
 (FF'd into local). It turned out to be exactly the four items the 2026-07-01

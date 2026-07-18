@@ -1,0 +1,89 @@
+\documentclass[10pt]{article}
+\usepackage[a4paper,margin=1.6cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{titlesec}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+\titlespacing*{\section}{0pt}{8pt}{2pt}
+\titlespacing*{\subsection}{0pt}{5pt}{1pt}
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\ptt}{p_t}
+\newcommand{\dR}{\Delta R}
+\pagestyle{empty}
+
+\begin{document}
+{\Large\bfseries flashjet substructure --- algorithm cheatsheet}\hfill{\small how the algos work, no derivations}
+
+\vspace{2pt}\hrule\vspace{4pt}
+
+Everything below is a \emph{read} of one binary merge tree per jet. Clustering records, per step:
+\code{hist\_p1,p2} (the two parent ids merged; \code{p2=$-1$} beam merge = jet finished, \code{$-2$} pad),
+\code{hist\_child} (new id), \code{hist\_d} (the distance below). Initial particles are ids $0..n{-}1$;
+each merge makes a new id. E-scheme $\Rightarrow$ a pseudojet's 4-momentum is the \emph{sum} of its
+constituents (why \code{\_pseudojet\_p4} is just addition).
+
+\section*{0. The clustering (foundation --- anti-kt / kt / C-A)}
+Sequential recombination: repeatedly merge the pair with the smallest distance, or merge $i$ with the beam.
+\[
+d_{ij}=\min(k_{t,i}^{2p},\,k_{t,j}^{2p})\,\frac{\dR_{ij}^2}{R^2},\qquad
+d_{iB}=k_{t,i}^{2p},\qquad \dR_{ij}^2=\Delta y_{ij}^2+\Delta\phi_{ij}^2 .
+\]
+The exponent $p$ picks the algorithm: \textbf{kt} $p{=}{+}1$ (soft first), \textbf{Cambridge/Aachen} $p{=}0$
+(purely angular, $d_{ij}=\dR^2/R^2$), \textbf{anti-kt} $p{=}{-}1$ (hard first, round jets).
+$y$ = rapidity, $k_t$ = transverse momentum. \code{hist\_d} stores exactly this $d_{ij}$.
+\hfill\emph{[anti-kt 0802.1189 p2--3]}
+
+\section*{1. Exclusive jets --- \code{exclusive\_jets\_from\_history} (a kt concept)}
+Inclusive clustering runs to the end (every particle in some jet). \textbf{Exclusive} = stop early and
+read off the clusters that remain. Two stopping rules:
+\begin{itemize}[nosep,leftmargin=1.4em]
+  \item \textbf{$d_{cut}$}: undo every pair-merge with $d_{ij}\ge d_{cut}$ (keep $d_{ij}<d_{cut}$).
+        \hfill\code{keep\_pair = hist\_d < d\_cut}
+  \item \textbf{$n_{jets}$}: keep only the first $k=n_{init}-n_{jets}$ merges of the sequence,
+        leaving exactly $n_{jets}$ clusters. (For kt, $d$ is monotonic $\Rightarrow$ ``first $k$
+        steps'' $=$ ``smallest-$d$ $k$ merges'' $=$ FastJet's undo-the-widest-$k$.)
+\end{itemize}
+Then each particle is assigned to the highest pseudojet it reaches through \emph{kept} merges only
+(\code{\_resolve\_roots}). Anchor: $n_{jets}=n_{inclusive}$ reproduces the inclusive partition.
+\hfill\emph{[FastJet manual p14, p20]}
+
+\section*{2. Grooming --- \code{groom\_from\_history} (soft-drop / mass-drop)}
+Goal: strip soft wide-angle radiation, keep the hard 2-prong core (cleaner jet mass).
+\textbf{Walk each jet from its root down the harder branch}, undoing the widest split first. At each node
+with parents $i,j$ (let $z=\dfrac{\min(p_{t,i},p_{t,j})}{p_{t,i}+p_{t,j}}$, $\dR=\dR_{ij}$), test the
+\textbf{soft-drop condition}
+\[
+z \;>\; z_{cut}\left(\frac{\dR}{R}\right)^{\!\beta}.
+\]
+\begin{itemize}[nosep,leftmargin=1.4em]
+  \item \textbf{passes} $\to$ this node is the groomed jet; stop.
+  \item \textbf{fails} $\to$ drop the softer parent, recurse into the harder one.
+  \item reach a single particle without passing $\to$ \emph{untagged}.
+\end{itemize}
+Special cases: \textbf{$\beta{=}0$} is the \textbf{modified Mass-Drop Tagger (mMDT)}
+(condition becomes just $z>z_{cut}$). Passing also \code{mu=} adds the \textbf{original mass-drop}
+requirement $\max(m_i,m_j)<\mu\,m_{\text{node}}$ (MDT default $\mu{=}0.67,\ y_{cut}{=}0.09$).
+The walk depth is the $\mathcal{O}(\log_2 n)$ tree descent.
+\hfill\emph{[BDRS 0802.2470; mMDT 1307.0007 p24--26; SoftDrop 1402.2657 p3,p6]}
+
+\section*{3. Lund coordinates --- \code{lund\_coordinates\_from\_history}}
+De-cluster each jet (widest split first) and, at every split, emit the kinematics of that emission ---
+the inputs to the \textbf{primary Lund plane} (a standard substructure / ML representation).
+Per split, from the two parents $i,j$:
+\[
+z=\frac{\min(p_{t,i},p_{t,j})}{p_{t,i}+p_{t,j}},\quad \dR=\dR_{ij},\quad k_t=\min(p_{t,i},p_{t,j})\,\dR,
+\]
+and the code stores the 6-tuple $\big(z,\ \dR,\ k_t,\ \ln\tfrac{1}{\dR},\ \ln k_t,\ d\big)$; the Lund
+plane is the $\big(\ln\tfrac1\dR,\ \ln k_t\big)$ scatter of a jet's splits. The last channel $d$ equals
+\code{splitting\_scales} exactly (the built-in cross-check). Bounds on real splits: $z\in(0,\tfrac12]$,
+$\dR\le R$.
+\hfill\emph{[Lund plane 1807.04758 p4--6]}
+
+\vspace{4pt}\hrule\vspace{3pt}
+{\small\textbf{Mental model:} clustering builds a binary tree per jet. \textbf{F1} cuts the tree at a
+chosen depth (exclusive jets); \textbf{F2} walks it top-down peeling soft branches (grooming);
+\textbf{F3} logs the physics of every split (Lund). The pages that follow are the primary-source
+definitions of each formula above.}
+\end{document}

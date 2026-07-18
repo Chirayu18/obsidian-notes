@@ -1,0 +1,21 @@
+executable = job_mva_2dcats.sh
+
+arguments = $(ClusterId)$(ProcId)
+
+output = job_2dcats.$(ClusterId).$(ProcId).out
+error  = job_2dcats.$(ClusterId).$(ProcId).err
+log    = job_2dcats.$(ClusterId).log
+
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+
+getenv = True
+
+request_GPUs = 1
+request_CPUs = 1
+request_memory = 8000
+
+requirements = regexp("H100", TARGET.GPUs_DeviceName) && (TARGET.OpSysAndVer =?= "AlmaLinux9")
+
++JobFlavour = "nextweek"
+queue
