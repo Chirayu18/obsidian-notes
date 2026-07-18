@@ -81,5 +81,34 @@ model, and it's free once the histories exist. Natural next step if pursued: gen
 W vs top vs QCD classes, same-era samples, and the full per-emission Lund list into a
 small transformer/LundNet-style model (flashjet emits exactly that list, batched).
 
-Plots: `tagger_quick.png` (first pass), `tagger_study.png` (full set) — links in [[plots]].
+## Follow-up: 13 physics-motivated FUNCTIONS of the 18 variables (`tagger_functions.py`)
+
+Dimensionless, physics-closed combinations to feed a tagger instead of raw variables
+(mostly pt-decorrelated by construction):
+
+| function | formula | physics |
+|---|---|---|
+| lnρ | $\ln(m_{SD}^2/p_T^2R^2)$ | QCD scaling variable (QCD flat in lnρ) |
+| ln m_SD | — | the one absolute (resonance) scale |
+| f_groom | $m_{SD}/m_{ung}$ | grooming survival: decays keep mass, QCD doesn't (0.747 alone) |
+| f_z | $\sqrt{d_{12}}/m_{SD}=\sqrt{z/(1-z)}$ | momentum sharing of the mass-defining split |
+| f_21, f_32 | $\sqrt{d_{23}}/\sqrt{d_{12}}$, $\sqrt{d_{34}}/\sqrt{d_{23}}$ | prong hierarchy |
+| χ | $\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$ | 2-prong closure; χ<1 flags **massive prongs** (top→Wb) |
+| ψ₁, ψ₂ | $\ln k_t^{(1,2)} - \ln m_{SD}$ | is the (2nd-)hardest emission at the decay scale? |
+| f_match | $\ln(\Delta R_{kt1}/R_g)$ | hardest-kt emission ≡ soft-drop split? |
+| ln(1+n_drop), n_kt1, n_kt5 | — | declustering patience + perturbative activity |
+
+Results (same logistic setup): functions-only **0.813** (13 vars, vs 0.829 for raw-18 —
+the counting variables carry some irreducible non-ratio information); functions+raw 0.831;
+**mass-decorrelated set (no lnρ/ln m_SD): 0.797** — near mass-scale performance with no
+explicit mass input, the sculpting-safe option. Logistic weight ranking after the two mass
+scales: ψ₁, n_kt1, ψ₂, f_match, ln(1+n_drop). Plot: `tagger_functions.png`.
+
+**Recommendation for a tagger**: feed the 13 functions as `global_features` (compact,
+interpretable, decorrelation-friendly — drop lnρ/ln m_SD for a mass-decorrelated tagger),
+and add the raw counting trio (n_lund, n_kt1, n_kt5) which the ratios don't fully cover.
+For the *full* merge history as a sequence input, see [[2026-07-18-history-tagger-design]].
+
+Plots: `tagger_quick.png` (first pass), `tagger_study.png` (full set),
+`tagger_functions.png` (physics functions) — links in [[plots]].
 Related: [[2026-07-17-plots-explained]], [[2026-07-13-cms-validation]].

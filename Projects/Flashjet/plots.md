@@ -219,3 +219,15 @@ emission, n_drop — AUC 0.764 alone), logistic AUC ladder mass-scale 0.794 → 
 declustering sequence carries tagger information beyond the mass scale — all post-reads of the histories.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_study.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_study.png
+
+### Physics-motivated functions of the history variables — tagger-input compression
+
+tags: [plot]
+Date: 2026-07-18
+Description: 13 dimensionless physics-closed functions of the 18 merge-history variables
+(lnρ, m_SD/m_ung grooming survival, √d12/m_SD=√(z/(1−z)), prong-hierarchy ratios, 2-prong
+closure χ, ψ₁/ψ₂ emission-vs-decay-scale, SD-split match, counting). Shapes + AUCs, function-set
+ROC ladder (functions-only 0.813, raw-18 0.829, both 0.831, mass-decorrelated 0.797) and
+correlations. tagger_functions.py on tagger_vars npz.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_functions.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_functions.png
