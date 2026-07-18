@@ -195,3 +195,15 @@ Soft Drop paper β-ordering (smaller β grooms harder; β=0 flat low-ρ tail) re
 groom_from_history 3× on the SAME merge histories (pure post-read, no re-clustering).
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/qcd_beta_family.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/qcd_beta_family.png
+
+### Tagger-input quick study — merge-history variables, TTto4Q vs QCD
+
+tags: [plot]
+Date: 2026-07-18
+Description: First pass at the tagger-inputs TODO from the existing compare_sample npz checkpoints.
+TTto4Q (Run3) vs QCD (UL18), pt-reweighted 300–800 GeV: signal/background shapes + single-variable
+ROC AUCs (m_SD 0.779, √d12 0.790, kt_g 0.780, R_g 0.776, z_g 0.605, m_ung 0.786), logistic-combo
+ROCs (kT-only 0.794 / C-A-only 0.784 / kT+C-A 0.799) and the signal correlation matrix — the
+mass-scale variables are 0.8–0.97 correlated, motivating √d23 + Lund-multiplicity extraction.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_quick.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_quick.png

@@ -57,7 +57,15 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 - [ ] Explore the merge history for **tagger inputs**: combine C/A variables (Lund coordinates,
       groomed z_g/R_g, declustering sequence) with jet understanding from kT (splitting scales
       √d12/√d23, exclusive-subjet structure) — idea: feed kT + C/A history-derived variables
-      into jet taggers (all are cheap post-reads of the same histories, GPU-batchable)
+      into jet taggers (all are cheap post-reads of the same histories, GPU-batchable).
+      **In progress 2026-07-18:** quick study from existing checkpoints done
+      (`tagger_quick.py` → `tagger_quick.png`, TTto4Q vs pt-reweighted QCD 300–800 GeV:
+      single-var AUCs m_SD 0.779 / √d12 0.790 / kt_g 0.780 / R_g 0.776 / z_g 0.605;
+      logistic combos kT-only 0.794, C/A-only 0.784, kT+C/A 0.799 — mass-scale vars are
+      0.8–0.97 correlated, so the gain must come from 3-prong/counting vars). Per-jet
+      extraction of √d23/√d34 + Lund summaries (n_lund, n_kt1, n_kt5, 3 hardest ln kt,
+      z/ΔR at hardest split, n_drop) running on HTCondor **9128460**
+      (`extract_tagger_vars.py` → `tagger_vars_sample{0,1,2}.npz`).
 - [x] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund planes + 4q/QCD ratio
       (top-decay blob at ln kt≈3.7, >2× QCD), m_SD spectra w/ m_W peak + m_t shoulder, z_g,
       √d12, NEW R_g jet-by-jet exact match (99.2/95.9/87.0% within 0.01), β-family on 164k
