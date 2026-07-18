@@ -207,3 +207,15 @@ ROCs (kT-only 0.794 / C-A-only 0.784 / kT+C-A 0.799) and the signal correlation 
 mass-scale variables are 0.8–0.97 correlated, motivating √d23 + Lund-multiplicity extraction.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_quick.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_quick.png
+
+### Tagger-input full study — kT + C/A merge-history variables, AUC ladder
+
+tags: [plot]
+Date: 2026-07-18
+Description: Full 18-variable tagger-input study (extract_tagger_vars.py, HTCondor 9128460 + tagger_study.py).
+TTto4Q vs pt-reweighted QCD: new-variable shapes (√d23, √d23/√d12, Lund counts, ln kt of 2nd-hardest
+emission, n_drop — AUC 0.764 alone), logistic AUC ladder mass-scale 0.794 → +3-prong 0.802 → +geometry
+0.806 → +Lund counting 0.827 (counting alone 0.787, no mass info), signal correlation matrix. The
+declustering sequence carries tagger information beyond the mass scale — all post-reads of the histories.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_study.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_study.png

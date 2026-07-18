@@ -5,7 +5,7 @@ date: 2026-07-17
 source: lxplus
 ---
 
-# Speaker notes — flashjet-substructure deck (34 pages)
+# Speaker notes — flashjet-substructure deck (35 pages)
 
 One entry per slide: what it shows, how it was made, the line to say. Deep-dive
 companions: [[2026-07-17-plots-explained]] (theory + method per plot),
@@ -42,6 +42,13 @@ companions: [[2026-07-17-plots-explained]] (theory + method per plot),
 29. **R_g exact match** — our split angle vs stored ΔR(sub1,sub2) (the subjets ARE the passing split's prongs): Δ ≤ 2e-4; 99.2/95.9/87.0% <0.01. Run 3 = slide-19 mechanism at 2024-pileup dose (90% pt<1, 99% Δm<0, rel. 0.14%).
 30. **β-family on data** — slide 13 redone on 164k real jets by re-reading the same histories (no re-clustering — the design point).
 31. **Backup divider.**
-32. **Reproducibility table** — every headline number + condor ID + jet count.
-33. **Function reference** — added API surface.
-34. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.
+32. **Outlook: tagger inputs** — 18 history-derived variables (kT scales + C/A groom + Lund
+    summaries), TTto4Q vs pt-reweighted QCD, weighted logistic. Mass-scale vars saturate at
+    0.794 (0.8–0.97 correlated); adding the declustering *sequence* → 0.827, ~2× rejection at
+    30% eff. Sleeper: n_drop 0.764 alone; ln kt^(2) sees the 2nd decay splitting. Exploratory
+    (no gen-match, linear, cross-era) — the point: this input vector is free once the history
+    exists. Line: *the history isn't just for validation — it's the tagger input.*
+    See [[2026-07-18-tagger-inputs]]. Condor 9128460.
+33. **Reproducibility table** — every headline number + condor ID + jet count.
+34. **Function reference** — added API surface.
+35. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.

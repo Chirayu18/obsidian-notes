@@ -647,6 +647,36 @@ $\beta = 0, 1, 2$ ($z_{\rm cut}=0.1$) and plot $\rho = m^2/(p_T^2 R^2)$.
 
 ---
 
+## Outlook: history variables as tagger inputs
+
+<div class="cols">
+<div>
+
+All of the above as an **18-variable input vector** — kT scales ($\sqrt{d_{12}}, \sqrt{d_{23}}, \sqrt{d_{34}}$),
+C/A grooming ($m_{SD}, z_g, R_g, n_{drop}$), Lund summaries (emission counts, hardest $\ln k_t$'s) —
+each a **post-read of histories we already have**.
+
+$t\bar t\to 4q$ vs $p_T$-reweighted QCD, weighted logistic:
+
+- mass-scale vars saturate at AUC **0.794** (0.8–0.97 correlated);
+- the **declustering sequence** is the complement: full set **0.827**,
+  ~2× QCD rejection at 30% eff;
+- sleeper: $n_{drop}$ alone 0.764 — decay jets pass soft drop in 0–1 declusterings;
+- $\ln k_t^{(2)}$ resolves the **second** decay splitting.
+
+<span class="small">Exploratory (no gen-match, linear model, cross-era) — the point is the
+information is free once the history exists. Condor 9128460.</span>
+
+</div>
+<div>
+
+![w:640](img/tagger_study.png)
+
+</div>
+</div>
+
+---
+
 ## Reproducibility & full-statistics numbers
 
 <style scoped>

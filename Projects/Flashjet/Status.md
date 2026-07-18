@@ -54,18 +54,20 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
       C/A trees, 7% z≈z_cut prong flips); relative agreement ~0.1% at all masses; NOT an
       algorithm error, not fixable from NanoAOD. See [[2026-07-17-msd-outlier-anatomy]].
       [completion:: 2026-07-17]
-- [ ] Explore the merge history for **tagger inputs**: combine C/A variables (Lund coordinates,
+- [x] Explore the merge history for **tagger inputs**: combine C/A variables (Lund coordinates,
       groomed z_g/R_g, declustering sequence) with jet understanding from kT (splitting scales
       √d12/√d23, exclusive-subjet structure) — idea: feed kT + C/A history-derived variables
       into jet taggers (all are cheap post-reads of the same histories, GPU-batchable).
-      **In progress 2026-07-18:** quick study from existing checkpoints done
-      (`tagger_quick.py` → `tagger_quick.png`, TTto4Q vs pt-reweighted QCD 300–800 GeV:
-      single-var AUCs m_SD 0.779 / √d12 0.790 / kt_g 0.780 / R_g 0.776 / z_g 0.605;
-      logistic combos kT-only 0.794, C/A-only 0.784, kT+C/A 0.799 — mass-scale vars are
-      0.8–0.97 correlated, so the gain must come from 3-prong/counting vars). Per-jet
-      extraction of √d23/√d34 + Lund summaries (n_lund, n_kt1, n_kt5, 3 hardest ln kt,
-      z/ΔR at hardest split, n_drop) running on HTCondor **9128460**
-      (`extract_tagger_vars.py` → `tagger_vars_sample{0,1,2}.npz`).
+      **Done:** 18-variable study, TTto4Q vs pt-reweighted QCD (`tagger_quick.py`,
+      `extract_tagger_vars.py` HTCondor 9128460, `tagger_study.py` →
+      `tagger_quick.png`/`tagger_study.png`). Mass-scale vars all ~0.78–0.79 AUC and
+      0.8–0.97 correlated (logistic combo 0.794); the *declustering sequence* is the
+      complementary information: n_drop 0.764 alone, ln kt of 2nd-hardest Lund emission
+      shows the 2nd decay splitting, √d23 the 3-prong structure. Full-set logistic
+      **AUC 0.827** (counting-only 0.787 with no mass info); ~2× QCD rejection at 30%
+      signal eff. Premise confirmed. Write-up: [[2026-07-18-tagger-inputs]].
+      Possible follow-ups (not started): gen-matched W/top/QCD classes, same-era QCD,
+      per-emission Lund list into a LundNet-style model. [completion:: 2026-07-18]
 - [x] Sample-comparison plots (QCD vs TTTo2L2Nu vs Run3 TTto4Q): Lund planes + 4q/QCD ratio
       (top-decay blob at ln kt≈3.7, >2× QCD), m_SD spectra w/ m_W peak + m_t shoulder, z_g,
       √d12, NEW R_g jet-by-jet exact match (99.2/95.9/87.0% within 0.01), β-family on 164k
@@ -76,6 +78,17 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 ---
 
 ## Log
+
+### 2026-07-18 — Tagger-inputs study: the declustering sequence is the payload (Claude, lxplus)
+Closed the tagger-inputs TODO. Per-jet extraction of kT scales (√d12/√d23/√d34) + C/A
+grooming + Lund summaries on all three samples (HTCondor 9128460), then a weighted-logistic
+AUC ladder on TTto4Q vs pt-reweighted QCD: mass-scale vars saturate at 0.794 (they're
+0.8–0.97 correlated); adding the sequence/counting variables lifts it to **0.827** and
+doubles QCD rejection at 30% eff. Best single non-mass variable: **n_drop** (0.764) —
+decay jets pass soft drop in 0–1 declusterings, QCD needs many. ln kt of the 2nd-hardest
+emission resolves the second decay splitting. Counting alone (no mass) matches the
+mass-scale set. Signal has *fewer* Lund emissions than QCD despite higher pileup, so the
+effect is physical. Note: [[2026-07-18-tagger-inputs]].
 
 ### 2026-07-17 — Outlier anatomy + three-sample comparison + Run3 TTto4Q (Claude, lxplus)
 Two big items, both in the deck (now 34 slides) and pushed:
