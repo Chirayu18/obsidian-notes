@@ -13,6 +13,9 @@ date: 2026-07-11
 
 ---
 
+> **📄 Full write-up:** [[2026-07-19-ctag2d-full-documentation]] — derivation, plane plot with
+> bins, pipeline integration, MVA results, feature-importance tables, and the v32 recipe.
+
 ## Commands
 
 ```bash
