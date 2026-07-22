@@ -231,3 +231,25 @@ ROC ladder (functions-only 0.813, raw-18 0.829, both 0.831, mass-decorrelated 0.
 correlations. tagger_functions.py on tagger_vars npz.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_functions.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tagger_functions.png
+
+### Per-variable distributions — all 31 tagger inputs (5 grouped panels)
+
+tags: [plot]
+Date: 2026-07-22
+Description: Signal-vs-background (TTto4Q vs pt-reweighted QCD, 300–800 GeV) distributions for
+ALL tagger inputs — 18 raw history variables + 13 physics functions = 31, laid out 6-per-image
+by physics group for the deck's "All inputs (1–5/5)" slides. Each panel: QCD filled + ttbar→4q
+step, weighted single-variable AUC in the title. Groups: mass-scale (msd/d12/mung/ktg/ln msd/lnρ,
+all 0.78–0.79), prong/kT (d23 0.684 … fz), Lund/counting (n_drop 0.765 best non-mass, lnkt2 sees
+2nd splitting), groom-geometry (R_g 0.779, fgroom 0.747), functions (χ closure, ψ₂ 0.670). Made by
+tagger_allvars.py on the tagger_vars npz.
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_mass.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_mass.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_prong.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_prong.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_lund.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_lund.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_groom.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_groom.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_fn.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_fn.png
