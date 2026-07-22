@@ -5,7 +5,7 @@ date: 2026-07-17
 source: lxplus
 ---
 
-# Speaker notes — flashjet-substructure deck (36 pages)
+# Speaker notes — flashjet-substructure deck (41 pages)
 
 One entry per slide: what it shows, how it was made, the line to say. Deep-dive
 companions: [[2026-07-17-plots-explained]] (theory + method per plot),
@@ -56,6 +56,19 @@ companions: [[2026-07-17-plots-explained]] (theory + method per plot),
     token sequence = the cpf/npf/vtx contract; C/A Lund list (LundNet input) + kT scales as
     new groups, tree via ParT's pairwise channel. Design only ([[2026-07-18-history-tagger-design]]).
     Line: *compress to physics functions today; feed the raw sequence tomorrow.*
-34. **Reproducibility table** — every headline number + condor ID + jet count.
-35. **Function reference** — added API surface.
-36. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.
+34. **All inputs (1/5) mass-scale** — per-variable sig-vs-bkg distributions, 6 panels, AUC
+    on each. msd/d12/mung/ktg/ln msd/lnρ all 0.78–0.79, 0.8–0.97 correlated (same 2-prong
+    mass). Point to the clean m_W≈80 + m_t≈160 structure in ln m_SD. Made by `tagger_allvars.py`.
+35. **All inputs (2/5) prong/kT** — d23/d34/d23r/f21/f32/fz. The splitting scales beyond the
+    first + ratios; d23 0.684 carries 3-prong top; fz=√(z/(1-z)) mass-decorrelated by construction.
+36. **All inputs (3/5) Lund/counting** — n_lund/n_kt1/n_kt5/lnkt2/lnkt3/ndrop. The declustering
+    *sequence*. n_drop 0.765 (best non-mass), lnkt2 sees the 2nd decay splitting, signal has
+    *fewer* emissions despite higher pileup (physical, not pileup artifact).
+37. **All inputs (4/5) groom geom** — zg/rg/z_kt1/dr_kt1/n_const/fgroom. R_g 0.779 (fixed wide
+    decay angle vs QCD collinear); fgroom=m_SD/m_ung 0.747 grooming survival.
+38. **All inputs (5/5) functions** — chi/psi1/psi2/fmatch/lndrop/nkt5. Closure χ<1 flags massive
+    prongs (top); ψ2 0.670 sees the W sub-decay. Every AUC weighted-logistic single-variable,
+    same selection. All in [[2026-07-18-tagger-inputs]]. Condor 9128460.
+39. **Reproducibility table** — every headline number + condor ID + jet count.
+40. **Function reference** — added API surface.
+41. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.

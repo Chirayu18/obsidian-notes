@@ -705,6 +705,134 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 ---
 
+## All inputs (1/5) — mass-scale variables
+
+<div class="cols">
+<div>
+
+![w:560](img/tvars_mass.png)
+
+<span class="small">Filled = QCD (pt-reweighted), red = $t\bar t\to 4q$; per-panel weighted single-variable AUC. All at **0.78–0.79** and 0.8–0.97 correlated — they probe the *same* 2-prong decay mass, so add little to one another.</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+- **$m_{SD}$** (0.782): soft-drop mass — clean $m_W\!\approx\!80$ peak + $m_t\!\approx\!160$ shoulder; QCD a steep low-mass continuum.
+- **$\sqrt{d_{12}}$** (0.792, best of group): $\approx\min(p_{T1},p_{T2})\Delta R$ of the last merge — momentum-weighted mass scale of the hardest split.
+- **$m_{ung}$** (0.788): ungroomed mass — signal keeps its mass, QCD's is inflated by soft wide radiation.
+- **$k_{t,g}=z_g p_T R_g$** (0.783): $k_t$ of the groomed split, another mass proxy.
+- **$\ln m_{SD}$** (0.782), **$\ln\rho=\ln(m_{SD}^2/(p_TR)^2)$** (0.784): log forms. QCD is ~flat in $\ln\rho$; signal piles at the decay mass — cleanest of the group.
+
+</div>
+</div>
+
+---
+
+## All inputs (2/5) — prong-hierarchy / kT variables
+
+<div class="cols">
+<div>
+
+![w:560](img/tvars_prong.png)
+
+<span class="small">The kT splitting scales *beyond the first* and their **ratios** — do multiple hard prongs exist with a hierarchy (3-prong top, 2-prong W) vs QCD's single DGLAP ladder?</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+- **$\sqrt{d_{23}}$** (0.684): 2nd kT scale — populated for 3-prong top (W→qq̄ inside), near zero for 2-prong W or 1-prong QCD.
+- **$\sqrt{d_{34}}$** (0.633): 3rd splitting — weakest, mostly extra radiation.
+- **$d_{23}/d_{12}$ = $f_{21}$** (0.655): the ratio removes overall scale — signal peaks near 0.1 (hierarchical decay scales), QCD broad.
+- **$f_{32}=\sqrt{d_{34}}/\sqrt{d_{23}}$** (0.628): next ratio in the hierarchy.
+- **$f_z=\sqrt{d_{12}}/m_{SD}=\sqrt{z/(1-z)}$** (0.638): momentum sharing of the mass split, **mass-decorrelated** — decay shares evenly ($z\!\approx\!\tfrac12$), QCD soft-biased.
+
+</div>
+</div>
+
+---
+
+## All inputs (3/5) — Lund / counting variables
+
+<div class="cols">
+<div>
+
+![w:560](img/tvars_lund.png)
+
+<span class="small">*How many* hard emissions, and how hard the sub-leading ones are — the **declustering sequence**, the information a single mass number cannot carry.</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+- **$n_{Lund}$** (0.602), **$n(k_t\!>\!1)$** (0.593): primary-emission counts. Signal has *fewer* (a color singlet radiates less) despite higher pileup — physical.
+- **$n(k_t\!>\!5)$** (0.691): counting only *hard* emissions sharpens it — top/W give 1–2, QCD more.
+- **$\ln k_t^{(2)}$** (0.688): 2nd-hardest emission — signal bump at $\ln k_t\!\approx\!3.5$–4.5 = the **second decay splitting** (top→W→qq̄).
+- **$\ln k_t^{(3)}$** (0.613): 3rd emission — weaker.
+- **$n_{drop}$** (0.765, **best non-mass var**): soft-drop declustering count. Decays pass in **0–1** steps; QCD needs up to ~12.
+
+</div>
+</div>
+
+---
+
+## All inputs (4/5) — grooming-geometry variables
+
+<div class="cols">
+<div>
+
+![w:560](img/tvars_groom.png)
+
+<span class="small">Geometry of the split soft drop keeps, plus constituent count and grooming survival.</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+- **$z_g$** (0.608): groomed momentum share — near the $z_{cut}=0.1$ edge, flatter than QCD's $1/z_g$; modest alone.
+- **$R_g$** (0.779): groomed opening angle, **strong**. Decay angle $R_g\!\approx\!m/(p_T\sqrt{z(1-z)})$ is fixed and wide; QCD collinear.
+- **$z$** (0.698), **$\Delta R$** (0.714) **of the hardest-$k_t$ emission**: for a decay this *is* the decay split, so both are decay-scale.
+- **$n_{const}$** (0.602): constituent multiplicity — quark/gluon-like, weak alone.
+- **$f_{groom}=m_{SD}/m_{ung}$** (0.747): **grooming survival** — decays keep mass ($\approx1$), QCD loses it ($\ll1$). Strong, mass-shape-decorrelated.
+
+</div>
+</div>
+
+---
+
+## All inputs (5/5) — physics-function inputs
+
+<div class="cols">
+<div>
+
+![w:560](img/tvars_fn.png)
+
+<span class="small">Dimensionless **closure / scale-comparison** functions, each designed to encode a specific decay hypothesis directly.</span>
+
+<span class="small">All AUCs weighted-logistic single-variable, same selection/reweighting as the study. Scripts `tagger_allvars.py` (plots), `tagger_study.py`, `tagger_functions.py`; Condor 9128460 extraction. See [[2026-07-18-tagger-inputs]].</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+- **$\chi=\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$** (0.567): 2-prong **closure** — $\chi\!\approx\!1$ for massless prongs (W), $\chi\!<\!1$ for **massive** prongs (top→Wb). Built-in top/W handle.
+- **$\psi_1=\ln k_t^{(1)}-\ln m_{SD}$** (0.528): hardest emission at the decay scale? Weak (≈ mass split for both).
+- **$\psi_2=\ln k_t^{(2)}-\ln m_{SD}$** (0.670): **2nd** emission at the decay scale? High for top (the W sub-decay) — strongest $\psi$/$\chi$.
+- **$f_{match}=\ln(\Delta R_{kt1}/R_g)$** (0.516): hardest-$k_t$ emission ≡ SD split? $\approx0$ for a clean decay.
+- **$\ln(1+n_{drop})$** (0.765): the $n_{drop}$ handle, compressed.
+- **$n(k_t\!>\!5)$** (0.691): perturbative activity, in the function set.
+
+</div>
+</div>
+
+---
+
 ## Reproducibility & full-statistics numbers
 
 <style scoped>
