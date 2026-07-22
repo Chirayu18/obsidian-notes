@@ -253,3 +253,18 @@ Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_groom.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_groom.png
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_fn.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tvars_fn.png
+
+### Full merge history of one jet — dendrograms with grooming overlaid
+
+tags: [plot]
+Date: 2026-07-22
+Description: The complete binary merge tree of one boosted ttbar→4q jet (25 PF constituents,
+raw pt 789 GeV, mass 135 GeV, n_drop=5), drawn as two dendrograms from flashjet's stored
+hist_p1/p2/child/d. Left = C/A tree (angular-ordered) with soft-drop overlaid: green spine =
+the groomed jet (root→passing split), grey dashed = the 5 soft prongs grooming drops, star =
+the split passing z>z_cut (its mass=m_SD, z=z_g, angle=R_g). Right = kT tree (value-sorted);
+its top merges' √d·R are the exclusive scales √d12≥√d23≥…. Shows the trees we read are the
+FULL ungroomed histories; grooming is a pruned path through the C/A tree. Script full_history3.py.
+See [[2026-07-22-full-merge-history]].
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png

@@ -745,6 +745,16 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`), and every inpu
 
 ---
 
+## The full merge history of one jet
+
+![w:1000](img/full_history_tree.png)
+
+<style scoped>section { font-size: 18px; }</style>
+
+flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every merge, **nothing removed**. One boosted top jet (25 const., $p_T$ 789, $m$ 135). **Left C/A** with soft-drop overlaid: <span style="color:#15803d">**green = the groomed jet**</span>, grey = the $n_{drop}=5$ dropped soft prongs, ★ = passing split ($m_{SD}, z_g, R_g$ live here). **Right kT** (value-sorted): top merges' $\sqrt d\,R = \sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$. **Grooming = a pruned path through the C/A tree, not a separate tree.** See [[2026-07-22-full-merge-history]].
+
+---
+
 ## All inputs (1/5) — mass-scale variables
 
 <div class="cols">
