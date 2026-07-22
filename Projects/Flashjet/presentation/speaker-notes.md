@@ -5,7 +5,7 @@ date: 2026-07-17
 source: lxplus
 ---
 
-# Speaker notes — flashjet-substructure deck (44 pages)
+# Speaker notes — flashjet-substructure deck (49 pages)
 
 One entry per slide: what it shows, how it was made, the line to say. Deep-dive
 companions: [[2026-07-17-plots-explained]] (theory + method per plot),
@@ -89,6 +89,27 @@ companions: [[2026-07-17-plots-explained]] (theory + method per plot),
 41. **All inputs (5/5) functions** — chi/psi1/psi2/fmatch/lndrop/nkt5, **all C/A** (no kT tree
     in this set). Closure χ<1 flags massive prongs (top); ψ2 0.670 sees the W sub-decay. Every
     AUC weighted-logistic single-variable. All in [[2026-07-18-tagger-inputs]]. Condor 9128460.
-42. **Reproducibility table** — every headline number + condor ID + jet count.
-43. **Function reference** — added API surface.
-44. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.
+37. **Tree gallery — QCD vs clean top** — QCD (23 const, pt 331): m_ung 33 → m_SD 1.2, n_drop
+    **13**, green spine is a long staircase, no balanced hard split. Clean top (32 const, pt 529):
+    m_ung 156 → m_SD 155, n_drop **1**, star at the very top. Spine length 13 vs 1 IS the discriminant.
+38. **Tree gallery — boosted & b-jet** — boosted (pt 629, R_g 0.26): decay angle shrinks ~m/pt, tree
+    compresses, grooming gets harder. b-jet (pt 403): single hard core, no balanced split — looks
+    QCD-like, foreshadowing the AK4 flavour result.
+39. **AK4 from MINIAOD** — JMENano has AK4 Jet_* + hadronFlavour but NO PF→AK4 linker (only
+    FatJetPFCand for AK8), so AK4 trees are impossible there. Went to MINIAOD via DAS (slimmedJets
+    carry packedPFCandidates as daughters): 12k AK4 jets, 3552 b / 6593 udsg. Two-stage pipeline
+    because CMSSW python 3.9 and b_hive 3.11 are ABI-incompatible: FWLite dumps constituents,
+    b_hive runs flashjet. Figure: b jet and light jet at same pt have near-identical trees.
+40. **AK4 result: no flavour tagging** — every variable 0.50–0.59 (best: z of hardest emission
+    0.591, √d12 0.588). Expected and important: b vs light is a LIFETIME question (IP, SVs), absent
+    from a kinematic tree. ⇒ history tokens belong in boosted 2-/3-prong tagging, not b-tagging.
+    Quantitatively confirms the UParT argument.
+41. **Correction: AUC tie handling** — the AUC integrated the ROC without handling ties; for
+    discrete counts (>80% share one value) that manufactures separation. Caught via AK4 n(kt>5)
+    scoring 0.773 while b/light had identical means per pt slice. Fixed with unique-value ROC
+    (Mann-Whitney). Corrected AK8: n_kt1 0.587, n_kt5 0.663, n_drop 0.769, f_match 0.648 (was badly
+    understated at 0.516). All mass/geometry vars unchanged → AK8 conclusions stand.
+    [[2026-07-22-ak4-and-tree-gallery]].
+47. **Reproducibility table** — every headline number + condor ID + jet count.
+48. **Function reference** — added API surface.
+49. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.

@@ -765,6 +765,127 @@ A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass is inflated 
 
 ---
 
+## Tree gallery — QCD vs clean top
+
+<div class="cols">
+<div>
+
+![w:540](img/tree_qcd.png)
+
+<span class="small">**QCD** (23 const, $p_T$ 331): m_ung 33 → **m_SD 1.2**, $n_{drop}=$**13**. The green spine is a long **staircase** — soft prong after soft prong dropped, mass collapses. No balanced hard split anywhere. *This is why $n_{drop}$ is the best non-mass variable (0.769).*</span>
+
+</div>
+<div>
+
+![w:540](img/tree_top.png)
+
+<span class="small">**Clean top** (32 const, $p_T$ 529): m_ung 156 → **m_SD 155**, $n_{drop}=$**1**. Grooming barely works at all — the ★ sits at the very top on a wide balanced split. The well-behaved counterpart to the misfiring top two slides back.</span>
+
+</div>
+</div>
+
+<span class="small">Same two-panel format as before (C/A with soft-drop overlaid). The contrast in **spine length** — 13 steps vs 1 — is the entire discriminant, visualised.</span>
+
+---
+
+## Tree gallery — boosted & b-jet
+
+<div class="cols">
+<div>
+
+![w:540](img/tree_boosted.png)
+
+<span class="small">**Boosted / collimated** (35 const, $p_T$ 629): $m_{SD}$ 74, $R_g=$**0.26**. At high $p_T$ the decay angle shrinks ($R_g\!\sim\!m/p_T$) — the hard split moves *down* the tree toward the collinear region and the whole structure compresses. The regime where grooming gets harder.</span>
+
+</div>
+<div>
+
+![w:540](img/tree_bjet.png)
+
+<span class="small">**b jet** (26 const, $p_T$ 403): m_ung 40 → m_SD 13, $n_{drop}=$8. A single hard core with no balanced hard split — the tree looks much more QCD-like than W/top-like. Foreshadows the AK4 result: **a kinematic tree does not see flavour**.</span>
+
+</div>
+</div>
+
+---
+
+## AK4 jets — from **MINIAOD** (the constituents NanoAOD doesn't link)
+
+<div class="cols">
+<div>
+
+![w:560](img/ak4_tree.png)
+
+<span class="small">JMENano has AK4 `Jet_*` + `hadronFlavour` but **no PF→AK4 linker** (only `FatJetPFCand` for AK8). So AK4 trees are impossible there. Went to **MINIAOD** (`slimmedJets` carry `packedPFCandidates` as daughters) via DAS: 12 000 AK4 jets, **3552 b / 6593 udsg**, real flavour truth.</span>
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+**Two-stage pipeline** (CMSSW python 3.9 and `b_hive` 3.11 are ABI-incompatible):
+
+1. **FWLite** (`CMSSW_14_1_0_pre4`) reads `slimmedJets` + PF daughters + `hadronFlavour` → constituent npz
+2. **`b_hive`** runs flashjet C/A + kT + soft-drop + Lund on those constituents → 18 vars + flavour
+
+The figure: a **b jet** and a **light jet** at the *same* $p_T$ (136 vs 135 GeV). Their trees are **near-identical** — both $m_{SD}\approx13.5$, similar depth and shape.
+
+</div>
+</div>
+
+---
+
+## AK4 result: the history does **not** do flavour tagging
+
+<div class="cols">
+<div>
+
+![w:560](img/ak4_lund.png)
+
+</div>
+<div>
+
+<style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
+
+b vs light (udsg), $p_T$-reweighted — **every variable lands at 0.50–0.59**:
+
+| best AK4 variables | AUC |
+|---|---|
+| $z$ of hardest emission | 0.591 |
+| $\sqrt{d_{12}}$ | 0.588 |
+| $\ln k_t^{(2)}$, $n_{Lund}$ | ~0.578 |
+| $m_{SD}$ | 0.573 |
+| $n(k_t\!>\!5)$, $f_{32}$ | ~0.51 |
+
+**The expected answer, and it matters:** b vs light is a **lifetime** question (displaced tracks, secondary vertices) — absent from a kinematic tree. The residual ~0.55 is a b hadron's mild mass/multiplicity edge.
+
+⇒ Pitch history tokens at **boosted 2-/3-prong tagging** (AK8 0.78–0.83), **not** as a b-tagging input — confirming UParT's IP/SV inputs carry what no tree contains.
+
+</div>
+</div>
+
+---
+
+## Correction: AUC tie handling
+
+<style scoped>section { font-size: 19px; } table { font-size: 17px; }</style>
+
+The AUC routine integrated the ROC **without handling ties**. For discrete counts (>80% of jets share one value) that splits tied jets arbitrarily and **manufactures separation**. Caught because AK4 $n(k_t\!>\!5)$ scored **0.773** while b and light had *identical means in every $p_T$ slice* — impossible.
+
+Fixed by building the ROC on **unique values** (proper Mann–Whitney tie handling). Continuous variables are unaffected; the corrected AK8 counts:
+
+| variable | was | **corrected** |
+|---|---|---|
+| $n(k_t>1)$ | 0.593 | **0.587** |
+| $n(k_t>5)$ | 0.691 | **0.663** |
+| $n_{drop}$ | 0.765 | **0.769** |
+| $f_{match}$ | 0.516 | **0.648** ← was badly *understated* |
+| $n_{Lund}$, $n_{const}$ | 0.602 | 0.602 (unchanged) |
+
+All mass/geometry variables ($m_{SD}$ 0.782, $\sqrt{d_{12}}$ 0.792, $R_g$ 0.779, $f_{groom}$ 0.747) are **unchanged**, so the AK8 conclusions stand: $n_{drop}$ is still the best non-mass variable. <span class="small">Full detail: [[2026-07-22-ak4-and-tree-gallery]].</span>
+
+---
+
 ## All inputs (1/5) — mass-scale variables
 
 <div class="cols">
@@ -831,11 +952,11 @@ A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass is inflated 
 
 <span class="small">All from the **C/A** primary declustering sequence (the Lund plane + soft-drop walk).</span>
 
-- <span class="tag ca">C/A</span> **$n_{Lund}$** (0.602), **$n(k_t\!>\!1)$** (0.593): primary-emission counts. Signal has *fewer* (a color singlet radiates less) despite higher pileup — physical.
-- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.691): counting only *hard* emissions sharpens it — top/W give 1–2, QCD more.
+- <span class="tag ca">C/A</span> **$n_{Lund}$** (0.602), **$n(k_t\!>\!1)$** (0.587): primary-emission counts. Signal has *fewer* (a color singlet radiates less) despite higher pileup — physical.
+- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.663): counting only *hard* emissions sharpens it — top/W give 1–2, QCD more.
 - <span class="tag ca">C/A</span> **$\ln k_t^{(2)}$** (0.688): 2nd-hardest emission — signal bump at $\ln k_t\!\approx\!3.5$–4.5 = the **second decay splitting** (top→W→qq̄).
 - <span class="tag ca">C/A</span> **$\ln k_t^{(3)}$** (0.613): 3rd emission — weaker.
-- <span class="tag ca">C/A</span> **$n_{drop}$** (0.765, **best non-mass var**): soft-drop declustering count. Decays pass in **0–1** steps; QCD needs up to ~12.
+- <span class="tag ca">C/A</span> **$n_{drop}$** (0.769, **best non-mass var**): soft-drop declustering count. Decays pass in **0–1** steps; QCD needs up to ~12.
 
 </div>
 </div>
@@ -888,9 +1009,9 @@ A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass is inflated 
 - <span class="tag ca">C/A</span> **$\chi=\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$** (0.567): 2-prong **closure** — $\chi\!\approx\!1$ for massless prongs (W), $\chi\!<\!1$ for **massive** prongs (top→Wb). Built-in top/W handle.
 - <span class="tag ca">C/A</span> **$\psi_1=\ln k_t^{(1)}-\ln m_{SD}$** (0.528): hardest emission at the decay scale? Weak (≈ mass split for both).
 - <span class="tag ca">C/A</span> **$\psi_2=\ln k_t^{(2)}-\ln m_{SD}$** (0.670): **2nd** emission at the decay scale? High for top (the W sub-decay) — strongest $\psi$/$\chi$.
-- <span class="tag ca">C/A</span> **$f_{match}=\ln(\Delta R_{kt1}/R_g)$** (0.516): hardest-$k_t$ emission ≡ SD split? $\approx0$ for a clean decay.
-- <span class="tag ca">C/A</span> **$\ln(1+n_{drop})$** (0.765): the $n_{drop}$ handle, compressed.
-- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.691): perturbative activity, in the function set.
+- <span class="tag ca">C/A</span> **$f_{match}=\ln(\Delta R_{kt1}/R_g)$** (0.648): hardest-$k_t$ emission ≡ SD split? $\approx0$ for a clean decay.
+- <span class="tag ca">C/A</span> **$\ln(1+n_{drop})$** (0.769): the $n_{drop}$ handle, compressed.
+- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.663): perturbative activity, in the function set.
 
 </div>
 </div>

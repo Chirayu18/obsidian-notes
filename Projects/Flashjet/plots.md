@@ -281,3 +281,39 @@ example where soft-drop misfires (m_SD→3 GeV). Same two-panel dendrogram forma
 Script full_history_good.py. See [[2026-07-22-full-merge-history]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
+
+### Merge-tree gallery — QCD, clean top, boosted, b-jet (AK8)
+
+tags: [plot]
+Date: 2026-07-22
+Description: Four more merge-tree examples in the same two-panel format (C/A with soft-drop
+overlaid + kT). QCD (m_ung 33→m_SD 1.2, n_drop 13): green spine is a long staircase, no
+balanced hard split — why n_drop discriminates. Clean top (156→155, n_drop 1): star at the
+top, grooming barely works. Boosted (pt 629, R_g 0.26): collimated, tree compresses. b-jet
+(pt 403): single hard core, QCD-like. Script tree_gallery.py. See [[2026-07-22-ak4-and-tree-gallery]].
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_qcd.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_qcd.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_top.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_top.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_boosted.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_boosted.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_bjet.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_bjet.png
+
+### AK4 jets from MINIAOD — merge tree + b-vs-light variable study
+
+tags: [plot]
+Date: 2026-07-22
+Description: AK4 jets built from MINIAOD slimmedJets + packedPFCandidates (JMENano has no
+PF→AK4 linker), 12k jets with Jet_hadronFlavour truth (3552 b / 6593 udsg). ak4_tree.png: a
+b jet and a light jet at the same pt have near-identical C/A trees. ak4_{mass,prong,lund,groom,fn}.png:
+the 18 vars + 13 functions, b vs light, pt-reweighted — EVERY variable lands at 0.50–0.59
+(best: z of hardest emission 0.591, √d12 0.588). Confirms a kinematic merge tree cannot do
+flavour tagging (that needs IP/SV lifetime info). Scripts dump_ak4_constituents.py (FWLite),
+ak4_substructure.py, ak4_tree.py, ak4_allvars.py. See [[2026-07-22-ak4-and-tree-gallery]].
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_tree.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_tree.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_lund.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_lund.png
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_mass.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_mass.png
