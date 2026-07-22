@@ -474,6 +474,47 @@ low-stat SR templates remain the driver, not the SF.
 leaves `.bak_pre_ctag2dsf` next to every parquet; the yaml has
 `hww_combine_fixed.yaml.bak_pre_ctag2dsf`. To revert, restore the backups and rebuild.
 
+### Limit with the 2D-cat MVA *and* the SF (the physically-matched combination)
+
+The SFs calibrate the 2D-category tagging, so they belong with the **2D-cat MVA scores**,
+not the baseline scores. Built as a separate workflow `hww_combine_2dcat` (copy of
+`hww_combine_fixed` with `inference:` → the 2D-cat model
+`.../HPlusCHToWW_2dcats/.../best_model.pt`, config `HPlusCHToWW_2dcats`, output
+`v11_hplusc_2dcat.*`). The SF-corrected `mva/` trees (nominal + 12 shift dirs) were copied
+into `outputs/hww_combine_2dcat/2022postEE/`, the 11 one-hot cols appended
+(`append_onehot.py`, deterministic from cvsl/cvsb), and the `mva_score_*` cols re-scored
+in place with the 2D-cat model (`rescore_2dcat.py`, softmax, `.bak_pre_2dcatscore` backups).
+
+**Full three-way comparison (2022postEE, blind Asimov):**
+
+| variant | full (all syst) | stat-only | freeze-autoMCStats |
+|---|---|---|---|
+| baseline (no SF) | 1343 | 788 | 1100 |
+| baseline scores + SF (`ctag2dsf`) | 1371 | 797 | 1144 |
+| **2D-cat scores + SF (`2dcatsf`)** | **1422** | **749** | 1168 |
+
+**Reading it:**
+- **Stat-only *improves*: 749 vs 788 (−5%).** With statistics-only uncertainties the
+  2D-cat MVA is the sharper discriminant — signal (H+c) `<P_hplusc>` rises to 0.514
+  (baseline 0.377) and **91.1%** of signal lands in the SR (baseline 70.8%). Consistent
+  with the +0.004 AUC.
+- **Full limit is *worse*: 1422 vs 1343 (+6%).** The 2D-cat argmax also pulls **2.3× more
+  tt** into the SR (tt→SR fraction 18.9% vs 8.3%), so SR yields ~double (SR total 20563 vs
+  ~9142). tt is the dominant background, so the enlarged SR is more systematics-exposed;
+  the wide `CMS_ctag2d_2022` band + autoMCStats on the bigger SR eat the stat gain. The
+  stat→full inflation grows (749→1422 = 1.9× vs 788→1343 = 1.7×).
+
+**Verdict:** the 2D-cat model genuinely separates better (stat-only wins), but with the
+current conservative systematics its more-inclusive SR boundary lets in enough tt that the
+*full* expected limit regresses ~6%. Levers to recover it: tighten the SR (raise the
+P(hplusc) cut / rebin), split ggH out of higgsbkg, or narrow the SF nuisance once a less
+conservative decomposition (e.g. Stat-only, or the per-source split) is used instead of
+`Total`. Not a bug — an honest separation-vs-systematics trade.
+
+**Baseline tree untouched:** all 2D-cat work lives under `outputs/hww_combine_2dcat/`;
+`hww_combine_fixed` (baseline+SF) is unchanged. Limit roots:
+`outputs/combine/higgsCombine2dcatsf{F,S,M}.AsymptoticLimits.mH120.root`.
+
 ---
 
 ## 8. File map
@@ -483,6 +524,10 @@ leaves `.bak_pre_ctag2dsf` next to every parquet; the yaml has
 | helper (processor) | `~/higgscharm/analysis/utils/ctag2d.py` (AFS, branch `NewWorkflows`) |
 | 2D SF applier | `b-hive/scripts/apply_ctag2d_sf.py` (+ vault copy in `lxplus-2026-07-12/`) |
 | 2D SF files | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/{2022,2023}/2D_HF_Tagging/flavTaggingSF_<campaign>.json.gz` |
+| 2D-cat combine workflow | `~/higgscharm/analysis/workflows/hww_combine_2dcat.yaml` (inference→2D-cat model, out `v11_hplusc_2dcat.*`) |
+| one-hot appender | `b-hive/scripts/append_onehot.py` (+ vault copy) |
+| 2D-cat re-scorer | `b-hive/scripts/rescore_2dcat.py` (+ vault copy) |
+| 2D-cat combine tree | `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_2dcat/2022postEE/` |
 | workflow axes | `~/higgscharm/analysis/workflows/hww.yaml` |
 | backfill script | `b-hive/scripts/append_ctag2d.py` |
 | 2dcats train config | `b-hive/config/HPlusCHToWW_2dcats.yml` |

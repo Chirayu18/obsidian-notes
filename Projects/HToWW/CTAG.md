@@ -237,3 +237,21 @@ limit ~2% — correct sign: the +44%/−16% `CMS_ctag2d_2022` nuisance is real u
 stat-only shift is just the ~1.06 mean-SF yield rescaling. Applied to nominal + all 12
 object-shift dirs (JES/JER/lepton) for consistency. Idempotent, `.bak_pre_ctag2dsf` backups
 left everywhere. See [[2026-07-19-ctag2d-full-documentation]] §9.
+
+**2D-cat MVA + SF (the matched combination, 2026-07-22):** the SFs calibrate the 2D-category
+tagging, so they belong with the 2D-cat MVA scores, not baseline. Built separate workflow
+`hww_combine_2dcat` (inference→`HPlusCHToWW_2dcats` model). Copied the SF-corrected mva trees
+(nominal+12 shifts), appended the 11 one-hots (`append_onehot.py`), re-scored in place with the
+2D-cat model (`rescore_2dcat.py`). Three-way limit:
+
+| variant | full | stat-only | freeze-autoMCStats |
+|---|---|---|---|
+| baseline (no SF) | 1343 | 788 | 1100 |
+| baseline + SF | 1371 | 797 | 1144 |
+| **2D-cat + SF** | **1422** | **749** | 1168 |
+
+Stat-only **improves −5%** (749 vs 788: sharper discriminant — signal `<P_hplusc>` 0.514 vs 0.377,
+91% of signal in SR vs 71%). But full limit **+6% worse** (1422): 2D-cat argmax also pulls 2.3× more
+tt into the SR (SR yield ~doubles), so the enlarged tt-heavy SR is more exposed to the wide
+`CMS_ctag2d_2022` band + autoMCStats. Honest separation-vs-systematics trade, not a bug. Baseline
+tree untouched (all under `outputs/hww_combine_2dcat/`). See [[2026-07-19-ctag2d-full-documentation]] §9.
