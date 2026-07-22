@@ -5,7 +5,7 @@ date: 2026-07-17
 source: lxplus
 ---
 
-# Speaker notes — flashjet-substructure deck (43 pages)
+# Speaker notes — flashjet-substructure deck (44 pages)
 
 One entry per slide: what it shows, how it was made, the line to say. Deep-dive
 companions: [[2026-07-17-plots-explained]] (theory + method per plot),
@@ -69,19 +69,26 @@ companions: [[2026-07-17-plots-explained]] (theory + method per plot),
     prongs, star = passing split (m_SD/z_g/R_g). Right kT: value-sorted, top merges = √d12≥√d23≥….
     Say: **grooming is a pruned path through the C/A tree, not a separate tree**; answers the
     "are these groomed?" question. Made by full_history3.py. [[2026-07-22-full-merge-history]].
-36. **All inputs (1/5) mass-scale** — per-variable sig-vs-bkg distributions, 6 panels, AUC
+    NB this jet is the *misfire* case: soft-drop follows the hardest branch into collinear junk,
+    m_SD collapses to ~3 GeV even though kT scales still show the 3-prong top (β=0 pathology).
+36. **…and here grooming WORKS: recovering m_W** — companion jet, a boosted W→qq̄ (30 const,
+    pt 507). m_ung 120 (inflated by soft radiation) → after dropping 4 soft prongs, soft-drop
+    lands on a balanced wide split (z_g 0.49, R_g 0.34, kt 80) → m_SD 83 ≈ m_W. Contrast prev
+    slide: same algorithm, two outcomes → why the tagger uses n_drop + kT scales, not m_SD alone.
+    Made by full_history_good.py. [[2026-07-22-full-merge-history]].
+37. **All inputs (1/5) mass-scale** — per-variable sig-vs-bkg distributions, 6 panels, AUC
     on each. msd/ktg/ln msd/lnρ [C/A], √d12 [kT], m_ung [anti-kT] — all 0.78–0.79, 0.8–0.97
     correlated (same 2-prong mass). Point to m_W≈80 + m_t≈160 in ln m_SD. Made by `tagger_allvars.py`.
-37. **All inputs (2/5) prong/kT** — d23/d34/d23r/f21/f32 [all kT], fz [kT÷C/A mixed]. Splitting
+38. **All inputs (2/5) prong/kT** — d23/d34/d23r/f21/f32 [all kT], fz [kT÷C/A mixed]. Splitting
     scales beyond the first + ratios; d23 0.684 carries 3-prong top; fz=√(z/(1-z)) mass-decorrelated.
-38. **All inputs (3/5) Lund/counting** — n_lund/n_kt1/n_kt5/lnkt2/lnkt3/ndrop, **all C/A**
+39. **All inputs (3/5) Lund/counting** — n_lund/n_kt1/n_kt5/lnkt2/lnkt3/ndrop, **all C/A**
     (primary declustering). n_drop 0.765 (best non-mass), lnkt2 sees the 2nd decay splitting,
     signal has *fewer* emissions despite higher pileup (physical, not pileup artifact).
-39. **All inputs (4/5) groom geom** — zg/rg/z_kt1/dr_kt1 [C/A], n_const [anti-kT], fgroom
+40. **All inputs (4/5) groom geom** — zg/rg/z_kt1/dr_kt1 [C/A], n_const [anti-kT], fgroom
     [C/A÷anti-kT mixed]. R_g 0.779 (fixed wide decay angle vs QCD collinear); fgroom 0.747 survival.
-40. **All inputs (5/5) functions** — chi/psi1/psi2/fmatch/lndrop/nkt5, **all C/A** (no kT tree
+41. **All inputs (5/5) functions** — chi/psi1/psi2/fmatch/lndrop/nkt5, **all C/A** (no kT tree
     in this set). Closure χ<1 flags massive prongs (top); ψ2 0.670 sees the W sub-decay. Every
     AUC weighted-logistic single-variable. All in [[2026-07-18-tagger-inputs]]. Condor 9128460.
-41. **Reproducibility table** — every headline number + condor ID + jet count.
-42. **Function reference** — added API surface.
-43. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.
+42. **Reproducibility table** — every headline number + condor ID + jet count.
+43. **Function reference** — added API surface.
+44. **Reproducing everything** — commands, condor pattern (AFS submit dir), seed, papers catalogue.

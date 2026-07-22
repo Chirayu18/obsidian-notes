@@ -57,9 +57,32 @@ primary branch *is* the soft-drop / Lund sequence.
 - **anti-kT**: the jet itself ($m_{ung}$, $n_{const}$).
 See the deck's "Which tree does each variable come from?" slide and [[2026-07-18-tagger-inputs]].
 
+## A second example — grooming that *works* (`full_history_good.png`)
+
+The first jet is a **cautionary case**: soft-drop follows the highest-$p_T$ branch,
+which marches down the leading quark's own collinear fragmentation and never crosses
+the wide balanced decay split, so it "passes" on a tiny near-collinear split and
+$m_{SD}$ collapses to $\sim3$ GeV (even though $n_{drop}=5$ and the kT scales still
+show the 3-prong top). Known $\beta=0$ soft-drop pathology.
+
+The companion figure shows grooming **doing its job** on a boosted $W\to q\bar q$
+(30 constituents, $p_T$ 507 GeV):
+- ungroomed mass **119.6 GeV**, inflated by soft wide-angle radiation;
+- soft-drop drops 4 soft prongs ($z\approx0.005$) then lands the passing split on a
+  genuinely **balanced, wide** decay: $z_g=0.49$, $R_g=0.34$, $k_t$ jumps to 80 GeV;
+- groomed mass **$m_{SD}=83$ GeV $\approx m_W$**.
+
+Side by side the two figures make the point: *the same algorithm can strip junk and
+recover the resonance, or misfire into collinear noise*, depending on whether the
+hard decay split sits on the highest-$p_T$ branch. This is the concrete motivation for
+feeding the tagger the **kT splitting scales and $n_{drop}$ alongside $m_{SD}$** — the
+kT scales don't care about branch-$p_T$ ordering and recover the structure either way.
+
 ## Reproduce
-`full_history3.py` in `/eos/home-c/cgupta/flashjet/plots/2026-07-13-substructure/`
-(picks the first jet with $n_{drop}\ge3$ so the dropping is visible; clusters the
-constituents with both C/A and kT, replays soft drop, draws both dendrograms).
-Earlier drafts: `full_history.py` (base tables), `full_history2.py` (first overlay).
-Plot link in [[plots]].
+`full_history3.py` (the top/misfire example, first jet with $n_{drop}\ge3$) and
+`full_history_good.py` (the clean $W$ example: requires a wide balanced passing split,
+$m_{SD}$ on a resonance, and $m_{ung}-m_{SD}>15$) in
+`/eos/home-c/cgupta/flashjet/plots/2026-07-13-substructure/`. Both cluster the
+constituents with C/A and kT, replay soft drop, and draw both dendrograms.
+`history_readout.py` prints the per-step soft-drop walk (mass, z, ΔR, kt) for the
+misfire jet. Earlier drafts: `full_history.py`, `full_history2.py`. Links in [[plots]].

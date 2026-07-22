@@ -755,6 +755,16 @@ flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every me
 
 ---
 
+## …and here grooming *works*: recovering $m_W$
+
+![w:1000](img/full_history_good.png)
+
+<style scoped>section { font-size: 18px; }</style>
+
+A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass is inflated to **120 GeV** by soft wide radiation; soft-drop peels off 4 soft prongs ($z\approx0.005$, grey) and lands the ★ on a **balanced, wide** split — $z_g=0.49$, $R_g=0.34$, $k_t$ jumps to **80 GeV** — giving <span style="color:#15803d">**$m_{SD}=83\approx m_W$**</span>. Contrast the previous slide, where the hardest branch ran into collinear junk and soft-drop misfired ($m_{SD}\!\to\!3$). Same algorithm, two outcomes — why the tagger also uses $n_{drop}$ and the **kT** scales ($\sqrt{d_{12}},\sqrt{d_{23}}$, robust to this), not $m_{SD}$ alone.
+
+---
+
 ## All inputs (1/5) — mass-scale variables
 
 <div class="cols">

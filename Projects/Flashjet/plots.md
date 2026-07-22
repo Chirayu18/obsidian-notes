@@ -268,3 +268,16 @@ FULL ungroomed histories; grooming is a pruned path through the C/A tree. Script
 See [[2026-07-22-full-merge-history]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png
+
+### Full merge history — grooming that WORKS (recovers m_W)
+
+tags: [plot]
+Date: 2026-07-22
+Description: Companion to full_history_tree.png showing C/A soft-drop grooming doing its job on
+a boosted W→qq̄ jet (30 PF constituents, pt 507 GeV). Ungroomed mass 119.6 GeV inflated by soft
+radiation; soft-drop drops 4 soft prongs then lands the passing split on a balanced wide decay
+(z_g 0.49, R_g 0.34, kt jumps to 80 GeV) → groomed m_SD 83 GeV ≈ m_W. Contrast the top-jet
+example where soft-drop misfires (m_SD→3 GeV). Same two-panel dendrogram format (C/A + kT).
+Script full_history_good.py. See [[2026-07-22-full-merge-history]].
+Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
