@@ -207,3 +207,33 @@ HFvLF(x) = P_b + P_c = 1 − P_L,   P_L = CvB·(CvL−1)/(CvB·CvL − CvB − C
 Apply the **official frozen edges** above to these two axes and assign the 11 categories
 (L0,C0–C4,B0–B4) as an integer `ctag_2d_cat` column appended to each parquet.
 
+
+---
+
+## Scale factors — per-campaign PNet 2D SFs (2026-07-22)
+
+User provided the correct 2D SFs (cmshgg `2D_HF_Tagging` ingredients, correctionlib v2,
+per-category — the right ones for our 11-cat scheme). Files on EOS:
+```
+2022 preEE   /eos/cms/store/group/phys_higgs/cmshgg/ingredients/2022/2D_HF_Tagging/flavTaggingSF_2022preEE.json.gz
+2022 postEE  /eos/cms/store/group/phys_higgs/cmshgg/ingredients/2022/2D_HF_Tagging/flavTaggingSF_2022postEE.json.gz
+2023 preBPix   /eos/cms/store/group/phys_higgs/cmshgg/ingredients/2023/2D_HF_Tagging/flavTaggingSF_2023preBPix.json.gz
+2023 postBPix  /eos/cms/store/group/phys_higgs/cmshgg/ingredients/2023/2D_HF_Tagging/flavTaggingSF_2023postBPix.json.gz
+```
+- correction `ParticleNetAK4_pseudocontinuous`; `evaluate(systematic, flavor, wp, abseta, pt)`.
+- `flavor` 0/4/5 = udsg/c/b (`cjet_cand_flavour`); `wp` = **L0=0, C0–C4=40–44, B0–B4=50–54**.
+- `systematic`: `central`, `up_Total`/`down_Total` (combined — use for one nuisance), `up_Stat`,
+  + full decomposition. **No bare `up`/`down`.** `abseta` inclusive; `pt`-binned `[20,35,50,70,90,120]`.
+- B1–B4 SFs = 1.0 for all flavours (empty/uncalibrated) → no-op, consistent with the empty-bin finding.
+
+**Integration:** applier `b-hive/scripts/apply_ctag2d_sf.py` scales `weight_nominal` (× central SF) in each
+MC `mva/<sample>.parquet` and adds `weight_CMS_ctag2d_<year>{Up,Down}` from `SF_{up,down}_Total/central`;
+then `CMS_ctag2d_<year>` goes into `hww_combine_fixed.yaml` `shape_systematics`. Combine tree is
+2022postEE-only today → nuisance `CMS_ctag2d_2022`. See [[2026-07-19-ctag2d-full-documentation]] §9.
+
+**Limit rerun result (2022postEE, `run_limit.sh … ctag2dsf`):** full r95 **1371** (baseline
+`negrwF` 1343, +2.1%), stat-only 797 (788), freeze-autoMCStats 1144 (1100). SF weakens the
+limit ~2% — correct sign: the +44%/−16% `CMS_ctag2d_2022` nuisance is real uncertainty; the
+stat-only shift is just the ~1.06 mean-SF yield rescaling. Applied to nominal + all 12
+object-shift dirs (JES/JER/lepton) for consistency. Idempotent, `.bak_pre_ctag2dsf` backups
+left everywhere. See [[2026-07-19-ctag2d-full-documentation]] §9.

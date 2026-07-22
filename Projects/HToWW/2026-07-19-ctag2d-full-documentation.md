@@ -385,11 +385,104 @@ Only once the feature set is settled is it worth spending v32 GPU time.
 
 ---
 
+## 9. Scale factors (per-campaign PNet 2D SFs) — added 2026-07-22
+
+The official **per-category** 2D flavour-tagging SFs for PNet AK4 (the H→γγ /
+`cmshgg` "2D_HF_Tagging" ingredients, correctionlib v2). These are the correct SFs
+for our 11-category scheme — one SF per (flavour, category, pt), applied to the
+**candidate c-jet**. Provided by the analysis group on EOS:
+
+| campaign | file |
+|---|---|
+| 2022 preEE  | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/2022/2D_HF_Tagging/flavTaggingSF_2022preEE.json.gz` |
+| 2022 postEE | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/2022/2D_HF_Tagging/flavTaggingSF_2022postEE.json.gz` |
+| 2023 preBPix  | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/2023/2D_HF_Tagging/flavTaggingSF_2023preBPix.json.gz` |
+| 2023 postBPix | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/2023/2D_HF_Tagging/flavTaggingSF_2023postBPix.json.gz` |
+
+**Correction:** `ParticleNetAK4_pseudocontinuous`
+**Signature:** `evaluate(systematic, flavor, wp, abseta, pt)`
+- `systematic` (string): `central`; uncertainties `up_Total`/`down_Total` (combined —
+  use this for a single nuisance), `up_Stat`/`down_Stat`, plus a large per-source
+  decomposition (`up_JES`, `up_XSec_*`, `up_LHEScaleWeight_*`, per-bin `up_Stat_flav*_*`, …).
+  **There is no bare `up`/`down`.**
+- `flavor` (int): `0`=udsg, `4`=c, `5`=b — the jet's **hadron flavour**
+  (`cjet_cand_flavour` in the parquets).
+- `wp` (int): the 2D category id — **`L0=0, C0..C4 = 40..44, B0..B4 = 50..54`**.
+  (Map our stored `cjet_cand_ctag_2d_cat` 0..10 → these ids.)
+- `abseta` (real): **inclusive** (single `eta_0p00toinf` bin — value irrelevant, pass any).
+- `pt` (real): pt-binned `[20,35,50,70,90,120,10000]` (flat below 20 / above 120).
+
+**Central SF matrix** (2022postEE, pt=60, verified by evaluation):
+
+| flavour | L0 | C0 | C1 | C2 | C3 | C4 | B0 | B1 | B2 | B3 | B4 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| udsg | 0.953 | 1.122 | 1.193 | 0.300 | 1.062 | 1.000 | 0.822 | 1.000 | 1.000 | 1.000 | 1.000 |
+| c    | 1.149 | 1.000 | 0.885 | 1.091 | 0.781 | 0.749 | 1.148 | 1.000 | 1.000 | 1.000 | 1.000 |
+| b    | 0.730 | 1.450 | 1.232 | 1.167 | 1.274 | 1.142 | 1.042 | 1.064 | 0.938 | 0.953 | 0.921 |
+
+**B1–B4 SFs are 1.0 for every flavour** — uncalibrated / empty, consistent with §3's
+finding that B1–B4 are empty for the candidate c-jet. Across the whole 2022postEE MC,
+**every event lands in L0 / C0–C4 / B0; B1–B4 receive zero events** (verified in the
+applier dry-run), so those SFs are exact no-ops.
+
+### How it enters the fit
+The SF is a genuine correction on the candidate c-jet, so it multiplies the
+**nominal** weight, with a single combined shape+norm nuisance `CMS_ctag2d_<year>`
+carrying `up_Total`/`down_Total`:
+
+- applier `b-hive/scripts/apply_ctag2d_sf.py` adds three columns to each
+  `mva/<sample>.parquet` (MC only, data untouched), idempotent with a
+  `.bak_pre_ctag2dsf` backup:
+  - `weight_nominal` ← `weight_nominal × SF_central` (and every existing
+    `weight_*` variation is scaled by the same central SF, so the correction is
+    everywhere);
+  - `weight_CMS_ctag2d_<year>Up`   = `weight_nominal_corrected × SF_upTotal/SF_central`;
+  - `weight_CMS_ctag2d_<year>Down` = `weight_nominal_corrected × SF_downTotal/SF_central`.
+- category per row = recomputed from `cvsl_pnet`/`cvsb_pnet` (the `mva/` parquets carry
+  the raw scores but not the int cat column); flavour = `cjet_cand_flavour`; rows with
+  no candidate c-jet (`cjet_cand_pt` NaN) → SF 1.
+- add `CMS_ctag2d_<year>` to `shape_systematics` in `hww_combine_fixed.yaml`; the
+  existing `build_variations`/`process_sample` machinery then reads the two new
+  weight columns automatically — no builder code change.
+
+**Only 2022postEE is populated** in the combine tree today, so the rerun uses
+`flavTaggingSF_2022postEE.json.gz` and the nuisance `CMS_ctag2d_2022`. The other
+three files are wired in and ready for when 2022preEE / 2023 are processed.
+
+**Object-shift consistency:** the JES/JER/lepton-scale templates read `weight_nominal`
+from their own `<year>/<shift>/mva/` dirs. The SF is applied there too (recomputed from
+each dir's *shifted* scores/pt), so the shift is measured against the same SF-corrected
+baseline — otherwise every object-shift nuisance would pick up a spurious ~6% offset.
+All 12 shift dirs corrected.
+
+### Limit result (2022postEE, blind Asimov, `run_limit.sh … ctag2dsf`)
+
+| variant | full (all syst) | stat-only | freeze-autoMCStats |
+|---|---|---|---|
+| baseline (`negrwF`, pre-SF) | 1343 | 788 | 1100 |
+| **+ `CMS_ctag2d_2022`** | **1371** | 797 | 1144 |
+| Δ | +28 (+2.1%) | +9 (+1.1%) | +44 (+4.0%) |
+
+The SF **weakens the expected limit by ~2%** — the expected sign/size. The stat-only
+shift (+1.1%) is just the yield rescaling (mean central SF ~1.06 changes SR S/√B); the
+extra degradation in the full limit is the one new nuisance's wide (+44%/−16%) band. A
+real c-tag SF *should* cost a little; this is the systematic doing its job, not a
+regression. The stat-only→full gap is still autoMCStats-dominated (freeze → 1144), i.e.
+low-stat SR templates remain the driver, not the SF.
+
+**Backfill / undo:** `apply_ctag2d_sf.py` is idempotent (guards on the `Up` column) and
+leaves `.bak_pre_ctag2dsf` next to every parquet; the yaml has
+`hww_combine_fixed.yaml.bak_pre_ctag2dsf`. To revert, restore the backups and rebuild.
+
+---
+
 ## 8. File map
 
 | what | where |
 |---|---|
 | helper (processor) | `~/higgscharm/analysis/utils/ctag2d.py` (AFS, branch `NewWorkflows`) |
+| 2D SF applier | `b-hive/scripts/apply_ctag2d_sf.py` (+ vault copy in `lxplus-2026-07-12/`) |
+| 2D SF files | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/{2022,2023}/2D_HF_Tagging/flavTaggingSF_<campaign>.json.gz` |
 | workflow axes | `~/higgscharm/analysis/workflows/hww.yaml` |
 | backfill script | `b-hive/scripts/append_ctag2d.py` |
 | 2dcats train config | `b-hive/config/HPlusCHToWW_2dcats.yml` |
