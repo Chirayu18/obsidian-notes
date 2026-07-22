@@ -17,6 +17,11 @@ style: |
   .small { font-size: 16px; color: #555; }
   .cols { display: flex; gap: 24px; align-items: flex-start; }
   .cols > div { flex: 1; }
+  .tag { font-size: 12px; font-weight: 700; padding: 1px 6px; border-radius: 6px; vertical-align: middle; }
+  .kt { background: #fde2e2; color: #b00020; }
+  .ca { background: #dbeafe; color: #1d4ed8; }
+  .ak { background: #e5e7eb; color: #374151; }
+  .mix { background: #ede9fe; color: #6d28d9; }
 ---
 
 <!-- _class: lead -->
@@ -705,6 +710,41 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 ---
 
+## Which tree does each variable come from?
+
+Each jet is clustered **three times** (`extract_tagger_vars.py`), and every input is a post-read of one specific history:
+
+<div class="cols">
+<div>
+
+<span class="tag ak">anti-kT</span> **$R=0.8$** — the physical jet
+`algorithm="antikt"` → leading-jet 4-vector
+- $m_{ung}$ (ungroomed mass), $n_{const}$
+
+<span class="tag kt">kT</span> **exclusive splitting scales**
+`algorithm="kt"` → `splitting_scales()`
+- $\sqrt{d_{12}}, \sqrt{d_{23}}, \sqrt{d_{34}}$ (value-sorted)
+- ⇒ ratios $d_{23}/d_{12}$, $f_{21}$, $f_{32}$
+
+</div>
+<div>
+
+<span class="tag ca">C/A</span> **big-$R$ recluster → soft-drop + Lund**
+`algorithm="cambridge"` → `groomed_jets` + `lund_coordinates`
+- groom: $m_{SD}, z_g, R_g, n_{drop}$, tagged
+- Lund: $n_{Lund}, n(k_t\!>\!1), n(k_t\!>\!5)$, $\ln k_t^{(1,2,3)}$, $z, \Delta R$ of hardest emission
+
+<span class="tag mix">mixed</span> **functions spanning two trees**
+- $f_{groom}=m_{SD}/m_{ung}$ (C/A ÷ anti-kT)
+- $f_z=\sqrt{d_{12}}/m_{SD}$ (kT ÷ C/A)
+
+</div>
+</div>
+
+<span class="small">**Why two trees?** kT is *value-sorted* — its exclusive scales $\sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$ read off the hardest splittings directly (prong hierarchy). C/A is *angular-ordered* — its primary declustering **is** the Lund plane / soft-drop sequence (grooming, emission counts). anti-kT gives the jet itself. Every tag below (<span class="tag kt">kT</span> / <span class="tag ca">C/A</span> / <span class="tag ak">anti-kT</span> / <span class="tag mix">mixed</span>) marks the source.</span>
+
+---
+
 ## All inputs (1/5) — mass-scale variables
 
 <div class="cols">
@@ -719,11 +759,11 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 <style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
 
-- **$m_{SD}$** (0.782): soft-drop mass — clean $m_W\!\approx\!80$ peak + $m_t\!\approx\!160$ shoulder; QCD a steep low-mass continuum.
-- **$\sqrt{d_{12}}$** (0.792, best of group): $\approx\min(p_{T1},p_{T2})\Delta R$ of the last merge — momentum-weighted mass scale of the hardest split.
-- **$m_{ung}$** (0.788): ungroomed mass — signal keeps its mass, QCD's is inflated by soft wide radiation.
-- **$k_{t,g}=z_g p_T R_g$** (0.783): $k_t$ of the groomed split, another mass proxy.
-- **$\ln m_{SD}$** (0.782), **$\ln\rho=\ln(m_{SD}^2/(p_TR)^2)$** (0.784): log forms. QCD is ~flat in $\ln\rho$; signal piles at the decay mass — cleanest of the group.
+- <span class="tag ca">C/A</span> **$m_{SD}$** (0.782): soft-drop mass — clean $m_W\!\approx\!80$ peak + $m_t\!\approx\!160$ shoulder; QCD a steep low-mass continuum.
+- <span class="tag kt">kT</span> **$\sqrt{d_{12}}$** (0.792, best of group): $\approx\min(p_{T1},p_{T2})\Delta R$ of the last merge — momentum-weighted mass scale of the hardest split.
+- <span class="tag ak">anti-kT</span> **$m_{ung}$** (0.788): ungroomed mass — signal keeps its mass, QCD's is inflated by soft wide radiation.
+- <span class="tag ca">C/A</span> **$k_{t,g}=z_g p_T R_g$** (0.783): $k_t$ of the groomed split, another mass proxy.
+- <span class="tag ca">C/A</span> **$\ln m_{SD}$** (0.782), **$\ln\rho=\ln(m_{SD}^2/(p_TR)^2)$** (0.784): log forms. QCD is ~flat in $\ln\rho$; signal piles at the decay mass — cleanest of the group.
 
 </div>
 </div>
@@ -744,11 +784,11 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 <style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
 
-- **$\sqrt{d_{23}}$** (0.684): 2nd kT scale — populated for 3-prong top (W→qq̄ inside), near zero for 2-prong W or 1-prong QCD.
-- **$\sqrt{d_{34}}$** (0.633): 3rd splitting — weakest, mostly extra radiation.
-- **$d_{23}/d_{12}$ = $f_{21}$** (0.655): the ratio removes overall scale — signal peaks near 0.1 (hierarchical decay scales), QCD broad.
-- **$f_{32}=\sqrt{d_{34}}/\sqrt{d_{23}}$** (0.628): next ratio in the hierarchy.
-- **$f_z=\sqrt{d_{12}}/m_{SD}=\sqrt{z/(1-z)}$** (0.638): momentum sharing of the mass split, **mass-decorrelated** — decay shares evenly ($z\!\approx\!\tfrac12$), QCD soft-biased.
+- <span class="tag kt">kT</span> **$\sqrt{d_{23}}$** (0.684): 2nd kT scale — populated for 3-prong top (W→qq̄ inside), near zero for 2-prong W or 1-prong QCD.
+- <span class="tag kt">kT</span> **$\sqrt{d_{34}}$** (0.633): 3rd splitting — weakest, mostly extra radiation.
+- <span class="tag kt">kT</span> **$d_{23}/d_{12}$ = $f_{21}$** (0.655): the ratio removes overall scale — signal peaks near 0.1 (hierarchical decay scales), QCD broad.
+- <span class="tag kt">kT</span> **$f_{32}=\sqrt{d_{34}}/\sqrt{d_{23}}$** (0.628): next ratio in the hierarchy.
+- <span class="tag mix">kT÷C/A</span> **$f_z=\sqrt{d_{12}}/m_{SD}=\sqrt{z/(1-z)}$** (0.638): momentum sharing of the mass split, **mass-decorrelated** — decay shares evenly ($z\!\approx\!\tfrac12$), QCD soft-biased.
 
 </div>
 </div>
@@ -769,11 +809,13 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 <style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
 
-- **$n_{Lund}$** (0.602), **$n(k_t\!>\!1)$** (0.593): primary-emission counts. Signal has *fewer* (a color singlet radiates less) despite higher pileup — physical.
-- **$n(k_t\!>\!5)$** (0.691): counting only *hard* emissions sharpens it — top/W give 1–2, QCD more.
-- **$\ln k_t^{(2)}$** (0.688): 2nd-hardest emission — signal bump at $\ln k_t\!\approx\!3.5$–4.5 = the **second decay splitting** (top→W→qq̄).
-- **$\ln k_t^{(3)}$** (0.613): 3rd emission — weaker.
-- **$n_{drop}$** (0.765, **best non-mass var**): soft-drop declustering count. Decays pass in **0–1** steps; QCD needs up to ~12.
+<span class="small">All from the **C/A** primary declustering sequence (the Lund plane + soft-drop walk).</span>
+
+- <span class="tag ca">C/A</span> **$n_{Lund}$** (0.602), **$n(k_t\!>\!1)$** (0.593): primary-emission counts. Signal has *fewer* (a color singlet radiates less) despite higher pileup — physical.
+- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.691): counting only *hard* emissions sharpens it — top/W give 1–2, QCD more.
+- <span class="tag ca">C/A</span> **$\ln k_t^{(2)}$** (0.688): 2nd-hardest emission — signal bump at $\ln k_t\!\approx\!3.5$–4.5 = the **second decay splitting** (top→W→qq̄).
+- <span class="tag ca">C/A</span> **$\ln k_t^{(3)}$** (0.613): 3rd emission — weaker.
+- <span class="tag ca">C/A</span> **$n_{drop}$** (0.765, **best non-mass var**): soft-drop declustering count. Decays pass in **0–1** steps; QCD needs up to ~12.
 
 </div>
 </div>
@@ -794,11 +836,11 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 <style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
 
-- **$z_g$** (0.608): groomed momentum share — near the $z_{cut}=0.1$ edge, flatter than QCD's $1/z_g$; modest alone.
-- **$R_g$** (0.779): groomed opening angle, **strong**. Decay angle $R_g\!\approx\!m/(p_T\sqrt{z(1-z)})$ is fixed and wide; QCD collinear.
-- **$z$** (0.698), **$\Delta R$** (0.714) **of the hardest-$k_t$ emission**: for a decay this *is* the decay split, so both are decay-scale.
-- **$n_{const}$** (0.602): constituent multiplicity — quark/gluon-like, weak alone.
-- **$f_{groom}=m_{SD}/m_{ung}$** (0.747): **grooming survival** — decays keep mass ($\approx1$), QCD loses it ($\ll1$). Strong, mass-shape-decorrelated.
+- <span class="tag ca">C/A</span> **$z_g$** (0.608): groomed momentum share — near the $z_{cut}=0.1$ edge, flatter than QCD's $1/z_g$; modest alone.
+- <span class="tag ca">C/A</span> **$R_g$** (0.779): groomed opening angle, **strong**. Decay angle $R_g\!\approx\!m/(p_T\sqrt{z(1-z)})$ is fixed and wide; QCD collinear.
+- <span class="tag ca">C/A</span> **$z$** (0.698), **$\Delta R$** (0.714) **of the hardest-$k_t$ emission**: for a decay this *is* the decay split, so both are decay-scale.
+- <span class="tag ak">anti-kT</span> **$n_{const}$** (0.602): constituent multiplicity — quark/gluon-like, weak alone.
+- <span class="tag mix">C/A÷anti-kT</span> **$f_{groom}=m_{SD}/m_{ung}$** (0.747): **grooming survival** — decays keep mass ($\approx1$), QCD loses it ($\ll1$). Strong, mass-shape-decorrelated.
 
 </div>
 </div>
@@ -821,12 +863,14 @@ as two new groups; tree structure via ParT's pairwise channel. Config + ntuple b
 
 <style scoped>li { font-size: 18px; margin: 0.15em 0; }</style>
 
-- **$\chi=\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$** (0.567): 2-prong **closure** — $\chi\!\approx\!1$ for massless prongs (W), $\chi\!<\!1$ for **massive** prongs (top→Wb). Built-in top/W handle.
-- **$\psi_1=\ln k_t^{(1)}-\ln m_{SD}$** (0.528): hardest emission at the decay scale? Weak (≈ mass split for both).
-- **$\psi_2=\ln k_t^{(2)}-\ln m_{SD}$** (0.670): **2nd** emission at the decay scale? High for top (the W sub-decay) — strongest $\psi$/$\chi$.
-- **$f_{match}=\ln(\Delta R_{kt1}/R_g)$** (0.516): hardest-$k_t$ emission ≡ SD split? $\approx0$ for a clean decay.
-- **$\ln(1+n_{drop})$** (0.765): the $n_{drop}$ handle, compressed.
-- **$n(k_t\!>\!5)$** (0.691): perturbative activity, in the function set.
+<span class="small">All from the **C/A** groom + Lund reads (no kT tree enters this set).</span>
+
+- <span class="tag ca">C/A</span> **$\chi=\sqrt{z_g(1-z_g)}\,p_T R_g/m_{SD}$** (0.567): 2-prong **closure** — $\chi\!\approx\!1$ for massless prongs (W), $\chi\!<\!1$ for **massive** prongs (top→Wb). Built-in top/W handle.
+- <span class="tag ca">C/A</span> **$\psi_1=\ln k_t^{(1)}-\ln m_{SD}$** (0.528): hardest emission at the decay scale? Weak (≈ mass split for both).
+- <span class="tag ca">C/A</span> **$\psi_2=\ln k_t^{(2)}-\ln m_{SD}$** (0.670): **2nd** emission at the decay scale? High for top (the W sub-decay) — strongest $\psi$/$\chi$.
+- <span class="tag ca">C/A</span> **$f_{match}=\ln(\Delta R_{kt1}/R_g)$** (0.516): hardest-$k_t$ emission ≡ SD split? $\approx0$ for a clean decay.
+- <span class="tag ca">C/A</span> **$\ln(1+n_{drop})$** (0.765): the $n_{drop}$ handle, compressed.
+- <span class="tag ca">C/A</span> **$n(k_t\!>\!5)$** (0.691): perturbative activity, in the function set.
 
 </div>
 </div>
