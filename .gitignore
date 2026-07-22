@@ -15,5 +15,23 @@ References/Private/
 
 # OS cruft
 .DS_Store
+.DS_Store?
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 nul
+
+# macOS AppleDouble / resource-fork sidecars (created over sshfs and by the Mac Finder)
+._*
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes
+.fseventsd
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Linux / editor cruft
+*~
+.directory
+.Trash-*
