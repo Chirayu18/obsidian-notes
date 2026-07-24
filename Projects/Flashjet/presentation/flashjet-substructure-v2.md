@@ -50,9 +50,9 @@ no kernel changes, CPU/CUDA identical, negligible cost:
 
 | | feature | reads | implements |
 |---|---|---|---|
-| **F1** | exclusive-kt jets | kT history | kt algorithm [1111.6097] |
-| **F2** | soft-drop / mMDT grooming | C/A history | Soft Drop [1402.2657] |
-| **F3** | Lund coordinates | C/A history | Lund plane [1807.04758] |
+| **F1** | exclusive-kt jets | kT history | kt algorithm [1] |
+| **F2** | soft-drop / mMDT grooming | C/A history | Soft Drop [4] |
+| **F3** | Lund coordinates | C/A history | Lund plane [6] |
 
 **Validated three ways**, each closed against an independent reference:
 
@@ -105,9 +105,9 @@ naive NumPy tree-walks used only to pin the fast implementations.</span>
 
 |        | Feature             | Function                             | Implements                                                       |
 | ------ | ------------------- | ------------------------------------ | ---------------------------------------------------------------- |
-| **F1** | Exclusive jets (kt) | `exclusive_jets_from_history(...)`   | kt algorithm — FastJet manual [1111.6097], [0802.1189]           |
-| **F2** | Grooming (C/A)      | `groom_from_history(...)`            | Soft Drop [1402.2657] · mMDT [1307.0007] · mass-drop [0802.2470] |
-| **F3** | Lund coordinates    | `lund_coordinates_from_history(...)` | Primary Lund plane [1807.04758]                                  |
+| **F1** | Exclusive jets (kt) | `exclusive_jets_from_history(...)`   | kt algorithm — FastJet manual [1], anti-kt [2]                   |
+| **F2** | Grooming (C/A)      | `groom_from_history(...)`            | Soft Drop [4] · mMDT [5] · mass-drop [3]                         |
+| **F3** | Lund coordinates    | `lund_coordinates_from_history(...)` | Primary Lund plane [6]                                           |
 
 **F1** — undo the last merges of the sequence to expose exactly `n_jets` (or a `d_cut`) subjets;
 reduces to the inclusive jets at the trivial cut.
@@ -186,15 +186,15 @@ stores the `PFCand` table + the `FatJetPFCand` constituent→AK8 map. Pulled via
 
 <!-- _class: lead -->
 
-# Act 1 — Correctness
+# Correctness
 
 *each feature reproduces the signature figure of the paper it implements*
 
-<span class="small">**Conclusion of this act:** on toy inputs with known truth, F1/F2/F3 land exactly on the papers' analytic predictions.</span>
+<span class="small">**Bottom line:** on toy inputs with known truth, F1/F2/F3 land exactly on the papers' analytic predictions.</span>
 
 ---
 
-## anti-kt jet shapes — reproduces [0802.1189] Fig. 1
+## anti-kt jet shapes — reproduces [2] Fig. 1
 ### Input B (toy shower), clustering only — no substructure feature
 
 ![w:820](img/jet_areas.png)
@@ -205,7 +205,7 @@ from flashjet's own clustering. 1 synthetic event (10 hard particles + ~3200 gho
 
 ---
 
-## F1 — kt substructure separates 2-prong from QCD [0802.1189, 1111.6097]
+## F1 — kt substructure separates 2-prong from QCD [1, 2]
 ### Input A (QCD/W toy fat-jets), kt clustering
 
 ![w:820](img/kt_observables.png)
@@ -227,7 +227,7 @@ W-like balanced ($z\!\approx\!0.35$), QCD lopsided ($z\!\to\!0$).
 
 ---
 
-## F2 — soft-drop $z_g$ vs the analytic prediction [1402.2657]
+## F2 — soft-drop $z_g$ vs the analytic prediction [4]
 ### Input B (toy shower), C/A soft-drop
 
 <div class="cols">
@@ -253,7 +253,7 @@ across the **entire range**, no free parameters. 72% of jets tagged.
 
 ---
 
-## F2 — groomed mass ordering in $\beta$ [1402.2657 Figs. 3–4]
+## F2 — groomed mass ordering in $\beta$ [4] Figs. 3–4
 ### Input B (toy shower), C/A soft-drop at $\beta=0,1,2$
 
 <div class="cols">
@@ -276,24 +276,24 @@ Reproduces the $\beta$-ordering of the Soft Drop paper.
 
 ---
 
-## F3 — primary Lund plane [1807.04758]
+## F3 — primary Lund plane [6]
 ### Input A (QCD/W toy fat-jets), C/A clustering
 
 ![w:760](img/lund_plane.png)
 
 `lund_coordinates_from_history` (C/A, $R=0.8$). **QCD** fills the soft-collinear region smoothly.
 **W-like** shows the same background **plus an isolated hard-splitting spot** exactly where the
-2-body $m_W$ decay must sit (red ★ = predicted position).
+2-body $m_W$ decay must sit (red ★ = predicted position). [6]
 
 ---
 
 <!-- _class: lead -->
 
-# Act 2 — On **real CMS data** (Input C)
+# On **real CMS data** (Input C)
 
 *not toys any more: real detector-level PF-candidate constituents*
 
-<span class="small">**Conclusion of this act:** on real constituents, flashjet reproduces CMS's stored FastJet output *jet-by-jet, raw-to-raw, to NanoAOD storage precision*.</span>
+<span class="small">**Bottom line:** on real constituents, flashjet reproduces CMS's stored FastJet output *jet-by-jet, raw-to-raw, to NanoAOD storage precision*.</span>
 
 ---
 
@@ -382,7 +382,7 @@ recompute the raw one.
 **What:** **F3** `lund_coordinates` on the same real AK8 jets. Needs no comparison curve — it *is* a
 clean, publication-quality primary Lund plane straight from detector-level simulation.
 
-The full [1807.04758] structure emerges with **no toy input**: the hard-collinear perturbative ridge,
+The full [6] structure emerges with **no toy input**: the hard-collinear perturbative ridge,
 the soft plateau, and the three kinematic edges.
 
 </div>
@@ -537,11 +537,11 @@ Run 3 (C3) = the same mechanism at higher pileup: relative agreement stays **0.1
 
 <!-- _class: lead -->
 
-# Act 3 — From validation to **tagger inputs**
+# From validation to **tagger inputs**
 
 *the same histories that reproduce FastJet are a free, physics-rich input vector*
 
-<span class="small">**Conclusion of this act:** the 18-var history vector reaches AUC 0.827 for boosted top/W vs QCD — and localizes *where* it helps (boosted decays, not AK4 flavour).</span>
+<span class="small">**Bottom line:** the 18-var history vector reaches AUC 0.827 for boosted top/W vs QCD — and localizes *where* it helps (boosted decays, not AK4 flavour).</span>
 
 ---
 
@@ -752,6 +752,21 @@ where the history helps — **boosted 2-/3-prong decays**, not AK4 flavour taggi
 
 ---
 
+## References
+
+<style scoped>section { font-size: 18px; } ol { line-height: 1.7; }</style>
+
+1. M. Cacciari, G. P. Salam, G. Soyez, *FastJet User Manual*, Eur. Phys. J. C 72 (2012) 1896 — [arXiv:1111.6097](https://arxiv.org/abs/1111.6097). **F1** exclusive jets (`d_cut`/`n_jets`).
+2. M. Cacciari, G. P. Salam, G. Soyez, *The anti-$k_t$ jet clustering algorithm*, JHEP 04 (2008) 063 — [arXiv:0802.1189](https://arxiv.org/abs/0802.1189). The `hist_d` distance measure, $p=-1/0/+1$ family, jet areas.
+3. J. M. Butterworth, A. R. Davison, M. Rubin, G. P. Salam, *Jet substructure as a new Higgs-search channel*, PRL 100 (2008) 242001 — [arXiv:0802.2470](https://arxiv.org/abs/0802.2470). **F2** original mass-drop ($\mu$) tagger.
+4. A. J. Larkoski, S. Marzani, G. Soyez, J. Thaler, *Soft Drop*, JHEP 05 (2014) 146 — [arXiv:1402.2657](https://arxiv.org/abs/1402.2657). **F2** the $z>z_{\rm cut}(\Delta R/R)^\beta$ condition, $z_g$ prediction, $\beta$-ordering.
+5. M. Dasgupta, A. Fregoso, S. Marzani, G. P. Salam, *Towards an understanding of jet substructure (mMDT)*, JHEP 09 (2013) 029 — [arXiv:1307.0007](https://arxiv.org/abs/1307.0007). **F2** the $\beta=0$ default.
+6. F. A. Dreyer, G. P. Salam, G. Soyez, *The Lund Jet Plane*, JHEP 12 (2018) 064 — [arXiv:1807.04758](https://arxiv.org/abs/1807.04758). **F3** the $(z,\Delta R,k_t,\ln 1/\Delta R,\ln k_t)$ coordinates.
+
+<span class="small">Broader review: S. Marzani, G. Soyez, M. Spannowsky, *Looking Inside Jets*, [arXiv:1901.10342](https://arxiv.org/abs/1901.10342). Papers + a print-ready reader catalogued in `References/Flashjet/papers.md`.</span>
+
+---
+
 <!-- _class: lead -->
 
 # Backup
@@ -904,7 +919,7 @@ The toy-shower closure, repeated on **164 292 real CMS jets**: re-groom the same
 $\beta = 0, 1, 2$ ($z_{\rm cut}=0.1$) and plot $\rho = m^2/(p_T^2 R^2)$.
 
 - grooming pushes mass **down**; **smaller $\beta$ grooms harder** — the exact ordering
-  of Soft Drop [1402.2657] Figs. 3–4;
+  of Soft Drop [4] Figs. 3–4;
 - $\beta=0$ (mMDT) develops the characteristic flat low-$\rho$ tail.
 
 <span class="small">Grooming re-run 3× on the *same* merge histories (a pure post-read: no re-clustering — the point of the history design).</span>
