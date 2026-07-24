@@ -809,7 +809,7 @@ ttbar AK4 vs QCD AK4 (MINIAOD, same source) — **every variable 0.50–0.55**:
 
 <span class="small">All 18 merge-history variables, weighted single-variable AUC. **Blue = AK8 top/W-vs-QCD (0.6–0.79)**, orange/green = **AK4 (≈0.5–0.59)** — same variables, strongly discriminating on boosted AK8, near-blind on AK4. ⇒ the history separates **boosted decays, not AK4 flavour** (a lifetime / displaced-vertex question a kinematic tree can't see).</span>
 
-<span class="small">⚠ **For this comparison AK8 was also taken from MINIAOD** (`slimmedJetsAK8`), matched to the MINIAOD AK4 (`slimmedJets`) — same TTto4Q + QCD files, same constituents, so it is a like-for-like test. (The merge-tree slides earlier read AK8 from **JMENano** via the `FatJetPFCand` linker; only AK4, which NanoAOD can't link, forces MINIAOD.)</span>
+<span class="small">⚠ **For this comparison AK8 was also taken from MINIAOD** (`slimmedJetsAK8`), matched to the MINIAOD AK4 (`slimmedJets`) — same TTto4Q + QCD files, same constituents, so it is a like-for-like test.</span>
 
 ---
 
