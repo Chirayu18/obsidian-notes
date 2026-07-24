@@ -679,17 +679,33 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 ## What the variables measure: one jet's full merge history (gen-verified)
 
-![w:1080](img/full_history_good.png)
+![w:920](img/full_history_good.png)
 
-<style scoped>section { font-size: 17px; }</style>
+<style scoped>section { font-size: 16px; }</style>
 
-flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every merge, **nothing removed**. This jet is a **gen-verified hadronic top** ($t\to Wb$, $W\to q\bar q$; the three hard partons are matched to `GenPart` inside the jet cone — see the **right panel**). **Left C/A** with soft-drop overlaid: <span style="color:#15803d">**green = the groomed jet**</span>, grey = dropped soft prongs, ★ = passing split ($m_{SD}, z_g, R_g$ live here). **Middle kT** (value-sorted): top merges' $\sqrt d\,R = \sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$. Grooming strips the soft junk and lands $m_{SD}$ on the decay mass. **Grooming = a pruned path through the C/A tree** — and the gen decay panel confirms the hard split the ★ sits on is the *real* $W\to q\bar q$.
+**One gen-verified top jet, read three ways** — flashjet keeps the *complete* merge tree (`hist_p1,p2,child,d`), nothing thrown away, and every substructure variable is a coordinate on it:
+
+- **Right = gen truth:** `GenPart` → hadronic top ($t\to Wb$, $W\to q\bar q$), all three hard partons inside the cone. *What the jet actually is.*
+- **Left = C/A tree + grooming:** <span style="color:#15803d">**green = surviving groomed jet**</span>, grey = dropped soft prongs, ★ = the passing split — **$m_{SD}, z_g, R_g$ live here.**
+- **Middle = kT tree**, splits value-sorted $\sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$ — source of $\sqrt{d_{12}}$, $z_{kt}$, the Lund counts.
+
+**Punchline:** grooming is a *pruned path* through the C/A tree; the ★ it stops on is the real $W\to q\bar q$ split, so $m_{SD}$ ($116\to$**80 GeV**) lands on the $W$ inside the top — confirmed by gen.
 
 ---
 
 ## AK8 vs AK4: the history is a **boosted-decay** tool
 
-Same 18 history variables, best single-variable AUC in three studies:
+![w:560](img/ak4_vs_ak8.png)
+
+<span class="small">All 18 merge-history variables, weighted single-variable AUC. **Blue = AK8 top/W-vs-QCD (0.6–0.79)**, orange = AK4 ttbar-vs-QCD, green = AK4 b-vs-light (**both ≈0.5–0.59**) — same variables, strongly discriminating on boosted AK8, near-blind on AK4.</span>
+
+**⇒ The history separates boosted 2-/3-prong decays — it does *not* separate AK4 flavour**: UParT's impact-parameter / secondary-vertex inputs carry information no clustering tree contains.
+
+<span class="small">**This comparison**: AK8 + AK4 both from **MINIAOD** (`slimmedJetsAK8` / `slimmedJets`, same files) — matched inputs. The merge-tree slides earlier read AK8 from **JMENano** (`FatJetPFCand` linker); only AK4 forces MINIAOD.</span>
+
+---
+
+## AK8 vs AK4 — reading the three studies
 
 | study | what's being separated | best variable | AUC | reading |
 |---|---|---|---|---|
@@ -697,55 +713,39 @@ Same 18 history variables, best single-variable AUC in three studies:
 | **AK4 ttbar vs QCD** | single quark jet (dijet) vs QCD | $m_{SD}$ | **0.55** | one AK4 jet ≈ one quark — no in-jet decay |
 | **AK4 b vs light** | flavour (b vs udsg) | $z$ hardest emis. | **0.55** | a **lifetime** question (IP/SV) — invisible to a kinematic tree |
 
-**⇒ The history variables separate boosted 2-/3-prong decays — they do *not* separate AK4 flavour** — quantitative
-confirmation that UParT's impact-parameter / secondary-vertex inputs carry information no clustering tree contains.
-
-<span class="small">Sources: AK8 = MINIAOD `slimmedJetsAK8` (same TTto4Q + QCD Run3 2022 files as AK4); AK4 = MINIAOD
-`slimmedJets`. Full AK4 trees + b-vs-light / ttbar-vs-QCD variable studies on the next slides.</span>
+<span class="small">Full AK4 trees + b-vs-light / ttbar-vs-QCD variable studies on the next slides.</span>
 
 ---
 
-## Full-history tree gallery — QCD vs clean top
+## Tree gallery 1/4 — QCD jet: a soft **staircase**, no decay
 
-<div class="cols">
-<div>
+![w:760](img/tree_qcd.png)
 
-![w:540](img/tree_qcd.png)
-
-<span class="small">**QCD** (23 const, $p_T$ 331): m_ung 33 → **m_SD 1.2**, $n_{drop}=$**13**. Green spine is a long **staircase** — soft prong after soft prong dropped, mass collapses. No balanced hard split. *Why $n_{drop}$ is the best non-mass variable.*</span>
-
-</div>
-<div>
-
-![w:540](img/tree_top.png)
-
-<span class="small">**Clean top** (32 const, $p_T$ 529): m_ung 156 → **m_SD 155**, $n_{drop}=$**1**. Grooming barely works — the ★ sits at the very top on a wide balanced split.</span>
-
-</div>
-</div>
-
-<span class="small">Spine length 13 vs 1 is the entire discriminant, visualised.</span>
+<span class="small">Gen: leading parton is a single light quark, **no resonance**. C/A tree: the green groomed spine is a long **staircase** — soft prong after soft prong stripped, so $n_{drop}=$**13** and the mass collapses $33\to$**1.2 GeV**. There is no wide balanced split to stop on. **This is why $n_{drop}$ is the strongest non-mass discriminant** — QCD has a long spine, a real decay has a short one.</span>
 
 ---
 
-## Full-history tree gallery — boosted & b-jet
+## Tree gallery 2/4 — clean top: grooming lands on $m_t$
 
-<div class="cols">
-<div>
+![w:760](img/tree_top.png)
 
-![w:540](img/tree_boosted.png)
+<span class="small">Gen: hadronic top, all of $b + q + q$ in the cone (gen top $p_T$ 618). C/A tree: the ★ sits **near the top of the tree on one wide, balanced split** — grooming barely has to prune, so $m_{ung}\,158\to m_{SD}\,$**152 GeV**, $n_{drop}=$**1**. The groomed jet keeps the whole $t\to bW$ system, so $m_{SD}$ sits on the **top mass**.</span>
 
-<span class="small">**Boosted / collimated** (35 const, $p_T$ 629): $R_g=$**0.26**. At high $p_T$ the decay angle shrinks — the hard split moves *down* toward the collinear region, the tree compresses.</span>
+---
 
-</div>
-<div>
+## Tree gallery 3/4 — boosted top: the same decay, **compressed**
 
-![w:540](img/tree_bjet.png)
+![w:760](img/tree_boosted.png)
 
-<span class="small">**b jet** (26 const, $p_T$ 403): single hard core, no balanced split — looks QCD-like. Foreshadows the AK4 result: **a kinematic tree does not see flavour**.</span>
+<span class="small">Gen: hadronic top again (gen top $p_T$ 648), but higher-$p_T$. The decay opening angle shrinks with boost, so the hard split moves *down* into the collinear region and the tree **compresses**: $R_g=$**0.30**, and here grooming resolves the $W$ subsystem, $m_{ung}\,163\to m_{SD}\,$**83 GeV**. Same physics as slide 2/4 — $R_g$ is what encodes the boost.</span>
 
-</div>
-</div>
+---
+
+## Tree gallery 4/4 — b jet: hard core, but **looks like QCD**
+
+![w:760](img/tree_bjet.png)
+
+<span class="small">Gen: a single **b** parton in the cone, no resonance. The tree has one hard core and **no balanced two-prong split** — kinematically it is indistinguishable from QCD. Flavour is a *lifetime* question (displaced vertex / impact parameter), which a clustering tree simply cannot see. **This foreshadows the AK4 result: the merge history does not tag flavour.**</span>
 
 ---
 
