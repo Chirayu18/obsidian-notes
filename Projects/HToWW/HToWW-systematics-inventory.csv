@@ -1,0 +1,40 @@
+Nuisance,Type,Processes,Where picked up (source),Key / file,Reference,Status,Notes
+pileup,shape (weight),all MC,processor: analysis/corrections/pileup.py (PileupWeights),"correctionlib PU json (BTV/LUM POG), pileupWeight event_weight",LUM POG pileup; AN-23-102 §7,IN CARD,"MC pileup profile reweighting, up/down from POG"
+ps_isr,shape (weight),all MC except tt (no_theory),processor: partonshower.py (PSWeight),"LHE PS weights, partonshowerWeight",AN-23-102 §7.1 (parton shower),IN CARD,ISR variation
+ps_fsr,shape (weight),all MC except tt,processor: partonshower.py,LHE PS weights,AN-23-102 §7.1,IN CARD,FSR variation
+scalevar_muR,shape (weight),all MC except tt,processor: lhescale.py,"LHEScaleWeight, lhescaleWeight",AN-23-102 §7.1 (QCD scale),IN CARD,muR up/down (envelope member)
+scalevar_muF,shape (weight),all MC except tt,processor: lhescale.py,LHEScaleWeight,AN-23-102 §7.1,IN CARD,muF up/down
+scalevar_muR_muF,shape (weight),all MC except tt,processor: lhescale.py,LHEScaleWeight,AN-23-102 §7.1,IN CARD,correlated muR*muF
+muon_id,shape (weight),all MC,processor: muon.py (MuonWeights.add_id_weights),"MUO POG muon SF json, muon.id=tight",MUO POG; AN-23-102 §6,IN CARD,muon ID SF up/down
+muon_iso,shape (weight),all MC,processor: muon.py (add_iso_weights),"MUO POG muon SF json, muon.iso=tight",MUO POG,IN CARD,muon isolation SF up/down
+electron_id,shape (weight),all MC,processor: electron.py (ElectronWeights.add_id_weights),"EGM POG electron SF json, electron.id=wp80iso",EGM POG; AN-23-102 §6,IN CARD,electron ID SF
+electron_reco_RecoBelow20,shape (weight),all MC,processor: electron.py (add_reco_weights),EGM POG reco SF (pt<20),EGM POG,IN CARD,"e reco SF, pt<20 bin"
+electron_reco_Reco20to75,shape (weight),all MC,processor: electron.py,EGM POG reco SF (20<pt<75),EGM POG,IN CARD,"e reco SF, 20-75"
+electron_reco_RecoAbove75,shape (weight),all MC,processor: electron.py,EGM POG reco SF (pt>75),EGM POG,IN CARD,"e reco SF, >75"
+CMS_ctag2d_2022,shape (weight),all MC,processor: analysis/corrections/ctag2d.py (CTag2DCorrector) [NATIVE as of 2026-07-24],"ParticleNetAK4_pseudocontinuous in flavTaggingSF_2022postEE.json.gz (cmshgg ingredients), up_Total/down_Total",cmshgg 2D_HF_Tagging ingredients; PNet AK4 pseudo-continuous,IN CARD,2D c-tag SF. Single Total nuisance now; DECORRELATE later (HiggsDNA bTagShapeSF style)
+CMS_negrw_vjets,shape (weight),vjets only,processor: base.py::_score_negrw + make_combine_inputs.py,"negrw_models.joblib ensemble (20 HistGradientBoostingClassifier), weight_negrw_std band",arXiv:2510.16217 (neg-weight reweighting),IN CARD,"|w|*g reweight of vjets; std-band shape nuisance, per-dataset renorm"
+CMS_scale_j_2022,shape (object shift),all MC,processor object_shifts=true (jerc.py JES),"JME POG JEC (jec_params_correctionlib.yaml), Total",JME POG JEC; AN-23-102 §7.2,IN CARD,"JES Total (single, like HiggsDNA/JEC convention). Regrouped split = TODO"
+CMS_res_j_2022,shape (object shift),all MC,processor object_shifts (jerc.py JER),JME POG JER,JME POG JER,IN CARD,JER
+CMS_scale_e_2022,shape (object shift),all MC,processor object_shifts (electron_ss.py),EGM scale&smearing,EGM POG SS,IN CARD,electron energy scale
+CMS_res_e_2022,shape (object shift),all MC,processor object_shifts (electron_ss.py),EGM scale&smearing,EGM POG SS,IN CARD,electron energy resolution
+CMS_scale_m_2022,shape (object shift),all MC,processor object_shifts (muon_ss.py),MUO momentum scale,MUO POG,IN CARD,muon momentum scale
+CMS_res_m_2022,shape (object shift),all MC,processor object_shifts (muon_ss.py),MUO momentum resolution,MUO POG,IN CARD,muon momentum resolution
+lumi_13p6TeV,lnN 1.014,"hplusc,higgsbkg,st,diboson,vjets",datacard lnN (workflow yaml),LumiPOG 2022postEE,CMS LUM POG (Run3 2022),IN CARD,1.4% integrated lumi
+xsec_st,lnN 0.9873/1.0167,st,datacard lnN,theory xsec,AN-23-102 Table 16,IN CARD,single-top xsec
+xsec_diboson,lnN 1.037,diboson,datacard lnN,theory xsec,AN-23-102 Table 16,IN CARD,VV xsec
+xsec_vjets,lnN 1.027,vjets,datacard lnN,theory xsec,AN-23-102 Table 16,IN CARD,V+jets xsec
+xsec_higgsbkg,lnN 1.05,higgsbkg,datacard lnN,theory xsec (Higgs bkg),AN-23-102 §7.1,IN CARD,Higgs-bkg xsec
+flavor_composition_ggH,lnN 1.40,higgsbkg,datacard lnN,AN-23-102 §7.1 (50% on ggH yield),AN-23-102 §7.1,IN CARD-PLACEHOLDER,0.5*0.8=0.40 effective; apply full 1.50 to ggH once split out of higgsbkg
+BR_HtoWW,lnN 1.01,"hplusc,higgsbkg",datacard lnN,HWW branching ratio,LHCHWG YR4,IN CARD,BR(H->WW)
+xsec_hplusc_PDF,lnN 1.06,hplusc,datacard lnN,signal PDF xsec,AN-23-102 §7.1,IN CARD,H+c PDF
+xsec_hplusc_4FS_5FS,lnN 1.30,hplusc,datacard lnN,4FS/5FS scheme,AN-23-102 §7.1,IN CARD,H+c flavour-scheme
+alphaS_PDF,lnN 1.03,"hplusc,higgsbkg,st,diboson,vjets",datacard lnN,alphaS,PDF4LHC / AN-23-102,IN CARD,alphaS
+tt (rateParam),rateParam (free norm),tt,"datacard (rate_params), CR_tt shared",data-driven tt norm,AN-23-102 (tt from data),IN CARD,"tt floats freely, shared CR_tt->SR; replaces tt xsec lnN"
+autoMCStats,MC-stat (per-bin BB),all,datacard autoMCStats 10,combine Barlow-Beeston,combine autoMCStats,IN CARD,MC statistical uncertainty per bin
+JES Regrouped sources,shape (object shift),all MC,would split CMS_scale_j into ~11 Regrouped,JME POG Regrouped JEC,JME POG,MISSING/TODO,currently single Total; decorrelate in whole-card pass
+CMS_ctag2d Stat/sources,shape (weight),all MC,would split CMS_ctag2d_2022 into Stat + shared JES/PU/theory/lepton,flavTaggingSF up_Stat + per-source keys (525 total),HiggsDNA bTagShapeSF precedent,MISSING/TODO,DECORRELATION DEFERRED (decision 2026-07-24). Map SF's JES/PU/lepton onto analysis' own shared nuisances
+prefiring (L1),shape (weight),all MC,NO prefiring code in framework (verified 2026-07-24),L1PrefiringWeight (absent),CMS L1 prefiring,MISSING/likely-negligible,Run3 2022: ECAL prefiring ~0; L1 muon prefiring small. Add only if AN requires
+trigger SF (muon/electron),shape (weight),all MC,"muon.trigger=false, electron.trigger=false in workflow (verified)",MUO/EGM trigger SF json,MUO/EGM POG,MISSING/TODO,trigger SFs DISABLED in workflow -> enable + add nuisance
+ctag (1D fixed-WP) SF,shape (weight),all MC,CTagCorrector exists but 'ctagging' not in event_weights,BTV particleNet_wc/tnp ctagging.json.gz,BTV POG,N/A-superseded,1D fixed-WP c-tag; superseded by 2D pseudo-cont for this analysis
+PDF shape (LHEPdfWeight),shape (weight),all MC w/ LHEPdfWeight,processor: lhepdf.py add_lhepdf_weight IS wired (verified); but NOT in shape_systematics,"LHEPdfWeight (computed, unused as shape)",PDF4LHC / AN-23-102,MISSING/TODO,PDF weights ARE dumped but only xsec_hplusc_PDF lnN used. Add PDF Hessian/envelope SHAPE nuisance(s)
+signal theory (ps_/scalevar_ on hplusc),shape (weight),hplusc,"hplusc NOT in no_theory (verified) -> gets ps_isr/fsr, scalevar_*",LHE weights on signal,AN-23-102 §7.1,IN CARD-OK,signal DOES receive the theory shape rows
