@@ -63,7 +63,7 @@ no kernel changes, CPU/CUDA identical, negligible cost:
 | **real CMS** (raw-to-raw) | stored FastJet branches | $p_T$ **1.000000**, $m_{SD}$ **−0.004 GeV**, $R_g$ 99.2% <0.01 |
 
 **⇒ flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision** — then the same
-histories become **tagger inputs** (second half of this talk).
+histories yield **variables that separate the samples** (second half of this talk).
 
 ---
 
@@ -176,7 +176,7 @@ stores the `PFCand` table + the `FatJetPFCand` constituent→AK8 map. Pulled via
 |---|---|---|---|---|
 | **C1** | `QCD_Pt-15to7000_Flat2018_pythia8` | UL18 JMENano (13 TeV) | 60 257 | CMS (1)–(4), β-family |
 | **C2** | `TTTo2L2Nu` (dileptonic) | UL18 JMENano (13 TeV) | 12 561 | ttbar slides |
-| **C3** | `TTto4Q` (fully-hadronic) | RunIII2024 JMENanoV15 (13.6 TeV) | 16 516 | three-sample compare, **tagger inputs** |
+| **C3** | `TTto4Q` (fully-hadronic) | RunIII2024 JMENanoV15 (13.6 TeV) | 16 516 | three-sample compare, **separating variables** |
 
 <span class="small">All: leading AK8 jet/event, raw $p_T>300$ GeV, $|\eta|<2.4$, 2–200 linked PF candidates.
 `PFCand_pt/mass` are **already PUPPI-weighted** (branch titles); stored `FatJet_*` are JEC-corrected
@@ -367,7 +367,7 @@ recompute the raw one.
 </div>
 <div>
 
-![w:520](img/cms_exact_match.png)
+![w:520](img/cms_msd_match.png)
 
 </div>
 </div>
@@ -537,11 +537,11 @@ Run 3 (C3) = the same mechanism at higher pileup: relative agreement stays **0.1
 
 <!-- _class: lead -->
 
-# From validation to **tagger inputs**
+# Variables that separate the samples
 
-*the same histories that reproduce FastJet are a free, physics-rich input vector*
+*the same histories that reproduce FastJet also carry physics that separates QCD from boosted decays*
 
-<span class="small">**Bottom line:** the 18-var history vector reaches AUC 0.827 for boosted top/W vs QCD — and localizes *where* it helps (boosted decays, not AK4 flavour).</span>
+<span class="small">**Bottom line:** the merge history yields variables that cleanly separate boosted top/W jets from QCD — and localizes *where* they help (boosted 2-/3-prong decays, not AK4 flavour).</span>
 
 ---
 
@@ -676,30 +676,6 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 ---
 
-## The result: the declustering *sequence* is the payload
-
-<div class="cols">
-<div>
-
-![w:640](img/tagger_study.png)
-
-</div>
-<div>
-
-$t\bar t\to 4q$ (C3) vs $p_T$-reweighted QCD, weighted logistic on the **18-variable** history vector:
-
-- mass-scale vars saturate at AUC **0.794** (they're 0.8–0.97 correlated — the *same* 2-prong mass);
-- adding the **declustering sequence** → full set **0.827**, ~2× QCD rejection at 30% eff;
-- **$n_{drop}$ alone 0.769** — decay jets pass soft drop in 0–1 steps, QCD needs many;
-- $\ln k_t^{(2)}$ resolves the **second** decay splitting (top→W).
-
-<span class="small">The point: this input vector is **free** once the history exists — no new clustering, GPU-batchable. Exploratory (no gen-match, linear model). Condor 9128460.</span>
-
-</div>
-</div>
-
----
-
 ## What the variables measure: one jet's full merge history
 
 ![w:1000](img/full_history_tree.png)
@@ -716,7 +692,7 @@ flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every me
 
 <style scoped>section { font-size: 18px; }</style>
 
-A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass inflated to **120 GeV** by soft wide radiation; soft-drop peels off 4 soft prongs (grey) and lands the ★ on a **balanced, wide** split — $z_g=0.49$, $R_g=0.34$, $k_t$ jumps to **80 GeV** — giving <span style="color:#15803d">**$m_{SD}=83\approx m_W$**</span>. Two slides show the same algorithm succeeding vs misfiring — why the tagger uses $n_{drop}$ + the **kT** scales, not $m_{SD}$ alone.
+A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass inflated to **120 GeV** by soft wide radiation; soft-drop peels off 4 soft prongs (grey) and lands the ★ on a **balanced, wide** split — $z_g=0.49$, $R_g=0.34$, $k_t$ jumps to **80 GeV** — giving <span style="color:#15803d">**$m_{SD}=83\approx m_W$**</span>. Two slides show the same algorithm succeeding vs misfiring — why the separating variables use $n_{drop}$ + the **kT** scales, not $m_{SD}$ alone.
 
 ---
 
@@ -730,46 +706,11 @@ Same 18 history variables, best single-variable AUC in three studies:
 | **AK4 ttbar vs QCD** | single quark jet (dijet) vs QCD | $m_{SD}$ | **0.55** | one AK4 jet ≈ one quark — no in-jet decay |
 | **AK4 b vs light** | flavour (b vs udsg) | $z$ hardest emis. | **0.55** | a **lifetime** question (IP/SV) — invisible to a kinematic tree |
 
-**⇒ Pitch history tokens at boosted 2-/3-prong tagging, not as an AK4 / b-tag input** — quantitative
+**⇒ The history variables separate boosted 2-/3-prong decays — they do *not* separate AK4 flavour** — quantitative
 confirmation that UParT's impact-parameter / secondary-vertex inputs carry information no clustering tree contains.
 
 <span class="small">Sources: AK8 = MINIAOD `slimmedJetsAK8` (same TTto4Q + QCD Run3 2022 files as AK4); AK4 = MINIAOD
-`slimmedJets`. Grouped-bar figure `ak4_vs_ak8.png` in backup once same-source AK8 substructure completes.</span>
-
----
-
-<!-- _class: lead -->
-
-# Summary
-
-**flashjet reads the full merge history** — F1 exclusive-kt jets, F2 soft-drop grooming, F3 Lund —
-as pure-torch post-reads, validated to **NanoAOD storage precision** against CMS's FastJet output on
-QCD and ttbar (raw-to-raw, jet-by-jet).
-
-**Those same histories are a free tagger input**: the 18-variable vector reaches **AUC 0.827** for
-boosted top/W vs QCD (the declustering *sequence*, not just mass), and the study cleanly localizes
-where the history helps — **boosted 2-/3-prong decays**, not AK4 flavour tagging.
-
----
-
-## References
-
-<style scoped>section { font-size: 18px; } ol { line-height: 1.7; }</style>
-
-1. M. Cacciari, G. P. Salam, G. Soyez, *FastJet User Manual*, Eur. Phys. J. C 72 (2012) 1896 — [arXiv:1111.6097](https://arxiv.org/abs/1111.6097). **F1** exclusive jets (`d_cut`/`n_jets`).
-2. M. Cacciari, G. P. Salam, G. Soyez, *The anti-$k_t$ jet clustering algorithm*, JHEP 04 (2008) 063 — [arXiv:0802.1189](https://arxiv.org/abs/0802.1189). The `hist_d` distance measure, $p=-1/0/+1$ family, jet areas.
-3. J. M. Butterworth, A. R. Davison, M. Rubin, G. P. Salam, *Jet substructure as a new Higgs-search channel*, PRL 100 (2008) 242001 — [arXiv:0802.2470](https://arxiv.org/abs/0802.2470). **F2** original mass-drop ($\mu$) tagger.
-4. A. J. Larkoski, S. Marzani, G. Soyez, J. Thaler, *Soft Drop*, JHEP 05 (2014) 146 — [arXiv:1402.2657](https://arxiv.org/abs/1402.2657). **F2** the $z>z_{\rm cut}(\Delta R/R)^\beta$ condition, $z_g$ prediction, $\beta$-ordering.
-5. M. Dasgupta, A. Fregoso, S. Marzani, G. P. Salam, *Towards an understanding of jet substructure (mMDT)*, JHEP 09 (2013) 029 — [arXiv:1307.0007](https://arxiv.org/abs/1307.0007). **F2** the $\beta=0$ default.
-6. F. A. Dreyer, G. P. Salam, G. Soyez, *The Lund Jet Plane*, JHEP 12 (2018) 064 — [arXiv:1807.04758](https://arxiv.org/abs/1807.04758). **F3** the $(z,\Delta R,k_t,\ln 1/\Delta R,\ln k_t)$ coordinates.
-
-<span class="small">Broader review: S. Marzani, G. Soyez, M. Spannowsky, *Looking Inside Jets*, [arXiv:1901.10342](https://arxiv.org/abs/1901.10342). Papers + a print-ready reader catalogued in `References/Flashjet/papers.md`.</span>
-
----
-
-<!-- _class: lead -->
-
-# Backup
+`slimmedJets`. Full AK4 trees + b-vs-light / ttbar-vs-QCD variable studies on the next slides.</span>
 
 ---
 
@@ -843,7 +784,7 @@ The b jet and light jet at the *same* $p_T$ have **near-identical** trees.
 
 ---
 
-## AK4 result: no flavour tagging (b vs light)
+## AK4 result: no flavour separation (b vs light)
 
 <div class="cols">
 <div>
@@ -889,6 +830,65 @@ ttbar AK4 vs QCD AK4 (MINIAOD, same source) — **every variable 0.50–0.55**:
 - a single AK4 jet in ttbar is mostly **one quark** (a b, or a light quark from W→qq̄) — no multi-prong decay *inside one jet* for the history to see.
 
 <span class="small">The tiny edge is just the b-jet admixture. Complements the b-vs-light null: the history has no AK4 handle at all.</span>
+
+</div>
+</div>
+
+---
+
+<!-- _class: lead -->
+
+# Summary
+
+**flashjet reads the full merge history** — F1 exclusive-kt jets, F2 soft-drop grooming, F3 Lund —
+as pure-torch post-reads, validated to **NanoAOD storage precision** against CMS's FastJet output on
+QCD and ttbar (raw-to-raw, jet-by-jet).
+
+**Those same histories yield variables that separate the samples**: they cleanly split boosted top/W
+jets from QCD (the declustering *sequence*, not just mass), and the study localizes
+where they help — **boosted 2-/3-prong decays**, not AK4 flavour.
+
+---
+
+## References
+
+<style scoped>section { font-size: 18px; } ol { line-height: 1.7; }</style>
+
+1. M. Cacciari, G. P. Salam, G. Soyez, *FastJet User Manual*, Eur. Phys. J. C 72 (2012) 1896 — [arXiv:1111.6097](https://arxiv.org/abs/1111.6097). **F1** exclusive jets (`d_cut`/`n_jets`).
+2. M. Cacciari, G. P. Salam, G. Soyez, *The anti-$k_t$ jet clustering algorithm*, JHEP 04 (2008) 063 — [arXiv:0802.1189](https://arxiv.org/abs/0802.1189). The `hist_d` distance measure, $p=-1/0/+1$ family, jet areas.
+3. J. M. Butterworth, A. R. Davison, M. Rubin, G. P. Salam, *Jet substructure as a new Higgs-search channel*, PRL 100 (2008) 242001 — [arXiv:0802.2470](https://arxiv.org/abs/0802.2470). **F2** original mass-drop ($\mu$) tagger.
+4. A. J. Larkoski, S. Marzani, G. Soyez, J. Thaler, *Soft Drop*, JHEP 05 (2014) 146 — [arXiv:1402.2657](https://arxiv.org/abs/1402.2657). **F2** the $z>z_{\rm cut}(\Delta R/R)^\beta$ condition, $z_g$ prediction, $\beta$-ordering.
+5. M. Dasgupta, A. Fregoso, S. Marzani, G. P. Salam, *Towards an understanding of jet substructure (mMDT)*, JHEP 09 (2013) 029 — [arXiv:1307.0007](https://arxiv.org/abs/1307.0007). **F2** the $\beta=0$ default.
+6. F. A. Dreyer, G. P. Salam, G. Soyez, *The Lund Jet Plane*, JHEP 12 (2018) 064 — [arXiv:1807.04758](https://arxiv.org/abs/1807.04758). **F3** the $(z,\Delta R,k_t,\ln 1/\Delta R,\ln k_t)$ coordinates.
+
+<span class="small">Broader review: S. Marzani, G. Soyez, M. Spannowsky, *Looking Inside Jets*, [arXiv:1901.10342](https://arxiv.org/abs/1901.10342). Papers + a print-ready reader catalogued in `References/Flashjet/papers.md`.</span>
+
+---
+
+<!-- _class: lead -->
+
+# Backup
+
+---
+
+## Multivariable separation: the declustering *sequence* is the payload
+
+<div class="cols">
+<div>
+
+![w:640](img/tagger_study.png)
+
+</div>
+<div>
+
+$t\bar t\to 4q$ (C3) vs $p_T$-reweighted QCD, weighted logistic on the **18-variable** history vector:
+
+- mass-scale vars saturate at AUC **0.794** (they're 0.8–0.97 correlated — the *same* 2-prong mass);
+- adding the **declustering sequence** → full set **0.827**, ~2× QCD rejection at 30% eff;
+- **$n_{drop}$ alone 0.769** — decay jets pass soft drop in 0–1 steps, QCD needs many;
+- $\ln k_t^{(2)}$ resolves the **second** decay splitting (top→W).
+
+<span class="small">The point: this variable set is **free** once the history exists — no new clustering, GPU-batchable. Exploratory (no gen-match, linear model). Condor 9128460.</span>
 
 </div>
 </div>
