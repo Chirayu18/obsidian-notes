@@ -62,8 +62,8 @@ no kernel changes, CPU/CUDA identical, negligible cost:
 | **paper closures** (toys) | analytic LL predictions | $z_g$ on the $1/z$ curve; areas; $\beta$-ordering |
 | **real CMS** (raw-to-raw) | stored FastJet branches | $p_T$ **1.000000**, $m_{SD}$ **−0.004 GeV**, $R_g$ 99.2% <0.01 |
 
-**⇒ flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision** — then the same
-histories yield **variables that separate the samples** (second half of this talk).
+**⇒ flashjet reproduces CMS's FastJet reconstruction jet-by-jet, with residuals at the level of
+NanoAOD float storage** — then the same histories yield **variables that separate the samples**.
 
 ---
 
@@ -190,7 +190,7 @@ stores the `PFCand` table + the `FatJetPFCand` constituent→AK8 map. Pulled via
 
 *each feature reproduces the signature figure of the paper it implements*
 
-<span class="small">**Bottom line:** on toy inputs with known truth, F1/F2/F3 land exactly on the papers' analytic predictions.</span>
+<span class="small">**Bottom line:** on toy inputs with known truth, F1/F2/F3 land on the papers' analytic predictions.</span>
 
 ---
 
@@ -293,7 +293,7 @@ Reproduces the $\beta$-ordering of the Soft Drop paper.
 
 *not toys any more: real detector-level PF-candidate constituents*
 
-<span class="small">**Bottom line:** on real constituents, flashjet reproduces CMS's stored FastJet output *jet-by-jet, raw-to-raw, to NanoAOD storage precision*.</span>
+<span class="small">**Bottom line:** on real constituents, flashjet reproduces CMS's stored FastJet output *jet-by-jet, raw-to-raw*, with the small residuals at the level of NanoAOD float storage.</span>
 
 ---
 
@@ -316,7 +316,7 @@ Reproduces the $\beta$-ordering of the Soft Drop paper.
 5. Chunked at 3000 jets (torch backend is $O(N^3)$; each AK8 jet is one independent event, so chunking is exact).
 
 **The stored CMS values are JEC-corrected**: raw jet = `FatJet_pt×(1−rawFactor)`;
-`FatJet_msoftdrop` = m(sub1+sub2) **with subjet JECs** (proven from data: Δ = +0.0002 GeV).
+`FatJet_msoftdrop` = m(sub1+sub2) **with subjet JECs** (checked against the data: Δ = +0.0002 GeV).
 
 </div>
 </div>
@@ -331,9 +331,9 @@ Reproduces the $\beta$-ordering of the Soft Drop paper.
 **What:** feed CMS's own AK8 constituents to **our** anti-kt $R=0.8$ and compare the reclustered
 jet $p_T$ to CMS's stored `FatJet_pt`, **jet-by-jet**.
 
-**Result — EXACT:** vs the **raw** jet pt (`FatJet_pt×(1−rawFactor)`) the ratio is
-**median 1.000000, σ = 2.5×10⁻⁴** — pure NanoAOD storage precision. The apparent ~6% offset
-vs the stored value **is the L1L2L3 JEC**, nothing else: CMS stores corrected $p_T$, we
+**Result:** vs the **raw** jet pt (`FatJet_pt×(1−rawFactor)`) the ratio is
+**median 1.000000, σ = 2.5×10⁻⁴** — the spread is consistent with NanoAOD float storage. The
+apparent ~6% offset vs the stored value **is the L1L2L3 JEC**: CMS stores corrected $p_T$, we
 recompute the raw one.
 
 <span class="small">60 257 jets; HTCondor cluster 9087059.</span>
@@ -348,21 +348,22 @@ recompute the raw one.
 
 ---
 
-## CMS (2) — soft-drop mass matches CMS **EXACTLY** (raw-to-raw) — C1
+## CMS (2) — soft-drop mass matches CMS `msoftdrop` (raw-to-raw) — C1
 
 <div class="cols">
 <div>
 
 **Raw-to-raw, on the C/A tree (20 065 jets):** our **F2** soft-drop mass reproduces CMS
-`FatJet_msoftdrop` jet-by-jet — the diagonal is exact to NanoAOD storage precision.
+`FatJet_msoftdrop` jet-by-jet — the diagonal is tight, with residuals near the NanoAOD storage level.
 
 | | our − CMS |
 |---|---|
 | $m_{\rm SD}$ | **−0.004 GeV** (95.6% <0.5 GeV) |
 | $z_g$ | \|Δ\| = **7×10⁻⁵** |
 
-**F2 reproduces CMS `msoftdrop`.** The residual 4.4% tail is fully attributed to NanoAOD storage
-(see backup — soft-candidate table floor + rounding).
+**F2 reproduces CMS `msoftdrop`.** The residual 4.4% tail is *consistent with* NanoAOD storage
+effects (see backup — soft-candidate table floor + rounding), though we don't claim that accounts
+for all of it.
 
 </div>
 <div>
@@ -410,8 +411,8 @@ AK8 jets by $\Delta R<0.4$.
 <div>
 
 **Result (7 701 matched jets, $p_T>300$, raw-to-raw):** pt **median 1.0000, 100% within 2%**;
-match **$\Delta R$ median 0.0019**; mass spectra identical. Full-event flashjet reproduces CMS's own
-FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
+match **$\Delta R$ median 0.0019**; mass spectra agree closely. Full-event flashjet recovers CMS's own
+FastJet AK8 jets to milliradian $\Delta R$ — no jets known a priori.
 
 </div>
 </div>
@@ -430,7 +431,7 @@ FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
 
 ---
 
-## ttbar — flashjet = stored FastJet branches (raw-to-raw) — C2
+## ttbar — flashjet ≈ stored FastJet branches (raw-to-raw) — C2
 
 ![w:820](img/ttbar_exact.png)
 
@@ -447,8 +448,8 @@ FastJet AK8 reconstruction to milliradian $\Delta R$ — no jets known a priori.
 </div>
 </div>
 
-<span class="small">The exact match holds on a completely different final state (boosted tops + b-jets), not just QCD —
-same conclusion, same NanoAOD-precision residual.</span>
+<span class="small">The close agreement holds on a completely different final state (boosted tops + b-jets), not just QCD —
+same conclusion, residuals again near the NanoAOD storage level.</span>
 
 ---
 
@@ -506,7 +507,7 @@ W-window jets peak at **39 ≈ $m_W/2$**, top-window at **81 ≈ $m_t/2$**; QCD 
 
 ---
 
-## $R_g$ — a second jet-by-jet exact match (F2 vs stored subjets) — C1/C2/C3
+## $R_g$ — a second jet-by-jet close match (F2 vs stored subjets) — C1/C2/C3
 
 ![w:840](img/compare_rg.png)
 
@@ -676,23 +677,13 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 ---
 
-## What the variables measure: one jet's full merge history
+## What the variables measure: one jet's full merge history (gen-verified)
 
-![w:1000](img/full_history_tree.png)
+![w:1080](img/full_history_good.png)
 
-<style scoped>section { font-size: 18px; }</style>
+<style scoped>section { font-size: 17px; }</style>
 
-flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every merge, **nothing removed**. One boosted top jet (25 const., $p_T$ 789, $m$ 135). **Left C/A** with soft-drop overlaid: <span style="color:#15803d">**green = the groomed jet**</span>, grey = the $n_{drop}=5$ dropped soft prongs, ★ = passing split ($m_{SD}, z_g, R_g$ live here). **Right kT** (value-sorted): top merges' $\sqrt d\,R = \sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$. **Grooming = a pruned path through the C/A tree.**
-
----
-
-## …and here grooming *works*: recovering $m_W$
-
-![w:1000](img/full_history_good.png)
-
-<style scoped>section { font-size: 18px; }</style>
-
-A boosted **$W\to q\bar q$** (30 const., $p_T$ 507). Ungroomed mass inflated to **120 GeV** by soft wide radiation; soft-drop peels off 4 soft prongs (grey) and lands the ★ on a **balanced, wide** split — $z_g=0.49$, $R_g=0.34$, $k_t$ jumps to **80 GeV** — giving <span style="color:#15803d">**$m_{SD}=83\approx m_W$**</span>. Two slides show the same algorithm succeeding vs misfiring — why the separating variables use $n_{drop}$ + the **kT** scales, not $m_{SD}$ alone.
+flashjet stores the **complete** binary tree (`hist_p1,p2,child,d`) — every merge, **nothing removed**. This jet is a **gen-verified hadronic top** ($t\to Wb$, $W\to q\bar q$; the three hard partons are matched to `GenPart` inside the jet cone — see the **right panel**). **Left C/A** with soft-drop overlaid: <span style="color:#15803d">**green = the groomed jet**</span>, grey = dropped soft prongs, ★ = passing split ($m_{SD}, z_g, R_g$ live here). **Middle kT** (value-sorted): top merges' $\sqrt d\,R = \sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$. Grooming strips the soft junk and lands $m_{SD}$ on the decay mass. **Grooming = a pruned path through the C/A tree** — and the gen decay panel confirms the hard split the ★ sits on is the *real* $W\to q\bar q$.
 
 ---
 
@@ -841,8 +832,8 @@ ttbar AK4 vs QCD AK4 (MINIAOD, same source) — **every variable 0.50–0.55**:
 # Summary
 
 **flashjet reads the full merge history** — F1 exclusive-kt jets, F2 soft-drop grooming, F3 Lund —
-as pure-torch post-reads, validated to **NanoAOD storage precision** against CMS's FastJet output on
-QCD and ttbar (raw-to-raw, jet-by-jet).
+as pure-torch post-reads, validated **jet-by-jet against CMS's FastJet output** on QCD and ttbar
+(raw-to-raw), with residuals **at the level of NanoAOD float storage**.
 
 **Those same histories yield variables that separate the samples**: they cleanly split boosted top/W
 jets from QCD (the declustering *sequence*, not just mass), and the study localizes
@@ -901,12 +892,13 @@ $t\bar t\to 4q$ (C3) vs $p_T$-reweighted QCD, weighted logistic on the **18-vari
 
 <span class="small">**Every input branch is stored with reduced mantissa** (`PFCand_pt` ~10 bits ≈ 10⁻³,
 `SubJet_pt/mass` ~9 bits, `SubJet_rawFactor` ~5 bits ≈ 2%) while CMS ran FastJet at full precision.
-Attribution (per-jet tests, 19 695 jets): **50%** — soft candidates **missing from `FatJetPFCand`**
-(the table has an effective ~0.1 GeV floor; the tail is one-sided, its groomed-$p_T$ deficit correlates
-with $\Delta m$, and $\delta m^2\!\approx\!p_T^{jet} p_T^{lost}\Delta R^2$ matches); **23%** within 3σ of
-storage rounding; **20%** rounding-sensitive C/A trees (half-ulp jitter moves them); **7%** genuine
-$z\!\approx\!z_{\rm cut}$ prong flips (14× enriched vs core). **Not fixable from NanoAOD — not an
-algorithm error**: relative agreement is ~0.1% everywhere. Scripts: `outliers.py` (HTCondor 9098953).</span>
+Best-estimate attribution (per-jet tests, 19 695 jets): **~50%** — soft candidates **missing from
+`FatJetPFCand`** (the table has an effective ~0.1 GeV floor; the tail is one-sided, its groomed-$p_T$
+deficit correlates with $\Delta m$, and $\delta m^2\!\approx\!p_T^{jet} p_T^{lost}\Delta R^2$ matches);
+**~23%** within 3σ of storage rounding; **~20%** rounding-sensitive C/A trees (half-ulp jitter moves
+them); **~7%** genuine $z\!\approx\!z_{\rm cut}$ prong flips (14× enriched vs core). These are
+**input-level (NanoAOD) effects, not an algorithm error** — relative agreement is ~0.1% everywhere;
+we don't claim the split is exact. Scripts: `outliers.py` (HTCondor 9098953).</span>
 
 ---
 
@@ -973,7 +965,7 @@ All CMS plots regenerated **raw-to-raw on the C/A tree** at full statistics
 | full-event (QCD) | all PFCands → anti-kt, ΔR-match | 7 701 jets, pt **1.0000**, ΔR med **0.0019** |
 | $R_g$ (3 samples) | our groomed `dR` vs ΔR(sub₁,sub₂) | median Δ ≤ 2×10⁻⁴; 99.2/95.9/87.0% <0.01 |
 
-<span class="small">Residual = NanoAOD float storage throughout. Jets: anti-kt $R=0.8$; grooming/Lund: big-$R$ **C/A** reclustering (as FastJet).</span>
+<span class="small">Residuals are consistent with NanoAOD float storage throughout (see CMS(2b) for the breakdown). Jets: anti-kt $R=0.8$; grooming/Lund: big-$R$ **C/A** reclustering (as FastJet).</span>
 
 ---
 
