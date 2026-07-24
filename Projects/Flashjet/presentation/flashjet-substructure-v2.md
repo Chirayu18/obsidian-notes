@@ -685,11 +685,11 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 **One gen-verified top jet, read three ways** — flashjet keeps the *complete* merge tree (`hist_p1,p2,child,d`), nothing thrown away, and every substructure variable is a coordinate on it:
 
-- **Right = gen truth:** `GenPart` → hadronic top ($t\to Wb$, $W\to q\bar q$), all three hard partons inside the cone. *What the jet actually is.*
+- **Right = gen truth:** `GenPart` → this **jet** is a hadronic top ($t\to Wb$, $W\to q\bar q$), all three hard partons ($b + q + q$) inside the cone. *This is the gen-verified part — the jet's identity.*
 - **Left = C/A tree + grooming:** <span style="color:#15803d">**green = surviving groomed jet**</span>, grey = dropped soft prongs, ★ = the passing split — **$m_{SD}, z_g, R_g$ live here.**
 - **Middle = kT tree**, splits value-sorted $\sqrt{d_{12}}\!\ge\!\sqrt{d_{23}}\!\ge\!\dots$ — source of $\sqrt{d_{12}}$, $z_{kt}$, the Lund counts.
 
-**Punchline:** grooming is a *pruned path* through the C/A tree; the ★ it stops on is the real $W\to q\bar q$ split, so $m_{SD}$ ($116\to$**80 GeV**) lands on the $W$ inside the top — confirmed by gen.
+**Punchline:** grooming is a *pruned path* through the C/A tree. Here it drops the soft $b$-side prong and stops at $m_{SD}\ 116\to$**80 GeV** — right on the $W$ mass, so the groomed jet is *plausibly* the $W\to q\bar q$ core. (Gen verifies the **jet = top**; the groomed subjet is not separately matched to the $W$ — the mass is the evidence.)
 
 ---
 
@@ -699,7 +699,7 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 <span class="small">All 18 merge-history variables, weighted single-variable AUC. **Blue = AK8 top/W-vs-QCD (0.6–0.79)**, orange = AK4 ttbar-vs-QCD, green = AK4 b-vs-light (**both ≈0.5–0.59**) — same variables, strongly discriminating on boosted AK8, near-blind on AK4.</span>
 
-**⇒ The history separates boosted 2-/3-prong decays — it does *not* separate AK4 flavour**: UParT's impact-parameter / secondary-vertex inputs carry information no clustering tree contains.
+**⇒ The history separates boosted 2-/3-prong decays — it does *not* separate AK4 flavour**: flavour is a lifetime question (displaced-vertex / impact-parameter information) that a purely kinematic clustering tree does not contain.
 
 <span class="small">**This comparison**: AK8 + AK4 both from **MINIAOD** (`slimmedJetsAK8` / `slimmedJets`, same files) — matched inputs. The merge-tree slides earlier read AK8 from **JMENano** (`FatJetPFCand` linker); only AK4 forces MINIAOD.</span>
 
@@ -796,7 +796,7 @@ b vs light (udsg), $p_T$-reweighted — **every variable 0.50–0.59**:
 | $m_{SD}$ | 0.573 |
 | $n(k_t\!>\!5)$, $f_{32}$ | ~0.51 |
 
-b vs light is a **lifetime** question (displaced tracks, SVs) — absent from a kinematic tree. Confirms UParT's IP/SV inputs carry what no tree contains.
+b vs light is a **lifetime** question (displaced tracks, SVs) — absent from a kinematic tree.
 
 </div>
 </div>
