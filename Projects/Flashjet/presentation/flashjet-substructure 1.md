@@ -116,7 +116,7 @@ $d$-channel ties **exactly** to `splitting_scales`.
 
 ---
 
-## The toy event generators (written in the plot scripts)
+## Input A: The toy event generators (written in the plot scripts)
 
 flashjet takes 4-vectors in and returns jets — it has **no event generator**. To exercise the
 features I wrote small, transparent toys *outside the repo*, in the plot scripts.
@@ -141,7 +141,7 @@ fails to separate them (or lands off the analytic curve) would be a real bug.</s
 
 ---
 
-## The toy parton shower (for the paper-figure closures)
+## Input B: The toy parton shower
 
 **`make_paper_plots.py`** builds a **primary, fixed-coupling, leading-log** shower — emissions
 sampled **uniformly in the Lund triangle** with density $\bar\alpha$ per unit
@@ -150,8 +150,6 @@ $(\ln 1/\theta,\ \ln k_t)$ area, off a hard spine at $(y,\phi)=(0,\pi)$:
 $$ \theta=e^{-u},\quad k_t=e^{v},\quad z=\frac{k_t}{p_{T0}\,\theta},\qquad
 \text{keep } v\le \ln(p_{T0}/2)-u \;(z\le\tfrac12),\ k_t>k_t^{\min} $$
 
-This is **exactly the semi-classical picture the papers' analytic predictions are derived in** —
-which is what makes the closure *quantitative*, not just qualitative.
 
 - **Jet areas**: one hard event + a dense grid of infinitely-soft **ghosts** ($p_T=10^{-8}$);
   the ghosts each algorithm sweeps up trace its catchment area (the anti-kt-paper construction).
@@ -159,6 +157,8 @@ which is what makes the closure *quantitative*, not just qualitative.
 <span class="small">$\bar\alpha=0.25$, $p_{T0}=1$ TeV, $R=0.4$, 20 000 showers. Everything is re-runnable with a fixed seed (`20260713`).</span>
 
 
+---
+[Add a slide on input C, all the cms datasets used]
 
 ---
 
@@ -174,7 +174,9 @@ which is what makes the closure *quantitative*, not just qualitative.
 
 ---
 
-## anti-kt jet shapes — reproduces [0802.1189] Fig. 1
+## anti-kt jet shapes - reproduces [0802.1189] Fig. 1
+[add paper links, everywhere I mean, don't change figures , just add in slides ]
+[Clearly define the inputs in ]
 
 ![w:820](img/jet_areas.png)
 
