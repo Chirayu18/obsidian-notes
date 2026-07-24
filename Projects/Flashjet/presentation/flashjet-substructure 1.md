@@ -176,7 +176,7 @@ $$ \theta=e^{-u},\quad k_t=e^{v},\quad z=\frac{k_t}{p_{T0}\,\theta},\qquad
 
 ## anti-kt jet shapes - reproduces [0802.1189] Fig. 1
 [add paper links, everywhere I mean, don't change figures , just add in slides ]
-[Clearly define the inputs in ]
+[Clearly define the inputs in each slide subtitle if input C is used make each dataset like c1,c2 etc and clearly indicate which datasets were used]
 
 ![w:820](img/jet_areas.png)
 
@@ -191,6 +191,7 @@ from flashjet's own clustering.
 <div>
 
 **How made — input (B), no substructure feature, clustering only.**
+[Skip previous line as already in title,also,If we have already defined input B before why do we need all this information down here now]
 1 synthetic event: **10 hard massless particles** ($p_T$ 10–400 GeV, random $y,\phi$) + a
 **uniform grid of ~3200 "ghosts"** ($p_T=10^{-8}$, spacing 0.125 in $y,\phi$). Clustered at
 **$R=1$** with `cluster_event_nn` for $p=+1/0/-1$; each ghost is coloured by the jet it lands in.
@@ -215,6 +216,7 @@ W-like balanced ($z\!\approx\!0.35$), QCD lopsided ($z\!\to\!0$).
 </div>
 <div>
 
+[same comments as previous slide]
 <span class="small">**How made — input (A), leading jet, kt clustering.**
 1500 **QCD-like** + 1500 **W-like** toy fat-jets ($p_T\!\approx\!500$ GeV, $R=0.8$); each a bag of
 massive-pion 4-vectors from `_spray` — **synthetic particles, not real constituents**. W pair-mass
