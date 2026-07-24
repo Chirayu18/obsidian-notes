@@ -32,52 +32,28 @@ style: |
 
 exclusive jets · soft-drop grooming · Lund coordinates
 
-**Chirayu Gupta** — for Alexandre De Moor
-2026-07-17 · branch `benchmarking` (pushed: commit `2e912ef`)
-
-<span class="small">Every claim below is closed against an independent reference and/or the
-defining paper. All plots regenerable: `plots/2026-07-13-substructure/`.</span>
+**Chirayu Gupta**
+[Add github link]
 
 ---
 
-## Summary — what this deck shows
+## Summary
 
 **Three substructure features** (F1 exclusive-kt jets, F2 soft-drop/mMDT grooming, F3 Lund
 coordinates), all **pure-torch post-reads of the existing merge history** — no kernel changes,
-CPU/CUDA identical, negligible cost.
 
-**Validation ladder**, each rung closed:
+**Validation studies**
 
-| rung | reference | headline result |
-|---|---|---|
-| unit tests | independent NumPy tree-walks | 85 passed (13 CUDA-only skipped) |
-| paper closures | analytic predictions, toy shower | $z_g$ on the $1/z$ curve; areas; $\beta$-ordering |
-| **real CMS QCD** | stored FastJet branches (raw-to-raw) | $p_T$ **1.000000**; $m_{SD}$ **−0.004 GeV**; $R_g$ 99.2% <0.01 |
-| **real CMS ttbar** ×2 | stored FastJet branches (raw-to-raw) | dileptonic UL18 **and** fully-hadronic Run 3 close |
-| full-event | ΔR-match to CMS's own AK8 jets | 100% within 2%, median ΔR 0.0019 |
-| physics regimes | QCD vs b-jets vs boosted tops | $m_W$/$m_t$ peaks, top blob in the Lund plane |
+| validation            | reference                            | headline result                                                |
+| --------------------- | ------------------------------------ | -------------------------------------------------------------- |
+| unit tests            | independent NumPy tree-walks         | 85 passed (13 CUDA-only skipped)                               |
+| paper closures        | analytic predictions, toy shower     | $z_g$ on the $1/z$ curve; areas; $\beta$-ordering              |
+| **real CMS QCD**      | stored FastJet branches (raw-to-raw) | $p_T$ **1.000000**; $m_{SD}$ **−0.004 GeV**; $R_g$ 99.2% <0.01 |
+| **real CMS ttbar** ×2 | stored FastJet branches (raw-to-raw) | dileptonic UL18 **and** fully-hadronic Run 3 close             |
+| full-event            | ΔR-match to CMS's own AK8 jets       | 100% within 2%, median ΔR 0.0019                               |
+| physics regimes       | QCD vs b-jets vs boosted tops        | $m_W$/$m_t$ peaks, top blob in the Lund plane                  |
 
-**flashjet reproduces CMS's FastJet reconstruction to NanoAOD storage precision.** The ~4% $m_{SD}$
-tail is fully attributed (missing soft constituents + storage rounding + threshold flips — see
-outlier anatomy); relative agreement is ~0.1% at all masses.
-
----
-
-## Where this sits in flashjet
-
-flashjet clusters padded `(B, N, 4)` torch tensors into jets on the GPU, staying on-device
-for ML training loops. Generalized-kt:
-
-$$ d_{ij} = \min(k_{t,i}^{2p}, k_{t,j}^{2p})\,\frac{\Delta R_{ij}^2}{R^2}, \qquad
-p=-1\;(\text{anti-}k_t),\; 0\;(\text{C/A}),\; +1\;(k_t) $$
-
-**The key object Alex's kernels already produce: the _merge history_.** Every recombination
-step records four arrays — `hist_p1, hist_p2` (the two inputs), `hist_child` (the output id),
-`hist_d` (the distance at which they merged). That history *is* the full binary clustering tree.
-
-> **Our contribution = read that tree.** No new kernels, no changes to the clustering path.
-> All three features are pure-torch post-reads of `(hist_p1, hist_p2, hist_child, hist_d)`,
-> so they run unchanged on CPU or CUDA and add negligible cost.
+[update this slide with a better table]
 
 ---
 
@@ -86,7 +62,7 @@ step records four arrays — `hist_p1, hist_p2` (the two inputs), `hist_child` (
 <div class="cols">
 <div>
 
-**Pre-existing (Alex)**
+**Pre-existing**
 - `history.py`: `jet_idx_from_history`, `_resolve_parents`, `_decode`,
   `splitting_scales_from_history`, Triton `_decode_triton`
 - `reference.py`: single-event NumPy ground truth (`cluster_event`)
@@ -117,11 +93,11 @@ naive NumPy tree-walks used only to pin the fast implementations.</span>
 
 ## The three features
 
-| | Feature | Function | Implements |
-|---|---|---|---|
-| **F1** | Exclusive jets (kt) | `exclusive_jets_from_history(...)` | kt algorithm — FastJet manual [1111.6097], [0802.1189] |
-| **F2** | Grooming (C/A) | `groom_from_history(...)` | Soft Drop [1402.2657] · mMDT [1307.0007] · mass-drop [0802.2470] |
-| **F3** | Lund coordinates | `lund_coordinates_from_history(...)` | Primary Lund plane [1807.04758] |
+|        | Feature             | Function                             | Implements                                                       |
+| ------ | ------------------- | ------------------------------------ | ---------------------------------------------------------------- |
+| **F1** | Exclusive jets (kt) | `exclusive_jets_from_history(...)`   | kt algorithm — FastJet manual [1111.6097], [0802.1189]           |
+| **F2** | Grooming (C/A)      | `groom_from_history(...)`            | Soft Drop [1402.2657] · mMDT [1307.0007] · mass-drop [0802.2470] |
+| **F3** | Lund coordinates    | `lund_coordinates_from_history(...)` | Primary Lund plane [1807.04758]                                  |
 
 **F1** — undo the last merges of the sequence to expose exactly `n_jets` (or a `d_cut`) subjets;
 reduces to the inclusive jets at the trivial cut.
@@ -181,6 +157,8 @@ which is what makes the closure *quantitative*, not just qualitative.
   the ghosts each algorithm sweeps up trace its catchment area (the anti-kt-paper construction).
 
 <span class="small">$\bar\alpha=0.25$, $p_{T0}=1$ TeV, $R=0.4$, 20 000 showers. Everything is re-runnable with a fixed seed (`20260713`).</span>
+
+
 
 ---
 
