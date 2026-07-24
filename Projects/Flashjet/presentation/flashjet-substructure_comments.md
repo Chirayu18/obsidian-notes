@@ -359,7 +359,7 @@ run on HTCondor (cluster 9087059).</span>
 ---
 
 ## CMS (2) — soft-drop mass matches CMS **EXACTLY** (raw-to-raw)
-
+[only middle plot relavant rest move to backup also cleanup extra information and move to backup]
 ![w:820](img/cms_exact_match.png)
 
 <div class="cols">
@@ -389,7 +389,7 @@ stacked artefacts, both removed: **(1) JEC** — `FatJet_pt`/`msoftdrop` are JEC
 ---
 
 ## CMS (2b) — anatomy of the residual $m_{SD}$ tail (the 4.4%)
-
+[move to backup]
 ![w:1050](img/outlier_anatomy.png)
 
 <span class="small">**Every input branch is stored with reduced mantissa** (`PFCand_pt` ~10 bits ≈ 10⁻³,
