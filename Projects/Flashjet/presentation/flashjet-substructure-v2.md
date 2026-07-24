@@ -693,30 +693,6 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 ---
 
-## AK8 vs AK4: the history is a **boosted-decay** tool
-
-![w:560](img/ak4_vs_ak8.png)
-
-<span class="small">All 18 merge-history variables, weighted single-variable AUC. **Blue = AK8 top/W-vs-QCD (0.6–0.79)**, orange = AK4 ttbar-vs-QCD, green = AK4 b-vs-light (**both ≈0.5–0.59**) — same variables, strongly discriminating on boosted AK8, near-blind on AK4.</span>
-
-**⇒ The history separates boosted 2-/3-prong decays — it does *not* separate AK4 flavour**: flavour is a lifetime question (displaced-vertex / impact-parameter information) that a purely kinematic clustering tree does not contain.
-
-<span class="small">**This comparison**: AK8 + AK4 both from **MINIAOD** (`slimmedJetsAK8` / `slimmedJets`, same files) — matched inputs. The merge-tree slides earlier read AK8 from **JMENano** (`FatJetPFCand` linker); only AK4 forces MINIAOD.</span>
-
----
-
-## AK8 vs AK4 — reading the three studies
-
-| study | what's being separated | best variable | AUC | reading |
-|---|---|---|---|---|
-| **AK8 top/W vs QCD** | boosted 2-/3-prong decay vs QCD | $\sqrt{d_{12}}$ | **0.79** | history separates **strongly** |
-| **AK4 ttbar vs QCD** | single quark jet (dijet) vs QCD | $m_{SD}$ | **0.55** | one AK4 jet ≈ one quark — no in-jet decay |
-| **AK4 b vs light** | flavour (b vs udsg) | $z$ hardest emis. | **0.55** | a **lifetime** question (IP/SV) — invisible to a kinematic tree |
-
-<span class="small">Full AK4 trees + b-vs-light / ttbar-vs-QCD variable studies on the next slides.</span>
-
----
-
 ## Tree gallery 1/4 — QCD jet: a soft **staircase**, no decay
 
 ![w:760](img/tree_qcd.png)
@@ -737,7 +713,7 @@ Each jet is clustered **three times** (`extract_tagger_vars.py`); every input is
 
 ![w:760](img/tree_boosted.png)
 
-<span class="small">Gen: hadronic top again (gen top $p_T$ 648), but higher-$p_T$. The decay opening angle shrinks with boost, so the hard split moves *down* into the collinear region and the tree **compresses**: $R_g=$**0.30**, and here grooming resolves the $W$ subsystem, $m_{ung}\,163\to m_{SD}\,$**83 GeV**. Same physics as slide 2/4 — $R_g$ is what encodes the boost.</span>
+<span class="small">Gen: hadronic top again (gen top $p_T$ 648), but higher-$p_T$. The decay opening angle shrinks with boost, so the hard split moves *down* into the collinear region and the tree **compresses**: $R_g=$**0.30**, and here grooming resolves the $W$ subsystem, $m_{ung}\,163\to m_{SD}\,$**83 GeV**. Same top decay as the clean-top case, just boosted — $R_g$ is what encodes that boost.</span>
 
 ---
 
@@ -824,6 +800,28 @@ ttbar AK4 vs QCD AK4 (MINIAOD, same source) — **every variable 0.50–0.55**:
 
 </div>
 </div>
+
+---
+
+## AK8 vs AK4: the history is a **boosted-decay** tool
+
+![w:500](img/ak4_vs_ak8.png)
+
+<span class="small">All 18 merge-history variables, weighted single-variable AUC. **Blue = AK8 top/W-vs-QCD (0.6–0.79)**, orange/green = **AK4 (≈0.5–0.59)** — same variables, strongly discriminating on boosted AK8, near-blind on AK4. ⇒ the history separates **boosted decays, not AK4 flavour** (a lifetime / displaced-vertex question a kinematic tree can't see).</span>
+
+<span class="small">⚠ **For this comparison AK8 was also taken from MINIAOD** (`slimmedJetsAK8`), matched to the MINIAOD AK4 (`slimmedJets`) — same TTto4Q + QCD files, same constituents, so it is a like-for-like test. (The merge-tree slides earlier read AK8 from **JMENano** via the `FatJetPFCand` linker; only AK4, which NanoAOD can't link, forces MINIAOD.)</span>
+
+---
+
+## AK8 vs AK4 — reading the three studies
+
+| study | what's being separated | best variable | AUC | reading |
+|---|---|---|---|---|
+| **AK8 top/W vs QCD** | boosted 2-/3-prong decay vs QCD | $\sqrt{d_{12}}$ | **0.79** | history separates **strongly** |
+| **AK4 ttbar vs QCD** | single quark jet (dijet) vs QCD | $m_{SD}$ | **0.55** | one AK4 jet ≈ one quark — no in-jet decay |
+| **AK4 b vs light** | flavour (b vs udsg) | $z$ hardest emis. | **0.55** | a **lifetime** question (IP/SV) — invisible to a kinematic tree |
+
+<span class="small">AK8 = MINIAOD `slimmedJetsAK8`, AK4 = MINIAOD `slimmedJets` (matched inputs; the AK4-result slides just above).</span>
 
 ---
 
