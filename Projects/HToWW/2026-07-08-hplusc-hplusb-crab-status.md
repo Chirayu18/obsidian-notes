@@ -36,6 +36,22 @@ Event counts from `dasgoclient` (queried 2026-07-08). DAS links resolve on
 `hplusb 2022preEE` NanoAOD was published by **tvanlaer** (not cgupta). The intermediate
 step datasets (GEN-SIM → MiniAOD) are not listed — only the NanoAOD inputs are needed.
 
+> [!warning] hplusb 2022preEE: use **v2**, not v1 (found 2026-07-28)
+> The **v1** tag above (`...ForNanov13_v1-v1-8653679c...`) is a **broken, unflattened
+> EDM file** — 1365/1390 branches are raw `nanoaodFlatTable_*` (`vector<signed char>`)
+> and it has **no `Jet_pt`/`Muon_pt`/`Electron_pt`**. Jobs die with
+> `ValueError: invalid C++ type name syntax`.
+> Use **`tvanlaer-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-v2-8653679c76b04a5edd42171c9a5e3f96`**
+> — verified 1840 branches with the flat NanoAOD content, same 276 files.
+
+> [!note] Signal redirectors are per-era
+> **2022postEE** signals read only via IIHE (`root://maite.iihe.ac.be:1094`);
+> **2022preEE / 2023preBPix** read via `root://cms-xrd-global.cern.ch` (IIHE returns
+> `[3011] No such file`). Always `xrdfs <redirector> stat <lfn>` one file per era first.
+
+> [!info] Not produced
+> **hplusb 2023preBPix** and **both signals for 2023postBPix** do not exist on DAS.
+
 ---
 
 ## 2023 chain progress (3 samples)
