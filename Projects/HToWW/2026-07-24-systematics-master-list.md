@@ -370,6 +370,29 @@ Baseline MVA + negrw + 2D c-tag SF, on `sumw_records` normalisation, **no LOWESS
 **~19% worse**, not at parity. Our stat-only 676 does beat the AN's scaled stat-only (~723).
 
 The 2D SF is applied **natively in the processor** (`CTag2DCorrector`); the post-hoc
-`apply_ctag2d_sf.py` is retired. The **2D-cat MVA arm has not been re-measured** on the new
-configuration — its tree was re-processed 2026-07-30 and had to be re-scored
-(`append_onehot.py` → `run_inference.py`, done 2026-07-31); the rebuild is pending.
+`apply_ctag2d_sf.py` is retired.
+
+### All three arms, same configuration (re-measured 2026-07-31)
+
+| variant | full | stat-only | freeze-autoMCStats |
+|---|---|---|---|
+| baseline, no SF | **1150** | 668 | 905 |
+| baseline + SF | **1164** | 676 | 930 |
+| **2D-cat + SF** | **1676** | **637** | 1393 |
+
+The 2D-cat tree was repaired first — the merge had been **interrupted** (34 of 57 group
+parquets; all raw shards present), completed with the repo's `merge_parquet_files`, then
+one-hots → inference → build.
+
+**Reading it:** stat-only *improves* **−5.8%** (637 vs 676), so the 2D-cat MVA is genuinely the
+sharper discriminant. But the full limit is **+44% worse** — far more than the +6% the old
+sidecar+smoothing series suggested. The SR composition explains it:
+
+| SR | baseline | 2D-cat | ratio |
+|---|---|---|---|
+| signal | 0.203 | 0.261 | 1.29× |
+| **tt** | 7,274 | 16,939 | **2.33×** |
+| total | 9,199 | 20,664 | 2.25× |
+
+$S/\sqrt{B}$ *falls* to 0.86×, and the stat→full inflation is **2.63×** vs 1.72× for baseline.
+<span>**On the current configuration, baseline scores + SF is the better choice.**</span>

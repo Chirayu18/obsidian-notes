@@ -487,53 +487,56 @@ i.e. low-stat SR templates remain the driver, **not** the SF.
 
 ## The matched combination: 2D-cat MVA + SF
 
-The SFs calibrate the **2D-category** tagging, so they physically belong with the 2D-cat MVA
-scores, not the baseline continuous scores. Built as a separate workflow `hww_combine_2dcat`.
+<span class="small">The SFs calibrate the **2D-category** tagging, so they physically belong with
+the 2D-cat MVA scores, not the baseline continuous ones (workflow `hww_combine_2dcat`).
+All three arms **re-measured 2026-07-31** on the same configuration — finally like-for-like.</span>
 
-| variant | full | stat-only | freeze autoMCStats |
-|---|---|---|---|
-| *baseline (no SF)* | *1343* | *788* | *1100* |
-| *baseline scores + SF* | *1371* | *797* | *1144* |
-| ***2D-cat scores + SF*** | ***1422*** | ***749*** | *1168* |
+![w:800 center](img/C4_threeway.png)
 
-<span class="hl">⚠️ OLD sidecar normalisation, smoothing on — this arm is NOT re-measured.</span>
-<span class="small">Its workflow tree was re-processed on 2026-07-30 and is **still incomplete**
-— missing `WtoLNu_2Jets` (all of W+jets) and 8 higgsbkg samples. Re-scoring succeeded, but the
-datacard build was **stopped** rather than write from a partial tree. Only the *relative*
-reading on the next slide is safe.</span>
+<span class="tiny">Left: the limit cascade. The 2D-cat curve (red) starts **lowest** at
+stat-only and ends **highest** at full. Right: why — the SR gets 2.25× bigger, and it is the
+**tt** that grows (2.33×), not the signal (1.29×).</span>
 
 ---
 
-## The 2D-cat trade, qualitatively
+## The 2D-cat trade — sharper, but a much bigger SR
 
 <div class="cols">
 <div class="small">
 
-<span class="ok">**Stat-only improves −5%** (749 vs 788).</span>
+<span class="ok">**Stat-only improves −5.8%** (637 vs 676).</span>
 
-The 2D-cat MVA is the sharper discriminant:
-$\langle P_\text{hplusc}\rangle$ rises to **0.514** (from 0.377) and **91.1%** of the signal
-lands in the SR (from 70.8%). Consistent with its +0.004 AUC.
+The 2D-cat MVA really is the sharper discriminant — same conclusion as the old series, and
+consistent with its +0.004 AUC.
+
+**But the full limit is +44% worse** (1676 vs 1164), where the old sidecar+smoothing series
+showed only +6%. The trade is much worse than previously thought.
 
 </div>
 <div class="small">
 
-<span class="hl">**Full limit is worse +6%** (1422).</span>
+**Why — the SR composition:**
 
-The 2D-cat argmax also pulls **2.3× more tt** into the SR (18.9% vs 8.3%), so SR yields roughly
-double — and tt is the dominant background, so the enlarged SR is more systematics-exposed.
+| | baseline | 2D-cat | ratio |
+|---|---|---|---|
+| signal | 0.203 | 0.261 | 1.29× |
+| **tt** | 7,274 | 16,939 | **2.33×** |
+| total | 9,199 | 20,664 | 2.25× |
+| tt fraction | 79.1% | 82.0% | |
+
+<span class="hl">$S/\sqrt{B}$ actually *falls* to 0.86×.</span> The argmax admits 2.3× more tt
+for only 1.29× more signal.
 
 </div>
 </div>
 
-**Verdict:** an honest separation-vs-systematics trade, not a bug.
+<span class="small">Stat→full inflation: **1.72×** for baseline vs **2.63×** for 2D-cat — the
+enlarged, tt-dominated SR is far more systematics-exposed.</span>
 
-<span class="small">Levers to recover it: tighten the SR, split ggH out of `higgsbkg`, or narrow
-the SF nuisance using a less conservative decomposition than `Total`.</span>
-
-<span class="tiny">⚠️ Both the −5% and the +6% are *relative* readings within the old
-sidecar+smoothing series. They should be re-measured on the current configuration once the
-2D-cat tree is complete.</span>
+<span class="tiny">**Verdict:** an honest separation-vs-systematics trade, not a bug — but on the
+current configuration the cost is much larger than the +6% seen before. Levers: tighten the SR
+(raise the $P$(hplusc) cut), split ggH out of `higgsbkg`, or narrow the SF nuisance below
+`Total`. As it stands, **baseline scores + SF is the better configuration**.</span>
 
 ---
 
@@ -604,7 +607,7 @@ fine charm-tag gradient a coarse 11-bin (effectively ~6-bin) scheme discards.</s
 |---|---|---|
 | baseline (negrw, no SF) | **1150** | — |
 | + official 2D c-tag SF | **1164** | **+1.2%** |
-| <span class="small">+ SF, with 2D-cat MVA scores</span> | <span class="small">*pending re-measurement*</span> | <span class="small">*was +5.9%*</span> |
+| + SF, with 2D-cat MVA scores | **1676** | **+45.7%** |
 
 <div class="small">
 
@@ -615,7 +618,9 @@ fine charm-tag gradient a coarse 11-bin (effectively ~6-bin) scheme discards.</s
 - Applying the SF **without** the matching 2D-cat discriminant is the mildest option, and is
   what `hww_combine_fixed` currently does.
 - The matched (2D-cat + SF) combination is more *physically* consistent and genuinely separates
-  better (stat-only −5%), but its wider SR admits more tt and loses on the full limit today.
+  better (stat-only **−5.8%**), but its argmax admits **2.33× more tt** for only 1.29× more
+  signal, so $S/\sqrt{B}$ falls and the full limit regresses **+45.7%**.
+- <span class="hl">On the current configuration, baseline scores + SF is the better choice.</span>
 
 </div>
 
@@ -659,7 +664,9 @@ no reprocessing (verified to machine precision).
 <span class="hl">Only 7 of 11 categories are populated</span> for the candidate c-jet;
 4 MVA inputs are identically zero.
 
-**1150 → 1164** with the SF <span class="small">(`sumw_records`, no LOWESS smoothing)</span>
+**1150 → 1164** with the SF · **→ 1676** with the matched 2D-cat discriminant
+
+<span class="small">(all on `sumw_records`, no LOWESS smoothing)</span>
 
 <span class="small">Full write-up: `Projects/HToWW/2026-07-19-ctag2d-full-documentation.md`
 · reference: `References/HToWW/2D-SFbc-calibration-AN-25-222.pdf`</span>
