@@ -51,7 +51,7 @@ Existing 13 training/validation plots reused from `../negrw-training/img/`.
 
 ---
 
-## 2. `ctag-sf-deck.md` — Official 2D c-tag scale factors (27 slides)
+## 2. `ctag-sf-deck.md` — Official 2D c-tag scale factors (28 slides)
 
 The 2D scheme, the official SFs, and a **controlled with/without-SF closure**.
 
@@ -74,6 +74,21 @@ adding a real, previously-neglected uncertainty. With the matched 2D-cat discrim
 |---|---|
 | `C1_sf_matrix.png` | central SF heatmap, 3 flavours × 11 categories, $p_T$=60 GeV. Corrections are O(10–30%) |
 | `C2_sf_band.png` | central SF with the `up/down_Total` band — **this band is the `CMS_ctag2d_2022` nuisance**. Populated categories only, because B1–B4 carry ±[0.3,3.0] placeholder bands that compress everything real |
+| `C3_sf_closure.png` | **the closure**: limit cascade with vs without the SF, plus the per-stage cost |
+
+### Closure result (re-measured 2026-07-31, this session)
+
+| variant | full | stat-only | freeze autoMCStats |
+|---|---|---|---|
+| no SF | **1343** | 788 | 1100 |
+| + `CMS_ctag2d_2022` | **1371** | 797 | 1144 |
+| Δ | +28 (+2.1%) | +9 (+1.1%) | +44 (+4.0%) |
+
+
+**These reproduce the Jul-22 numbers exactly**, from independently rebuilt inputs.
+The with-SF arm also reproduces the reference datacard bin-for-bin (SR V+jets 745.9,
+all-channel 6163.1, SR total 9141.5 — identical to `v11_hplusc_v4.root`), so the A/B is
+verified end-to-end rather than merely internally consistent.
 
 Generator: `ctag_sf_plots.py`, evaluated directly from
 `flavTaggingSF_2022postEE.json.gz` via correctionlib.
@@ -106,7 +121,7 @@ Since `sumw` is the denominator of `lumi*xsec/sumw`, this **inflates** the yield
 Restored the sidecar version (old one kept as `.bak_parquetmd_20260731`) and rebuilt.
 Full write-up: [[2026-07-31-sumw-normalization-trap]].
 
-**Sanity check for any future rebuild:** SR V+jets ≈ **735**, all-channel V+jets ≈ **5.8k**
+**Sanity check for any future rebuild:** SR V+jets ≈ **735** (no SF) / **746** (with SF), all-channel ≈ **5.8k** / **6.2k**
 (2022postEE). If V+jets is ~14k, the wrong `read_scale` is active.
 
 ---

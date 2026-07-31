@@ -313,6 +313,17 @@ are wrong. **Check after any rebuild:** SR V+jets ≈ **735**, all-channel V+jet
 
 ## The closure result
 
+![w:800 center](img/C3_sf_closure.png)
+
+<span class="small">Measured **2026-07-31** from freshly rebuilt inputs, both arms through the
+same builder on the same day. <span class="ok">The with-SF arm reproduces the reference datacard
+bin-for-bin</span> (SR V+jets 745.9, all-channel 6163.1, SR total 9141.5 — identical to
+`v11_hplusc_v4.root`), so the A/B is verified end-to-end, not just internally consistent.</span>
+
+---
+
+## Reading the closure
+
 | variant | full (all syst) | stat-only | freeze autoMCStats |
 |---|---|---|---|
 | baseline, **no SF** | **1343** | 788 | 1100 |
