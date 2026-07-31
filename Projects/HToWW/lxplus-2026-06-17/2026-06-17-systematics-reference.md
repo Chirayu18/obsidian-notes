@@ -8,6 +8,14 @@ source: lxplus
 
 # H+c → WW combine — systematics reference (v11 & v32)
 
+> ⚠️ **SUPERSEDED IN PART (checked 2026-07-31).** The AN impact percentages quoted in this
+> note (charm-tag "5.9%", MC-stat "6.2%", JES "6.0%") **do not match AN-23-102**. The AN has
+> **no Table 18**; the inventory is **Table 16** and the impacts are **Table 17**. In Table 17's
+> **1POI $r_{H+c}$** column the real values are charm-tag **1.1%**, MC-stat **5.4%**,
+> JES/JER **1.1%**, trigger **0.0%**. The numbers here look like they came from a different
+> column or source. Use [[2026-07-24-systematics-master-list]] for the current inventory and
+> the verified AN comparison.
+
 Every systematic **implemented** and **missing** vs AN-23-102. Datacards:
 `higgscharm/outputs/combine/v11_hplusc_v4.txt`, `b-hive/combine_inputs/v11_hplusc_v32_v9.txt`.
 Weight shapes read `weight_<name>Up/Down` from the parquets; object shifts are separate parquet dirs.

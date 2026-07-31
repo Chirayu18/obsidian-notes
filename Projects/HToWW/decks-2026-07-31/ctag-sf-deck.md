@@ -297,26 +297,108 @@ renorm factors appear identically in both build logs.</span>
 
 <div class="small">
 
-The builder has **two** `read_scale` implementations. Only the **sidecar** one
-(`analysis/filesets/sumw_<year>.json`) is correct; the parquet-metadata one **undercounts**,
-because those parquets predate the `dump_chunk_sumw` processor fix.
+**The parquets *are* self-normalising — the builder just wasn't reading the self-normalising
+part.** `make_combine_inputs.py` hand-rolls its own `sumw` sum instead of calling the repo's
+`read_parquet_sumw()`. There are **three** sources:
 
-| sample | sidecar `sumw` | parquet-md `sumw` | ratio |
-|---|---|---|---|
-| **WtoLNu_2Jets** | 4.94e+13 | 8.52e+12 | **5.80×** |
-| TbarQto2Q | 1.02e+09 | 1.41e+07 | **72.6×** |
-| WWZ / WZZ / ZZZ | ~1e6 | **0.0** | no metadata at all |
-| DY, tt, Higgs, ST | — | — | 1.000 ✅ |
+| # | source of `sumw` | verdict |
+|---|---|---|
+| 1 | **`sumw_records/`** — `dump_chunk_sumw`, **pre-selection, every read-chunk** | ✅ correct |
+| 2 | per-shard schema metadata in `parquets_<sample>/base/` | ❌ **undercounts** |
+| 3 | sidecar `analysis/filesets/sumw_<year>.json` | ⚠️ stale for signal |
+
+**Why #2 fails:** a read-chunk where *no event survives selection* writes no data shard, so its
+generator weight vanishes. Measured: `WtoLNu_2Jets` **5.4×**, `DYto2L_10to50` **23.8×**,
+`TbarQto2Q` **72.6×**; tt / st / Higgs all exactly 1.000.
 
 </div>
 
 <span class="hl">`sumw` is the denominator</span> of $\text{lumi}\times\sigma/\text{sumw}$, so
 undercounting **inflates** the yield — and it lands on `WtoLNu`, squarely on V+jets.
 
-<span class="small">**Dangerous because it is common-mode:** two variants built the same wrong way
-still agree with *each other* to ~1%, so the A/B looks internally consistent while both numbers
-are wrong. **Check after any rebuild:** SR V+jets ≈ **735**, all-channel V+jets ≈ **5.8k**
-(2022postEE). If V+jets is ~14k, you are on the parquet-metadata path.</span>
+<span class="small">**Fixed 2026-07-31:** `read_scale` now reads **source #1**, with the sidecar
+only as a *logged* fallback. The v11 build uses **zero** fallbacks.</span>
+
+---
+
+## ⚠️ …and the sidecar turned out to be stale for the signal
+
+<div class="cols">
+<div class="small">
+
+For `HplusCharm_HtoWW` the two *independent parquet-derived* sources agree **exactly**:
+
+```
+sumw_records   : 7.822690e+04
+shard metadata : 7.822690e+04   ratio 1.0000
+sidecar json   : 9.265575e+04   ratio 0.8443
+```
+
+**Proof the records are complete** — each record encodes
+`<file-uuid>_<tree>_<lo>-<hi>`, so coverage is checkable:
+
+```
+80 records -> 80 distinct UUIDs   (= 80 files)
+chunks/file : min 1, max 1
+gaps 0  ·  overlaps 0
+events covered : 277,345
+```
+
+<span class="tiny">The direct `Runs`-tree `genEventSumw` check needs a grid proxy (private
+IIHE production) and could not be run.</span>
+
+</div>
+<div class="small">
+
+**So switching is a normalisation change, not only a bug fix.** Per-process, summed over all
+six channels:
+
+| process | sidecar | records | ratio |
+|---|---|---|---|
+| **hplusc** | 0.25 | 0.29 | **1.184** |
+| higgsbkg | 284.2 | 285.2 | 1.004 |
+| tt | 93624.2 | 93624.2 | 1.000 |
+| st | 7457.2 | 7457.2 | 1.000 |
+| diboson | 2137.6 | 2137.6 | 1.000 |
+| **vjets** | 6163.1 | 6534.9 | **1.060** |
+
+<span class="hl">Note the sign:</span> a *smaller* records-sumw makes the yield *larger*.
+
+</div>
+</div>
+
+---
+
+## What that does to the numbers
+
+| variant | full | stat-only | freeze autoMCStats |
+|---|---|---|---|
+| <span class="small">*sidecar (superseded)* — no SF</span> | *1343* | *788* | *1100* |
+| <span class="small">*sidecar (superseded)* — + SF</span> | *1371* | *797* | *1144* |
+| **`sumw_records`** — no SF | **1172** | **668** | **941** |
+| **`sumw_records`** — + `CMS_ctag2d_2022` | **1192** | **676** | **976** |
+
+<div class="cols">
+<div class="small">
+
+Ratio records/sidecar: **0.869** (SF), **0.873** (no SF), 0.848 stat-only, 0.853 freeze —
+all clustered around the naive signal-scaling expectation $1/1.1844 = 0.844$, slightly above
+it because the +6% vjets background partly offsets the signal gain.
+
+</div>
+<div class="small">
+
+<span class="hl">This is a normalisation shift, not a sensitivity gain.</span> Nothing about the
+discriminant, the reweighting or the systematics changed.
+
+Both physics conclusions survive: the SF still costs **~1.7%**, and the fit is still
+**autoMCStats-dominated**.
+
+</div>
+</div>
+
+<span class="tiny">Both series reproducible: `v11_hplusc_v4.{root,txt}.bak_sidecar_20260731`,
+builder `make_combine_inputs.py.bak_sidecar_20260731`.</span>
 
 ---
 
@@ -325,9 +407,8 @@ are wrong. **Check after any rebuild:** SR V+jets ≈ **735**, all-channel V+jet
 ![w:800 center](img/C3_sf_closure.png)
 
 <span class="small">Measured **2026-07-31** from freshly rebuilt inputs, both arms through the
-same builder on the same day. <span class="ok">The with-SF arm reproduces the reference datacard
-bin-for-bin</span> (SR V+jets 745.9, all-channel 6163.1, SR total 9141.5 — identical to
-`v11_hplusc_v4.root`), so the A/B is verified end-to-end, not just internally consistent.</span>
+same builder on the same day, on the corrected **`sumw_records`** normalisation
+(see the two slides that follow).</span>
 
 ---
 
@@ -335,14 +416,14 @@ bin-for-bin</span> (SR V+jets 745.9, all-channel 6163.1, SR total 9141.5 — ide
 
 | variant | full (all syst) | stat-only | freeze autoMCStats |
 |---|---|---|---|
-| baseline, **no SF** | **1343** | 788 | 1100 |
-| **+ `CMS_ctag2d_2022`** | **1371** | 797 | 1144 |
-| Δ | **+28 (+2.1%)** | +9 (+1.1%) | +44 (+4.0%) |
+| baseline, **no SF** | **1172** | 668 | 941 |
+| **+ `CMS_ctag2d_2022`** | **1192** | 676 | 976 |
+| Δ | **+20 (+1.7%)** | +8 (+1.2%) | +35 (+3.7%) |
 
 <div class="cols">
 <div class="small">
 
-**The SF weakens the limit by ~2% — and that is the correct sign.**
+**The SF weakens the limit by ~1.7% — and that is the correct sign.**
 
 A real c-tag scale factor *should* cost something: it introduces a genuine
 uncertainty that was previously being ignored, not assumed away.
@@ -351,15 +432,15 @@ uncertainty that was previously being ignored, not assumed away.
 <div class="small">
 
 **Decomposition**
-- **stat-only +1.1%** — pure yield rescaling. Mean central SF ≈ 1.06, so SR $S/\sqrt{B}$
+- **stat-only +1.2%** — pure yield rescaling. Mean central SF ≈ 1.06, so SR $S/\sqrt{B}$
   shifts slightly. Not an uncertainty effect at all.
-- **full +2.1%** — the extra degradation is the one new nuisance's wide
+- **full +1.7%** — the extra degradation is the one new nuisance's wide
   (+44%/−16%) band doing its job.
 
 </div>
 </div>
 
-<span class="hl">The stat-only → full gap is still autoMCStats-dominated</span> (freeze → 1144),
+<span class="hl">The stat-only → full gap is still autoMCStats-dominated</span> (freeze → 976),
 i.e. low-stat SR templates remain the driver, **not** the SF.
 
 ---
@@ -371,9 +452,14 @@ scores, not the baseline continuous scores. Built as a separate workflow `hww_co
 
 | variant | full | stat-only | freeze autoMCStats |
 |---|---|---|---|
-| baseline (no SF) | 1343 | 788 | 1100 |
-| baseline scores + SF | 1371 | 797 | 1144 |
-| **2D-cat scores + SF** | **1422** | **749** | 1168 |
+| *baseline (no SF)* | *1343* | *788* | *1100* |
+| *baseline scores + SF* | *1371* | *797* | *1144* |
+| ***2D-cat scores + SF*** | ***1422*** | ***749*** | *1168* |
+
+<span class="hl">⚠️ These three are the OLD sidecar normalisation</span> — kept here because the
+2D-cat arm has **not yet been re-measured**. Its workflow tree was re-processed on 2026-07-30
+and currently has no scored `mva/` parquets; the one-hot + inference + build chain is being
+re-run. Until it completes, only the *relative* reading below is safe, not the absolute values.
 
 <div class="cols">
 <div class="small">
@@ -464,13 +550,15 @@ fine charm-tag gradient a coarse 11-bin (effectively ~6-bin) scheme discards.</s
 
 | change | full $r_{95}$ | vs baseline |
 |---|---|---|
-| baseline (negrw, no SF) | **1343** | — |
-| + official 2D c-tag SF | **1371** | +2.1% |
-| + SF, with 2D-cat MVA scores | **1422** | +5.9% |
+| baseline (negrw, no SF) | **1172** | — |
+| + official 2D c-tag SF | **1192** | **+1.7%** |
+| <span class="small">+ SF, with 2D-cat MVA scores</span> | <span class="small">*pending re-measurement*</span> | <span class="small">*was +5.9%*</span> |
 
 <div class="small">
 
-- The SF costs **~2%** — the expected size and the correct sign for adding a real,
+- All on the corrected **`sumw_records`** normalisation. <span class="tiny">(Superseded sidecar
+  series: 1343 / 1371 / 1422.)</span>
+- The SF costs **~1.7%** — the expected size and the correct sign for adding a real,
   previously-neglected uncertainty.
 - Applying the SF **without** the matching 2D-cat discriminant is the mildest option, and is
   what `hww_combine_fixed` currently does.
@@ -519,7 +607,7 @@ no reprocessing (verified to machine precision).
 <span class="hl">Only 7 of 11 categories are populated</span> for the candidate c-jet;
 4 MVA inputs are identically zero.
 
-**1343 → 1371** with the SF · **→ 1422** with the matched 2D-cat discriminant
+**1172 → 1192** with the SF <span class="small">(`sumw_records` normalisation)</span>
 
 <span class="small">Full write-up: `Projects/HToWW/2026-07-19-ctag2d-full-documentation.md`
 · reference: `References/HToWW/2D-SFbc-calibration-AN-25-222.pdf`</span>
