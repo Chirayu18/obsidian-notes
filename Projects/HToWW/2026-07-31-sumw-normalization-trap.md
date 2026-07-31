@@ -164,14 +164,50 @@ different sumw conventions. The pre-switch datacards are preserved as
 `ruhex-osgce.rutgers.edu` blacklisted would close it and remove the last records-vs-sidecar
 discrepancy that is not simply staleness.
 
+## LOWESS shape smoothing turned OFF everywhere (2026-07-31)
+
+`smooth_shapes` was `true` in `hww_combine_fixed` / `_nosf` / `_sfchk` / `hww_genrw_train` but
+already `false` in `hww_combine_2dcat`, where the reasoning was recorded:
+
+> LOWESS smoothing DISABLED. The negrw reweighting applied in `process_sample`
+> (w → |w|·g, renormalised to the nominal yield) already removes the MC-stat variance at the
+> source for the vjets templates, and its docstring states it REPLACES the template smoothing.
+> `smooth_shape_variations` had no vjets exclusion, so those templates were being treated
+> **twice** — washing out genuine shape information.
+
+That argument applies to every workflow, so it is now `false` in all of them (backups
+`*.yaml.bak_smoothon_20260731`).
+
+⚠️ **Two different smoothings — do not confuse them:**
+
+| | what it does | status |
+|---|---|---|
+| `dy_template_smooth.py` | smooths the **nominal** DY/V+jets template | **OFF** — replaced by negrw (Jul-17 decision); never called |
+| `smooth_shapes` (LOWESS) | smooths each **systematic variation's ratio** to nominal, rescaled to preserve the variation's yield | **now OFF** everywhere |
+
+**Effect (records normalisation): the limit IMPROVES ~2%.**
+
+| variant | smoothing ON | smoothing OFF |
+|---|---|---|
+| no SF | 1172 / 668 / 941 | **1150 / 668 / 905** |
+| + `CMS_ctag2d_2022` | 1192 / 676 / 976 | **1164 / 676 / 930** |
+
+(full / stat-only / freeze-autoMCStats.) Stat-only is **identical** either way — smoothing only
+touches systematic variations, never the nominal, which is exactly the expected behaviour and a
+good closure check on the change.
+
 ## The limits, both normalizations (2022postEE, blind Asimov)
 
 | variant | full | stat-only | freeze-autoMCStats |
 |---|---|---|---|
-| **sidecar** — no SF | 1343 | 788 | 1100 |
-| **sidecar** — + `CMS_ctag2d_2022` | 1371 | 797 | 1144 |
-| **records** — no SF | **1172** | 668 | 941 |
-| **records** — + `CMS_ctag2d_2022` | **1192** | 676 | 976 |
+| sidecar + smoothing — no SF | 1343 | 788 | 1100 |
+| sidecar + smoothing — + SF | 1371 | 797 | 1144 |
+| records + smoothing — no SF | 1172 | 668 | 941 |
+| records + smoothing — + SF | 1192 | 676 | 976 |
+| **records, no smoothing — no SF** | **1150** | **668** | **905** |
+| **records, no smoothing — + SF** | **1164** | **676** | **930** |
+
+**The last two rows are the current canonical numbers.**
 
 Ratio records/sidecar: full **0.869** (SF) and **0.873** (no SF), stat-only 0.848,
 freeze 0.853 — all clustered around the naive signal-scaling expectation
