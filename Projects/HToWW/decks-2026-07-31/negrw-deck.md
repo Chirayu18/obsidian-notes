@@ -89,6 +89,77 @@ bin with zero content and a finite, large error.
 
 ---
 
+## The original diagnosis: V+jets is starved exactly under the signal
+
+![w:880 center](img/automcstats_issue.png)
+
+<span class="tiny">**(A)** SR stack — the MC-stat band explodes right where the signal peaks;
+bin 6 is DY $= 0 \pm 41$ from ±79k NLO weights cancelling. **(B)** $N_\text{eff}$ per bin —
+V+jets sits at **≈10** across the signal-rich region while every other process is at
+10³–10⁴. **(C)** the DY per-event generator weights: uniformly **±10⁵**, giving
+$N_\text{eff}$ = 1317 out of 10,410 events.</span>
+
+---
+
+## It is not a systematic — it is the top nuisance in the fit
+
+<div class="cols">
+<div>
+
+![w:400](img/impacts_cms_v11.png)
+
+</div>
+<div class="small">
+
+CMS-style impacts, $r=1$ Asimov. The **top three** nuisances are
+
+`prop_binSR_hplusc_bin6`
+`prop_binSR_hplusc_bin5`
+`prop_binSR_hplusc_bin7`
+
+— all `autoMCStats` parameters, each with $|\Delta\hat r| \sim 400\text{–}600$, far above
+every physics systematic (`ps_fsr`, `scalevar_muR`, `CMS_scale_j`…).
+
+<span class="hl">`bin6` is #1</span> — the same bin the template plot shows as
+$0\pm\infty$. The diagnosis and the fit agree.
+
+</div>
+</div>
+
+---
+
+## How far off we are from the published analysis
+
+<div class="cols">
+<div>
+
+![w:490](img/breakdown_vs_AN.png)
+
+</div>
+<div class="small">
+
+Grouped $|\Delta r|/r$ against **AN-23-102 Table 18**.
+
+- <span class="hl">Our MC-stat: ~41%. The AN's: 6.2%.</span> That single bar is the
+  whole problem.
+- Our Bkg-Higgs ~1% vs their 21%. Our systematic model was *less* complete than theirs,
+  yet our total was worse.
+- Statistical components are comparable (56/70% vs 60%), confirming the discriminant
+  itself is fine.
+
+**Conclusion: fix the MC statistics, not the systematics.**
+
+<span class="tiny">⚠️ **This plot is from 2026-06-17 and its empty "Charm-tag" bar is now out of
+date.** We had no c-tag uncertainty then — that was a real gap. The official 2D PNet c-tag SF
+was added on 2026-07-22 as `CMS_ctag2d_2022` and costs **+2.1%** on the limit
+(1343 → 1371); see the companion c-tag deck. `tt-norm` is still absent by choice — `tt` is
+data-driven via CR_tt, per AN-23-102.</span>
+
+</div>
+</div>
+
+---
+
 ## What that does to the actual template
 
 ![w:560 center](img/P1_SR_vjets_template.png)
@@ -241,11 +312,10 @@ So we can train on a far larger sample than the SR.
 
 ## The two weight classes really are separated
 
-![w:720 center](img/08_input_features.png)
+![w:520 center](img/08_input_features.png)
 
-<span class="small">Blue: $w>0$ · Red: $w<0$, per input feature. The classes separate visibly in the
-merging / parton-count variables — that separation is precisely what the classifier exploits.
-If these histograms overlapped exactly, no classifier could help.</span>
+<span class="tiny">Blue: $w>0$ · Red: $w<0$, per input feature. The classes separate visibly in the
+merging / parton-count variables — exactly what the classifier exploits.</span>
 
 ---
 
@@ -311,12 +381,12 @@ into ~256 buckets, grows shallow trees. Scales to ~10M events, handles `NaN` nat
 <div class="cols">
 <div>
 
-![w:400](img/03_roc.png)
+![w:310](img/03_roc.png)
 
 </div>
 <div>
 
-![w:500](img/05_pplus_by_sign.png)
+![w:380](img/05_pplus_by_sign.png)
 
 </div>
 </div>
@@ -326,9 +396,9 @@ into ~256 buckets, grows shallow trees. Scales to ~10M events, handles `NaN` nat
 | ensemble log-loss | **0.331** |
 | ensemble AUC | **0.829** |
 
-<span class="small">True $w>0$ events pile up at $P_+ \to 1$; $w<0$ events spread to low $P_+$.
-AUC 0.83 on a problem that is *intrinsically* stochastic — the sign is not a deterministic
-function of $\vec x$, so 1.0 is not the target. What matters is that $P_+$ is **calibrated**.</span>
+<span class="tiny">AUC 0.83 on an *intrinsically stochastic* problem — the sign is not a
+deterministic function of $\vec x$, so 1.0 is not the target. What matters is that $P_+$ is
+**calibrated**.</span>
 
 ---
 
@@ -544,17 +614,17 @@ positive fraction. Next slide: what we do about it.</span>
 <span class="tiny">Applied factors: DYto2L_50 ×0.986, WtoLNu ×0.900, DYto2L_10to50 ×0.446.</span>
 
 <div class="cols">
-<div class="small">
+<div class="tiny">
 
 **Why it is defensible**
-- Reweighting is meant to fix **variance, not yield** — exact closure is what the identity
-  guarantees in the large-$N$ limit. The rescale forces our finite-$N$ estimate back onto it.
+- Reweighting fixes **variance, not yield** — exact closure is what the identity guarantees in
+  the large-$N$ limit; the rescale forces our finite-$N$ estimate back onto it.
 - Standard shape-only template practice (the existing DY smoothing does the same).
 - It **keeps the entire benefit**: $N_\text{eff}$ comes from reduced per-bin variance, which a
   global rescale does not touch.
 
 </div>
-<div class="small">
+<div class="tiny">
 
 **Why it must be stated**
 - <span class="hl">This is our extension, not the paper's.</span> Their closure was clean
@@ -769,11 +839,10 @@ recorded so they are not retried:
    how much freedom the fit *uses*; it is **not** a recoverable budget. Every "fix" derived from
    reading it that way failed.
 
-</div>
+The remaining v32 deficit is **structural**: it concentrates signal into bins that are ~72% tt.
+The one open lever is **more MC statistics at high $D$** — exactly what negrw bought.
 
-<span class="small">The remaining v32 deficit is structural: it concentrates signal into bins that
-are ~72% tt. The one open lever is **more MC statistics at high $D$** — which is exactly what
-negrw bought.</span>
+</div>
 
 ---
 
@@ -798,6 +867,172 @@ with the method's own uncertainty included and shown to be negligible.
 <!-- _class: lead -->
 
 # Backup
+
+---
+
+<!-- _class: lead -->
+
+## Backup A — every combine input
+
+<span class="small">All 6 channels × 6 processes, their MC-stat errors,
+and all 20 shape systematics.</span>
+
+---
+
+## All six channels — stacked nominal templates
+
+![w:790 center](img/B1_all_channels_stacked.png)
+
+<span class="tiny">Signal (red line) scaled by a **single global ×2000** in every panel, so shapes
+are comparable across channels. Hatched = total background MC-stat; black points = the Asimov
+dataset the blind limit is run against. tt (blue) dominates everywhere except `CR_vjets`.</span>
+
+---
+
+## Every template individually (6 channels × 6 processes)
+
+![w:530 center](img/B2_all_templates_grid.png)
+
+<span class="tiny">Annotation = mean relative MC-stat error over populated bins,
+<span class="hl">red when > 50%</span>. **tt is 1–3% everywhere; V+jets is 14–67%.**</span>
+
+---
+
+## All 20 shape systematics — signal region
+
+![w:620 center](img/B3_shapes_SR_hplusc.png)
+
+<span class="tiny">Every Up (solid) / Down (dashed) variation as a ratio to nominal, per process.
+Most are sub-percent lines hugging 1.0; the visible excursions are the theory shapes
+(`scalevar_*`, `ps_*`). This is why the JES/JER/lepton block contributes only 18 of the 484
+systematic tax.</span>
+
+---
+
+## All 20 shape systematics — control regions (1/2)
+
+<div class="cols">
+<div>
+
+![w:470](img/B3_shapes_CR_tt.png)
+<span class="tiny">`CR_tt` — the tt-pure region.</span>
+
+</div>
+<div>
+
+![w:470](img/B3_shapes_CR_vjets.png)
+<span class="tiny">`CR_vjets` — note `CMS_negrw_vjets` appears only here and in the SR.</span>
+
+</div>
+</div>
+
+---
+
+## All 20 shape systematics — control regions (2/2)
+
+<div class="cols3">
+<div>
+
+![w:330](img/B3_shapes_CR_higgsbkg.png)
+<span class="tiny">`CR_higgsbkg`</span>
+
+</div>
+<div>
+
+![w:330](img/B3_shapes_CR_st.png)
+<span class="tiny">`CR_st`</span>
+
+</div>
+<div>
+
+![w:330](img/B3_shapes_CR_diboson.png)
+<span class="tiny">`CR_diboson`</span>
+
+</div>
+</div>
+
+<span class="tiny">The 20 shapes are: `pileup`, `ps_isr`, `ps_fsr`, `scalevar_muR`,
+`scalevar_muF`, `scalevar_muR_muF`, `muon_id`, `muon_iso`, `electron_id`,
+`electron_reco_{RecoBelow20,Reco20to75,RecoAbove75}`,
+`CMS_{scale,res}_{e,m,j}_2022` (6 object shifts), `CMS_ctag2d_2022`, `CMS_negrw_vjets`.</span>
+
+---
+
+## Fit diagnostics
+
+<div class="cols">
+<div>
+
+![w:430](img/impacts_cms_v32.png)
+<span class="tiny">v32 impacts — `autoMCStats` dominates here too, confirming this is a
+property of the inputs and not of one discriminant.</span>
+
+</div>
+<div>
+
+![w:430](img/likelihood_scan.png)
+<span class="tiny">$-2\Delta\ln L$ vs $r$ for v11 and v32 (Asimov, $r=1$ injected)
+with 68/95% lines.</span>
+
+</div>
+</div>
+
+---
+
+## Where we started: limits before the fix
+
+<div class="cols">
+<div>
+
+![w:440](img/limit_comparison_4bar.png)
+<span class="tiny">stat-only and with-systematics for v11 & v32, vs AN-23-102 √L-scaled to
+26.7 fb⁻¹ (syst 1148, stat 879). **Our stat-only beats the AN's; our with-syst is far
+worse** — the signature of systematic (here MC-stat) inflation.</span>
+
+</div>
+<div>
+
+![w:440](img/limit_comparison_statonly.png)
+<span class="tiny">stat-only only: v11 = 771, v32 = 584 vs AN scaled = 879. Our
+discriminants are genuinely good — the floors beat the published analysis at equal
+luminosity.</span>
+
+</div>
+</div>
+
+---
+
+## The pre-negrw workaround, for the record
+
+<div class="cols">
+<div>
+
+![w:450](img/automcstats_fix.png)
+
+</div>
+<div class="small">
+
+Before the reweighting existed, the symptom was treated by **smoothing** the DY template:
+1742 → **1399**.
+
+<span class="hl">This is what negrw replaced.</span> Smoothing pools the sparse tail into a
+smooth shape — it hides the variance rather than removing it, and it biases the template
+shape by construction.
+
+The reweighting instead raises $N_\text{eff}$ **at the source** (3.44× in the SR) and reaches
+**1343** without touching the shape.
+
+<span class="tiny">Per the Jul-17 decision, the two are **not** stacked — running both would
+double-count the regularisation.</span>
+
+</div>
+</div>
+
+---
+
+<!-- _class: lead -->
+
+## Backup B — reference
 
 ---
 

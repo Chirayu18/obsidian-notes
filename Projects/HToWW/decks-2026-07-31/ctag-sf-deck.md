@@ -187,19 +187,28 @@ Official **per-category** 2D flavour-tagging SFs for PNet AK4 — the H→γγ /
 
 </div>
 
-**Correction:** `ParticleNetAK4_pseudocontinuous` · **Signature:** `evaluate(systematic, flavor, wp, abseta, pt)`
+**Correction:** `ParticleNetAK4_pseudocontinuous`
+**Signature:** `evaluate(systematic, flavor, wp, abseta, pt)` — see next slide.
+
+---
+
+## The `evaluate` signature, argument by argument
 
 <div class="small">
 
-- `systematic`: `central`; `up_Total`/`down_Total` (combined — **use this for one nuisance**),
-  `up_Stat`/`down_Stat`, plus a large per-source decomposition. <span class="hl">There is no bare
-  `up`/`down`.</span>
-- `flavor`: `0`=udsg, `4`=c, `5`=b — the jet's **hadron flavour** (`cjet_cand_flavour`).
-- `wp`: the 2D category id — <span class="hl">`L0=0, C0..C4 = 40..44, B0..B4 = 50..54`</span>
-  (note: **not** our stored 0..10 — must be remapped).
-- `abseta`: **inclusive** (single bin, value irrelevant). `pt`: binned `[20,35,50,70,90,120]`.
+| arg | values |
+|---|---|
+| `systematic` | `central`; `up_Total`/`down_Total` (combined — **use this for one nuisance**); `up_Stat`/`down_Stat`; plus a large per-source decomposition. <span class="hl">There is no bare `up`/`down`.</span> |
+| `flavor` | `0` = udsg, `4` = c, `5` = b — the jet's **hadron flavour** (`cjet_cand_flavour`) |
+| `wp` | the 2D category id: <span class="hl">`L0=0, C0..C4 = 40..44, B0..B4 = 50..54`</span> — **not** our stored `0..10`, so it must be remapped |
+| `abseta` | **inclusive** — a single `eta_0p00toinf` bin, so the value is irrelevant |
+| `pt` | binned `[20, 35, 50, 70, 90, 120]`, flat below 20 and above 120 |
 
 </div>
+
+<span class="small">The SF file exposes **525** systematic keys in total. We collapse them to the
+single combined `Total` band — see the recommendation at the end for when and how to
+decorrelate.</span>
 
 ---
 
