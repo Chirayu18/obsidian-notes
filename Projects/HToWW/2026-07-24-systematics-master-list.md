@@ -64,7 +64,7 @@ larger stat term and will matter **less** for us in relative terms, not more.
 
 | Item | Status | AN 1POI impact | Effort | What to do |
 |---|---|---|---|---|
-| **Trigger SFs (muon + electron)** | 🔴 MISSING | **0.0%** | **low** | `trigger: false` → enable; SFs from the top-analysis cross-trigger measurement (AN §7.2, ref [23]). Adds `weight_trig*Up/Down` → one shape row. <br>**Genuinely negligible in the AN** — worth adding for completeness/correctness, not for the limit. |
+| **Trigger SFs (muon + electron)** | 🟢 **CODED, not enabled** | **0.0%** | **config only** | `Electron-HLT-SF` is **already fully implemented** in `electron.py` (`HLT_SF_Ele30_MVAiso80ID` for our `wp80iso`), json path resolved, and a `muon_hlt` efficiency json sits alongside. Flip `trigger: false` → enable, add the nuisance row. **See §2e.** <br>**Genuinely negligible in the AN (0.0%)** — do it for correctness, not for the limit. |
 | **MET unclustered energy** | 🔴 MISSING | **0.4%** | **medium** | Needs a new *object-shift* parquet tree (`CMS_scale_met_unclustered_*`), i.e. a reprocessing pass. AN §7.2 varies each particle type by its resolution. |
 | **top-pT reweighting** | 🔴 MISSING | *(in tt-norm 0.7%)* | low | `weight_toppt*` on tt. **Partly moot for us:** tt is data-driven via the `rate_tt` rateParam, which already absorbs the normalisation part. |
 | **PDF *shape* nuisance** | 🔴 MISSING | *(≤1–3%, in cH/bH 8.5%)* | **low** | `LHEPdfWeight` IS already computed (`lhepdf.py` wired); only the `xsec_hplusc_PDF` lnN is used. Swap/add the Hessian-envelope **shape** rows — cheapest real upgrade on this list. |
@@ -78,8 +78,9 @@ larger stat term and will matter **less** for us in relative terms, not more.
 ### Priority reading
 
 1. **PDF shape** — the weights already exist, so this is nearly free and touches the signal.
-2. **Trigger SFs** — you named this as the gap, and it *is* the last missing POG correction,
-   but AN Table 17 puts its impact at **0.0%**. Add it for correctness; expect no limit change.
+2. **Trigger SFs** — the last missing POG correction, and it turns out to be **already coded**
+   (§2e), so it is a config flip rather than development. AN Table 17 puts its impact at
+   **0.0%**: add it for correctness, expect no limit change.
 3. **Decorrelation** — the only item that might *improve* the limit rather than cost.
 4. Everything else is sub-percent in the AN and dominated by our MC-stat term.
 
@@ -277,6 +278,68 @@ the fix is a shape nuisance, which is a larger design question than the sample r
 ⚠️ **Size in two steps.** The 20k assumes the 3FS negative-weight fraction resembles the 4FS
 nominal's (0.262). An unmerged 3FS NLO sample can be worse. Generate a small batch, measure
 $N_\text{eff}/N$, then size the rest — don't commit the full request blind.
+
+## 2e. Object IDs / working points and their SF sources (checked 2026-07-31)
+
+### Electrons — `wp80iso`
+
+**Selection** (`hww_combine_fixed.yaml:52-54`): `pt > 10`, `|η| < 2.5`,
+`working_points.electron_id(events, 'wp80iso')`; pair cuts `l1.pt > 20`, `l2.pt > 10`,
+`(l1+l2).pt > 30`.
+
+**Definition** (`analysis/working_points/working_points.py:12`):
+
+```python
+"wp80iso": events.Electron.mvaFall17V2Iso_WP80      # Run 2 NanoAOD
+           if hasattr(...) else events.Electron.mvaIso_WP80   # Run 3  <- ours
+```
+
+i.e. the **EGamma MVA ID *with* isolation, 80% signal-efficiency WP**, read straight off the
+NanoAOD boolean branch `Electron_mvaIso_WP80`. The same helper also exposes `wp90iso`, the
+`cutBased` ladder (`fail/veto/loose/medium/tight` = 0–4) and an `mvaHZZIso` BDT ID — none used.
+
+**Official source**, cited in `analysis/corrections/electron.py:29`:
+<https://twiki.cern.ch/twiki/bin/view/CMS/EgammSFandSSRun3#Scale_factors_and_correction_AN1>
+
+### Muons — `tight` ID + `tight` iso
+
+`working_points.py:90` → `events.Muon.tightId` (options: `looseId`/`mediumId`/`tightId`);
+isolation via `muon_iso`. Configured at `hww_combine_fixed.yaml:153-154`.
+
+### All correction files actually loaded (2022postEE)
+
+| key | correction(s) | file |
+|---|---|---|
+| `electron_id` | `Electron-ID-SF` | `/cvmfs/cms-griddata.cern.ch/cat/metadata/EGM/Run3-22EFGSep23-Summer22EE-NanoAODv12/2025-10-22/electron.json.gz` |
+| `electron_reco` | `Electron-ID-SF` | *(same file)* |
+| `electron_ss` | scale & smearing | `.../EGM/.../latest/electronSS_EtDependent.json.gz` |
+| **`electron_hlt`** | `Electron-HLT-SF`, `-DataEff`, `-McEff` | `/cvmfs/cms.cern.ch/rsync/cms-nanoAOD/jsonpog-integration/POG/EGM/2022_Summer22EE/electronHlt.json.gz` |
+| `muon` | MUO Z-based SFs | `.../MUO/.../2025-08-14/muon_Z.json.gz` |
+| `muon_ss` | scale & smearing | `.../MUO/.../muon_scalesmearing.json.gz` |
+| **`muon_hlt`** | HLT efficiency | `~/higgscharm/analysis/data/muon_hlt/2022postEE_Muon_HLT_Eff.json` (local, not CVMFS) |
+| `pileup` | `puWeights` | `.../LUM/.../2024-01-31/puWeights.json.gz` |
+| `ctagging` | 1D PNet c-tag *(superseded)* | `.../BTV/.../2025-08-20/ctagging.json.gz` |
+| **`ctagging_2d`** | `ParticleNetAK4_pseudocontinuous` | `/eos/cms/store/group/phys_higgs/cmshgg/ingredients/2022/2D_HF_Tagging/flavTaggingSF_2022postEE.json.gz` |
+| `jetvetomaps` | JME veto maps | `.../JME/.../2025-10-07/jetvetomaps.json.gz` |
+
+⚠️ Note the EGM/MUO/BTV/LUM files come from the **CAT metadata** area
+(`cms-griddata.cern.ch/cat/metadata/...`), *not* the usual `jsonpog-integration` path — only
+`electron_hlt` uses the latter.
+
+### 🟢 Trigger SFs are already implemented, just not enabled
+
+`analysis/corrections/electron.py` contains a complete HLT implementation keyed by working
+point, with the json path already resolved:
+
+```python
+"wp80iso": "HLT_SF_Ele30_MVAiso80ID"
+"wp90iso": "HLT_SF_Ele30_MVAiso90ID"
+```
+
+and there is a `muon_hlt` efficiency json alongside it. So the "missing trigger SF" from §2 is
+a **configuration change** (`trigger: false` → enable + add the nuisance), **not** new
+development — cheaper than the "low effort" originally estimated. AN impact is still **0.0%**,
+so this is a correctness item, not a limit-improving one.
 
 ## 3. What's DONE / not-applicable
 - **Signal theory shapes** (`ps_*`, `scalevar_*` on hplusc): ✅ present — `hplusc` is not in `no_theory`.
