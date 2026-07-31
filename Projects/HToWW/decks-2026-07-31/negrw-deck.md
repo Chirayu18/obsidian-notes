@@ -130,33 +130,58 @@ $0\pm\infty$. The diagnosis and the fit agree.
 
 ## How far off we are from the published analysis
 
-<div class="cols">
-<div>
+![w:760 center](img/D1_breakdown_vs_AN.png)
 
-![w:490](img/breakdown_vs_AN.png)
+<span class="small">Freeze scan on the **current** card (2026-07-31), both sides on the AN's own
+metric. <span class="ok">The experimental block is essentially at parity</span> —
+JES/JER 1.4 vs 1.1, charm-tag 2.7 vs 1.1, lepton 0.1 vs 0.4, pileup 0.0 vs 0.4. Only **two**
+groups differ materially: **MC-stat** (~4.5×) and **signal theory** (~3.5×, the flat 30%
+`xsec_hplusc_4FS_5FS`). Bkg-Higgs is *smaller* than the AN's — our
+`flavor_composition_ggH` is still a 1.40 placeholder vs their 1.50-on-ggH.</span>
+
+---
+
+## ⚠️ Getting that comparison right — the metric matters
+
+<div class="cols">
+<div class="small">
+
+**AN-23-102 has no Table 18.** The inventory is **Table 16**, the impacts **Table 17**.
+
+Table 17's percentages decode from Figure 54 (1POI, Asimov $r=1$, total uncertainty on $r$ =
+441.6):
+
+```
+freeze MC-stat -> residual
+  sqrt(441.6^2 - 144.3^2) = 417.4
+  drop = 5.5%     Table 17 says 5.4%  ✅
+```
+
+So the AN's metric is the **linear drop in the 1σ width**,
+$(\sigma_\text{full}-\sigma_\text{frozen})/\sigma_\text{full}$.
 
 </div>
 <div class="small">
 
-Grouped $|\Delta r|/r$ against **AN-23-102 Table 18**.
+Quoting a *different* quantity — e.g. $\sqrt{\sigma_\text{full}^2-\sigma_\text{frozen}^2}/r$ —
+inflates every entry and makes the systematics look far worse than they are:
 
-- <span class="hl">Our MC-stat: ~41%. The AN's: 6.2%.</span> That single bar is the
-  whole problem.
-- Our Bkg-Higgs ~1% vs their 21%. Our systematic model was *less* complete than theirs,
-  yet our total was worse.
-- Statistical components are comparable (56/70% vs 60%), confirming the discriminant
-  itself is fine.
+| group | AN metric | the wrong one |
+|---|---|---|
+| MC-stat | 24.5% | 28.7% |
+| charm-tag | **2.7%** | 10.2% |
+| tt norm | **3.5%** | 11.5% |
+| JES/JER | **1.4%** | 7.3% |
 
-**Conclusion: fix the MC statistics, not the systematics.**
-
-<span class="tiny">⚠️ **This plot is from 2026-06-17 and its empty "Charm-tag" bar is now out of
-date.** We had no c-tag uncertainty then — that was a real gap. The official 2D PNet c-tag SF
-was added on 2026-07-22 as `CMS_ctag2d_2022` and costs **+2.1%** on the limit
-(1343 → 1371); see the companion c-tag deck. `tt-norm` is still absent by choice — `tt` is
-data-driven via CR_tt, per AN-23-102.</span>
+<span class="hl">Always state which definition is being used.</span>
 
 </div>
 </div>
+
+<span class="tiny">⚠️ One caveat: the AN's own **"Statistical 73.8%"** does not reproduce under
+this definition (freezing stat gives a 43.1% drop), so their statistical row appears to be
+normalised differently from their systematic rows. The systematic rows are trustworthy —
+MC-stat reproduces to 0.1%.</span>
 
 ---
 
@@ -686,10 +711,44 @@ autoMCStats inflation — nothing else moved.</span>
 | | freeze autoMCStats | 1068 | 1083 | +1% |
 | | <span class="hl">autoMCStats inflation</span> | **867** | **408** | **−53%** |
 
-<span class="small">**Why stat-only moves +2% for v11 and not for v32:** the "stat-only" limit
-freezes `allConstrainedNuisances` but **keeps** `prop_bin*` floating — so it still contains
-per-bin MC-stat error. Changing those errors (bin 6: $0\pm\infty \to 91\pm25\%$) *should* move it.
-It is a rebalance, not a distortion.</span>
+<span class="small">**Why stat-only moves +2% for v11 and not for v32:** the reweighting changes the
+per-bin MC-stat errors themselves (bin 6: $0\pm\infty \to 91\pm25\%$), so a rebalance is
+expected — not a distortion.</span>
+
+---
+
+## Where these numbers stand today
+
+<span class="small">The 1742 → 1343 comparison above is the **clean negrw A/B**: both sides
+built identically, so the −23% is the reweighting's effect alone. Two later configuration
+changes moved the absolute scale (neither is about negrw):</span>
+
+| configuration | no SF | + c-tag SF |
+|---|---|---|
+| negrw, as measured above | 1343 | 1371 |
+| <span class="small">+ `sumw_records` normalisation</span> | 1172 | 1192 |
+| <span class="small">+ LOWESS smoothing OFF</span> | **1150** | **1164** |
+
+<div class="cols">
+<div class="small">
+
+**1. `sumw_records` (−14%)** — the builder was reading a *stale sidecar* `sumw` for the signal.
+The self-normalising per-chunk records give a signal template **18.4% larger**. A pure
+normalisation fix; not a sensitivity gain.
+
+</div>
+<div class="small">
+
+**2. Smoothing off (−2%)** — LOWESS was smoothing the negrw-reweighted vjets shape variations
+*on top of* the reweighting, double-treating them. Stat-only is **identical** either way,
+confirming only systematics were touched.
+
+</div>
+</div>
+
+<span class="tiny">⚠️ vs the published analysis: AN-23-102 quotes an expected UL of **431 at
+138 fb⁻¹**. Scaled to our 26.7 fb⁻¹ that is $431\sqrt{138/26.7}=$ **980**, so we are ~19%
+worse — not at parity. Our stat-only 676 does beat the AN's scaled ~723.</span>
 
 ---
 

@@ -375,8 +375,10 @@ six channels:
 |---|---|---|---|
 | <span class="small">*sidecar (superseded)* — no SF</span> | *1343* | *788* | *1100* |
 | <span class="small">*sidecar (superseded)* — + SF</span> | *1371* | *797* | *1144* |
-| **`sumw_records`** — no SF | **1172** | **668** | **941** |
-| **`sumw_records`** — + `CMS_ctag2d_2022` | **1192** | **676** | **976** |
+| `sumw_records` + smoothing — no SF | 1172 | 668 | 941 |
+| `sumw_records` + smoothing — + SF | 1192 | 676 | 976 |
+| **`sumw_records`, no smoothing — no SF** | **1150** | **668** | **905** |
+| **`sumw_records`, no smoothing — + SF** | **1164** | **676** | **930** |
 
 <div class="cols">
 <div class="small">
@@ -402,6 +404,44 @@ builder `make_combine_inputs.py.bak_sidecar_20260731`.</span>
 
 ---
 
+## …and LOWESS shape smoothing turned off
+
+<div class="cols">
+<div class="small">
+
+Two **different** smoothings — easy to confuse:
+
+| | what it smooths | status |
+|---|---|---|
+| `dy_template_smooth.py` | the **nominal** V+jets template | OFF — replaced by negrw (Jul-17); never called |
+| `smooth_shapes` (LOWESS) | each **systematic variation's ratio** to nominal | **now OFF** everywhere |
+
+The reason, already recorded in the 2dcat workflow: `smooth_shape_variations` has **no vjets
+exclusion**, so negrw-reweighted vjets templates were being treated **twice** — the reweighting
+removes the MC-stat variance at the source, then LOWESS smoothed the result again, washing out
+genuine shape information.
+
+</div>
+<div class="small">
+
+**Effect: the limit *improves* ~2%.**
+
+| variant | smoothing ON | OFF |
+|---|---|---|
+| no SF | 1172 | **1150** |
+| + SF | 1192 | **1164** |
+
+<span class="ok">Stat-only is **identical** either way (668 / 676)</span> — smoothing only
+touches systematic variations, never the nominal. That is exactly the expected behaviour and a
+clean closure check on the change.
+
+<span class="tiny">Now `false` in every workflow; backups `*.yaml.bak_smoothon_20260731`.</span>
+
+</div>
+</div>
+
+---
+
 ## The closure result
 
 ![w:800 center](img/C3_sf_closure.png)
@@ -416,14 +456,14 @@ same builder on the same day, on the corrected **`sumw_records`** normalisation
 
 | variant | full (all syst) | stat-only | freeze autoMCStats |
 |---|---|---|---|
-| baseline, **no SF** | **1172** | 668 | 941 |
-| **+ `CMS_ctag2d_2022`** | **1192** | 676 | 976 |
-| Δ | **+20 (+1.7%)** | +8 (+1.2%) | +35 (+3.7%) |
+| baseline, **no SF** | **1150** | 668 | 905 |
+| **+ `CMS_ctag2d_2022`** | **1164** | 676 | 930 |
+| Δ | **+14 (+1.2%)** | +8 (+1.2%) | +25 (+2.8%) |
 
 <div class="cols">
 <div class="small">
 
-**The SF weakens the limit by ~1.7% — and that is the correct sign.**
+**The SF weakens the limit by ~1.2% — and that is the correct sign.**
 
 A real c-tag scale factor *should* cost something: it introduces a genuine
 uncertainty that was previously being ignored, not assumed away.
@@ -434,13 +474,13 @@ uncertainty that was previously being ignored, not assumed away.
 **Decomposition**
 - **stat-only +1.2%** — pure yield rescaling. Mean central SF ≈ 1.06, so SR $S/\sqrt{B}$
   shifts slightly. Not an uncertainty effect at all.
-- **full +1.7%** — the extra degradation is the one new nuisance's wide
+- **full +1.2%** — the extra degradation is the one new nuisance's wide
   (+44%/−16%) band doing its job.
 
 </div>
 </div>
 
-<span class="hl">The stat-only → full gap is still autoMCStats-dominated</span> (freeze → 976),
+<span class="hl">The stat-only → full gap is still autoMCStats-dominated</span> (freeze → 930),
 i.e. low-stat SR templates remain the driver, **not** the SF.
 
 ---
@@ -456,32 +496,44 @@ scores, not the baseline continuous scores. Built as a separate workflow `hww_co
 | *baseline scores + SF* | *1371* | *797* | *1144* |
 | ***2D-cat scores + SF*** | ***1422*** | ***749*** | *1168* |
 
-<span class="hl">⚠️ These three are the OLD sidecar normalisation</span> — kept here because the
-2D-cat arm has **not yet been re-measured**. Its workflow tree was re-processed on 2026-07-30
-and currently has no scored `mva/` parquets; the one-hot + inference + build chain is being
-re-run. Until it completes, only the *relative* reading below is safe, not the absolute values.
+<span class="hl">⚠️ OLD sidecar normalisation, smoothing on — this arm is NOT re-measured.</span>
+<span class="small">Its workflow tree was re-processed on 2026-07-30 and is **still incomplete**
+— missing `WtoLNu_2Jets` (all of W+jets) and 8 higgsbkg samples. Re-scoring succeeded, but the
+datacard build was **stopped** rather than write from a partial tree. Only the *relative*
+reading on the next slide is safe.</span>
+
+---
+
+## The 2D-cat trade, qualitatively
 
 <div class="cols">
 <div class="small">
 
 <span class="ok">**Stat-only improves −5%** (749 vs 788).</span>
-The 2D-cat MVA is the sharper discriminant: signal $\langle P_\text{hplusc}\rangle$
-rises to 0.514 (from 0.377) and **91.1%** of signal lands in the SR (from 70.8%).
-Consistent with its +0.004 AUC.
+
+The 2D-cat MVA is the sharper discriminant:
+$\langle P_\text{hplusc}\rangle$ rises to **0.514** (from 0.377) and **91.1%** of the signal
+lands in the SR (from 70.8%). Consistent with its +0.004 AUC.
 
 </div>
 <div class="small">
 
 <span class="hl">**Full limit is worse +6%** (1422).</span>
-The 2D-cat argmax also pulls **2.3× more tt** into the SR (tt→SR 18.9% vs 8.3%), so SR yields
-roughly double. tt is the dominant background, so the enlarged SR is more systematics-exposed.
+
+The 2D-cat argmax also pulls **2.3× more tt** into the SR (18.9% vs 8.3%), so SR yields roughly
+double — and tt is the dominant background, so the enlarged SR is more systematics-exposed.
 
 </div>
 </div>
 
-<span class="small">**Verdict:** an honest separation-vs-systematics trade, not a bug. Levers to
-recover it: tighten the SR, split ggH out of higgsbkg, or narrow the SF nuisance using a less
-conservative decomposition than `Total`.</span>
+**Verdict:** an honest separation-vs-systematics trade, not a bug.
+
+<span class="small">Levers to recover it: tighten the SR, split ggH out of `higgsbkg`, or narrow
+the SF nuisance using a less conservative decomposition than `Total`.</span>
+
+<span class="tiny">⚠️ Both the −5% and the +6% are *relative* readings within the old
+sidecar+smoothing series. They should be re-measured on the current configuration once the
+2D-cat tree is complete.</span>
 
 ---
 
@@ -550,15 +602,15 @@ fine charm-tag gradient a coarse 11-bin (effectively ~6-bin) scheme discards.</s
 
 | change | full $r_{95}$ | vs baseline |
 |---|---|---|
-| baseline (negrw, no SF) | **1172** | — |
-| + official 2D c-tag SF | **1192** | **+1.7%** |
+| baseline (negrw, no SF) | **1150** | — |
+| + official 2D c-tag SF | **1164** | **+1.2%** |
 | <span class="small">+ SF, with 2D-cat MVA scores</span> | <span class="small">*pending re-measurement*</span> | <span class="small">*was +5.9%*</span> |
 
 <div class="small">
 
 - All on the corrected **`sumw_records`** normalisation. <span class="tiny">(Superseded sidecar
   series: 1343 / 1371 / 1422.)</span>
-- The SF costs **~1.7%** — the expected size and the correct sign for adding a real,
+- The SF costs **~1.2%** — the expected size and the correct sign for adding a real,
   previously-neglected uncertainty.
 - Applying the SF **without** the matching 2D-cat discriminant is the mildest option, and is
   what `hww_combine_fixed` currently does.
@@ -607,7 +659,7 @@ no reprocessing (verified to machine precision).
 <span class="hl">Only 7 of 11 categories are populated</span> for the candidate c-jet;
 4 MVA inputs are identically zero.
 
-**1172 → 1192** with the SF <span class="small">(`sumw_records` normalisation)</span>
+**1150 → 1164** with the SF <span class="small">(`sumw_records`, no LOWESS smoothing)</span>
 
 <span class="small">Full write-up: `Projects/HToWW/2026-07-19-ctag2d-full-documentation.md`
 · reference: `References/HToWW/2D-SFbc-calibration-AN-25-222.pdf`</span>

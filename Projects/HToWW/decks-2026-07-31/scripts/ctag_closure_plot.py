@@ -4,8 +4,8 @@ matplotlib.use("Agg"); import matplotlib.pyplot as plt
 OUT="/eos/user/c/cgupta/HToWW/plots/ctag"
 
 stages=["stat-only","freeze\nautoMCStats","full\n(all syst)"]
-nosf=[668,941,1172]
-sf  =[676,976,1192]
+nosf=[668,905,1150]
+sf  =[676,930,1164]
 x=np.arange(3)
 
 fig,(ax,axr)=plt.subplots(1,2,figsize=(10.4,4.2),
@@ -18,9 +18,9 @@ for xi,(a,b) in enumerate(zip(nosf,sf)):
     ax.annotate(f"{b}",(xi,b),textcoords="offset points",xytext=(0,13),
                 ha="center",color="#b2182b",fontsize=11,fontweight="bold")
 ax.set_xticks(x); ax.set_xticklabels(stages,fontsize=10.5)
-ax.set_ylabel("expected $r_{95}$"); ax.set_ylim(600,1300)
+ax.set_ylabel("expected $r_{95}$"); ax.set_ylim(600,1280)
 ax.grid(alpha=.3); ax.legend(fontsize=10.5,loc="upper left")
-ax.set_title("2D c-tag SF closure  (2022postEE, blind Asimov, sumw_records norm.)",fontsize=11)
+ax.set_title("2D c-tag SF closure  (2022postEE, blind Asimov, sumw_records, no smoothing)",fontsize=11)
 
 d=[b-a for a,b in zip(nosf,sf)]
 pct=[100*(b-a)/a for a,b in zip(nosf,sf)]
