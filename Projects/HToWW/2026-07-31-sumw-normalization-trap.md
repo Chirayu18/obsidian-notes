@@ -102,6 +102,31 @@ production.
 normalization change. It should be adopted deliberately, and any limit quoted after the
 switch is **not** comparable to the pre-switch numbers without saying so.
 
+### Proof that the records are complete (2026-07-31)
+
+The direct check — summing `genEventSumw` from each NanoAOD `Runs` tree — **cannot be run
+without a grid proxy** (the signal is a private production at
+`root://maite.iihe.ac.be//store/user/cgupta/…`; all 80 reads fail with
+`Auth failed: No protocols left to try`).
+
+Instead, the record **coverage** was verified directly. Each record filename encodes
+`<file-uuid>_<tree>_<lo>-<hi>`, so the chunks can be checked for completeness:
+
+```
+80 record files
+distinct file UUIDs : 80        <- matches the 80 files in the fileset
+chunks per file     : min 1, max 1
+gaps                : 0         <- every chunk starts at event 0
+overlaps            : 0         <- nothing double-counted
+events covered      : 277,345
+TOTAL sumw          : 7.822690e+04
+```
+
+**The records tile the entire dataset exactly once.** Combined with shard metadata agreeing
+to 1.0000 and the fileset/shard/record counts all being 80, this is conclusive:
+`sumw_records` = 7.823e+04 is the true generator sumw, and the sidecar's 9.266e+04 is stale
+(built from an older, larger signal production).
+
 ## So do you need the sidecar?
 
 **No — and as of 2026-07-31 `make_combine_inputs.py` no longer does.** `read_scale` was
@@ -111,10 +136,23 @@ for samples that have no records. The v11 build uses **zero** fallbacks.
 The sidecar is not merely redundant, it is **wrong for the signal** (see above), so keeping it
 as primary was actively harmful.
 
-**But the switch is a normalization change, not a pure bug fix.** Relative to the sidecar it:
+**But the switch is a normalization change, not a pure bug fix.** Measured on the rebuilt
+templates (summed over all six channels), sidecar → records:
 
-- makes the **signal ~18% larger** (`HplusCharm` 0.844), and `HplusBottom` ~3× larger (0.324),
-- makes **vjets ~7% smaller** (0.926–0.950), correctly reflecting the xrootd-lost files.
+| process | sidecar | records | ratio |
+|---|---|---|---|
+| **hplusc** (signal) | 0.25 | 0.29 | **1.1844** |
+| higgsbkg | 284.19 | 285.20 | 1.0036 |
+| tt | 93624.16 | 93624.16 | 1.0000 |
+| st | 7457.20 | 7457.20 | 1.0000 |
+| diboson | 2137.61 | 2137.61 | 1.0000 |
+| **vjets** | 6163.14 | 6534.86 | **1.0603** |
+
+Only signal and vjets move; tt/st/diboson are identical to 4 decimals.
+
+⚠️ **Note the sign.** `sumw` is the *denominator* of `lumi*xsec/sumw`, so a records-sumw that is
+*smaller* than the sidecar (vjets 0.926–0.950) makes the yield **larger**, not smaller. SR vjets
+goes 745.9 → 802.6 (**+7.6%**) and the SR signal 0.1711 → 0.2026 (**+18.4%**).
 
 Limits computed after the switch are therefore **not directly comparable** to the
 1343 / 1371 / 1422 series computed before it. Both are internally consistent; they normalize to
@@ -125,6 +163,37 @@ different sumw conventions. The pre-switch datacards are preserved as
 **Still open:** the vjets 7% is a genuine missing-statistics effect. Re-running vjets with
 `ruhex-osgce.rutgers.edu` blacklisted would close it and remove the last records-vs-sidecar
 discrepancy that is not simply staleness.
+
+## The limits, both normalizations (2022postEE, blind Asimov)
+
+| variant | full | stat-only | freeze-autoMCStats |
+|---|---|---|---|
+| **sidecar** — no SF | 1343 | 788 | 1100 |
+| **sidecar** — + `CMS_ctag2d_2022` | 1371 | 797 | 1144 |
+| **records** — no SF | **1172** | 668 | 941 |
+| **records** — + `CMS_ctag2d_2022` | **1192** | 676 | 976 |
+
+Ratio records/sidecar: full **0.869** (SF) and **0.873** (no SF), stat-only 0.848,
+freeze 0.853 — all clustered around the naive signal-scaling expectation
+$1/1.1844 = 0.844$, slightly above it because the +6% vjets background partly offsets the
+signal gain. <span>**This is a normalization shift, not a sensitivity gain.**</span> Nothing
+about the discriminant, the reweighting or the systematics changed.
+
+Physics conclusions are unchanged on the new normalization:
+
+- the c-tag SF still costs **+1.7%** (was +2.1%) — same sign, same size;
+- the stat-only → full gap is still autoMCStats-dominated (freeze 976 vs full 1192).
+
+⚠️ **No `2dcat` number.** That build failed — `outputs/hww_combine_2dcat/2022postEE/mva/`
+does not exist (the tree was rebuilt in a new layout on 2026-07-30 22:08–23:09 and
+`run_inference.py` has not been re-run on it). A limit of 2140 appeared in the batch output,
+but it came from `v11_hplusc_2dcat.txt` **rewritten at 09:39 by a concurrent
+`drive_combine.py`**, i.e. a mixed-normalization artifact. It is **not** comparable to the
+1422 in [[2026-07-19-ctag2d-full-documentation]] and must not be quoted.
+
+Reproduce either series: the pre-switch datacards are
+`v11_hplusc_v4.{root,txt}.bak_sidecar_20260731` and the pre-switch builder is
+`make_combine_inputs.py.bak_sidecar_20260731`.
 
 ## The symptom
 
