@@ -6,9 +6,20 @@ source: laptop
 marp: true
 theme: default
 paginate: true
+style: |
+  section { font-size: 24px; padding: 50px 60px; justify-content: flex-start; }
+  h1 { font-size: 40px; margin: 0 0 14px; }
+  h3 { font-size: 28px; }
+  section > p, section > ul, section > ol { margin: 0.45em 0; }
+  li { margin: 0.18em 0; }
+  table { font-size: 21px; width: 100%; }
+  th, td { padding: 5px 9px; }
+  pre { font-size: 18px; margin: 0.45em 0; }
+  code { font-size: 0.92em; }
+  blockquote { font-size: 22px; margin: 0.45em 0; }
 ---
 
-<!-- Marp deck. Render: `marp <file>.md -o deck.html` — or just read it as a note. -->
+<!-- Marp deck. Render: `marp <file>.md -o deck.pdf` — or just read it as a note. -->
 
 # Prompt Butter Jam vs. code2prompt
 
@@ -306,10 +317,23 @@ OUTPUT / STOP WHEN` as a manual checklist. That's the transferable idea.
 | 4 | c2p | 🟠 Med | 10M-token output, no context-limit warning |
 | 5 | PBJ | 🟠 Med | Demo mode freezes preview; desyncs from input |
 | 6 | npm | 🟠 Med | `npm i code2prompt` installs unrelated package |
+
+---
+
+## Issues found — low severity
+
+| # | Tool | Severity | Issue |
+|---|---|---|---|
 | 7 | PBJ | 🟡 Low | "0 prompts sharpened" counter never increments |
 | 8 | PBJ | 🟡 Low | Sharpen requires two clicks; first appears inert |
 | 9 | PBJ | 🟡 Low | Stale `Stack` value contradicts pasted code's language |
 | 10 | PBJ | 🟡 Low | Telemetry detail exceeds what the privacy note implies |
+
+**3 high · 3 medium · 4 low** — across both tools.
+
+The three high-severity issues are each a *correctness or safety* problem,
+not a polish problem: a corrupted prompt, an unenforced safety claim,
+and an unintended file read.
 
 ---
 
@@ -325,10 +349,19 @@ Timings = best of 3, `/usr/bin/time`. Corpus: this vault, `pallets/click`,
 fake secrets, a 3 MB binary, unicode filenames, 8-level nesting,
 and a symlink to `/etc/passwd`.
 
-**Caveat:** PBJ is a moving target — an independent pre-release side
-project. Findings are a snapshot of **2026-08-02** and the demo-splice
-bug specifically should be re-checked before citing it.
+---
 
-*One correction made during testing:* an initial "secrets are redacted"
-reading was wrong — caused by the frozen-preview bug (#5) — and was
-retracted after re-testing outside demo mode.
+## Caveats & corrections
+
+**PBJ is a moving target** — an independent pre-release side project.
+Findings are a snapshot of **2026-08-02**; the demo-splice bug (#1)
+should be re-checked before citing it anywhere.
+
+**One correction made during testing:** an initial "secrets are redacted"
+reading was **wrong** — caused by the frozen-preview bug (#5), which showed
+stale demo output instead of the live input. Retracted after re-testing
+outside demo mode; the corrected finding is #2.
+
+**One near-miss:** a suspected "exit 0 on error" bug in code2prompt was
+an artifact of `$?` capturing a piped `tail`, not the binary.
+Exit codes are correct. Not counted as a finding.
