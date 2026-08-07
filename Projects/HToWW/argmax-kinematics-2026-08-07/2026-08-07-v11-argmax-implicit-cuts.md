@@ -113,14 +113,33 @@ deterministic function of the dilepton system and MET, and the network *does* se
 So the wall is **emergent**: the model rebuilt an unseen variable out of its inputs
 and then drew a hard boundary on it. It is not reading `mTll` off a column.
 
-The location is suggestive. The SR selection is `mTl2 > 30 && mTll > 60`. The learned
-wall sits at **52.8, i.e. just below the 60 cut** — consistent with the network having
-learned the SR boundary from the training-label correlation and reproducing it with
-finite resolution rather than exactly.
+The location is suggestive. The SR selection is `mTl2 > 30 && mTll > 60`, and the
+learned wall sits at **52.8, just below the 60 cut**.
+
+**But the network did not copy the cut.** Two facts rule that out:
+
+1. The v11 training workflow `hww_MVA.yaml` has **no mT or mll cut in its `base`
+   category** (`grep -c` over the categories block returns 0 — the `transverse_mass_*`
+   selections are *defined* but never applied). Training therefore spanned the full
+   mTll range, including the region below 60.
+2. The training labels are **process truth** (`is_hplusc`, `is_tt`, …), not SR
+   membership. Nothing in the loss ever told the model where the SR boundary was.
+
+So what the network learned is the **signal's true kinematic support**: H→WW→eμνν with
+`mTl2 > 30` physically lives in that mTll window, and the SR cuts were themselves
+designed around the same physics. Both the wall and the cut descend from the signal
+distribution; neither descends from the other. That is precisely why the wall sits at
+~53 rather than exactly 60 — it tracks where signal density actually dies, not where
+someone drew a line.
+
+The correct statement is therefore *not* "the MVA internalised the SR cuts" but
+**"the MVA independently recovers the same kinematic region the SR cuts select,
+because both follow the signal distribution."**
 
 ## Relation to the SR cuts
 
-The model has effectively *internalised* the SR selection:
+The model's own signal region and the hand-written SR cuts land on nearly the same
+events — arrived at independently:
 
 | | events | argmax=signal | rate |
 |---|---:|---:|---:|
@@ -135,6 +154,33 @@ but only a soft one in `mTl2`.
 
 So of the two SR cuts, `mTll > 60` is nearly redundant with what the MVA does on its
 own, while `mTl2 > 30` is still doing independent work.
+
+### The plots that show it
+
+`internalised_2d_plane.png` — the (mTll, mTl2) plane coloured by the fraction of events
+the model assigns argmax=signal, with both SR cut lines drawn on top. The signal-argmax
+island's **left edge lands essentially on the mTll = 60 line**, while the mTl2 = 30 line
+**cuts straight through the middle of the island** — the model is happy to call events
+signal below it. The island is also bounded on the right (~170) and top (~120), edges
+that no cut in the workflow imposes.
+
+`internalised_profile_mTll.png` / `internalised_profile_mTl2.png` — the argmax=signal
+rate vs each variable (red, left axis) with the mean `P(hplusc)` score overlaid (grey,
+right axis).
+
+| | rate below cut | rate above cut | ratio | signal-argmax events below cut |
+|---|---:|---:|---:|---:|
+| `mTll > 60` | **0.0098%** | 11.363% | **1160×** | 75 |
+| `mTl2 > 30` | 1.8197% | 10.613% | 5.8× | 11,732 |
+
+In the mTll profile the red curve is pinned at exactly zero across the whole region
+below the cut and lifts off the axis at the line. In the mTl2 profile it is already at
+~6% *at* the line and rises smoothly through it — no wall at all.
+
+Both grey score curves are smooth and rise well before their cut, with no discontinuity
+anywhere. That is the mechanism: **a continuous score meeting a hard argmax threshold**.
+The score does not jump at 60; it simply crosses the level where `hplusc` starts winning
+the six-way argmax.
 
 ## Why this matters
 
@@ -155,6 +201,30 @@ own, while `mTl2 > 30` is still doing independent work.
   asymmetry to exploit.
 - If the fit is ever extended below mTll = 60, the network will not populate the SR
   there — the extension would be empty by construction, not by physics.
+
+## Should we retrain without these cuts?
+
+**No — and there is nothing to remove. v11 IS already the uncut training.**
+
+`hww_MVA.yaml`'s `base` category contains no mT or mll selection, so the model was
+trained on the full kinematic range. A "version without the SR cuts" is what we have.
+
+Beyond that, the boundary is not a defect to be trained away. A correctly trained
+classifier **must** assign low `P(signal)` where the signal density is ~zero — that is
+what a good classifier *is*. Forcing it to spread probability into a region containing
+no signal would make it worse, not better. The wall is evidence the training worked.
+
+Retraining is therefore not the lever here. What *would* change the picture:
+
+- **Use `P(hplusc)` directly instead of `argmax_winner_score`.** The hard walls are an
+  argmax artifact, not a score artifact — the score is continuous everywhere. A
+  discriminant built on `P(hplusc)` has no cliff and would keep the events currently
+  discarded at the class boundary. This is a `combine:` block change, not a retrain.
+- **Drop or loosen `mTll > 60`.** It removes almost nothing the MVA would have kept
+  (75 events), so it costs acceptance without buying rejection. `mTl2 > 30` should
+  stay — it is doing real work.
+
+Neither requires touching the network.
 
 ### Caveats
 
@@ -181,10 +251,23 @@ and for the sharpness / SR-overlap numbers:
 micromamba run -n b_hive python -u edge_diag.py
 ```
 
-Scripts: [`plot_argmax_kin.py`](plot_argmax_kin.py), [`edge_diag.py`](edge_diag.py)
-(both also on lxplus in the repo root).
-Plots: `argmax_mll.png`, `argmax_mTll.png`, `argmax_mTl2.png`.
-Support table: `argmax_support.txt`. Edge/SR numbers: `argmax_edge_diagnostics.txt`.
+and for the SR-overlap plots:
+
+```bash
+micromamba run -n b_hive python -u plot_internalised.py <outdir>
+```
+
+Scripts: [`plot_argmax_kin.py`](plot_argmax_kin.py), [`edge_diag.py`](edge_diag.py),
+[`plot_internalised.py`](plot_internalised.py) (all also on lxplus in the repo root).
+
+| output | content |
+|---|---|
+| `argmax_mll.png`, `argmax_mTll.png`, `argmax_mTl2.png` | per-class kinematic shapes |
+| `internalised_2d_plane.png` | (mTll, mTl2) plane vs both SR cut lines |
+| `internalised_profile_mTll.png`, `internalised_profile_mTl2.png` | argmax rate + mean score vs each cut |
+| `argmax_support.txt` | per-class support table |
+| `argmax_edge_diagnostics.txt` | wall sharpness, SR overlap |
+| `internalised_numbers.txt` | above/below-cut rates |
 
 Left panel of each is raw counts on a log y-axis (a hard cut shows as a cliff to zero);
 right panel is each class normalised to unit area for shape comparison.

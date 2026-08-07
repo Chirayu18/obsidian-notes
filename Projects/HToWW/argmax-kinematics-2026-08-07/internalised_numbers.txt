@@ -1,0 +1,7 @@
+pooled events: 4,046,127   argmax=signal: 372,722
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/internalised_2d_plane.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/internalised_profile_mTll.png
+   mTll: below cut argmax-sig rate = 0.0098%  | above = 11.363%  | signal-argmax events below cut = 75
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/internalised_profile_mTl2.png
+   mTl2: below cut argmax-sig rate = 1.8197%  | above = 10.613%  | signal-argmax events below cut = 11,732
+done
