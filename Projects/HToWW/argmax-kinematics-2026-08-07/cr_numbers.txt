@@ -1,0 +1,14 @@
+pooled 4,046,127
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_topcr_mll.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_topcr_mTll.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_topcr_mTl2.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_himll_mll.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_himll_mTll.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_himll_mTl2.png
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_topcr_2d_plane.png  max argmax-sig frac = 0.480%
+wrote /eos/user/c/cgupta/HToWW/kin_argmax/cr_himll_2d_plane.png  max argmax-sig frac = 11.992%
+
+=== argmax=signal rate per region ===
+topcr  N=  565,368  argmax=signal=      66  (0.0117%)  max P(hplusc)=0.3580
+himll  N=2,375,781  argmax=signal=  21,607  (0.9095%)  max P(hplusc)=0.4443
+done

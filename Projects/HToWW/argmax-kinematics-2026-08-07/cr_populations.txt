@@ -1,0 +1,66 @@
+pooled: 4,046,127
+
+=== SR (mTl2>30 & mTll>60 & mll<=72) :  N=1,221,786 (30.20% of pool) ===
+  by ARGMAX class:
+    hplusc       340,412  (27.86%)
+    higgsbkg     457,227  (37.42%)
+    tt           356,003  (29.14%)
+    st            30,489  ( 2.50%)
+    diboson       25,500  ( 2.09%)
+    vjets         12,155  ( 0.99%)
+  by TRUE process:
+    hplusc         1,613  ( 0.13%)
+    higgsbkg     161,489  (13.22%)
+    tt           913,184  (74.74%)
+    st           134,776  (11.03%)
+    diboson       10,205  ( 0.84%)
+    vjets            519  ( 0.04%)
+
+=== Top CR (mTl2>30 & mTll<=60) :  N=565,368 (13.97% of pool) ===
+  by ARGMAX class:
+    hplusc            66  ( 0.01%)
+    higgsbkg     123,373  (21.82%)
+    tt           240,095  (42.47%)
+    st            32,594  ( 5.77%)
+    diboson       71,071  (12.57%)
+    vjets         98,169  (17.36%)
+  by TRUE process:
+    hplusc            80  ( 0.01%)
+    higgsbkg      49,898  ( 8.83%)
+    tt           441,532  (78.10%)
+    st            64,330  (11.38%)
+    diboson        5,977  ( 1.06%)
+    vjets          3,551  ( 0.63%)
+
+=== High-mll CR (mll>72) :  N=2,375,781 (58.72% of pool) ===
+  by ARGMAX class:
+    hplusc        21,607  ( 0.91%)
+    higgsbkg     101,167  ( 4.26%)
+    tt         1,186,251  (49.93%)
+    st           585,580  (24.65%)
+    diboson      418,425  (17.61%)
+    vjets         62,751  ( 2.64%)
+  by TRUE process:
+    hplusc            21  ( 0.00%)
+    higgsbkg      53,425  ( 2.25%)
+    tt         1,972,883  (83.04%)
+    st           325,160  (13.69%)
+    diboson       23,488  ( 0.99%)
+    vjets            804  ( 0.03%)
+
+=== High-mll CR & SR-mT (mll>72 & mTl2>30 & mTll>60) :  N=1,614,248 (39.90% of pool) ===
+  by ARGMAX class:
+    hplusc        20,512  ( 1.27%)
+    higgsbkg      44,005  ( 2.73%)
+    tt           788,774  (48.86%)
+    st           462,199  (28.63%)
+    diboson      291,385  (18.05%)
+    vjets          7,373  ( 0.46%)
+  by TRUE process:
+    hplusc             7  ( 0.00%)
+    higgsbkg      32,219  ( 2.00%)
+    tt         1,341,753  (83.12%)
+    st           224,533  (13.91%)
+    diboson       15,510  ( 0.96%)
+    vjets            226  ( 0.01%)
+

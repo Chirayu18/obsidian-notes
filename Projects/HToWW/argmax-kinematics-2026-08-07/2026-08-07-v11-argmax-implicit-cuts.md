@@ -202,6 +202,74 @@ the six-way argmax.
 - If the fit is ever extended below mTll = 60, the network will not populate the SR
   there — the extension would be empty by construction, not by physics.
 
+## The same study in the two control regions
+
+Definitions taken from `hww_combine_fixed.yaml` (both are *defined* there; neither is
+applied in the `base` category):
+
+- **Top CR** = `mTl2 > 30 && mTll <= 60` — inverts the SR mTll cut. N = 565,368 (14.0%).
+- **High-mll CR** = `mll > 72` — inverts the SR `mll <= 72` cut. N = 2,375,781 (58.7%).
+
+Both are overwhelmingly tt by truth (78.1% and 83.0%), as a top CR should be.
+
+### Which classes have the stats?
+
+Measured first (`cr_populations.txt`), rather than assumed — and the answer differs
+by region:
+
+| argmax class | Top CR | High-mll CR |
+|---|---:|---:|
+| hplusc (signal) | **66 (0.01%)** | 21,607 (0.91%) |
+| higgsbkg | 123,373 | 101,167 |
+| tt | 240,095 | 1,186,251 |
+| st | 32,594 | 585,580 |
+| diboson | 71,071 | 418,425 |
+| vjets | 98,169 | 62,751 |
+
+**The Top CR has essentially no signal class — 66 events — and that is not a stats
+accident.** The Top CR is *defined* as `mTll <= 60`, which is exactly the region where
+the model refuses to assign signal. The CR sits wholly inside the model's signal-dead
+zone. Max `P(hplusc)` anywhere in the Top CR is **0.358**, never enough to win the
+six-way argmax.
+
+So the class split is region-dependent:
+
+- **Top CR** → the five populated background classes (tt, single-t, higgs bkg,
+  diboson, V+jets). No signal curve — there is nothing to draw.
+- **High-mll CR** → signal / higgs bkg / top (tt+st) / diboson / V+jets.
+
+### What the CR plots show
+
+`cr_topcr_2d_plane.png` — the whole plane is black (zero signal density) **except** a
+sliver of cells pressed against the mTll = 60 line, peaking at just 0.48%. This is the
+cleanest single view of the wall: an entire 565k-event region lies inside the dead zone,
+with the handful of signal-argmax events clinging to the boundary.
+
+`cr_himll_2d_plane.png` — a real signal island survives (max 12.0%), still walled at
+mTll ≈ 60 on the left but **leaking below the mTl2 = 30 line**. The same asymmetry as
+the SR, in a disjoint event sample — so it is a property of the model, not of the region.
+
+`cr_topcr_mll.png` — inside the Top CR the background classes separate cleanly in mll
+and **each has its own implicit edges**: diboson switches on at ~62, single-t at ~72,
+while higgs-bkg and V+jets die off above ~110. The bounded-box behaviour is not special
+to the signal class — every class occupies one.
+
+`cr_himll_mll.png` — the signal class dies at mll ≈ 100 while the CR runs to 200+,
+reproducing the inclusive upper wall against a background that continues smoothly.
+
+| region | N | argmax=signal | rate | max P(hplusc) |
+|---|---:|---:|---:|---:|
+| Top CR | 565,368 | 66 | 0.0117% | 0.358 |
+| High-mll CR | 2,375,781 | 21,607 | 0.9095% | 0.444 |
+
+### Consequence for the fit
+
+The Top CR cannot constrain anything about the signal class — by construction it holds
+no signal-argmax events. That is fine if its job is to constrain the **tt normalisation**
+(it is 78% tt by truth, and `CR_tt` is a real channel in the datacard). But it means the
+Top CR gives **no handle on signal-region migration**, and any systematic whose effect is
+to move events across the mTll ≈ 60 boundary will be unconstrained by it.
+
 ## Should we retrain without these cuts?
 
 **No — and there is nothing to remove. v11 IS already the uncut training.**
@@ -265,9 +333,19 @@ Scripts: [`plot_argmax_kin.py`](plot_argmax_kin.py), [`edge_diag.py`](edge_diag.
 | `argmax_mll.png`, `argmax_mTll.png`, `argmax_mTl2.png` | per-class kinematic shapes |
 | `internalised_2d_plane.png` | (mTll, mTl2) plane vs both SR cut lines |
 | `internalised_profile_mTll.png`, `internalised_profile_mTl2.png` | argmax rate + mean score vs each cut |
+| `cr_topcr_*.png`, `cr_himll_*.png` | the same split inside each CR (3 kinematics + 2D plane each) |
 | `argmax_support.txt` | per-class support table |
 | `argmax_edge_diagnostics.txt` | wall sharpness, SR overlap |
 | `internalised_numbers.txt` | above/below-cut rates |
+| `cr_populations.txt` | per-CR class populations (argmax **and** truth) |
+| `cr_numbers.txt` | per-CR signal rates and max score |
+
+CR plots and populations:
+
+```bash
+micromamba run -n b_hive python -u cr_pop.py          # populations, decides the split
+micromamba run -n b_hive python -u plot_cr.py <outdir>
+```
 
 Left panel of each is raw counts on a log y-axis (a hard cut shows as a cliff to zero);
 right panel is each class normalised to unit area for shape comparison.
