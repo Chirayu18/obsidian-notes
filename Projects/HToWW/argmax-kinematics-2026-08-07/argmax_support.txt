@@ -1,0 +1,17 @@
+# v11 argmax classes, 2022postEE, all MC pooled, raw unweighted
+# signal: 372722 events
+# higgs: 783292 events
+# other: 2890113 events
+var            class            N       min      p0.1        p1       p50       p99       max
+dilepton_mass  signal      372722     12.00     12.14     13.27     41.19     82.74    100.20
+dilepton_mass  higgs       783292     12.00     12.26     14.10     47.02     94.33    656.64
+dilepton_mass  other      2890113     12.00     14.30     22.78    108.86    421.71   2860.96
+
+mtll           signal      372722     52.76     63.74     72.61    113.80    164.53    201.72
+mtll           higgs       783292      0.00      0.26      2.58     90.17    236.12    871.78
+mtll           other      2890113      0.00      0.33      3.18    124.92    317.05   2077.33
+
+mtl2           signal      372722      0.16     14.38     22.67     66.98    107.58    133.05
+mtl2           higgs       783292      0.00      0.19      1.85     57.80    143.78   1200.53
+mtl2           other      2890113      0.00      0.18      1.78     75.13    202.72    986.19
+
