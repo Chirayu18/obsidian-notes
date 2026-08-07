@@ -1,0 +1,40 @@
+AFTER >=1 c-jet (what the parquets contain):
+  signal yield     = 0.2910
+  background yield = 110,038.3
+  S/sqrt(B)        = 0.00088
+
+Efficiency of each KINEMATIC cut (on top of >=1 c-jet):
+cut                       eff_S    eff_B         S            B   S/sqrtB    gain
+---------------------------------------------------------------------------------
+mTll > 60                0.9258   0.7902    0.2694     86,948.4   0.00091   1.04x
+mTl2 > 30                0.8903   0.8269    0.2590     90,989.2   0.00086   0.98x
+mll <= 72                0.9782   0.3974    0.2846     43,732.3   0.00136   1.55x
+mTll>60 & mTl2>30        0.8524   0.6776    0.2480     74,559.0   0.00091   1.04x
+ALL THREE (SR)           0.8454   0.2706    0.2460     29,777.6   0.00143   1.63x
+
+process         pre-cjet   post-cjet  cjet eff
+------------------------------------------------
+H+c                 1.26        0.29    23.13%
+ggH               856.64      135.79    15.85%
+VBF               118.18       30.82    26.08%
+ZH                 18.98        8.35    43.97%
+ggZH                4.21        2.25    53.36%
+ttHtoBB            66.18       47.44    71.68%
+tt            178,100.00   93,624.16    52.57%
+Single Top     18,870.00    7,457.20    39.52%
+WW             12,540.00    1,832.25    14.61%
+WZ              1,040.50      266.00    25.56%
+ZZ                104.74       39.36    37.58%
+
+=== the number that matters: H+c vs ggH ===
+  c-jet eff  H+c = 23.13%
+  c-jet eff  ggH = 15.85%
+  ENRICHMENT  H+c/ggH = 1.46x
+
+  ggH:H+c ratio BEFORE c-jet = 681.0 : 1
+  ggH:H+c ratio AFTER  c-jet = 466.7 : 1
+  improvement = 1.46x
+
+  5% lnN on higgsbkg (xsec_higgsbkg 1.05):
+    before c-jet: 0.05*856.6 = 42.83 events = 34.0x the signal
+    after  c-jet: 0.05*135.8 = 6.79 events = 23.3x the signal

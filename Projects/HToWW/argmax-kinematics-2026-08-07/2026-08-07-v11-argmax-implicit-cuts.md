@@ -270,6 +270,92 @@ no signal-argmax events. That is fine if its job is to constrain the **tt normal
 Top CR gives **no handle on signal-region migration**, and any systematic whose effect is
 to move events across the mTll ≈ 60 boundary will be unconstrained by it.
 
+## Could we drop the ≥1 c-jet cut and lean on the kinematic cuts instead?
+
+**No. They are not substitutable — they reject different backgrounds.**
+
+The premise is right on its own terms. The kinematic cuts *are* cheap for signal
+(weighted, on top of ≥1 c-jet):
+
+| cut | eff signal | eff bkg | S/√B gain |
+|---|---:|---:|---:|
+| `mTll > 60` | 92.6% | 79.0% | 1.04× |
+| `mTl2 > 30` | 89.0% | 82.7% | 0.98× |
+| `mll <= 72` | 97.8% | 39.7% | 1.55× |
+| all three (SR) | **84.5%** | **27.1%** | **1.63×** |
+
+And the c-jet cut *is* expensive: it keeps only **23.1%** of signal.
+
+But that comparison is the wrong one, because the two kinds of cut are aimed at
+different backgrounds:
+
+- **mTll / mll / mTl2 separate the H→WW→eμνν topology from tt and DY.** They work on
+  the *decay* kinematics.
+- **The c-jet requirement separates H+c from the other Higgs production modes** — above
+  all **ggH→WW, which has identical leptonic decay kinematics**. No mT or mll cut can
+  ever distinguish H+c from ggH; only the charm tag can.
+
+### The arithmetic
+
+| process | pre-c-jet | post-c-jet | c-jet eff |
+|---|---:|---:|---:|
+| **H+c** | 1.26 | 0.29 | **23.1%** |
+| **ggH** | 856.64 | 135.79 | **15.9%** |
+| VBF | 118.18 | 30.82 | 26.1% |
+| tt | 178,100 | 93,624 | 52.6% |
+| WW | 12,540 | 1,832 | 14.6% |
+
+(Pre-c-jet from the [[2026-07-07-cutflow-2022postEE|cutflow]] `one_mu_one_e` column.
+The signal number is corrected down by 0.8443 for the sumw fix — that cutflow predates
+it, when signal normalisation was 18.4% high. tt/st/diboson scales were exact.)
+
+The killer number is the **ggH : H+c ratio**, since ggH is shape-degenerate with the
+signal in every variable the fit uses:
+
+| | ggH : H+c |
+|---|---:|
+| before c-jet | 681 : 1 |
+| after c-jet | 467 : 1 |
+
+and what that does to the 5% `xsec_higgsbkg` lnN:
+
+| | ggH normalisation uncertainty | relative to signal |
+|---|---:|---:|
+| before c-jet | ±42.8 events | **34× the signal** |
+| after c-jet | ±6.8 events | 23× the signal |
+
+Even *with* the charm tag the signal sits under an irreducible same-shape background
+whose normalisation uncertainty is 23× larger. Remove the tag and that becomes 34×,
+with nothing left that can tell the two apart. **More raw signal events do not help
+when the extra events arrive buried under a background you cannot distinguish from
+them** — the objective is a constrained POI, not event count.
+
+Note the c-jet enrichment measured here is only **1.46×** (23.1% / 15.9%), which is
+modest for a medium-WP charm tag and worth understanding on its own — but the direction
+is unambiguous, and it is the *only* handle on ggH that exists.
+
+### Two clarifications on the framing
+
+1. **The kinematic cuts are already absent from training.** `hww_MVA.yaml`'s `base`
+   category has no mT/mll cut (see above). The ≥1 c-jet requirement is the *only*
+   selection in the training sample. So "train without the c-jet cut and use the
+   kinematic ones instead" mixes two things: the kinematics are already in the state
+   you'd want, and only the c-jet cut is actually there.
+2. **Dropping it is not a config flip.** Pre-c-jet scored parquets no longer exist (the
+   old `hww/` tree is gone), the network's `cjet_cand_pt / cvsl / cvsb` features are
+   undefined for events with no selected c-jet, and the ctag SF machinery is keyed to
+   the selected c-jet. It is a full reprocessing + retrain + SF rework.
+
+### The defensible middle path
+
+If the goal is more signal acceptance, the version worth considering is **not** dropping
+the requirement but **softening it**: keep ≥1 jet, drop the hard medium-WP charm cut,
+and feed `CvsL`/`CvsB` to the network continuously so it draws its own charm boundary.
+That keeps the ggH-rejection handle (the network can still use charm information) while
+recovering the signal currently lost at a hard threshold — the same argument as the
+argmax=tt CR beating the hand-drawn mT box. It is a large campaign (reprocess + retrain
++ SF rework), so it is an option with a cost, not a quick test.
+
 ## Should we retrain without these cuts?
 
 **No — and there is nothing to remove. v11 IS already the uncut training.**
@@ -339,6 +425,7 @@ Scripts: [`plot_argmax_kin.py`](plot_argmax_kin.py), [`edge_diag.py`](edge_diag.
 | `internalised_numbers.txt` | above/below-cut rates |
 | `cr_populations.txt` | per-CR class populations (argmax **and** truth) |
 | `cr_numbers.txt` | per-CR signal rates and max score |
+| `cut_efficiency_scan.txt` | S vs B efficiency of each cut; per-process c-jet efficiency |
 
 CR plots and populations:
 
