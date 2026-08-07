@@ -346,6 +346,45 @@ is unambiguous, and it is the *only* handle on ggH that exists.
    undefined for events with no selected c-jet, and the ctag SF machinery is keyed to
    the selected c-jet. It is a full reprocessing + retrain + SF rework.
 
+### Tag-space measurement (what a looser WP would buy)
+
+Medium WP is a 2D cut: **CvL > 0.160 and CvB > 0.304** (PNet, 2022postEE). Inside the
+surviving region:
+
+| proc | N | CvL p25 | CvL p50 | CvB p50 | near threshold |
+|---|---:|---:|---:|---:|---:|
+| **H+c** | 1,925 | 0.284 | **0.633** | 0.851 | **21.0%** |
+| ggH | 25,802 | 0.194 | 0.259 | 0.819 | 46.2% |
+| tt | 3,087,397 | 0.274 | 0.618 | 0.716 | 30.2% |
+| WW | 32,420 | 0.195 | 0.264 | 0.840 | 45.4% |
+
+Separation of H+c from ggH *inside* the medium region:
+
+| variable | H+c median | ggH median | AUC |
+|---|---:|---:|---:|
+| **CvL** | 0.633 | 0.259 | **0.731** |
+| CvB | 0.851 | 0.819 | 0.551 |
+
+**Two things follow.** First, essentially all the H+c-vs-ggH power lives in **CvL**;
+`CvB` is nearly useless for this discrimination (AUC 0.551 ≈ coin flip) — it separates
+c from b, which is not where the ggH problem is. Second, signal sits **deeper** in the
+charm region than ggH does (21% near threshold vs 46%), so relaxing the boundary admits
+proportionally more ggH than signal *at the margin* — but the network can see exactly
+that, which is the argument for letting it weigh CvL continuously instead of at a
+threshold.
+
+**Caveat:** the parquets contain only jets that already passed medium, so "near
+threshold" indicates where the survivors sit — it is **not** a measurement of what a
+looser cut recovers. The pre-c-jet tree is gone, so an actual recovery number needs a
+small reprocessing test (signal's 80 files + ggH, WP line relaxed).
+
+**Cost correction.** `CTag2DCorrector` (`analysis/corrections/ctag2d.py:69`) reads the
+candidate jet's raw `btagPNetCvL`/`CvB` and maps them into the 11-category scheme —
+it **never references the working point**, and the scheme spans the full plane
+including the untagged `L0` bin. So the 2D SF machinery already works for a
+no-WP selection. This is cheaper than "SF rework" suggested above: reprocess + retrain,
+but the corrections layer needs no redesign.
+
 ### The defensible middle path
 
 If the goal is more signal acceptance, the version worth considering is **not** dropping
@@ -426,6 +465,7 @@ Scripts: [`plot_argmax_kin.py`](plot_argmax_kin.py), [`edge_diag.py`](edge_diag.
 | `cr_populations.txt` | per-CR class populations (argmax **and** truth) |
 | `cr_numbers.txt` | per-CR signal rates and max score |
 | `cut_efficiency_scan.txt` | S vs B efficiency of each cut; per-process c-jet efficiency |
+| `tagspace_scan.txt` | where signal/ggH sit in (CvL,CvB); H+c-vs-ggH AUC per variable |
 
 CR plots and populations:
 

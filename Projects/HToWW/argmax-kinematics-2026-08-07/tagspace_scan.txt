@@ -1,0 +1,14 @@
+medium WP: CvL>0.16  CvB>0.304
+
+proc          N  CvL p10     p25     p50  CvB p10     p25     p50  near-thr
+----------------------------------------------------------------------------
+H+c       1,925    0.194   0.284   0.633    0.576   0.722   0.851     21.0%
+ggH      25,802    0.172   0.194   0.259    0.579   0.696   0.819     46.2%
+tt     3,087,397    0.192   0.274   0.618    0.393   0.533   0.716     30.2%
+WW       32,420    0.172   0.195   0.264    0.587   0.709   0.840     45.4%
+
+=== how discriminating is CvL between H+c and ggH (inside medium)? ===
+  CvL: H+c median=0.633   ggH median=0.259   separation=+0.374
+  CvB: H+c median=0.851   ggH median=0.819   separation=+0.031
+  AUC(CvL) H+c vs ggH = 0.7307   (0.5 = no separation)
+  AUC(CvB) H+c vs ggH = 0.5510   (0.5 = no separation)
