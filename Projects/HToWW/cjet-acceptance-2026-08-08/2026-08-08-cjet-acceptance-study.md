@@ -148,6 +148,26 @@ Only `hww_combine_fixed` has a populated `2022postEE/mva_labeled/` with train/te
 filelists; the `2dcat` tree does not. Both carry the same 26 features (the one-hots plus
 raw CvL/CvB), so it is a valid reference for a like-for-like postEE-only comparison.
 
+**9. `law` lives inside the `b_hive` env — source `setup.sh` *within* micromamba.**
+`b-hive/setup.sh` calls `law completion`, so sourcing it from a plain shell gives
+`law: command not found`, leaves `LAW_CONFIG_FILE` unset, and every task then dies with
+
+```
+task family 'DatasetConstructorTask' not found in index
+```
+
+**and `law` still exits 0**, so the whole 5-step chain "succeeds" in 29 seconds. The
+working pattern is one shell per step:
+
+```bash
+micromamba run -n b_hive bash -c "cd $BH && source setup.sh >/dev/null 2>&1 && law run <task> ..."
+```
+
+and grep the log for `not found in index` explicitly, since the exit code will not tell
+you. This is the same class of false success as gotcha 6 — on this stack, *a suspiciously
+fast success is the failure mode*, so always sanity-check elapsed time against the work
+the step should be doing.
+
 ## Variant 3 mechanism checks (both pass, with one subtlety)
 
 Run on the first 40 signal shards once variant 3's signal reached 7/7.
