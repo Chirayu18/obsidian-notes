@@ -83,6 +83,17 @@ baseline, which is impossible for a strictly looser selection. That is the sanit
 `nocjet ≥ looseWP ≥ baseline` in raw signal count. If it fails, the tree is incomplete,
 not the physics.
 
+**4. Waiting on a workflow's jobs needs the CLUSTER ID, not the workflow name.**
+`condor_q -nobatch | grep <workflow>` matches nothing — the queue listing shows the
+executable and args, not the workflow name. A retry loop built on that check thinks the
+queue is empty and resubmits on top of jobs that are merely waiting for a slot. Parse
+`submitted to cluster <N>` out of the submit log and poll `condor_q <N> -af ProcId`
+instead (`retry.sh` does this).
+
+Note the missing partitions were consistently **_1, _2, _3** across attempts, which
+looks less like random timeouts and more like specific input files being slow or
+unavailable at IIHE. Worth checking in the morning if the retries do not converge.
+
 ## Results
 
 *(pending — jobs running)*
