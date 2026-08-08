@@ -270,6 +270,32 @@ the higgsbkg yield — and it ignores the MVA, which is the thing that actually 
 signal from ggH. A 2.11× counting gain is a strong signal to keep going, not a result.
 **The ROC comparison is what decides it.**
 
+## ROC — reference model (variant 3 pending)
+
+Both models: config `HPlusCHToWW_2dcats`, 30 epochs, batch 1024, lr 1e-3, loss weighting
+on, **2022postEE only**. The reference selection comes from `hww_combine_fixed`
+(the only tree with a populated postEE `mva_labeled`).
+
+**Reference (current medium-WP selection)** — 2,197,631 test events, 909 of them signal:
+
+| discrimination | AUC |
+|---|---:|
+| hplusc vs ALL | **0.9196** |
+| hplusc vs **higgsbkg** | **0.8548** ← the ggH degeneracy |
+| hplusc vs tt | 0.9273 |
+| hplusc vs st | 0.9189 |
+| hplusc vs diboson | 0.8812 |
+| hplusc vs vjets | 0.9258 |
+
+**`higgsbkg` is by far the hardest class to separate** (0.855 vs ≥0.88 for everything
+else), which independently confirms the framing of this whole study: ggH is the binding
+constraint, and it is the one background the kinematic cuts cannot touch.
+
+Note the test set has only **909 signal events** — the AUCs are computed against
+millions of background events, so the background side is precise, but the signal side
+carries ~3% statistical uncertainty. Differences between the two models smaller than
+roughly ±0.01 in AUC should not be over-interpreted.
+
 ## Files
 
 | file | content |
