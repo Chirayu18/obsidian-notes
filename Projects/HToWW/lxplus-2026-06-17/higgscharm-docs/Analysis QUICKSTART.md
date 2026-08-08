@@ -49,39 +49,73 @@ ln -sfn /eos/user/c/cgupta/higgscharm/outputs outputs   # if not already linked
 ```
 
 ### Nominal → r₉₅ (the working path)
+
+Current production workflow is **`hww_combine_2dcat`** (native 2D c-tag SF + negrw).
+Env: `micromamba run -n b_hive` with
+`MAMBA_ROOT_PREFIX=/eos/user/c/cgupta/EPR_task/b-hive/micromamba`.
+
 ```bash
 # 1. Produce parquets on Condor. Use --memory 6000 (default 3 GB OOMs heavy samples).
-python runner.py -w hww_MVA -y 2022postEE --output_format parquet --eos --submit --memory 6000
+python runner.py -w hww_combine_2dcat -y 2022postEE --output_format parquet --eos --submit --memory 6000
 
-# 2. Check completion / resubmit failures (parquet-aware):
-python jobs_status.py -w hww_combine -y 2022postEE --eos --output_format parquet
-#    -> reports finished/missing per dataset; answer y to blacklist bad xrootd sites + resubmit
+# 2. *** CHECK COMPLETION -- DO NOT SKIP ***  (see the gotcha below)
+python jobs_status.py -w hww_combine_2dcat -y 2022postEE --eos
+#    -> prints expected / finished / missing; answer y to resubmit the missing ones.
+#    RE-RUN UNTIL missing == 0 BEFORE DOING ANYTHING ELSE.
 
-# 3. Merge shards (base coffea/torch env)
-python run_postprocess.py -w hww_MVA -y 2022postEE --postprocess --output_format parquet
+# 3. Merge shards  (NOTE: there is no --mva flag)
+python run_postprocess.py -w hww_combine_2dcat -y 2022postEE --postprocess --output_format parquet
 
 # 4. MVA inference -> adds mva_score_* columns
-python scripts/mva/run_inference.py -w hww_MVA -y 2022postEE
+python scripts/mva/run_inference.py -w hww_combine_2dcat -y 2022postEE
 
 # 5. Build ROOT templates + datacard
-python scripts/combine/make_combine_inputs.py -w hww_MVA -y 2022postEE
+python scripts/combine/make_combine_inputs.py -w hww_combine_2dcat -y 2022postEE
 
 # 6. Fits (inside CMSSW — the wrapper sources it)
-bash scripts/combine/run_combine.sh hww_MVA
+bash scripts/combine/run_combine.sh hww_combine_2dcat
 
 # 7. Plots
-python scripts/combine/make_combine_plots.py -w hww_MVA
-python scripts/combine/make_impact_plot.py   -w hww_MVA
+python scripts/combine/make_combine_plots.py -w hww_combine_2dcat
+python scripts/combine/make_impact_plot.py   -w hww_combine_2dcat
 ```
 
-Only **step 6** runs inside CMSSW; steps 3–5 run in the base env.
+Only **step 6** runs inside CMSSW; steps 3–5 run in the `b_hive` env.
 
-### Retrain the MVA (optional, in the b-hive repo)
+### Retrain the MVA (in the b-hive repo)
+
+**Training and the fit read DIFFERENT trees.** This is the single most confusing thing
+about the setup:
+
+| purpose | tree | why |
+|---|---|---|
+| **training** | `hww_combine_fixed/<year>/mva_labeled/` | has the group-level merges (`ggH.parquet`, `VBF.parquet`, …) that `make_mva_labeled.py` needs |
+| **fit / limit** | `hww_combine_2dcat/<year>/` | has native `ctagging_2d: true` → `weight_CMS_ctag2d_2022` |
+
+The "2dcats" in `hwwcom_multiclass_v11_2dcats` refers to the **feature set** (the 11
+one-hot `cjet_cand_ctag2d_*` columns appended post-hoc), **not** to the
+`hww_combine_2dcat` workflow. The model trains on `hww_combine_fixed` parquets.
+
 ```bash
-python scripts/mva/prep_training_inputs.py -w hww_MVA -y 2022postEE  # split + labels + filelists
-cd .../b-hive && ./train_MVA.sh                                      # DatasetConstructor + Training
-# then point inference.model_path in hww_MVA.yaml at the new best_model.pt
+cd /eos/home-c/cgupta/HToWW/b-hive
+
+# a. labels + 80/20 split (produces mva_labeled/{train,test}/ + filelists/base.txt)
+python make_mva_labeled.py --input-dir <outputs>/hww_combine_fixed/2022postEE --groups-key process_groups
+python split_train_test.py --input-dir <outputs>/hww_combine_fixed/2022postEE/mva_labeled
+
+# b. append the 11 ctag2d one-hots (REQUIRED by the HPlusCHToWW_2dcats config;
+#    the processor does NOT write them)
+python scripts/append_onehot.py --mva-dir <...>/mva_labeled/train
+python scripts/append_onehot.py --mva-dir <...>/mva_labeled/test
+
+# c. train (DatasetConstructor -> Training -> Inference -> ROC)
+./train_v11_2dcats.sh
+# then point inference.model_path in the workflow yaml at the new best_model.pt
 ```
+
+`train_v11_2dcats.sh` uses `filelists/v11_{train,test}_allEras.txt` — **3 eras**
+(2022postEE + preEE H+c/H+b + 2023preBPix H+c). For a single-era study, write a filelist
+with only that era's lines and pass `--train-filelist` / `--test-filelist`.
 
 ---
 
@@ -99,16 +133,90 @@ cd .../b-hive && ./train_MVA.sh                                      # DatasetCo
 - **`jobs_status.py` output format.** Pass `--output_format parquet`; the default
   `coffea` counts stale `.coffea` stubs and reports wrong numbers.
 
+### Completeness — the trap that invalidated a whole study (2026-08-08)
+
+- **`jobs_status.py` is the ONLY valid completeness check.** Do not infer completeness
+  from output directories on EOS: partition dirs (`<sample>_1`, `_2`, …) are created
+  **early**, so "7/7 dirs exist" is true long before the jobs finish. A study was run to
+  completion on trees that were 335/496, 3/6 and 2/6 finished, and every number had to be
+  withdrawn. Run `jobs_status.py` and require `missing == 0` before reading any yield.
+- **A partial tree reads LOWER than the baseline.** If a strictly looser selection gives
+  *fewer* events than a tighter one, the tree is incomplete — that is the cheapest sanity
+  gate available.
+
+### Silent failures — a fast "success" is the failure mode
+
+- **`run_postprocess.py` has no `--mva` flag** (some older notes show one). The call dies
+  with `unrecognized arguments: --mva`.
+- **`law` lives inside the `b_hive` env.** `b-hive/setup.sh` calls `law completion`, so
+  sourcing it from a plain shell gives `law: command not found`, leaves
+  `LAW_CONFIG_FILE` unset, and every task dies with
+  `task family 'DatasetConstructorTask' not found in index` — **while `law` still exits
+  0**. Source it *inside* micromamba:
+  ```bash
+  micromamba run -n b_hive bash -c "cd $B_HIVE_DIR && source setup.sh && law run <task> ..."
+  ```
+  and grep the log for `not found in index`, since the exit code will not tell you.
+- **Piping a step into `tee` masks its exit code** (`tee`'s rc is ~always 0). Use
+  `${PIPESTATUS[0]}`, or redirect to a file and `tail` it.
+- **Rule of thumb:** on this stack, a step that "succeeds" implausibly fast has failed.
+  Always sanity-check elapsed time against the work the step should be doing.
+
+### Grid proxy and long-running submissions
+
+- **The proxy is node-local.** `voms-proxy-init` writes `/tmp/x509up_u<uid>` on *one*
+  lxplus node; reconnecting elsewhere makes `submit_condor.py` report
+  "VOMS proxy expired or non-existing" on a perfectly valid proxy. Export the AFS copy,
+  which `submit_condor.py` itself writes and which is shared across nodes:
+  ```bash
+  export X509_USER_PROXY=/afs/cern.ch/user/c/cgupta/private/x509up_u151861
+  ```
+- **`nohup … & disown` does not survive an ssh control-master reset.** Use `tmux` for
+  anything long-running.
+- **Waiting on a workflow's jobs needs the CLUSTER ID.** `condor_q -nobatch | grep <wf>`
+  matches nothing (the listing shows the executable, not the workflow). Parse
+  `submitted to cluster <N>` from the submit log and poll `condor_q <N> -af ProcId`.
+- **The private H+c postEE NanoAOD (`maite.iihe.ac.be`) times out under load**
+  (`XRootD error: Operation expired`). Transient — resubmit; it clears once the queue
+  drains. `--nfiles <small>` reduces per-job concurrency if it persists.
+
 ---
 
-## Status
+## Status (updated 2026-08-08)
 
-- **Nominal limit + weight-based systematics: ready** (the v3 r₉₅ path).
-- **Object-shift (JES/JER) shape templates: produced & scored, not yet folded into
-  the datacard** — that's the one remaining wiring step in
-  `scripts/combine/make_combine_inputs.py` (loop the `<year>/<shift>/mva/` dirs and
-  emit shape rows).
--  Need to implement ctagging SF and working points [[CTAG]]
+**Done since the June snapshot:**
+
+- **Object-shift (JES/JER) shape templates: folded into the datacard.** No longer a
+  pending wiring step.
+- **c-tagging SF implemented** — native `CTag2DCorrector` (`ctagging_2d: true`) →
+  `CMS_ctag2d_2022`, replacing the post-hoc patch. [[2026-07-19-ctag2d-full-documentation]]
+- **Negative-weight reweighting** of V+jets (arXiv:2510.16217) in the processor.
+- **sumw normalisation fixed** — `read_scale` now uses the self-normalising
+  `sumw_records`, not the shard metadata (which undercounts WtoLNu 5.4×).
+  [[2026-07-31-sumw-normalization-trap]]
+- **LOWESS shape smoothing off everywhere** (it double-treated the negrw'd vjets).
+
+**Current limits** (2022postEE, Asimov, `sumw_records`, no smoothing):
+
+| variant | full | stat-only | freeze-aMCS |
+|---|---:|---:|---:|
+| baseline, no ctag SF | 1150 | 668 | 905 |
+| **baseline + SF** ← canonical | **1164** | 676 | 930 |
+| 2D-cat + SF | 1676 | 637 | 1393 |
+
+**Open items, by measured impact** ([[2026-07-24-systematics-master-list]]):
+
+1. **Signal theory 29.7%** — `xsec_hplusc_4FS_5FS` needs re-derivation (~20k gen-level
+   events each of 3FS and 4FS non-FXFX at 13.6 TeV).
+2. **MC-stat 24.5%** — more signal MC is the direct lever.
+3. Trigger SFs — coded already, a config flip; expect ~0% impact.
+4. `flavor_composition_ggH` still a 1.40 placeholder.
+5. Decorrelation (JES Total → RegroupedV2, ctag Total → per-source) may *improve* the limit.
+
+**In flight (2026-08-08):** c-jet acceptance study
+([[2026-08-08-cjet-acceptance-study]]) — three selection variants testing whether the
+charm tag can be loosened. **All results withdrawn**; trees were incomplete and are being
+reprocessed. See that note for the full account.
 
 ## Reference numbers
 
