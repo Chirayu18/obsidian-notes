@@ -194,6 +194,47 @@ acting on the no-tag sample, exactly as predicted from the earlier measurement.
 every variant by construction; what matters is whether the network can still separate
 H+c from ggH once the tag is loosened. That is the ROC comparison, below.
 
+## Results — variant 3 signal AND background (the real test)
+
+Both trees read identically (per-sample `base/` shards, `lumi*xsec/sumw`, negrw on vjets).
+
+| process | baseline yield | variant 3 yield | ratio |
+|---|---:|---:|---:|
+| **hplusc (signal)** | 0.291 | **0.443** | **1.52×** |
+| higgsbkg | 285.2 | 346.9 | 1.22× |
+| tt | 93,461.9 | 48,478.9 | **0.52×** |
+| st | 7,457.8 | 4,528.0 | 0.61× |
+| diboson | 2,137.3 | 1,501.9 | 0.70× |
+| vjets | 6,674.4 | 2,452.8 | 0.37× |
+| **TOTAL BKG** | **110,016.5** | **57,308.4** | **0.52×** |
+
+| metric | baseline | variant 3 | change |
+|---|---:|---:|---:|
+| **S/√B** | 0.000877 | **0.001849** | **2.11× better** |
+| S/B | 2.645e-06 | 7.722e-06 | 2.92× better |
+| higgsbkg / S | 980.2 | 783.1 | 1.25× better |
+
+**Variant 3 improves S/√B by 2.11×.** Signal rises 1.52× while total background *falls*
+to 0.52× — the kinematic cuts remove far more background than the loosened tag admits.
+The baseline total (110,017) reproduces the 110,038 from the independent earlier scan,
+so the normalisation is consistent.
+
+**Where the gain comes from — and the one place it does not.** Every background falls
+except `higgsbkg`, which *rises* 1.22×. That is exactly the predicted behaviour: the
+kinematic cuts suppress tt (0.52×), V+jets (0.37×), single-t and diboson, because those
+are separated by decay topology — but ggH shares the signal's leptonic kinematics, so
+the cuts cannot touch it and dropping the charm tag lets more of it in.
+
+Even so `higgsbkg/S` still *improves* 1.25× (980 → 783), because signal grows faster
+than higgsbkg does. So loosening the tag does not make the ggH problem worse in relative
+terms; the tag was not buying as much ggH rejection as its 77% signal cost implied.
+
+**Caveat.** S/√B is a counting proxy on the full base selection, not a limit. It ignores
+systematics entirely — notably the 5% `xsec_higgsbkg` lnN, whose absolute size grows with
+the higgsbkg yield — and it ignores the MVA, which is the thing that actually separates
+signal from ggH. A 2.11× counting gain is a strong signal to keep going, not a result.
+**The ROC comparison is what decides it.**
+
 ## Files
 
 | file | content |

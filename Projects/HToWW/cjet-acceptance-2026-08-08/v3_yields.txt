@@ -1,0 +1,26 @@
+
+=== BASELINE (medium WP) ===
+process           raw N          yield
+hplusc            1,925          0.291
+higgsbkg        320,718        285.228
+tt            5,685,363      93461.851
+st              497,884       7457.750
+diboson          38,134       2137.309
+vjets            10,931       6674.379
+TOTAL BKG                   110016.518
+  S/sqrt(B) = 0.000877
+  S/B       = 2.645e-06
+  higgsbkg/S = 980.2
+
+=== VARIANT 3 (no tag + kin) ===
+process           raw N          yield
+hplusc            2,801          0.443
+higgsbkg        328,788        346.895
+tt            1,892,764      48478.866
+st              348,462       4528.010
+diboson          20,599       1501.877
+vjets             1,228       2452.765
+TOTAL BKG                    57308.413
+  S/sqrt(B) = 0.001849
+  S/B       = 7.722e-06
+  higgsbkg/S = 783.9
