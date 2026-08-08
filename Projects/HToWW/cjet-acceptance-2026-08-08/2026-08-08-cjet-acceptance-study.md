@@ -133,6 +133,21 @@ therefore logged `exit=0` three times while all three steps had failed, and only
 and `tail` it afterwards (what `v3_chain2.sh` does), and abort the chain on the first
 real failure instead of letting it cascade.
 
+**7. The 11 `cjet_cand_ctag2d_*` one-hots are NOT written by the processor.** They are a
+post-hoc step (`b-hive/scripts/append_onehot.py --mva-dir <dir>`), and the
+`HPlusCHToWW_2dcats` config *requires* them. Fresh variant-3 parquets have **0 of 11**
+while the existing `hww_combine_fixed` baseline has all 11 — so a training launched on
+the fresh tree fails on missing features. Run `append_onehot.py` on both `train/` and
+`test/` after the split (idempotent, atomic rename).
+
+Events carrying the `-1` sentinel get `cat = -1` → all eleven one-hots zero, which is a
+reasonable "no charm information" encoding.
+
+**8. The postEE reference must come from `hww_combine_fixed`, not `hww_combine_2dcat`.**
+Only `hww_combine_fixed` has a populated `2022postEE/mva_labeled/` with train/test
+filelists; the `2dcat` tree does not. Both carry the same 26 features (the one-hots plus
+raw CvL/CvB), so it is a valid reference for a like-for-like postEE-only comparison.
+
 ## Variant 3 mechanism checks (both pass, with one subtlety)
 
 Run on the first 40 signal shards once variant 3's signal reached 7/7.
