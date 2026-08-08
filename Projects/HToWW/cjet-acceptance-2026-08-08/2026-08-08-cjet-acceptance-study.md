@@ -105,6 +105,41 @@ So the files are healthy and reachable; the failures are genuine transient timeo
 under load (the whole 496-job variant-3 campaign was hammering the same endpoints).
 Retrying is the correct remedy — no need to re-fetch via a different redirector.
 
+## Variant 3 mechanism checks (both pass, with one subtlety)
+
+Run on the first 40 signal shards once variant 3's signal reached 7/7.
+
+**Kinematic cuts in `base` — correct.** 100.00% of events satisfy each of
+`mTl2 > 30`, `mTll > 60`, `mll <= 72`. They are genuinely applied at processing time.
+
+**`-1` sentinel — present, but read it carefully.**
+
+| column | min | `== -1` | NaN |
+|---|---:|---:|---:|
+| `cjet_cand_cvsl_pnet` | -1.000 | 10 (1.5%) | 0 |
+| `cjet_cand_cvsb_pnet` | -1.000 | 10 (1.5%) | 0 |
+| `cjet_cand_pt` | 20.03 | **0** | 0 |
+
+The asymmetry is not a bug in the yaml — all four expressions are written identically
+(`ak.fill_none(ak.pad_none(..., target=1).X, -1)`, lines 546/553/560/612). Checking the
+sentinel events directly:
+
+- they have **real `cjet_cand_pt` of 20–23 GeV**, so a candidate c-jet *does* exist
+- CvL and CvB are `-1` for exactly the same 10 events (perfect overlap)
+- their `jet_multiplicity` is **0** — the jet passes the `cjets` pT>20 cut but not the
+  `jets` pT>30 cut
+
+So these −1s **come from NanoAOD itself**, where the PNet discriminants are stored as −1
+for jets whose tagger output is undefined; `fill_none` never fired. Non-sentinel events
+span CvL 0.0335–0.9995 and CvB 0.0005–0.9907, i.e. the physical [0,1] range.
+
+**Consequence for the training:** −1 is now doing double duty — "no c-jet" (the intended
+sentinel) and "PNet undefined" (from NanoAOD). At 1.5% of signal events it will not
+drive the result, but the two cases are not distinguishable in the feature, and the
+network will read both as the same out-of-range value. If the ROC comparison turns on
+these events, separate the cases with an explicit `has_cjet` flag rather than overloading
+−1.
+
 ## Results
 
 *(pending — jobs running)*
