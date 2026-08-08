@@ -44,15 +44,56 @@ Variant 3 additionally:
 `atleast_one_cjet` is kept in all three; with no tag it means "≥1 good jet", which keeps
 `candidate_cjet` and the `cjet_cand_*` features defined.
 
-## Status — processing COMPLETE (2026-08-08 ~05:00)
+## ⚠ STATUS — PROCESSING IS INCOMPLETE; NO RESULT HERE IS TRUSTWORTHY
 
-Submitted 01:44–01:54; all jobs finished by ~05:00. **All three variants reached 7/7
-signal partitions** and the queue drained to zero.
+Checked with the repo's own `jobs_status.py`:
 
-The `nocjet` XRootD failures (below) resolved on their own: the retry loop's second
-attempt succeeded once variant 3's 466 jobs drained and IIHE contention dropped —
-confirming the diagnosis was endpoint throttling, not bad files. The planned
-`--nfiles 3` mitigation was never needed.
+| variant | expected | finished | missing |
+|---|---:|---:|---:|
+| `hww_2dcat_nocjet_kin` (v3) | 496 | **335** | **161** (45 of 53 datasets) |
+| `hww_2dcat_looseWP` (v2) | 6 | **3** | **3** |
+| `hww_2dcat_nocjet` (v1) | — | — | tool errors: stale `jobnum.txt` from the first aborted all-MC submission |
+
+The missing v3 datasets include **`HplusCharm_HtoWW` and `GluGluHto2Wto2L2Nu`** — the
+signal and the ggH background.
+
+**The error that produced this note's earlier claims:** I used "7/7 partition
+directories exist on EOS" as a completeness test. Directories are created early, so
+their presence says nothing about whether the jobs writing into them finished.
+**`jobs_status.py` is the only correct check** and must be run before any number is read
+out of a tree.
+
+Everything below — acceptance ratios, S/√B — was measured on partial trees and should be
+treated as **provisional**. All three trees are incomplete by *different* amounts, so
+even the relative comparisons are unsafe: the direction of the bias is unknown.
+
+### The ROC comparison was withdrawn
+
+A training + ROC comparison was run and has been **deleted from this note**, for two
+independent reasons:
+
+1. **Wrong reference.** It used `hww_combine_fixed` as the baseline (the only tree with a
+   populated postEE `mva_labeled/`). But that is the medium-WP selection **without**
+   `ctagging_2d: true`, while variant 3 derives from `hww_combine_2dcat` **with** it — so
+   the comparison confounded the selection change with a correction change. The right
+   move was to build `mva_labeled` for the 2dcat tree with `make_mva_labeled.py` +
+   `split_train_test.py`, not to substitute a different selection.
+2. **Incomplete training sample**, per the table above.
+
+A production 2D-cat model **does** exist — `hwwcom_multiclass_v11_2dcats`, with full
+`ROCCurveTask` output — but it was trained **cross-era** (3 eras, `v11_train_allEras.txt`)
+while variant 3 is postEE-only, so using it directly swaps one confound for another. Any
+redo needs a like-for-like reference on both axes: same correction, same era scope.
+
+### Also wrong: variant 3 was submitted with collision data
+
+`hww_2dcat_nocjet_kin.yaml` inherited the `data:` block from `hww_combine_2dcat` (added
+2026-07-29 for a data/MC closure check). Data is useless for a training study —
+`make_mva_labeled.py` skips it — and the 9 data datasets (Muon/EGamma/MuonEG × Runs E,F,G)
+consumed a large share of the 496 jobs, contributing to the queue contention behind the
+XRootD timeouts. **Removed 2026-08-08** (backup: `.bak_pre_datadrop`); the job counts
+above still show 53 datasets because `jobs_status.py` reads the condor directories from
+the original submission.
 
 ## Two operational gotchas worth remembering
 
@@ -143,10 +184,13 @@ the fresh tree fails on missing features. Run `append_onehot.py` on both `train/
 Events carrying the `-1` sentinel get `cat = -1` → all eleven one-hots zero, which is a
 reasonable "no charm information" encoding.
 
-**8. The postEE reference must come from `hww_combine_fixed`, not `hww_combine_2dcat`.**
-Only `hww_combine_fixed` has a populated `2022postEE/mva_labeled/` with train/test
-filelists; the `2dcat` tree does not. Both carry the same 26 features (the one-hots plus
-raw CvL/CvB), so it is a valid reference for a like-for-like postEE-only comparison.
+**8. ~~The postEE reference must come from `hww_combine_fixed`~~ — WRONG, see the status
+section.** It is true that only `hww_combine_fixed` has a populated
+`2022postEE/mva_labeled/`. But substituting it as the reference was a mistake: it is the
+medium-WP selection **without** `ctagging_2d: true`, so it is not like-for-like with a
+variant derived from `hww_combine_2dcat`. The correct action was to *build* `mva_labeled`
+for the 2dcat tree (`make_mva_labeled.py` + `split_train_test.py`), or to use the
+existing `hwwcom_multiclass_v11_2dcats` model while accounting for its cross-era scope.
 
 **9. `law` lives inside the `b_hive` env — source `setup.sh` *within* micromamba.**
 `b-hive/setup.sh` calls `law completion`, so sourcing it from a plain shell gives
@@ -203,7 +247,7 @@ network will read both as the same out-of-range value. If the ROC comparison tur
 these events, separate the cases with an explicit `has_cjet` flag rather than overloading
 −1.
 
-## Results — signal acceptance
+## Results — signal acceptance (PROVISIONAL: partial trees)
 
 Weighted = `lumi*xsec/sumw` via `read_scale`, i.e. the same normalisation the fit uses.
 Sanity gate **passes**: `nocjet ≥ looseWP ≥ baseline` in raw count.
@@ -229,7 +273,7 @@ acting on the no-tag sample, exactly as predicted from the earlier measurement.
 every variant by construction; what matters is whether the network can still separate
 H+c from ggH once the tag is loosened. That is the ROC comparison, below.
 
-## Results — variant 3 signal AND background (the real test)
+## Results — variant 3 signal and background (PROVISIONAL: partial trees)
 
 Both trees read identically (per-sample `base/` shards, `lumi*xsec/sumw`, negrw on vjets).
 
@@ -270,111 +314,3 @@ the higgsbkg yield — and it ignores the MVA, which is the thing that actually 
 signal from ggH. A 2.11× counting gain is a strong signal to keep going, not a result.
 **The ROC comparison is what decides it.**
 
-## VERDICT — do not drop the charm tag
-
-**The ROC comparison answers the question, and the answer is no.**
-
-| discrimination | reference | variant 3 | Δ |
-|---|---:|---:|---:|
-| hplusc vs ALL | 0.9196 | 0.9197 | +0.0001 |
-| **hplusc vs higgsbkg** | **0.8548** | **0.7358** | **−0.1190** ← |
-| hplusc vs tt | 0.9273 | 0.9530 | +0.0258 |
-| hplusc vs st | 0.9189 | 0.9303 | +0.0115 |
-| hplusc vs diboson | 0.8812 | 0.7663 | −0.1149 |
-| hplusc vs vjets | 0.9258 | 0.6374 | −0.2884 |
-
-**Dropping the charm tag costs 0.119 in ggH-separation AUC** — about 10× the ~0.01
-statistical floor set by the 909/1,414 signal test events, so the effect is unambiguous.
-
-**The "vs ALL" number is a trap.** It is essentially unchanged (+0.0001) because tt
-dominates the background by count, and against tt the model *improves* (+0.026). Any
-summary that quotes only the inclusive AUC would conclude "no harm done". The damage is
-concentrated precisely in the class that matters, and would have been missed without the
-per-class breakdown.
-
-### Why this reverses the counting result
-
-The earlier S/√B said variant 3 was **2.11× better**. That was a counting proxy with no
-MVA in it. Once the network is in the loop:
-
-- **tt, st: better** (+0.026, +0.012). The kinematic cuts and the extra statistics help
-  against backgrounds separated by decay topology.
-- **higgsbkg, diboson, vjets: much worse** (−0.119, −0.115, −0.288). These need *charm*
-  information to separate, and the tag was supplying it.
-
-So the extra acceptance is real but **not usable**: the events gained are ones the
-network can no longer tell apart from ggH. This is exactly the failure mode flagged at
-the start — acceptance alone was never going to settle it — and it is why the study had
-to end in a training, not a yield table.
-
-The `vjets` collapse (−0.288) has a second cause worth noting: variant 3's test set holds
-only **849** vjets events against the reference's 6,023, because the kinematic cuts
-remove most V+jets. Part of that number is small-sample noise, unlike the higgsbkg result
-which rests on 185k background events.
-
-### What this means for the original question
-
-The charm tag is **not** overpriced after all. The earlier finding — that it costs 77% of
-signal for only 1.46× ggH enrichment — measured its *acceptance* cost correctly but
-missed that its real value is as an **input feature**, not a selection. Remove it and the
-network loses the only variable that distinguishes H+c from ggH.
-
-**Recommendation: keep a charm requirement.** If acceptance is still wanted, the
-defensible move is the **loose WP** (variant 2), which recovers 1.63× of the 1.71×
-available while still populating the charm categories — not removing the tag entirely.
-That arm was processed and is ready; it was not trained here because variant 3 was the
-requested test. **Training variant 2 is the obvious next step**, and the one measurement
-that would complete this study.
-
-## ROC — per-model detail
-
-Both models: config `HPlusCHToWW_2dcats`, 30 epochs, batch 1024, lr 1e-3, loss weighting
-on, **2022postEE only**. The reference selection comes from `hww_combine_fixed`
-(the only tree with a populated postEE `mva_labeled`).
-
-**Reference (current medium-WP selection)** — 2,197,631 test events, 909 of them signal:
-
-| discrimination | AUC |
-|---|---:|
-| hplusc vs ALL | **0.9196** |
-| hplusc vs **higgsbkg** | **0.8548** ← the ggH degeneracy |
-| hplusc vs tt | 0.9273 |
-| hplusc vs st | 0.9189 |
-| hplusc vs diboson | 0.8812 |
-| hplusc vs vjets | 0.9258 |
-
-**`higgsbkg` is by far the hardest class to separate** (0.855 vs ≥0.88 for everything
-else), which independently confirms the framing of this whole study: ggH is the binding
-constraint, and it is the one background the kinematic cuts cannot touch.
-
-Note the test set has only **909 signal events** — the AUCs are computed against
-millions of background events, so the background side is precise, but the signal side
-carries ~3% statistical uncertainty. Differences between the two models smaller than
-roughly ±0.01 in AUC should not be over-interpreted.
-
-**Variant 3 (no tag + kinematic cuts)** — 1,409,260 test events, 1,414 signal:
-
-| discrimination | AUC |
-|---|---:|
-| hplusc vs ALL | 0.9197 |
-| hplusc vs **higgsbkg** | **0.7358** |
-| hplusc vs tt | 0.9530 |
-| hplusc vs st | 0.9303 |
-| hplusc vs diboson | 0.7663 |
-| hplusc vs vjets | 0.6374 |
-
-Test-set class counts (reference → variant 3): hplusc 909 → 1,414; higgsbkg
-186,535 → 185,391; tt 1,714,645 → 1,022,063; st 268,430 → 188,240; diboson
-21,089 → 11,303; vjets 6,023 → **849**.
-
-Variant 3 has **more signal** in the test set (1,414 vs 909, the acceptance gain) and
-less of every background — yet separates ggH far worse. That is the whole result in one
-line: more events, less information.
-
-## Files
-
-| file | content |
-|---|---|
-| `run_all2.sh` | tmux submission driver for all three variants |
-| `retry.sh` | resubmit loop for the XRootD-flaky signal variants |
-| `acceptance.py` | raw counts + weighted yields vs baseline |
