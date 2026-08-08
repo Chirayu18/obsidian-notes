@@ -90,9 +90,20 @@ queue is empty and resubmits on top of jobs that are merely waiting for a slot. 
 `submitted to cluster <N>` out of the submit log and poll `condor_q <N> -af ProcId`
 instead (`retry.sh` does this).
 
-Note the missing partitions were consistently **_1, _2, _3** across attempts, which
-looks less like random timeouts and more like specific input files being slow or
-unavailable at IIHE. Worth checking in the morning if the retries do not converge.
+The missing partitions were consistently **_1, _2, _3** across attempts, which looked
+like specific bad input files rather than random timeouts. **Checked directly — it is
+not.** `xrdfs maite.iihe.ac.be stat` returns a valid size for all of them, including
+`NANO_NANO_21.root`, the exact file named in the XRootD error:
+
+```
+NANO_NANO_1.root:  Size: 7808780
+NANO_NANO_21.root: Size: 7762372
+NANO_NANO_41.root: Size: 7803452
+```
+
+So the files are healthy and reachable; the failures are genuine transient timeouts
+under load (the whole 496-job variant-3 campaign was hammering the same endpoints).
+Retrying is the correct remedy — no need to re-fetch via a different redirector.
 
 ## Results
 
