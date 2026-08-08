@@ -110,6 +110,29 @@ So the files are healthy and reachable; the failures are genuine transient timeo
 under load (the whole 496-job variant-3 campaign was hammering the same endpoints).
 Retrying is the correct remedy — no need to re-fetch via a different redirector.
 
+## Two more gotchas, from the postprocess step
+
+**5. `run_postprocess.py` has no `--mva` flag.** [[2026-07-24-run-analysis-steps]] step 4
+gives
+
+```bash
+python3 run_postprocess.py --workflow ... --postprocess --output_format parquet --mva
+```
+
+but `--mva` is not in this repo state's argparser and the call dies with
+`unrecognized arguments: --mva`. The correct invocation is
+
+```bash
+python3 run_postprocess.py -w <workflow> -y 2022postEE --postprocess --output_format parquet
+```
+
+**6. Piping a step into `tee` masks its exit code.** `cmd | tee -a log; echo exit=$?`
+reports the exit status of `tee`, which is essentially always 0. The first chain run
+therefore logged `exit=0` three times while all three steps had failed, and only the
+59-second total runtime gave it away. Capture `${PIPESTATUS[0]}`, or redirect to a file
+and `tail` it afterwards (what `v3_chain2.sh` does), and abort the chain on the first
+real failure instead of letting it cascade.
+
 ## Variant 3 mechanism checks (both pass, with one subtlety)
 
 Run on the first 40 signal shards once variant 3's signal reached 7/7.
