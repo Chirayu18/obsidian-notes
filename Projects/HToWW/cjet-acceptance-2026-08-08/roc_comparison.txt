@@ -1,0 +1,36 @@
+
+=== reference (medium WP) ===
+  dir: /eos/user/c/cgupta/EPR_task/b-hive/output/InferenceTask/HPlusCHToWW_2dcats/hwwcom_2dcats_ref_train/hwwcom_2dcats_ref_test/hwwcom_multiclass_2dcats_ref/SimpleMLP_MultiClass/epochs_30/nominal/test_attack_nominal
+  test events: 2,197,631
+  class counts: {'hplusc': 909, 'higgsbkg': 186535, 'tt': 1714645, 'st': 268430, 'diboson': 21089, 'vjets': 6023}
+  AUC hplusc vs ALL      = 0.9196   (S=909 B=2,196,722)
+  AUC hplusc vs higgsbkg = 0.8548   (S=909 B=186,535)  <-- the ggH degeneracy
+  AUC hplusc vs tt       = 0.9273   (S=909 B=1,714,645)
+  AUC hplusc vs st       = 0.9189   (S=909 B=268,430)
+  AUC hplusc vs diboson  = 0.8812   (S=909 B=21,089)
+  AUC hplusc vs vjets    = 0.9258   (S=909 B=6,023)
+
+=== variant 3 (no tag+kin) ===
+  dir: /eos/user/c/cgupta/EPR_task/b-hive/output/InferenceTask/HPlusCHToWW_2dcats/hwwcom_2dcats_nocjetkin_train/hwwcom_2dcats_nocjetkin_test/hwwcom_multiclass_2dcats_nocjetkin/SimpleMLP_MultiClass/epochs_30/nominal/test_attack_nominal
+  test events: 1,409,260
+  class counts: {'hplusc': 1414, 'higgsbkg': 185391, 'tt': 1022063, 'st': 188240, 'diboson': 11303, 'vjets': 849}
+  AUC hplusc vs ALL      = 0.9197   (S=1,414 B=1,407,846)
+  AUC hplusc vs higgsbkg = 0.7358   (S=1,414 B=185,391)  <-- the ggH degeneracy
+  AUC hplusc vs tt       = 0.9530   (S=1,414 B=1,022,063)
+  AUC hplusc vs st       = 0.9303   (S=1,414 B=188,240)
+  AUC hplusc vs diboson  = 0.7663   (S=1,414 B=11,303)
+  AUC hplusc vs vjets    = 0.6374   (S=1,414 B=849)
+
+================================================================
+comparison              reference  variant 3     delta
+----------------------------------------------------------------
+hplusc vs vs_all           0.9196     0.9197   +0.0001
+hplusc vs higgsbkg         0.8548     0.7358   -0.1190  <--
+hplusc vs tt               0.9273     0.9530   +0.0258
+hplusc vs st               0.9189     0.9303   +0.0115
+hplusc vs diboson          0.8812     0.7663   -0.1149
+hplusc vs vjets            0.9258     0.6374   -0.2884
+================================================================
+
+AUC higher = better separation. The higgsbkg row is the one that decides
+whether the extra acceptance from dropping the charm tag is usable.

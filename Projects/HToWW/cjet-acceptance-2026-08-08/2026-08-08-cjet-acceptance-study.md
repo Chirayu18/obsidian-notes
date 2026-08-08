@@ -270,7 +270,63 @@ the higgsbkg yield — and it ignores the MVA, which is the thing that actually 
 signal from ggH. A 2.11× counting gain is a strong signal to keep going, not a result.
 **The ROC comparison is what decides it.**
 
-## ROC — reference model (variant 3 pending)
+## VERDICT — do not drop the charm tag
+
+**The ROC comparison answers the question, and the answer is no.**
+
+| discrimination | reference | variant 3 | Δ |
+|---|---:|---:|---:|
+| hplusc vs ALL | 0.9196 | 0.9197 | +0.0001 |
+| **hplusc vs higgsbkg** | **0.8548** | **0.7358** | **−0.1190** ← |
+| hplusc vs tt | 0.9273 | 0.9530 | +0.0258 |
+| hplusc vs st | 0.9189 | 0.9303 | +0.0115 |
+| hplusc vs diboson | 0.8812 | 0.7663 | −0.1149 |
+| hplusc vs vjets | 0.9258 | 0.6374 | −0.2884 |
+
+**Dropping the charm tag costs 0.119 in ggH-separation AUC** — about 10× the ~0.01
+statistical floor set by the 909/1,414 signal test events, so the effect is unambiguous.
+
+**The "vs ALL" number is a trap.** It is essentially unchanged (+0.0001) because tt
+dominates the background by count, and against tt the model *improves* (+0.026). Any
+summary that quotes only the inclusive AUC would conclude "no harm done". The damage is
+concentrated precisely in the class that matters, and would have been missed without the
+per-class breakdown.
+
+### Why this reverses the counting result
+
+The earlier S/√B said variant 3 was **2.11× better**. That was a counting proxy with no
+MVA in it. Once the network is in the loop:
+
+- **tt, st: better** (+0.026, +0.012). The kinematic cuts and the extra statistics help
+  against backgrounds separated by decay topology.
+- **higgsbkg, diboson, vjets: much worse** (−0.119, −0.115, −0.288). These need *charm*
+  information to separate, and the tag was supplying it.
+
+So the extra acceptance is real but **not usable**: the events gained are ones the
+network can no longer tell apart from ggH. This is exactly the failure mode flagged at
+the start — acceptance alone was never going to settle it — and it is why the study had
+to end in a training, not a yield table.
+
+The `vjets` collapse (−0.288) has a second cause worth noting: variant 3's test set holds
+only **849** vjets events against the reference's 6,023, because the kinematic cuts
+remove most V+jets. Part of that number is small-sample noise, unlike the higgsbkg result
+which rests on 185k background events.
+
+### What this means for the original question
+
+The charm tag is **not** overpriced after all. The earlier finding — that it costs 77% of
+signal for only 1.46× ggH enrichment — measured its *acceptance* cost correctly but
+missed that its real value is as an **input feature**, not a selection. Remove it and the
+network loses the only variable that distinguishes H+c from ggH.
+
+**Recommendation: keep a charm requirement.** If acceptance is still wanted, the
+defensible move is the **loose WP** (variant 2), which recovers 1.63× of the 1.71×
+available while still populating the charm categories — not removing the tag entirely.
+That arm was processed and is ready; it was not trained here because variant 3 was the
+requested test. **Training variant 2 is the obvious next step**, and the one measurement
+that would complete this study.
+
+## ROC — per-model detail
 
 Both models: config `HPlusCHToWW_2dcats`, 30 epochs, batch 1024, lr 1e-3, loss weighting
 on, **2022postEE only**. The reference selection comes from `hww_combine_fixed`
@@ -295,6 +351,25 @@ Note the test set has only **909 signal events** — the AUCs are computed again
 millions of background events, so the background side is precise, but the signal side
 carries ~3% statistical uncertainty. Differences between the two models smaller than
 roughly ±0.01 in AUC should not be over-interpreted.
+
+**Variant 3 (no tag + kinematic cuts)** — 1,409,260 test events, 1,414 signal:
+
+| discrimination | AUC |
+|---|---:|
+| hplusc vs ALL | 0.9197 |
+| hplusc vs **higgsbkg** | **0.7358** |
+| hplusc vs tt | 0.9530 |
+| hplusc vs st | 0.9303 |
+| hplusc vs diboson | 0.7663 |
+| hplusc vs vjets | 0.6374 |
+
+Test-set class counts (reference → variant 3): hplusc 909 → 1,414; higgsbkg
+186,535 → 185,391; tt 1,714,645 → 1,022,063; st 268,430 → 188,240; diboson
+21,089 → 11,303; vjets 6,023 → **849**.
+
+Variant 3 has **more signal** in the test set (1,414 vs 909, the acceptance gain) and
+less of every background — yet separates ggH far worse. That is the whole result in one
+line: more events, less information.
 
 ## Files
 
