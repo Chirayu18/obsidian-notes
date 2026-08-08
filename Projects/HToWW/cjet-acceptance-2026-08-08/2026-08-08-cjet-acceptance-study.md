@@ -44,10 +44,15 @@ Variant 3 additionally:
 `atleast_one_cjet` is kept in all three; with no tag it means "≥1 good jet", which keeps
 `candidate_cjet` and the `cjet_cand_*` features defined.
 
-## Status (2026-08-08 ~02:05)
+## Status — processing COMPLETE (2026-08-08 ~05:00)
 
-- Submitted 01:44–01:54. Variants 1 & 2: 6 jobs each. Variant 3: **496 jobs**, all running.
-- Variants 1 & 2 hit transient **XRootD timeouts** (below); a retry loop is running.
+Submitted 01:44–01:54; all jobs finished by ~05:00. **All three variants reached 7/7
+signal partitions** and the queue drained to zero.
+
+The `nocjet` XRootD failures (below) resolved on their own: the retry loop's second
+attempt succeeded once variant 3's 466 jobs drained and IIHE contention dropped —
+confirming the diagnosis was endpoint throttling, not bad files. The planned
+`--nfiles 3` mitigation was never needed.
 
 ## Two operational gotchas worth remembering
 
@@ -140,9 +145,31 @@ network will read both as the same out-of-range value. If the ROC comparison tur
 these events, separate the cases with an explicit `has_cjet` flag rather than overloading
 −1.
 
-## Results
+## Results — signal acceptance
 
-*(pending — jobs running)*
+Weighted = `lumi*xsec/sumw` via `read_scale`, i.e. the same normalisation the fit uses.
+Sanity gate **passes**: `nocjet ≥ looseWP ≥ baseline` in raw count.
+
+| variant | raw N | weighted | vs baseline |
+|---|---:|---:|---:|
+| baseline (medium WP) | 1,925 | 0.2910 | 1.00× |
+| **1: no c-tag** | 3,285 | 0.5138 | **1.71×** |
+| **2: loose WP** | 3,136 | 0.4853 | **1.63×** |
+| 3: no-tag + kinematic cuts | 2,801 | 0.4425 | 1.46× |
+
+**The headline: loose WP captures 1.63× of the 1.71× available.** Going all the way to
+no tag buys only a further 5% relative in signal, while giving up the charm requirement
+entirely — and with it the only handle on ggH. On acceptance-per-unit-risk, **the loose
+WP is the standout**: nearly all the gain, a selection that still rejects light jets, and
+the existing 2D SF machinery applies unchanged.
+
+Variant 3 sits *lower* than variants 1 and 2 because the kinematic cuts (`mTl2>30`,
+`mTll>60`, `mll≤72`) are applied on top — 1.46× vs 1.71× is the 85% kinematic efficiency
+acting on the no-tag sample, exactly as predicted from the earlier measurement.
+
+**These are acceptance numbers only and do not settle the question.** Signal is up in
+every variant by construction; what matters is whether the network can still separate
+H+c from ggH once the tag is loosened. That is the ROC comparison, below.
 
 ## Files
 
