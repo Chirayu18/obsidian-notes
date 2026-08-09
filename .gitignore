@@ -35,3 +35,6 @@ nul
 *~
 .directory
 .Trash-*
+
+# Marp slide previews (regenerable: npx @marp-team/marp-cli <deck>.md --images png)
+Projects/HToWW/argmax-kinematics-2026-08-07/slide.*.png
