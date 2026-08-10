@@ -124,7 +124,20 @@ despite `mtll` **not being an input feature**.
 
 ---
 
-## 03 · Same behaviour in the top CR — separation is learned, not cut
+## 03 · Where the network puts tt̄ — and where the hand-made CR sits
+
+### argmax=tt̄ density across the same plane, with the cut-defined top CR overlaid
+
+![w:700](cr_topcr_argmax_tt_plane.png)
+
+The tt̄ class fills a **broad** region — the cut box (mT<sub>ll</sub>≤60 & mT<sub>l2</sub>>30)
+sits inside it but captures only **15.3%** of all argmax=tt̄ events. Purity inside the box is
+42.5% vs 38.1% outside: the cut buys **+4 points of tt̄ fraction while discarding 85% of the
+tt̄ the network already identifies.** That is the whole case for the MVA-defined CR on one plot.
+
+---
+
+## 03b · Same behaviour in the top CR — separation is learned, not cut
 
 ![w:720](cr_topcr_2d_plane.png)
 

@@ -104,7 +104,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
 <p><span class="kicker">H→WW · 2022postEE · v11 6-class MVA</span></p>
 <h1 id="kinematic-cuts-buy-pre-selection-s%E2%88%9Ab--they-do-not-buy-control-region-purity">Kinematic cuts buy pre-selection S/√B — they do not buy control-region purity</h1>
 <p>The MVA defines <strong>purer</strong> control regions <em>without</em> any kinematic cut, and already applies<br />
@@ -207,7 +207,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
 <h2 id="01--the-tt%CC%84-control-region-is-purer-when-the-mva-defines-it">01 · The tt̄ control region is purer when the MVA defines it</h2>
 <h3 id="purity--fraction-of-events-whose-true-process-is-tt%CC%84-pooled-mc-4046127-events-rawunweighted">Purity = fraction of events whose <em>true</em> process is tt̄. Pooled MC, 4,046,127 events, raw/unweighted.</h3>
 <table>
@@ -353,7 +353,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
 <h2 id="01b--what-is-actually-in-the-mva-tt%CC%84-cr">01b · What is actually in the MVA tt̄ CR</h2>
 <table>
 <thead>
@@ -497,7 +497,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
 <h2 id="02--the-mva-has-already-internalised-the-sr-kinematic-cuts">02 · The MVA has already internalised the SR kinematic cuts</h2>
 <h3 id="fraction-of-events-called-signal-across-the-msubllsub-mtsubllsub-plane--no-kinematic-cut-applied">Fraction of events called signal across the (m<sub>ll</sub>, mT<sub>ll</sub>) plane — no kinematic cut applied</h3>
 <p><img src="internalised_2d_plane.png" alt="" style="width:760px;" /></p>
@@ -604,17 +604,14 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
-<h2 id="03--same-behaviour-in-the-top-cr--separation-is-learned-not-cut">03 · Same behaviour in the top CR — separation is learned, not cut</h2>
-<p><img src="cr_topcr_2d_plane.png" alt="" style="width:720px;" /></p>
-<p>Across the entire cut-defined top CR the argmax=signal fraction peaks at <strong>0.48%</strong>;<br />
-only <strong>66 of 565,368</strong> events are called signal (0.0117%), max P(H+c) = 0.358 — below the<br />
-0.5 needed to ever win argmax.</p>
-<div class="callout">
-<p><strong>The cut is redundant with the classifier.</strong> The network independently recovers the same<br />
-region because both follow the same physics — not because it was trained on the cut.<br />
-<code>hww_MVA.yaml</code> has no mT/m<sub>ll</sub> cut in its base selection; labels are process truth.</p>
-</div>
+;" data-marpit-pagination-total="10" data-size="16:9">
+<h2 id="03--where-the-network-puts-tt%CC%84--and-where-the-hand-made-cr-sits">03 · Where the network puts tt̄ — and where the hand-made CR sits</h2>
+<h3 id="argmaxtt%CC%84-density-across-the-same-plane-with-the-cut-defined-top-cr-overlaid">argmax=tt̄ density across the same plane, with the cut-defined top CR overlaid</h3>
+<p><img src="cr_topcr_argmax_tt_plane.png" alt="" style="width:700px;" /></p>
+<p>The tt̄ class fills a <strong>broad</strong> region — the cut box (mT<sub>ll</sub>≤60 &amp; mT<sub>l2</sub>&gt;30)<br />
+sits inside it but captures only <strong>15.3%</strong> of all argmax=tt̄ events. Purity inside the box is<br />
+42.5% vs 38.1% outside: the cut buys <strong>+4 points of tt̄ fraction while discarding 85% of the<br />
+tt̄ the network already identifies.</strong> That is the whole case for the MVA-defined CR on one plot.</p>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="6" data-paginate="true" data-theme="default" data-style="section {
   font-family: &quot;Source Sans 3&quot;, &quot;Segoe UI&quot;, system-ui, sans-serif;
@@ -712,54 +709,16 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
-<h2 id="04--cutting-shrinks-the-training-set-the-mva-needs">04 · Cutting shrinks the training set the MVA needs</h2>
-<h3 id="efficiency-of-each-kinematic-cut-on-top-of-the-%E2%89%A51-c-jet-requirement">Efficiency of each kinematic cut, on top of the ≥1 c-jet requirement</h3>
-<table>
-<thead>
-<tr>
-<th>cut</th>
-<th style="text-align:right">ε<sub>S</sub></th>
-<th style="text-align:right">ε<sub>B</sub></th>
-<th style="text-align:right">S/√B</th>
-<th style="text-align:right">gain</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>mT<sub>ll</sub> &gt; 60</td>
-<td style="text-align:right">0.926</td>
-<td style="text-align:right">0.790</td>
-<td style="text-align:right">0.00091</td>
-<td style="text-align:right">1.04×</td>
-</tr>
-<tr>
-<td>mT<sub>l2</sub> &gt; 30</td>
-<td style="text-align:right">0.890</td>
-<td style="text-align:right">0.827</td>
-<td style="text-align:right">0.00086</td>
-<td style="text-align:right">0.98×</td>
-</tr>
-<tr>
-<td>m<sub>ll</sub> ≤ 72</td>
-<td style="text-align:right">0.978</td>
-<td style="text-align:right">0.397</td>
-<td style="text-align:right">0.00136</td>
-<td style="text-align:right">1.55×</td>
-</tr>
-<tr>
-<td><strong>all three (the SR)</strong></td>
-<td style="text-align:right"><strong>0.845</strong></td>
-<td style="text-align:right"><strong>0.271</strong></td>
-<td style="text-align:right"><strong>0.00143</strong></td>
-<td style="text-align:right"><strong>1.63×</strong></td>
-</tr>
-</tbody>
-</table>
-<div class="flag">
-<p><strong>The cost, made concrete.</strong> Putting <code>mll≤72</code> into the base selection empties the<br />
-high-m<sub>ll</sub> CR <em>by construction</em> — a region holding <strong>2.38M events at 83.0% tt̄ purity</strong>.<br />
-You trade a well-populated constraint region for a 1.63× pre-selection number the MVA does not need.</p>
+;" data-marpit-pagination-total="10" data-size="16:9">
+<h2 id="03b--same-behaviour-in-the-top-cr--separation-is-learned-not-cut">03b · Same behaviour in the top CR — separation is learned, not cut</h2>
+<p><img src="cr_topcr_2d_plane.png" alt="" style="width:720px;" /></p>
+<p>Across the entire cut-defined top CR the argmax=signal fraction peaks at <strong>0.48%</strong>;<br />
+only <strong>66 of 565,368</strong> events are called signal (0.0117%), max P(H+c) = 0.358 — below the<br />
+0.5 needed to ever win argmax.</p>
+<div class="callout">
+<p><strong>The cut is redundant with the classifier.</strong> The network independently recovers the same<br />
+region because both follow the same physics — not because it was trained on the cut.<br />
+<code>hww_MVA.yaml</code> has no mT/m<sub>ll</sub> cut in its base selection; labels are process truth.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="7" data-paginate="true" data-theme="default" data-style="section {
@@ -858,48 +817,54 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
-<h2 id="05--the-real-lever-the-charm-tag-not-the-kinematics">05 · The real lever: the charm tag, not the kinematics</h2>
-<div class="stats">
-<div class="stat hi"><span class="lab">c-jet eff — H+c signal</span><span class="val">23.1%</span><span class="note">medium WP discards 77% of signal</span></div>
-<div class="stat"><span class="lab">c-jet eff — ggH</span><span class="val">15.9%</span><span class="note">the shape-degenerate competitor</span></div>
-<div class="stat ok"><span class="lab">enrichment H+c / ggH</span><span class="val">1.46×</span><span class="note">ggH:H+c 681:1 → 467:1</span></div>
-</div>
-<h3 id="loose-vs-medium-measured-offline-on-the-untagged-tree-5619-hc-events-hww_2dcat_nocjet">Loose vs medium, measured offline on the untagged tree (5,619 H+c events, <code>hww_2dcat_nocjet</code>)</h3>
+;" data-marpit-pagination-total="10" data-size="16:9">
+<h2 id="04--cutting-shrinks-the-training-set-the-mva-needs">04 · Cutting shrinks the training set the MVA needs</h2>
+<h3 id="efficiency-of-each-kinematic-cut-on-top-of-the-%E2%89%A51-c-jet-requirement">Efficiency of each kinematic cut, on top of the ≥1 c-jet requirement</h3>
 <table>
 <thead>
 <tr>
-<th>c-tag option</th>
-<th style="text-align:right">signal N</th>
-<th style="text-align:right">eff of ≥1-jet base</th>
-<th style="text-align:right">vs medium</th>
+<th>cut</th>
+<th style="text-align:right">ε<sub>S</sub></th>
+<th style="text-align:right">ε<sub>B</sub></th>
+<th style="text-align:right">S/√B</th>
+<th style="text-align:right">gain</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>medium (CvL&gt;0.160, CvB&gt;0.304)</td>
-<td style="text-align:right">3,244</td>
-<td style="text-align:right">57.7%</td>
-<td style="text-align:right">1.00×</td>
+<td>mT<sub>ll</sub> &gt; 60</td>
+<td style="text-align:right">0.926</td>
+<td style="text-align:right">0.790</td>
+<td style="text-align:right">0.00091</td>
+<td style="text-align:right">1.04×</td>
 </tr>
 <tr>
-<td><strong>loose (CvL&gt;0.054, CvB&gt;0.182)</strong></td>
-<td style="text-align:right"><strong>5,337</strong></td>
-<td style="text-align:right"><strong>95.0%</strong></td>
-<td style="text-align:right"><strong>1.65×</strong></td>
+<td>mT<sub>l2</sub> &gt; 30</td>
+<td style="text-align:right">0.890</td>
+<td style="text-align:right">0.827</td>
+<td style="text-align:right">0.00086</td>
+<td style="text-align:right">0.98×</td>
 </tr>
 <tr>
-<td>no tag at all</td>
-<td style="text-align:right">5,619</td>
-<td style="text-align:right">100.0%</td>
-<td style="text-align:right">1.73×</td>
+<td>m<sub>ll</sub> ≤ 72</td>
+<td style="text-align:right">0.978</td>
+<td style="text-align:right">0.397</td>
+<td style="text-align:right">0.00136</td>
+<td style="text-align:right">1.55×</td>
+</tr>
+<tr>
+<td><strong>all three (the SR)</strong></td>
+<td style="text-align:right"><strong>0.845</strong></td>
+<td style="text-align:right"><strong>0.271</strong></td>
+<td style="text-align:right"><strong>0.00143</strong></td>
+<td style="text-align:right"><strong>1.63×</strong></td>
 </tr>
 </tbody>
 </table>
-<div class="callout">
-<p><strong>Loosening the WP recovers 1.65× the signal — most of what dropping the tag entirely would give<br />
-(1.73×), while still rejecting light-flavour.</strong> Compare the kinematic cuts, worth 1.63× on S/√B but<br />
-paid for with the control regions.</p>
+<div class="flag">
+<p><strong>The cost, made concrete.</strong> Putting <code>mll≤72</code> into the base selection empties the<br />
+high-m<sub>ll</sub> CR <em>by construction</em> — a region holding <strong>2.38M events at 83.0% tt̄ purity</strong>.<br />
+You trade a well-populated constraint region for a 1.63× pre-selection number the MVA does not need.</p>
 </div>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="8" data-paginate="true" data-theme="default" data-style="section {
@@ -998,7 +963,147 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
+<h2 id="05--the-real-lever-the-charm-tag-not-the-kinematics">05 · The real lever: the charm tag, not the kinematics</h2>
+<div class="stats">
+<div class="stat hi"><span class="lab">c-jet eff — H+c signal</span><span class="val">23.1%</span><span class="note">medium WP discards 77% of signal</span></div>
+<div class="stat"><span class="lab">c-jet eff — ggH</span><span class="val">15.9%</span><span class="note">the shape-degenerate competitor</span></div>
+<div class="stat ok"><span class="lab">enrichment H+c / ggH</span><span class="val">1.46×</span><span class="note">ggH:H+c 681:1 → 467:1</span></div>
+</div>
+<h3 id="loose-vs-medium-measured-offline-on-the-untagged-tree-5619-hc-events-hww_2dcat_nocjet">Loose vs medium, measured offline on the untagged tree (5,619 H+c events, <code>hww_2dcat_nocjet</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>c-tag option</th>
+<th style="text-align:right">signal N</th>
+<th style="text-align:right">eff of ≥1-jet base</th>
+<th style="text-align:right">vs medium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>medium (CvL&gt;0.160, CvB&gt;0.304)</td>
+<td style="text-align:right">3,244</td>
+<td style="text-align:right">57.7%</td>
+<td style="text-align:right">1.00×</td>
+</tr>
+<tr>
+<td><strong>loose (CvL&gt;0.054, CvB&gt;0.182)</strong></td>
+<td style="text-align:right"><strong>5,337</strong></td>
+<td style="text-align:right"><strong>95.0%</strong></td>
+<td style="text-align:right"><strong>1.65×</strong></td>
+</tr>
+<tr>
+<td>no tag at all</td>
+<td style="text-align:right">5,619</td>
+<td style="text-align:right">100.0%</td>
+<td style="text-align:right">1.73×</td>
+</tr>
+</tbody>
+</table>
+<div class="callout">
+<p><strong>Loosening the WP recovers 1.65× the signal — most of what dropping the tag entirely would give<br />
+(1.73×), while still rejecting light-flavour.</strong> Compare the kinematic cuts, worth 1.63× on S/√B but<br />
+paid for with the control regions.</p>
+</div>
+</section>
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-theme="default" data-style="section {
+  font-family: &quot;Source Sans 3&quot;, &quot;Segoe UI&quot;, system-ui, sans-serif;
+  font-size: 21px;
+  padding: 44px 56px;
+  background: #FAFAF8;
+  color: #16181C;
+}
+h1 {
+  font-family: Fraunces, &quot;Iowan Old Style&quot;, Georgia, serif;
+  font-size: 38px; line-height: 1.12; color: #16181C;
+  border-bottom: 2px solid #16181C; padding-bottom: 12px; margin-bottom: 18px;
+}
+h2 {
+  font-family: Fraunces, &quot;Iowan Old Style&quot;, Georgia, serif;
+  font-size: 29px; line-height: 1.18; color: #16181C;
+  margin: 0 0 6px 0;
+}
+h3 { font-size: 17px; color: #6E7178; font-weight: 600; margin: 0 0 16px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 17px;
+        font-variant-numeric: tabular-nums; margin: 10px 0; }
+th, td { padding: 7px 11px; text-align: right; border-bottom: 1px solid #E2E0DB; }
+th:first-child, td:first-child { text-align: left; }
+thead th { background: #EDEFF1; font-size: 13px; letter-spacing: .07em;
+           text-transform: uppercase; color: #6E7178; border-bottom: 1px solid #CFCCC5; }
+strong { color: #B23A2E; }
+.win { background: #F5E7E4; }
+code { font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace;
+       font-size: .88em; background: #EDEFF1; padding: 1px 5px; border-radius: 2px; }
+.callout { border-left: 3px solid #B23A2E; background: #F5E7E4;
+           padding: 11px 15px; font-size: 19px; margin-top: 12px; }
+.flag { border-left: 3px solid #7C8794; background: #EDEFF1;
+        padding: 11px 15px; font-size: 19px; margin-top: 12px; }
+.kicker { font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace; font-size: 13px;
+          letter-spacing: .15em; text-transform: uppercase; color: #B23A2E; }
+.stats { display: flex; gap: 18px; margin: 14px 0; }
+.stat { flex: 1; border: 1px solid #E2E0DB; padding: 12px 14px; background: #fff;
+        display: flex; flex-direction: column; gap: 3px; }
+.stat .lab { display: block; font-size: 12px; letter-spacing: .09em;
+             text-transform: uppercase; color: #6E7178; line-height: 1.3; }
+.stat .val { display: block; font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace;
+             font-size: 30px; font-weight: 700; line-height: 1.15; }
+.stat .note { display: block; font-size: 14px; color: #6E7178; line-height: 1.3; }
+.hi .val { color: #B23A2E; }
+.ok .val { color: #2E6B4F; }
+footer { font-size: 13px; color: #6E7178; }
+section.lead { display: flex; flex-direction: column; justify-content: center; }
+section.lead h1 { border-bottom: none; font-size: 44px; }
+img { display: block; margin: 6px auto; max-height: 340px; }
+" lang="en-GB" data-marpit-pagination="9" style="--paginate:true;--theme:default;--style:section {
+  font-family: &quot;Source Sans 3&quot;, &quot;Segoe UI&quot;, system-ui, sans-serif;
+  font-size: 21px;
+  padding: 44px 56px;
+  background: #FAFAF8;
+  color: #16181C;
+}
+h1 {
+  font-family: Fraunces, &quot;Iowan Old Style&quot;, Georgia, serif;
+  font-size: 38px; line-height: 1.12; color: #16181C;
+  border-bottom: 2px solid #16181C; padding-bottom: 12px; margin-bottom: 18px;
+}
+h2 {
+  font-family: Fraunces, &quot;Iowan Old Style&quot;, Georgia, serif;
+  font-size: 29px; line-height: 1.18; color: #16181C;
+  margin: 0 0 6px 0;
+}
+h3 { font-size: 17px; color: #6E7178; font-weight: 600; margin: 0 0 16px 0; }
+table { border-collapse: collapse; width: 100%; font-size: 17px;
+        font-variant-numeric: tabular-nums; margin: 10px 0; }
+th, td { padding: 7px 11px; text-align: right; border-bottom: 1px solid #E2E0DB; }
+th:first-child, td:first-child { text-align: left; }
+thead th { background: #EDEFF1; font-size: 13px; letter-spacing: .07em;
+           text-transform: uppercase; color: #6E7178; border-bottom: 1px solid #CFCCC5; }
+strong { color: #B23A2E; }
+.win { background: #F5E7E4; }
+code { font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace;
+       font-size: .88em; background: #EDEFF1; padding: 1px 5px; border-radius: 2px; }
+.callout { border-left: 3px solid #B23A2E; background: #F5E7E4;
+           padding: 11px 15px; font-size: 19px; margin-top: 12px; }
+.flag { border-left: 3px solid #7C8794; background: #EDEFF1;
+        padding: 11px 15px; font-size: 19px; margin-top: 12px; }
+.kicker { font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace; font-size: 13px;
+          letter-spacing: .15em; text-transform: uppercase; color: #B23A2E; }
+.stats { display: flex; gap: 18px; margin: 14px 0; }
+.stat { flex: 1; border: 1px solid #E2E0DB; padding: 12px 14px; background: #fff;
+        display: flex; flex-direction: column; gap: 3px; }
+.stat .lab { display: block; font-size: 12px; letter-spacing: .09em;
+             text-transform: uppercase; color: #6E7178; line-height: 1.3; }
+.stat .val { display: block; font-family: &quot;JetBrains Mono&quot;, ui-monospace, monospace;
+             font-size: 30px; font-weight: 700; line-height: 1.15; }
+.stat .note { display: block; font-size: 14px; color: #6E7178; line-height: 1.3; }
+.hi .val { color: #B23A2E; }
+.ok .val { color: #2E6B4F; }
+footer { font-size: 13px; color: #6E7178; }
+section.lead { display: flex; flex-direction: column; justify-content: center; }
+section.lead h1 { border-bottom: none; font-size: 44px; }
+img { display: block; margin: 6px auto; max-height: 340px; }
+;" data-marpit-pagination-total="10" data-size="16:9">
 <h2 id="06--what-this-argument-does-not-yet-prove">06 · What this argument does not yet prove</h2>
 <ul>
 <li><strong>Loosening the WP admits more ggH too.</strong> CvL carries the H+c-vs-ggH separation<br />
@@ -1018,7 +1123,7 @@ the ggH the looser WP also admits. <code>hww_ctag_compare</code> (2022preEE, 191
 that missing half with full MC across all four categories on identical events.</p>
 </div>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="9" data-paginate="true" data-class="lead" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="10" data-paginate="true" data-class="lead" data-theme="default" data-style="section {
   font-family: &quot;Source Sans 3&quot;, &quot;Segoe UI&quot;, system-ui, sans-serif;
   font-size: 21px;
   padding: 44px 56px;
@@ -1066,7 +1171,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-" lang="en-GB" class="lead" data-marpit-pagination="9" style="--paginate:true;--class:lead;--theme:default;--style:section {
+" lang="en-GB" class="lead" data-marpit-pagination="10" style="--paginate:true;--class:lead;--theme:default;--style:section {
   font-family: &quot;Source Sans 3&quot;, &quot;Segoe UI&quot;, system-ui, sans-serif;
   font-size: 21px;
   padding: 44px 56px;
@@ -1114,7 +1219,7 @@ footer { font-size: 13px; color: #6E7178; }
 section.lead { display: flex; flex-direction: column; justify-content: center; }
 section.lead h1 { border-bottom: none; font-size: 44px; }
 img { display: block; margin: 6px auto; max-height: 340px; }
-;" data-marpit-pagination-total="9" data-size="16:9">
+;" data-marpit-pagination-total="10" data-size="16:9">
 <h2 id="summary">Summary</h2>
 <ol>
 <li><strong>MVA-defined CRs are purer than cut-defined ones</strong> — 87.9% vs 78.1% on tt̄, and 2.8× the events.</li>
