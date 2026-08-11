@@ -31,6 +31,18 @@ open directly in Obsidian on the laptop.
 - **Read with:** [[2026-08-11-mva-defined-regions-literature]] §0.
 - **EOS original:** `/eos/home-c/cgupta/HToWW/b-hive/docs/HIG-24-018-paper-v15.pdf`
 
+### arXiv:2604.02127 — CMS HH→bbWW dilepton, **Run 3** ⭐ the closest same-era match
+- **File:** [[2604.02127-HH-bbWW-Run3-13p6TeV-multiclass.pdf]]
+- **Why:** the only **Run 3** analysis found that defines SRs *and* CRs by multiclass argmax —
+  **13.6 TeV, 62 fb⁻¹ (2022–2023)**, same era as us, WW final state with two leptons.
+  "Events are assigned to the category corresponding to the **most probable process**" → 2 SRs
+  (ggF, VBF) + **4 background CRs** (tt, single-t, DY, H). tt and DY rates float in the fit.
+- **Two things we do differently:** (1) **staged NNs** — multiclass for *categorisation*, then a
+  separate **binary** NN as the *discriminant* in each SR; (2) **CRs enter the fit as YIELD
+  ONLY**, shapes only in the SRs — Run 3 precedent for the `CR_tt` yield-only recommendation in
+  [[2026-08-10-analysis-strategy-from-AN]] §3.
+- **Read with:** [[2026-08-11-mva-defined-regions-literature]] §4.
+
 ### arXiv:2011.03652 — CMS ttH/tH multilepton (the published argmax precedent)
 - **File:** [[2011.03652-ttH-multilepton-argmax-ANN.pdf]]
 - **Why:** peer-reviewed CMS result **in a H→WW decay channel** that classifies events into

@@ -23,6 +23,10 @@ without an internal baseline. The papers below are that missing baseline.
 > because they add a published/peer-reviewed citation, a 2025 example, and a direct
 > commentary on our c-tagging choice.
 
+> **Era caveat.** §§0–3 are all **Run 2** (13 TeV, 137–138 fb⁻¹). Ours is **Run 3**
+> (13.6 TeV, 2022–2023). **§4 is the closest Run 3 analogue** — same era, same
+> argmax-defined SR+CR construction, and a WW final state.
+
 ---
 
 ## 0. CMS HIG-24-018 — already in the vault, and the closest match by far ⭐⭐
@@ -249,6 +253,61 @@ supporting the decision to keep medium rather than loosen.
 
 ---
 
+## 4. CMS HH → bbWW dilepton, **Run 3** — the closest same-era match ⭐
+
+**arXiv:2604.02127** — *Search for Higgs boson pair production in the bbWW decay channel with
+two leptons in the final state*, CMS, **√s = 13.6 TeV, 62 fb⁻¹ (2022–2023)**.
+Vault copy: `2604.02127-HH-bbWW-Run3-13p6TeV-multiclass.pdf`.
+
+The only **Run 3** analysis found that defines signal *and* control regions by multiclass
+argmax. Same era as us, same 13.6 TeV conditions, and a **WW final state with two leptons**.
+
+### The argmax construction (§4, p.8)
+
+> "The values obtained in the output nodes of the NN_cat are normalised to unity using a
+> 'soft-max' function … **Events are assigned to the category corresponding to the most
+> probable process according to this NN multiclassification.** The events are separated into
+> one of two SRs targeting ggF HH production (SR_ggF) or VBF HH production (SR_VBF), **or
+> into one of four background CRs targeting the main background processes: tt, single-t/t̄,
+> DY, and H production.**"
+
+Two SRs + **four background CRs**, all from one argmax — structurally almost identical to our
+`SR_hplusc` + five background CRs.
+
+### The design choice that matters most for us — a *staged* NN, and CRs fit by YIELD
+
+> "The events in the SRs are classified by **additional NNs** designed to separate ggF or VBF
+> signal events from background events. **The distributions of the output values of the binary
+> NNs in the SRs, together with the event yield in the CRs, enter the final fit** as sensitive
+> observables."
+
+Two things we do differently:
+
+1. **Staged classifiers.** A multiclass NN for *categorisation*, then a **separate binary NN**
+   for the *discriminant* within each SR. We use one 6-class network for both jobs. Their
+   "staged multiclassification-plus-binary NN approach" (line 123) lets each network optimise
+   for one task. Note this is also the cH→γγ instinct (§3): a dedicated classifier against the
+   degenerate competitor.
+2. **CRs enter the fit as YIELD ONLY, not shape.** Exactly the recommendation in §3 of
+   [[2026-08-10-analysis-strategy-from-AN]] (make `CR_tt` yield-only, per AN-23-102 line 662)
+   — now with **Run 3 precedent** from an argmax-defined CR. We currently fit a 10-bin shape
+   in all six channels. Given that our residual same-sign JES/JER flags are channel-migration
+   artifacts ([[2026-08-11-jes-jer-bug-fixed]]), moving the CRs to yield-only is well
+   supported.
+
+Also: **`tt` and DY normalisations "are determined in the final fit to data"** — the same
+floating-rate treatment as our `rate_params: [tt]`, and as ttW/ttZ in §1.
+
+### Other structure worth noting
+
+- SRs further split by jet content: **boosted / 1b / ≥2b** — a multiplicity split like the
+  AN's Nc-j idea, but on b-tagged jets.
+- Separate **DY and tt validation regions** (Table 1) — a VR distinct from the CRs, echoing
+  the validation sideband in HIG-24-018 (§0).
+- A **simultaneous binned profile likelihood fit** across all SRs and CRs.
+
+---
+
 ## Summary — what to take from this
 
 **The auditability worry in §2 of the strategy note is largely answered.** Argmax-defined
@@ -276,9 +335,25 @@ Ranked by what we should actually do:
    own finding that CvL carries the H+c-vs-ggH separation (AUC 0.731) and CvB does not
    (0.551).
 
-**Citation to reach for first:** HIG-24-018 for method *and* physics (charm Yukawa, 2D
-c-tag categories, argmax CRs); arXiv:2011.03652 when a *published, peer-reviewed* reference
-is required.
+6. **Make the CRs yield-only.** arXiv:2604.02127 (§4) fits "the event yield in the CRs" while
+   fitting shapes only in the SRs — **Run 3 precedent** for what §3 of the strategy note
+   already recommended from AN-23-102. We currently fit a 10-bin shape in all six channels.
+7. **Consider staging the classifiers.** Multiclass for *categorisation*, a separate binary NN
+   for the *discriminant* inside each SR (§4). Two of the four analyses here converge on a
+   dedicated classifier against the degenerate competitor (§3, §4).
+
+**Which to cite for what:**
+
+| need | cite |
+|---|---|
+| **same era (Run 3, 13.6 TeV)** + argmax SR/CR + WW final state | **arXiv:2604.02127** (§4) |
+| method **and** physics — charm Yukawa, 2D c-tag categories, argmax CRs | **HIG-24-018** (§0) |
+| a *published, peer-reviewed* argmax reference, in a H→WW channel | **arXiv:2011.03652** (§1) |
+| c-tagging WP / CvB choices in charm-Higgs | arXiv:2503.08797 (§3) |
+
+**Era note:** §§0–3 are Run 2 (13 TeV, 137–138 fb⁻¹); only §4 is Run 3. No Run 3 analysis of
+*charm-associated* Higgs production in H→WW was found — that space appears to still be open,
+which is consistent with AN-23-102 being a full-Run-2 note.
 
 ## Sources
 
