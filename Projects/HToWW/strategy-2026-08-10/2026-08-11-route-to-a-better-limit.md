@@ -83,16 +83,39 @@ MC-stat effect from any change in normalisation) and re-running the limit:
 Diminishing returns are visible: 3× captures 148 of the 252, because once V+jets errors
 fall the other processes begin to dominate.
 
-## Route to ~1000
+## Route to ~1000 — the ordering matters
 
-| action | expected limit | effort |
-|---|---:|---|
-| 3× V+jets MC (preEE + 2023) | **1037** | processing already exists |
-| + `flavor_composition_ggH` correctly scoped | ~1012 | config only |
-| + AN's Nc-j=1 / Nc-j>1 SR split (+8%) | **~930** | config + card |
+| # | action | expected limit | effort |
+|---|---|---:|---|
+| **1** | **3× V+jets MC (preEE + 2023)** | **1037** | processing already exists |
+| 2 | `flavor_composition_ggH` correctly scoped | ~1012 | config only, independent |
+| 3 | AN's Nc-j=1 / Nc-j>1 SR split | ~930 | **blocked by 1 — see below** |
 
 **~1000 is comfortably reachable**, and none of it requires winning the argument about the
 30% 4FS/5FS theory uncertainty.
+
+### The Nc-j split is currently blocked by the same MC shortfall
+
+`cjet_multiplicity` is already in the parquets, so the AN's Nc-j=1 / Nc-j>1 split (lines
+337–338, quoted at +8%) needs no reprocessing. The SR populations are favourable —
+**signal is 91% Nc-j=1 against tt's 79%**, so the split does concentrate signal.
+
+But it collides with the MC-stat problem above. Raw V+jets MC events in the SR:
+
+| category | raw V+jets MC events | per bin (10 bins) |
+|---|---:|---:|
+| combined SR (current) | 1043 | 104 — already n_eff ≈ 30 |
+| Nc-j = 1 | 896 | 90 |
+| **Nc-j > 1** | **147** | **14.7** |
+
+The Nc-j>1 category would sit at `n_eff` of order 5–15 per bin, i.e. **below the
+autoMCStats threshold of 10**, spawning per-bin nuisances precisely in the region that
+already costs 223 units. The AN's +8% is quoted for **full Run 2**, with several times the
+MC available.
+
+**On 2022postEE alone the split would probably cost more in MC-stat nuisances than it
+gains in separation.** After action 1, Nc-j>1 would hold ~440 V+jets events and the split
+becomes affordable — so this is a good idea whose prerequisite is more MC, not a bad idea.
 
 **This is a conservative lower bound on the multi-era gain.** The test above adds only MC
 statistics. A real multi-era fit also adds **data**, which lowers the 637 stat-only floor
