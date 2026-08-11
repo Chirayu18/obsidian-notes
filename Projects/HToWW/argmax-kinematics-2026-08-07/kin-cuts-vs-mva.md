@@ -202,24 +202,52 @@ paid for with the control regions.
 
 ---
 
+## 05b · The missing half: what the looser WP admits — and the answer is *no*
+
+### `hww_ctag_compare`, 2022preEE, full MC — four categories over **one** untagged jet collection, weighted yields
+
+| process | base (no tag) | medium WP | loose WP | kin, no tag |
+|---|---:|---:|---:|---:|
+| **H+c (signal)** | 1.79× | **1.00×** | **1.70×** | 1.56× |
+| **ggH (degenerate)** | 2.92× | **1.00×** | **2.67×** | 2.16× |
+| tt | 1.44× | 1.00× | 1.40× | 0.46× |
+| V+jets | 2.37× | 1.00× | 2.21× | 0.38× |
+
+<div class="stats">
+<div class="stat"><span class="lab">signal gain, medium→loose</span><span class="val">1.70×</span><span class="note">what slide 05 measured</span></div>
+<div class="stat hi"><span class="lab">ggH gain, medium→loose</span><span class="val">2.67×</span><span class="note">the half that was missing</span></div>
+<div class="stat hi"><span class="lab">H+c/ggH enrichment retained</span><span class="val">0.64×</span><span class="note">loosening destroys 36% of it</span></div>
+</div>
+
+<div class="callout">
+
+**ggH grows 1.57× faster than signal.** The charm tag exists to buy H+c-over-ggH
+enrichment, and loosening the WP gives back **36%** of it. Dropping the tag entirely is
+worse (0.62×). The acceptance gain on slide 05 is real but it is **not free** — this is the
+measurement that decides it, and it says **keep the medium WP.**
+
+</div>
+
+---
+
 ## 06 · What this argument does not yet prove
 
-- **Loosening the WP admits more ggH too.** CvL carries the H+c-vs-ggH separation
-  (AUC 0.731); CvB does not (0.551 ≈ coin flip). A looser WP moves down the CvL axis, so
-  signal *and* ggH both rise — acceptance alone cannot decide it.
-- **Purity is measured here; sensitivity is not.** These are raw event counts. The limit
-  also depends on how systematics act on a larger background.
+- ~~**Loosening the WP admits more ggH too.**~~ **Now measured — see slide 05b.** ggH rises
+  2.67× against signal's 1.70×, so the enrichment falls to 0.64×. CvL carries the
+  H+c-vs-ggH separation (AUC 0.731), CvB does not (0.551 ≈ coin flip); a looser WP moves
+  down the CvL axis and admits the degenerate background faster than the signal.
+- **Purity is measured here; sensitivity is not.** These are event counts, not a limit. The
+  limit also depends on how systematics act on a larger background.
 - **Selection and SF boundaries do not coincide.** The 2D SF scheme bins on
   `x=CvL/(CvL+CvB(1−CvL))` and `y=1−CvB`; a rectangular WP cut is a different shape in
   that plane. Already true in production, but worth stating.
 
 <div class="flag">
 
-**All numbers here are 2022postEE**, from the completed `hww_combine_fixed` MVA tree.
-The loose-WP row on slide 05 is measured offline on the untagged `hww_2dcat_nocjet` signal —
-a genuine like-for-like WP comparison, but signal-only, so it gives acceptance and **not**
-the ggH the looser WP also admits. `hww_ctag_compare` (2022preEE, 191 jobs running) supplies
-that missing half with full MC across all four categories on identical events.
+**Slides 01–05 are 2022postEE** (`hww_combine_fixed` MVA tree, raw counts); **slide 05b is
+2022preEE** (`hww_ctag_compare`, weighted yields, full MC). The two agree on the signal
+ratio to within a few percent across different eras, weighting, and code paths — the
+raw-postEE loose/medium of 1.65× against the weighted-preEE 1.70×.
 
 </div>
 
@@ -233,7 +261,9 @@ that missing half with full MC across all four categories on identical events.
 2. **The MVA already applies the SR kinematic cuts internally** — 0.0098% vs 11.36% argmax=signal
    across the mT<sub>ll</sub> wall, with `mtll` not even an input.
 3. **Cutting deletes the sidebands the network learns from**, and empties the CRs you need to fit.
-4. **Spend the acceptance budget on the charm WP.** Going medium → loose recovers **1.65×**
-   the signal — comparable to the 1.63× the kinematic cuts buy, but without emptying a CR.
+4. **Neither acceptance lever is free.** Medium → loose recovers **1.70×** the signal —
+   comparable to the 1.63× the kinematic cuts buy — but admits ggH at **2.67×**, giving back
+   36% of the H+c/ggH enrichment. **Keep the medium WP.** The kinematic cuts buy 1.63× on
+   S/√B but empty the CRs. The MVA-defined regions remain the one change that costs nothing.
 
-<footer>2022postEE · v11 6-class MVA [hplusc, higgsbkg, tt, st, diboson, vjets] · pooled MC 4,046,127 events, raw/unweighted · purity = true-process fraction</footer>
+<footer>Slides 01–05: 2022postEE, v11 6-class MVA [hplusc, higgsbkg, tt, st, diboson, vjets], pooled MC 4,046,127 events, raw · Slide 05b: 2022preEE hww_ctag_compare, weighted yields, full MC · purity = true-process fraction</footer>
