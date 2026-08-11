@@ -249,6 +249,10 @@ measurement that decides it, and it says **keep the medium WP.**
 ratio to within a few percent across different eras, weighting, and code paths — the
 raw-postEE loose/medium of 1.65× against the weighted-preEE 1.70×.
 
+The **H+c and ggH samples are 100% complete** (7/7 and 4/4 partitions), so the
+signal, ggH, and enrichment figures on slide 05b are final. The tt and V+jets rows are
+drawn from 174/191 jobs and may shift slightly.
+
 </div>
 
 ---
