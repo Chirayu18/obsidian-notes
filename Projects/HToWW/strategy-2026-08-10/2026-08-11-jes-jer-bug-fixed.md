@@ -120,9 +120,50 @@ The headline 1185 is the median read directly from
 that is the first freeze-one-nuisance **impacts** run (`drive_combine.py` lines 90–92),
 not the main limit.
 
+## Nuisance impacts — PARTIAL (9 of 23 converged)
+
+`drive_combine.py`'s `freeze_per_nuisance` loop ran all 46 fits (23 nuisances × up/dn) and
+reported no failures, but **only 9 produced a usable result**. The other 14 — including
+*every one of the 13 shape systematics* — wrote a degenerate file with a single entry at
+quantile 0.025 and the identical value 3984.4, instead of the normal 5-quantile band.
+Combine still exited 0, so the driver did not flag it.
+
+**Treat the ranking below as covering lnN normalisations only.** The shape systematics
+(JES/JER, ctag2d, ps_isr/fsr, scalevar, pileup, lepton IDs) are *not* measured here, which
+is unfortunate because they are exactly the ones the argmax-migration question turns on.
+
+| nuisance | +1σ | −1σ | max shift |
+|---|---:|---:|---:|
+| **`xsec_hplusc_4FS_5FS`** | 815 | 1376 | **370** |
+| `xsec_hplusc_PDF` | 1113 | 1250 | 72 |
+| `flavor_composition_ggH` | 1171 | 1158 | 27 |
+| `xsec_vjets` | 1198 | 1171 | 14 |
+| `BR_HtoWW` | 1174 | 1196 | 11 |
+| `lumi_13p6TeV` | 1178 | 1192 | 7 |
+| `xsec_higgsbkg` | 1188 | 1182 | 3 |
+| `xsec_st` / `xsec_diboson` | — | — | 1 |
+
+**`xsec_hplusc_4FS_5FS` dominates by 5×** — the 30% H+c flavour-scheme uncertainty from AN
+Table 16. This is a *theory normalisation on the signal itself*: it scales the signal yield
+directly, so no amount of background rejection touches it. It also explains why the
+freeze-one-nuisance runs during the main loop clustered so tightly (1171–1198): those were
+the small nuisances, and the one that matters moves the limit to 815/1376.
+
+**Consequence for the "tighten the SR" branch:** the largest measured lever on this limit is
+a signal theory uncertainty, not background contamination. SR tightening cannot address it.
+
 ## Follow-up
 
 - The checker's zero-guard should use a small epsilon rather than exact 0 to avoid
   flagging empty signal templates in background CRs.
 - Smoothing (action 5 of the strategy note) is now unblocked — it would have smoothed over
   a bug if applied before this fix.
+- **Fix the impacts loop so shape systematics converge** (14 of 23 fits returned a
+  degenerate single-quantile result while combine exited 0). Until then the impact ranking
+  is lnN-only and the JES/JER migration cost is unquantified. Likely needs the fit options
+  revisited — `-t -1 --run blind --noFitAsimov` with `--freezeParameters` on a shape
+  nuisance may be under-determined. `drive_combine.py` should also check the output has 5
+  quantiles rather than trusting the exit code.
+- **`xsec_hplusc_4FS_5FS` (30%, AN Table 16) is the single largest lever on the limit.**
+  Worth confirming the 30% is still the right number for this analysis before optimising
+  anything downstream of it.
