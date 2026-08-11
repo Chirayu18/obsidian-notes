@@ -103,6 +103,23 @@ broken groups and the frozen one are fully repaired.
 so Up and Down both broaden the distribution and move yields the same way (−0.30% / −0.30%
 for tt). Expected, not a defect.
 
+## Impact on the limit
+
+| card | stat-only | full | syst penalty |
+|---|---:|---:|---:|
+| baseline `hww_combine_fixed` | 676 | **1164** | 1.72× |
+| 2dcat **before** fix | 637 | **1676** | 2.63× |
+| 2dcat **after** fix | 637 | **1185** | **1.86×** |
+
+Full limit **1676 → 1185 (−29%)**. Stat-only is **unchanged at 637**, which is the
+expected internal consistency check: a fix to shape *systematics* must not move the
+statistics-only result.
+
+The headline 1185 is the median read directly from
+`higgsCombineV3Limit.AsymptoticLimits.mH120.root`. The log also contains a 1178 block —
+that is the first freeze-one-nuisance **impacts** run (`drive_combine.py` lines 90–92),
+not the main limit.
+
 ## Follow-up
 
 - The checker's zero-guard should use a small epsilon rather than exact 0 to avoid

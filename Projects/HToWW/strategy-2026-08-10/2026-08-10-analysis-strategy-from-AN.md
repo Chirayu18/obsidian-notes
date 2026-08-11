@@ -183,11 +183,16 @@ was an artifact of the JES/JER bug.** With that fixed, the picture changes mater
 |---|---:|---:|---:|
 | baseline `hww_combine_fixed` | 676 | **1164** | 1.72× |
 | 2dcat **before** fix | 637 | **1676** | 2.63× |
-| 2dcat **after** fix | 637 | **1178** | **1.85×** |
+| 2dcat **after** fix | 637 | **1185** | **1.86×** |
 
-2dcat's full limit improves **1676 → 1178 (−30%)** and now essentially ties the 1164
-baseline, while keeping its better stat-only limit (637 vs 676). Stat-only is *unchanged*
-at 637 — confirming the fix touched only the systematics, as it should.
+2dcat's full limit improves **1676 → 1185 (−29%)** and now essentially ties the 1164
+baseline (a 1.8% gap — a statistical tie), while keeping its better stat-only limit (637 vs
+676). Stat-only is *unchanged* at 637 — confirming the fix touched only the systematics, as
+it should.
+
+*(Provenance: 1185 is the median from `higgsCombineV3Limit.AsymptoticLimits.mH120.root`,
+read from the ROOT file. The log also shows a 1178 block — that is the first
+freeze-one-nuisance **impacts** run, not the headline limit.)*
 
 So the categories do buy real separation; the earlier verdict was measuring a bug. What
 remains is a **1.85× systematics penalty vs the baseline's 1.72×** — the residual gap is
