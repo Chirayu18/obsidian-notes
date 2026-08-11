@@ -17,10 +17,37 @@ open directly in Obsidian on the laptop.
   (Table 17), uncertainty breakdown (Table 18: 60% statistical), systematics list (§7.1/7.2).
 - **EOS original:** `/eos/home-c/cgupta/HToWW/b-hive/docs/AN2023_102_v14 ... (1).pdf`
 
-### HIG-24-018 (paper)
+### HIG-24-018 (paper) ⭐ the primary methodological reference
 - **File:** [[HIG-24-018-paper-v15.pdf]]
-- **Why:** the argmax-channelization (SR + CRs) strategy our combine pipeline mirrors.
+- **Title:** Simultaneous probe of the charm and bottom quark Yukawa couplings using ttH events, 138 fb⁻¹.
+- **Why:** the argmax-channelization (SR + CRs) strategy our combine pipeline mirrors — and it
+  matches us on **three** axes: argmax-defined regions, the **same 11 mutually-exclusive 2D
+  c-tag categories** (B0–B4/C0–C4, fed to the classifier as booleans exactly like our one-hots),
+  and a charm-Yukawa target.
+- **Key technique we do NOT use:** CRs are assigned by a **weighted argmax** — per-class weights
+  100/12/4/2/1 "optimized to enhance the purity of each CR" (lines 576–578). Config-level lever,
+  no retraining. Also has a **validation sideband** (0.4 < D_ttX < 0.6) and a hierarchical cut on
+  the *summed* discriminant before the argmax.
+- **Read with:** [[2026-08-11-mva-defined-regions-literature]] §0.
 - **EOS original:** `/eos/home-c/cgupta/HToWW/b-hive/docs/HIG-24-018-paper-v15.pdf`
+
+### arXiv:2011.03652 — CMS ttH/tH multilepton (the published argmax precedent)
+- **File:** [[2011.03652-ttH-multilepton-argmax-ANN.pdf]]
+- **Why:** peer-reviewed CMS result **in a H→WW decay channel** that classifies events into
+  "ANN output node categories" **by the highest-activation output node**, uses background nodes
+  as fit categories, and leaves **ttW and ttZ rates unconstrained** — the published justification
+  for our argmax regions + `rate_params: [tt]`. Also feeds two *conventional* CRs into the same
+  fit alongside the argmax categories.
+- **Sections:** §6 (ANN, p.17), §7.3 (CRs, p.24), §7.4 (unconstrained rates).
+
+### arXiv:2503.08797 — CMS cH → γγ (same physics, different choices)
+- **File:** [[2503.08797-cH-diphoton-charm.pdf]]
+- **Why:** charm-associated Higgs with **ggH as the degenerate background** — our exact problem.
+  Uses **two binary BDTs** (cH-vs-ggH, cH-vs-continuum) rather than one multiclass, and
+  **deliberately excludes c-tagging from the training** so the ggH heavy-flavour uncertainty stays
+  a clean normalisation (contrast HIG-24-018, which does the opposite). Chose ~30% charm
+  efficiency and **dropped CvsB** as only a minor improvement — independent support for our
+  CvL/CvB findings and for keeping the medium WP.
 
 ### MVA_Studies (proposed Run 3 talk, Athens 2026)
 - **File:** [[MVA_Studies.pdf]] (in `References/MVA_Studies_Athens_2026/`)
