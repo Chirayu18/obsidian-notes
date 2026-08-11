@@ -210,8 +210,8 @@ paid for with the control regions.
 |---|---:|---:|---:|---:|
 | **H+c (signal)** | 1.79× | **1.00×** | **1.70×** | 1.56× |
 | **ggH (degenerate)** | 2.92× | **1.00×** | **2.67×** | 2.16× |
-| tt | 1.44× | 1.00× | 1.40× | 0.46× |
-| V+jets | 2.37× | 1.00× | 2.21× | 0.38× |
+| tt | 1.87× | 1.00× | 1.55× | 0.56× |
+| V+jets | 2.39× | 1.00× | 2.23× | 0.34× |
 
 <div class="stats">
 <div class="stat"><span class="lab">signal gain, medium→loose</span><span class="val">1.70×</span><span class="note">what slide 05 measured</span></div>
@@ -250,8 +250,8 @@ ratio to within a few percent across different eras, weighting, and code paths �
 raw-postEE loose/medium of 1.65× against the weighted-preEE 1.70×.
 
 The **H+c and ggH samples are 100% complete** (7/7 and 4/4 partitions), so the
-signal, ggH, and enrichment figures on slide 05b are final. The tt and V+jets rows are
-drawn from 174/191 jobs and may shift slightly.
+signal, ggH, and enrichment figures on slide 05b are final — they were unchanged between
+the 174/191 and 186/191 snapshots. The tt and V+jets rows are drawn from 186/191 jobs.
 
 </div>
 
