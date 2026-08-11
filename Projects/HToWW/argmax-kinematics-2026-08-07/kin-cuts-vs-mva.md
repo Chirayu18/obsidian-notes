@@ -251,7 +251,9 @@ raw-postEE loose/medium of 1.65× against the weighted-preEE 1.70×.
 
 The **H+c and ggH samples are 100% complete** (7/7 and 4/4 partitions), so the
 signal, ggH, and enrichment figures on slide 05b are final — they were unchanged between
-the 174/191 and 186/191 snapshots. The tt and V+jets rows are drawn from 186/191 jobs.
+the 174/191 and 186/191 snapshots. The tt and V+jets rows are drawn from **186/191** jobs;
+`DYto2L_2Jets_50` and `TTto2L2Nu` are partial (repeated XRootD timeouts on remote replicas),
+which affects only those two rows.
 
 </div>
 
