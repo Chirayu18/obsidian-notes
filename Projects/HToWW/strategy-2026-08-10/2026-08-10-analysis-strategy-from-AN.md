@@ -153,15 +153,14 @@ confirmed match.
 
 ## 6. Prioritised actions
 
-**1. Diagnose the JES/JER merged-group bug.** *(blocks everything shape-related)*
-Systematics inflate the limit 1.7× (1164 full vs 676 stat-only), and this sits in exactly
-that machinery. Signature: vjets 1507.7→437 and higgsbkg 131→1.4 for **both** Up and Down
-(same sign — impossible for a ±1σ scale shift), while tt and st move a physical ±1.5% and
-diboson is **frozen identical to nominal**. The two broken processes are the two *merged
-groups*; the healthy ones are single-sample. Strongly suggests constituent datasets missing
-their varied trees, so the varied template sums over a subset. **Now testable — 
-`hww_combine_2dcat` reached 506/506.** Note the earlier "incomplete `hww_combine_fixed`
-tree" theory is dead: that tree was complete.
+**1. ~~Diagnose the JES/JER merged-group bug.~~ ✅ FIXED 2026-08-11.**
+Root cause: inference had scored only **19 of 57 samples** into the object-shift
+directories, so merged groups summed a partial subset while nominal summed all of them.
+Re-running `run_inference.py` took all 12 shift dirs to **44 samples** (the complete MC
+set; the remaining entries are data + merged-group outputs). Verified: per-process yields
+summed over all channels now move a physical **±1.5–3.6% with opposite signs** — vjets
++1.50%/−1.70%, higgsbkg +2.73%/−2.67%, diboson +3.27%/−3.61%. Full write-up in
+[[2026-08-11-jes-jer-bug-fixed]].
 
 **2. Split `higgsbkg` to isolate the charm component.** Retires the known-wrong 1.40
 placeholder, enables the 2POI fit, removes the shape-averaging artifact.
@@ -177,10 +176,24 @@ correctness issue), add MET-unclustered and PU-Jet-ID nuisances.
 **5. Then apply smoothing.** AN v8 added it specifically to counter migration-induced
 constraints. Doing it before action 1 would smooth over a bug rather than a genuine effect.
 
-**6. Do not adopt the 2D-ctag-category variant yet.** It gives a *worse* full limit (1676
-vs 1164) despite a *better* stat-only limit (637 vs 676) — it buys separation at the cost
-of amplifying systematics that are currently broken (1) and incomplete (4). Revisit after
-those are fixed.
+**6. ~~Do not adopt the 2D-ctag-category variant yet.~~ REVISED 2026-08-11 — the 1676
+was an artifact of the JES/JER bug.** With that fixed, the picture changes materially:
+
+| card | stat-only | full | syst penalty |
+|---|---:|---:|---:|
+| baseline `hww_combine_fixed` | 676 | **1164** | 1.72× |
+| 2dcat **before** fix | 637 | **1676** | 2.63× |
+| 2dcat **after** fix | 637 | **1178** | **1.85×** |
+
+2dcat's full limit improves **1676 → 1178 (−30%)** and now essentially ties the 1164
+baseline, while keeping its better stat-only limit (637 vs 676). Stat-only is *unchanged*
+at 637 — confirming the fix touched only the systematics, as it should.
+
+So the categories do buy real separation; the earlier verdict was measuring a bug. What
+remains is a **1.85× systematics penalty vs the baseline's 1.72×** — the residual gap is
+the argmax **channel-migration** exposure documented in §2 and
+[[2026-08-11-jes-jer-bug-fixed]], which is what smoothing (action 5) targets. Closing the
+gaps in (4) and applying smoothing is now the path to putting 2dcat ahead rather than level.
 
 ## 7. On loosening the charm WP — measured, and the answer is no
 
