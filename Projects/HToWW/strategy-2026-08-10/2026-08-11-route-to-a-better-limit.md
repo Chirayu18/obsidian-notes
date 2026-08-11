@@ -88,8 +88,31 @@ fall the other processes begin to dominate.
 | # | action | expected limit | effort |
 |---|---|---:|---|
 | **1** | **3× V+jets MC (preEE + 2023)** | **1037** | processing already exists |
-| 2 | `flavor_composition_ggH` correctly scoped | ~1012 | config only, independent |
+| 2 | `flavor_composition_ggH` correctly scoped | **−21 (measured)** | config only, independent |
 | 3 | AN's Nc-j=1 / Nc-j>1 SR split | ~930 | **blocked by 1 — see below** |
+
+### Action 2, measured: 1185 → 1164
+
+The card currently applies `flavor_composition_ggH: {higgsbkg: 1.40}` — the AN's
+ggH+heavy-flavour 50% — to the **entire merged higgsbkg group** in all six channels. But
+ggH is only **13.1%** of that group's SR yield:
+
+| constituent | SR share |
+|---|---:|
+| VBF | 29.0% |
+| ggZH | 23.3% |
+| ZH | 21.0% |
+| **ggH** | **13.1%** |
+| WH | 9.1% |
+| ttH / H+b / H→ττ | 4.6% |
+
+So ~87% of the group is being penalised by an uncertainty that does not apply to it.
+Rescaling the nuisance to ggH's actual share (1.40 → 1.052 on the merged group) gives
+**r < 1164**, a gain of 21.
+
+Small, but it is a **correctness fix rather than a tuning knob**, it is config-only, and
+the proper version — splitting `higgsbkg` by jet flavour (§4 of the strategy note) — is
+also the prerequisite for the 2POI fit.
 
 **~1000 is comfortably reachable**, and none of it requires winning the argument about the
 30% 4FS/5FS theory uncertainty.
