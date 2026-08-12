@@ -43,3 +43,10 @@ Projects/HToWW/argmax-kinematics-2026-08-07/slide.*.png
 # at /eos/user/c/cgupta/HToWW/leptonmva/
 Muon-mvaTTH.*.weights.xml
 Electron-mvaTTH.*.weights*.xml
+
+# Semantic search index (regenerable: scripts/rag/vault-search --build)
+.obsidian-semantic-index.json
+
+# Python bytecode
+__pycache__/
+*.pyc

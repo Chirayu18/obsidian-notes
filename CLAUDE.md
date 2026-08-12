@@ -3,6 +3,30 @@
 This is Chirayu's Obsidian vault, synced between the laptop (where Obsidian runs)
 and lxplus (where analysis work happens) **via git** (GitHub remote `origin`).
 
+## Searching the vault — use `vault-search` before grepping
+
+**When you need prior context from these notes (past decisions, why something was
+done, where a pipeline is documented), run this first:**
+
+```bash
+scripts/rag/vault-search "why did the limit come out wrong"
+```
+
+It fuses semantic search (meaning-based, finds notes that share no keywords with
+your query) with a keyword pass, via reciprocal rank fusion. Use it when you know
+*what you mean* but not what the note calls it. Plain `rg` is still the right tool
+when you know the exact term (a function name, a dataset tag).
+
+- `--limit N` — number of results (default 8)
+- `--paths-only` — bare paths, for piping into Read
+- `--no-archive` — hide `Archive/` hits (they're tagged `[ARCHIVED]` otherwise)
+- `--build` — refresh the index; **run this after writing notes**, it's incremental
+  (~0.4s when nothing changed, ~75s for a full rebuild)
+
+Requires Ollama running with `bge-m3` pulled. If Ollama is down it degrades to
+keyword-only and says so on stderr — it never hard-fails. On lxplus (no Ollama)
+it runs keyword-only; that's expected.
+
 ## When running on lxplus — dump work into the vault
 
 When you generate notes, docs, or plots during a session on lxplus, **save them into

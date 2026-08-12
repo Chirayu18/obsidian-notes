@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""Search the Obsidian vault by meaning, with a keyword pass folded in.
+
+Semantic layer is vendored from obsidian-second-brain (MIT, see vendor/).
+This wrapper adds:
+  - vault-root resolution, so it runs from any cwd (lxplus included)
+  - a ripgrep pass merged into the ranking, because pure-semantic ranking
+    tails off on short factual queries ("which sites get re-admitted")
+  - snippet output, so callers get context without opening every file
+
+Usage:
+    vault-search "why did the limit come out wrong"
+    vault-search --limit 5 --no-archive "crab memory"
+    vault-search --build          # refresh the index after writing notes
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import re
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+VENDOR = Path(__file__).resolve().parent / "vendor"
+sys.path.insert(0, str(VENDOR))
+
+
+def vault_root() -> Path:
+    """Vault root: $OBSIDIAN_VAULT_PATH, else two levels up from this script."""
+    env = os.environ.get("OBSIDIAN_VAULT_PATH")
+    if env:
+        return Path(env).expanduser().resolve()
+    return Path(__file__).resolve().parents[2]
+
+
+def keyword_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, int], str]:
+    """Count per-file matches for the query's content words.
+
+    Returns ({relpath: hit_count}, error_message). Prefers ripgrep but falls
+    back to POSIX grep: `rg` is often a shell function/alias rather than a real
+    binary (and is absent on lxplus), which shutil.which cannot see -- relying
+    on it alone silently disabled this whole arm.
+    """
+    tool = shutil.which("rg") or shutil.which("grep")
+    if not tool:
+        return {}, "no rg/grep on PATH"
+    use_rg = Path(tool).name == "rg"
+    # Drop stopwords and short tokens; what's left are the terms worth matching.
+    stop = {
+        "the", "a", "an", "and", "or", "but", "if", "of", "to", "in", "on", "for",
+        "with", "how", "why", "what", "when", "which", "that", "this", "is", "are",
+        "was", "were", "do", "does", "did", "i", "my", "me", "it", "its", "from",
+        "at", "by", "as", "be", "been", "can", "could", "would", "should", "get",
+        "got", "out", "up", "so", "not", "no", "yes", "we", "you",
+    }
+    terms = [t for t in re.findall(r"[A-Za-z0-9_+-]{3,}", query.lower()) if t not in stop]
+    if not terms:
+        return {}, ""
+    pattern = "|".join(re.escape(t) for t in terms)
+    # Honour the same skip set as the semantic indexer, or the two arms search
+    # different universes (venvs, node_modules and .git would leak into results).
+    try:
+        from vault_ops import _SKIP_DIRS as skip
+    except ImportError:
+        skip = {".git", ".obsidian", "node_modules", "__pycache__"}
+    if use_rg:
+        cmd = [tool, "-i", "--count-matches", "--glob", "*.md"]
+        cmd += [f"--glob=!{d}/" for d in sorted(skip)]
+        cmd += ["-e", pattern, "."]
+    else:
+        # POSIX grep: -c counts matching *lines*, close enough for rank order.
+        cmd = [tool, "-rIic", "--include=*.md"]
+        cmd += [f"--exclude-dir={d}" for d in sorted(skip)]
+        cmd += ["-E", "-e", pattern, "."]
+    try:
+        proc = subprocess.run(cmd, cwd=vault, capture_output=True, text=True, timeout=60)
+    except (subprocess.SubprocessError, OSError) as exc:
+        return {}, f"keyword search failed: {exc}"
+    hits: dict[str, int] = {}
+    for line in proc.stdout.splitlines():
+        path, _, count = line.rpartition(":")
+        # grep -c emits a 0 line for every non-matching file; drop those.
+        if not path or not count.isdigit() or int(count) == 0:
+            continue
+        hits[path.lstrip("./")] = int(count)
+    return dict(sorted(hits.items(), key=lambda kv: -kv[1])[: limit * 4]), ""
+
+
+def snippet(vault: Path, rel: str, query: str, width: int = 200) -> str:
+    """First line mentioning a query term, else the first prose line."""
+    try:
+        text = (vault / rel).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    terms = [t for t in re.findall(r"[A-Za-z0-9_+-]{4,}", query.lower())]
+    lines = [ln.strip() for ln in text.splitlines()]
+    prose = [
+        ln for ln in lines
+        if ln and not ln.startswith(("---", "#", "|", "```", "tags:", "status:", "date:", "source:"))
+    ]
+    for ln in prose:
+        low = ln.lower()
+        if any(t in low for t in terms):
+            return ln[:width]
+    return prose[0][:width] if prose else ""
+
+
+def main(argv: list[str]) -> int:
+    ap = argparse.ArgumentParser(
+        prog="vault-search",
+        description="Semantic + keyword search over the Obsidian vault.",
+    )
+    ap.add_argument("query", nargs="*", help="Natural-language query")
+    ap.add_argument("--limit", type=int, default=8, help="Max results (default 8)")
+    ap.add_argument("--build", action="store_true", help="Rebuild the index, then exit")
+    ap.add_argument("--no-archive", action="store_true", help="Hide Archive/ hits")
+    ap.add_argument("--paths-only", action="store_true", help="Print paths, no scores/snippets")
+    args = ap.parse_args(argv)
+
+    vault = vault_root()
+    if not vault.is_dir():
+        print(f"vault-search: no vault at {vault}", file=sys.stderr)
+        return 2
+
+    try:
+        import semantic_search as ss
+    except ImportError as exc:
+        print(f"vault-search: cannot load vendored search core: {exc}", file=sys.stderr)
+        return 2
+
+    if args.build:
+        try:
+            ss.build_index(vault)
+        except Exception as exc:
+            print(f"vault-search: index build failed: {exc}", file=sys.stderr)
+            print("Is Ollama running?  ollama serve   /   ollama pull bge-m3", file=sys.stderr)
+            return 1
+        return 0
+
+    query = " ".join(args.query).strip()
+    if not query:
+        ap.error("a query is required (or use --build)")
+
+    # Ripgrep pass, shaped as the [{path,title,score}] the fuser expects.
+    # Already rank-ordered by match count.
+    kw, kw_err = keyword_hits(vault, query, args.limit)
+    if kw_err:
+        print(f"[keyword arm unavailable: {kw_err}]", file=sys.stderr)
+    lexical = [{"path": rel, "title": Path(rel).stem, "score": float(n)} for rel, n in kw.items()]
+
+    # Fuse with the vendored Reciprocal Rank Fusion: it combines the two rank
+    # orders without needing cosine values and match counts to be comparable.
+    # Falls back to keyword-only if Ollama or the index is unavailable, so a
+    # missing index still returns something useful instead of erroring out.
+    semantic_failed = ""
+    over = max(args.limit * 3, 20)
+    try:
+        index = ss.load_index(vault)
+        results = ss.hybrid_search(query, index, lexical, limit=over)
+    except Exception as exc:
+        semantic_failed = str(exc)
+        results = [dict(r, score=1.0 / (60 + i)) for i, r in enumerate(lexical)]
+
+    ranked = [(r["path"], r["score"]) for r in results]
+    if args.no_archive:
+        ranked = [(r, s) for r, s in ranked if not r.startswith("Archive/")]
+    ranked = ranked[: args.limit]
+
+    if not ranked:
+        print("No matches.", file=sys.stderr)
+        if semantic_failed:
+            print(f"(semantic layer unavailable: {semantic_failed})", file=sys.stderr)
+        return 1
+
+    if semantic_failed:
+        print(f"[keyword-only: {semantic_failed}]", file=sys.stderr)
+
+    for rel, score in ranked:
+        if args.paths_only:
+            print(rel)
+            continue
+        tag = " [ARCHIVED]" if rel.startswith("Archive/") else ""
+        print(f"{score:.4f}  {rel}{tag}")
+        snip = snippet(vault, rel, query)
+        if snip:
+            print(f"        {snip}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
