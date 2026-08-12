@@ -78,7 +78,7 @@ physics question for a Run 3 analysis.
 | Diboson | 12 exclusive samples | 3 inclusive (WW/WZ/ZZ) 193.3 pb | **AN better** — see below |
 | W+gamma | 1 (WGToLNuG 01J) 192.3 pb | 5 PTG-binned 664.7 pb | **ours better** — binned in photon pT |
 | V+jets | 3 NLO jet-binned + 4 pT-binned + 9 HT-binned + sherpa | **1 inclusive** 67710 pb | **AN much better** — known gap |
-| DY | DYJetsToTauTau TauToMuEle 117.08 pb | DYto2L 10to50 + 50, 27638 pb | different strategy |
+| Z+jets | **1** ττ→eμ-filtered, 117.08 pb | 2 inclusive DY, 27638 pb | **AN better** — see below |
 
 ### Diboson is the notable structural difference
 
@@ -96,6 +96,61 @@ V+jets replacement.
 
 Note we DO have `WZto3LNu` (4.924 pb) in the fileset under key `wz-excl` — the
 one exclusive diboson sample — but it is **not requested by the workflow**.
+
+### Z+jets — the AN uses ONLY Z->tautau, and that is a deliberate stats argument
+
+AN-23-102 §2.3 (lines 164-166), verbatim:
+
+> "For Z+jets we consider only Z -> tautau -> e nu mu nu, which dominates our
+> selection, since tau decays can generate e-mu final state, while Z -> mumu(ee)
+> can't."
+
+Their single Z+jets sample is `DYJetsToTauTau_TauToMuEle_M-50` (117.08 pb) — a
+**generator-filtered** ττ→eμ sample. The reasoning is exact for an eμ final
+state: Z→ee and Z→μμ cannot produce eμ, so simulating them is wasted budget.
+Only Z→ττ with τ→e and τ→μ reaches the selection.
+
+We use **inclusive** DY (`DYto2L_2Jets_10to50` + `DYto2L_2Jets_50`, 27638 pb
+total) — 236x their cross section, where the large majority of generated events
+are Z→ee/μμ that fail the eμ requirement immediately.
+
+**MEASURED 2026-08-12** from `base/cutflow_base_DY+Jets.csv` (postEE, weighted):
+
+| cut | events | fraction |
+|---|---|---|
+| initial | 9,582,982,303 | — |
+| `one_ll_pair` | 12,023,064 | 0.126% of initial |
+| `one_muon_one_electron` | **189,453** | **1.58% of ll pairs** |
+| `atleast_one_cjet` | 68,638 | 0.00072% of initial |
+
+**The eμ requirement alone discards 98.4% of DY events that already had a
+lepton pair.** Overall SR survival is 1 in ~139,600 generated events.
+
+That 98.4% is precisely the Z→ee/μμ contamination the AN's ττ→eμ generator
+filter removes at source. We are paying full simulation and processing cost for
+events that cannot enter the selection.
+
+**Run 3 replacements EXIST** in `Run3Summer22EENanoAODv12` (verified via
+`dasgoclient`) — the `_Filtered` variants are the direct analogue of the AN's
+`TauToMuEle` sample:
+
+| sample | events |
+|---|---|
+| `DYto2Tau-2Jets_M-50_0J_Filtered_TuneCP5_13p6TeV_amcatnloFXFX-pythia8` | 43,864,206 |
+| `DYto2Tau-2Jets_M-50_1J_Filtered_...` | 65,170,238 |
+| `DYto2Tau-2Jets_M-50_2J_Filtered_...` | 110,138,041 |
+| **total filtered** | **219,172,485** |
+
+Unfiltered `DYto2Tau-2Jets_MLL-50_{0,1,2}J` also exist (657M total) if an
+unfiltered ττ sample is preferred.
+
+Note these are also **jet-binned (0J/1J/2J)**, so switching solves the same
+binning problem as the W+jets replacement and should probably be done in the
+same pass. DY is a smaller SR background than V+jets, so priority is lower —
+but the fix is the same shape and the phase-space waste is even more extreme
+(98.4% vs the W+jets negative-weight issue).
+
+Cross sections would be needed for whichever DY samples are adopted.
 
 ### V+jets — already known, already being worked
 
@@ -143,6 +198,9 @@ Optional, only if the corresponding samples are wired in:
 - `WZto3LNu` already has 4.924 pb in the fileset (would need the inclusive WZ
   rescaled to avoid double counting, exactly like the `-ext` trap).
 - TTZ already has 1.39 pb (needs a `process_map` entry, not a new xsec).
+- **DY ττ-filtered replacement**: `DYto2Tau-2Jets_M-50_{0J,1J,2J}_Filtered`
+  — 3 cross sections, if we adopt the AN's Z→ττ-only strategy.
+- **W+jets replacement** (already-open task): `WtoLNu-2Jets_{0J,1J,2J}`.
 
 ## Files touched
 
