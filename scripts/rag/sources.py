@@ -34,9 +34,23 @@ CODE_SKIP_DIRS = {
     ".git", "__pycache__", ".cache", "node_modules", ".ipynb_checkpoints",
     "build", "dist", ".eggs", "venv", ".venv", "site-packages",
     "condor_logs", "logs", "log", "outputs", "output", "plots", "figures",
+    # Per-dataset condor job trees: partitions.json is a generated list of
+    # XRootD paths, and the .sub/.sh beside it are templated per dataset.
+    "condor", "out", "img",
 }
 # Generated/vendored files that add noise without adding recall.
-CODE_SKIP_RE = re.compile(r"(^|/)(setup\.py|conftest\.py)$|\.min\.(js|css)$|_pb2\.py$")
+CODE_SKIP_RE = re.compile(
+    r"(^|/)(setup\.py|conftest\.py)$|\.min\.(js|css)$|_pb2\.py$"
+    # Generated data, not source: job-splitting output, correctionlib tables,
+    # dataset dumps. Embedding these buries real code under XRootD URLs and
+    # float arrays, and they churn constantly so they force re-embedding.
+    r"|(^|/)partitions?[_.][^/]*\.json$"
+    r"|(^|/)partitions\.json$"
+    r"|(^|/)analysis/data/.*\.json$"
+    r"|(^|/)(dataset_discovery|fileset)[^/]*\.json$"
+    r"|(^|/)filesets/.*\.json$"
+    r"|(^|/)\.sites_map\.json$"
+)
 
 MAX_CODE_BYTES = 400_000   # skip generated blobs masquerading as source
 MAX_PDF_CHARS = 120_000    # ~40 pages of prose; enough for an analysis note
