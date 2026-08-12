@@ -201,12 +201,17 @@ def search_multi(vault: Path, query: str, limit: int, tiers: list[str] | None,
             rrf += 1.0 / (K + sem_rank[ident])
         if ident in lex_rank:
             rrf += 1.0 / (K + lex_rank[ident])
+        # Superseded notes are demoted (x0.25), never hidden: "what did we think
+        # in June" is a legitimate question, and the note is tagged in output so
+        # a stale conclusion can't be mistaken for a current one.
         w = sources.TIER_WEIGHT.get(tier, 0.5)
-        rec = sources.recency_factor(e.get("mtime", now), now)
+        rec = sources.freshness(e, now)
         sim = sem_sim.get(ident, 0.0)
         out.append({
             "id": ident, "tier": tier, "path": e.get("path", ident),
             "sim": sim, "score": rrf * w * rec,
+            "status": e.get("status", ""),
+            "superseded_by": e.get("superseded_by", ""),
         })
     # Filter before slicing, or --no-archive silently returns fewer than `limit`.
     if no_archive:
@@ -279,6 +284,11 @@ def main(argv: list[str]) -> int:
                     label = {"papers": " [PDF]", "code": " [CODE]"}.get(r["tier"], "")
                     if ident.startswith("Archive/"):
                         label += " [ARCHIVED]"
+                    # Loud, because the whole point is that a stale conclusion
+                    # must never read as a current one.
+                    if r.get("status") == "superseded":
+                        sb = r.get("superseded_by") or ""
+                        label += f" [SUPERSEDED{' → ' + sb if sb else ''}]"
                     print(f"{r['sim']:.3f}  {ident}{label}")
                     snip = snippet(vault, ident, query) if r["tier"] == "notes" else ""
                     if snip:

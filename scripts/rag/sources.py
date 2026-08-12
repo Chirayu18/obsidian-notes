@@ -21,10 +21,27 @@ from pathlib import Path
 # --- tier weights -----------------------------------------------------------
 TIER_WEIGHT = {"notes": 1.0, "papers": 0.7, "code": 0.5}
 
-# Recency: a note touched today scores at full weight, one a year old at
-# ~0.75. Gentle on purpose -- old notes must stay findable, just not on top.
-RECENCY_HALFLIFE_DAYS = 900.0
-RECENCY_FLOOR = 0.70
+# Recency. This has to be strong enough to actually decide a tie: semantic
+# similarity between two notes on the same topic varies by far more than a few
+# percent, so a gentle curve is cosmetic. With a 120-day half-life a fresh note
+# beats a year-old one by ~2.3x, which is what makes an updated limit outrank
+# the superseded one it replaced.
+#
+# The floor keeps old-but-still-valid notes reachable -- they are demoted, never
+# hidden, and an exact term or --tier still finds them.
+RECENCY_HALFLIFE_DAYS = 120.0
+RECENCY_FLOOR = 0.35
+
+# A note explicitly marked superseded is not merely old -- it has been replaced.
+# Age cannot express that: a June limit number is stale while a June methodology
+# note is still authoritative. This is the only signal that distinguishes them.
+#
+# 0.55, not lower: RRF scores sit in a narrow band, so a harsher penalty does
+# not demote a superseded note, it erases it (measured: 0.25 pushed a verbatim
+# text match below rank 25). Demoted-but-reachable is the goal -- results are
+# tagged [SUPERSEDED -> successor], so a stale conclusion cannot be misread as
+# current even when it legitimately ranks.
+SUPERSEDED_PENALTY = 0.55
 
 CODE_EXTS = {".py", ".cc", ".h", ".C", ".cpp", ".sh", ".yaml", ".yml", ".json", ".cfg", ".md"}
 
@@ -144,9 +161,57 @@ def read_code(path: Path) -> str:
         return ""
 
 
+_FM_RE = re.compile(r"^---\n(.*?)\n---", re.DOTALL)
+_STATUS_RE = re.compile(r"^status:\s*(.+?)\s*$", re.MULTILINE)
+_DATE_RE = re.compile(r"^date:\s*(\d{4})-(\d{2})-(\d{2})", re.MULTILINE)
+_SUPERSEDED_BY_RE = re.compile(r"^superseded_by:\s*(.+?)\s*$", re.MULTILINE)
+
+
+def note_metadata(text: str) -> dict:
+    """Pull status / date / superseded_by out of a note's frontmatter.
+
+    `date:` is preferred over mtime for recency: a git checkout, a sync, or a
+    typo fix rewrites mtime and would otherwise make an old note look new.
+    """
+    m = _FM_RE.match(text)
+    if not m:
+        return {}
+    fm = m.group(1)
+    out: dict = {}
+    s = _STATUS_RE.search(fm)
+    if s:
+        out["status"] = s.group(1).strip().strip("\"'").lower()
+    d = _DATE_RE.search(fm)
+    if d:
+        try:
+            import datetime as _dt
+            out["date"] = _dt.datetime(
+                int(d.group(1)), int(d.group(2)), int(d.group(3))
+            ).timestamp()
+        except ValueError:
+            pass
+    sb = _SUPERSEDED_BY_RE.search(fm)
+    if sb:
+        out["superseded_by"] = sb.group(1).strip().strip("\"'")
+    return out
+
+
 def recency_factor(mtime: float, now: float | None = None) -> float:
     """Newer files score higher, bounded below by RECENCY_FLOOR."""
     now = now if now is not None else time.time()
     age_days = max(0.0, (now - mtime) / 86400.0)
     decay = 0.5 ** (age_days / RECENCY_HALFLIFE_DAYS)
     return RECENCY_FLOOR + (1.0 - RECENCY_FLOOR) * decay
+
+
+def freshness(entry: dict, now: float | None = None) -> float:
+    """Combined age + supersession multiplier for a ranked document.
+
+    Uses the note's own `date:` when present, falling back to mtime.
+    """
+    now = now if now is not None else time.time()
+    stamp = entry.get("date") or entry.get("mtime") or now
+    f = recency_factor(stamp, now)
+    if entry.get("status") == "superseded":
+        f *= SUPERSEDED_PENALTY
+    return f

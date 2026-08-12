@@ -155,6 +155,17 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
         if prev and prev.get("sig") == sig and prev.get("vecs"):
             entry = dict(prev)
             entry["mtime"] = st.st_mtime
+            # Frontmatter drives ranking (status/date), so refresh it even on a
+            # cache hit: marking a note superseded must take effect without
+            # forcing a re-embed of unchanged prose. Cheap -- a small read.
+            if d["tier"] == "notes":
+                for k in ("status", "date", "superseded_by"):
+                    entry.pop(k, None)
+                try:
+                    entry.update(sources.note_metadata(
+                        p.read_text(encoding="utf-8", errors="replace")[:4096]))
+                except OSError:
+                    pass
             new[d["id"]] = entry
             reused += 1
             continue
@@ -172,7 +183,10 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
         # A bare path is a poor signal -- "systematics master list" failed to
         # match `notes: Projects/.../2026-07-24-systematics-master-list.md`
         # until the stem was spelled out as words.
+        meta = {}
         if d["tier"] == "notes":
+            # Read frontmatter BEFORE prepare_note_text strips it.
+            meta = sources.note_metadata(text)
             header, body = ss.prepare_note_text(p.stem, text)
             text = body or text
             header = header.strip()
@@ -188,7 +202,7 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
         new[d["id"]] = {
             "tier": d["tier"], "path": d["path"], "sig": sig,
             "mtime": st.st_mtime, "vecs": vecs, "hash": _hash(text),
-            "title": p.stem,
+            "title": p.stem, **meta,
         }
         embedded += 1
         if verbose and embedded % 25 == 0:

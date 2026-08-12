@@ -36,6 +36,25 @@ Results are tagged `[PDF]` / `[CODE]` so you know what you're looking at. A `cod
 hit reads `lxplus:higgscharm/runner.py` → that's `~/mnt/lxplus/higgscharm/runner.py`
 locally, `~/higgscharm/runner.py` on lxplus.
 
+**Newest wins.** Ranking is recency-weighted with a 120-day half-life, so a fresh
+note outranks a year-old one by ~2.3× at equal relevance. Recency uses the note's
+`date:` frontmatter when present (mtime lies after a git checkout or a typo fix).
+
+**When a note replaces an older one, mark the old one superseded:**
+
+```yaml
+---
+status: superseded
+superseded_by: "[[2026-08-11-card-rebuild-1160]]"
+---
+```
+
+It is then demoted (×0.55) and tagged `[SUPERSEDED → …]` in results — still
+reachable for "what did we think in June", but never mistakable for current.
+**Do this whenever you write a note that updates a previous result** (a new limit,
+a corrected yield, a revised decision); age alone can't distinguish a stale number
+from an old-but-still-valid method note.
+
 **Keeping it fresh.** `scripts/rag/build_index.py` rebuilds incrementally: it
 re-embeds changed files and **prunes entries whose file is gone**. SessionEnd and
 PreCompact hooks fire `scripts/rag/refresh-index.sh`, which detaches the rebuild
