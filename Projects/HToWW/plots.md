@@ -34,3 +34,16 @@ all / higgsbkg / tt / st / diboson / vjets. AUC(hplusc_vs_all)=0.932 vs baseline
 Compare with the baseline `hwwcom_multiclass_v11` ROCs in the sibling directory.
 Path: /eos/user/c/cgupta/EPR_task/b-hive/output/ROCCurveTask/HPlusCHToWW_2dcats/hwwcom_v11_2dcats_train/hwwcom_v11_2dcats_test/hwwcom_multiclass_v11_2dcats/SimpleMLP_MultiClass/epochs_30/nominal/test_attack_nominal/
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/EPR_task/b-hive/output/ROCCurveTask/HPlusCHToWW_2dcats/hwwcom_v11_2dcats_train/hwwcom_v11_2dcats_test/hwwcom_multiclass_v11_2dcats/SimpleMLP_MultiClass/epochs_30/nominal/test_attack_nominal/
+
+## Lepton MVA (mvaTTH) 2022EE — ONNX conversion #plot
+
+tags: [plot]
+Date: 2026-08-12
+Description: ONNX vs TMVA::Reader validation (corr = 1.0000000000); prompt-vs-nonprompt
+separation on the eµ selection; and the prompt/nonprompt ROC with working-point markers.
+Path: /eos/home-c/cgupta/HToWW/leptonmva
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
+
+- `plot_validation.png` — ONNX vs TMVA::Reader, both flavours, max |Δ| = 2e-07
+- `plot_separation.png` — score distributions, prompt vs nonprompt (log y)
+- `plot_roc.png` — prompt eff vs nonprompt eff, markers at score > 0.0 / 0.4 / 0.8
