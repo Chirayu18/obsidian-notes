@@ -50,3 +50,8 @@ Electron-mvaTTH.*.weights*.xml
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Multi-source RAG index + rebuild lock/log (regenerable: scripts/rag/build_index.py)
+.vault-rag-index.json
+.vault-rag-index.lock
+.vault-rag-index.log

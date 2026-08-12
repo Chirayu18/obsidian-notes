@@ -13,19 +13,43 @@ scripts/rag/vault-search "why did the limit come out wrong"
 ```
 
 It fuses semantic search (meaning-based, finds notes that share no keywords with
-your query) with a keyword pass, via reciprocal rank fusion. Use it when you know
-*what you mean* but not what the note calls it. Plain `rg` is still the right tool
-when you know the exact term (a function name, a dataset tag).
+your query) with a keyword pass. Use it when you know *what you mean* but not what
+the note calls it. Plain `rg` is still the right tool when you know the exact term
+(a function name, a dataset tag).
 
+**Three tiers are searched together**, ranked so notes come first:
+
+| Tier | What | Weight |
+|---|---|---|
+| `notes` | vault markdown, recency-weighted | 1.0 |
+| `papers` | `References/**.pdf`, text-extracted | 0.7 |
+| `code` | lxplus analysis repos via the sshfs mount | 0.5 |
+
+Flags:
+- `--tier code` / `--tier papers` — restrict to a tier (repeatable)
 - `--limit N` — number of results (default 8)
 - `--paths-only` — bare paths, for piping into Read
-- `--no-archive` — hide `Archive/` hits (they're tagged `[ARCHIVED]` otherwise)
-- `--build` — refresh the index; **run this after writing notes**, it's incremental
-  (~0.4s when nothing changed, ~75s for a full rebuild)
+- `--no-archive` — hide `Archive/` hits (tagged `[ARCHIVED]` otherwise)
+- `--notes-only` — skip the multi-source index
 
-Requires Ollama running with `bge-m3` pulled. If Ollama is down it degrades to
-keyword-only and says so on stderr — it never hard-fails. On lxplus (no Ollama)
-it runs keyword-only; that's expected.
+Results are tagged `[PDF]` / `[CODE]` so you know what you're looking at. A `code`
+hit reads `lxplus:higgscharm/runner.py` → that's `~/mnt/lxplus/higgscharm/runner.py`
+locally, `~/higgscharm/runner.py` on lxplus.
+
+**Keeping it fresh.** `scripts/rag/build_index.py` rebuilds incrementally: it
+re-embeds changed files and **prunes entries whose file is gone**. SessionEnd and
+PreCompact hooks fire `scripts/rag/refresh-index.sh`, which detaches the rebuild
+(~8ms to return, so it never blocks). Run it by hand after writing a batch of notes
+if you want them searchable immediately:
+
+```bash
+scripts/rag/refresh-index.sh --wait     # foreground, shows result
+```
+
+Requires Ollama with `bge-m3`. If Ollama or the index is missing it degrades to
+keyword-only and says so on stderr — it never hard-fails. **On lxplus there is no
+Ollama and the index is gitignored, so it runs keyword-only there; that's expected.**
+Code indexing happens laptop-side over the sshfs mount, since that's where Ollama is.
 
 ## When running on lxplus — dump work into the vault
 

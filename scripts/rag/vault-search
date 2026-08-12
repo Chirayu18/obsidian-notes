@@ -16,15 +16,18 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
-VENDOR = Path(__file__).resolve().parent / "vendor"
-sys.path.insert(0, str(VENDOR))
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE / "vendor"))
 
 
 def vault_root() -> Path:
@@ -99,6 +102,8 @@ def snippet(vault: Path, rel: str, query: str, width: int = 200) -> str:
     prose = [
         ln for ln in lines
         if ln and not ln.startswith(("---", "#", "|", "```", "tags:", "status:", "date:", "source:"))
+        # Marp decks open with a CSS block; those lines are not prose.
+        and not re.match(r"^[.#@]?[\w-]+\s*\{|^\}|^\s*[\w-]+:\s*[^ ]+;\s*$", ln)
     ]
     for ln in prose:
         low = ln.lower()
@@ -107,16 +112,115 @@ def snippet(vault: Path, rel: str, query: str, width: int = 200) -> str:
     return prose[0][:width] if prose else ""
 
 
+def search_multi(vault: Path, query: str, limit: int, tiers: list[str] | None,
+                 no_archive: bool = False):
+    """Search the multi-source index (notes + papers + code).
+
+    Ranking = RRF(semantic, keyword) x tier weight x recency. Tier weight is
+    what makes notes outrank an equally-relevant code file; recency is a gentle
+    tiebreak so the newest note wins among equals.
+
+    Returns (results, error). error non-empty means fall back to notes-only.
+    """
+    try:
+        import build_index as bi
+        import semantic_search as ss
+        import sources
+    except ImportError as exc:
+        return [], f"multi-source modules unavailable: {exc}"
+
+    index_path = vault / bi.INDEX_FILE
+    if not index_path.exists():
+        return [], f"no multi-source index at {index_path.name} (build: scripts/rag/build_index.py)"
+    try:
+        idx = json.loads(index_path.read_text())
+    except Exception as exc:
+        return [], f"multi-source index unreadable: {exc}"
+    docs = idx.get("docs") or {}
+    if not docs:
+        return [], "multi-source index is empty"
+
+    try:
+        qvec = ss.embed(query, model=idx.get("model"))
+    except Exception as exc:
+        return [], f"embedding backend unavailable: {exc}"
+
+    now = time.time()
+    scored = []
+    for ident, e in docs.items():
+        if tiers and e.get("tier") not in tiers:
+            continue
+        vecs = e.get("vecs") or []
+        if not vecs:
+            continue
+        # Best-matching chunk represents the document: one relevant section
+        # should surface a long paper, not be averaged away by the rest.
+        sim = max((ss.cosine(qvec, v) for v in vecs), default=0.0)
+        scored.append((sim, ident, e))
+    if not scored:
+        return [], "no documents in the requested tiers"
+    scored.sort(key=lambda t: -t[0])
+    sem_rank = {ident: i for i, (_, ident, _) in enumerate(scored)}
+    sem_sim = {ident: s for s, ident, _ in scored}
+
+    # Keyword arm over the vault, fused with the semantic order. Without this
+    # the ranking is pure cosine, which tails off on short factual queries
+    # ("blacklist") that name a term the note uses but the query barely
+    # contextualises -- the exact case RRF was added to cover.
+    kw, _ = keyword_hits(vault, query, limit)
+    lex_rank = {rel: i for i, rel in enumerate(kw)}
+
+    K = 60
+    out = []
+    # Union of both rankings, so a keyword-only hit can still surface.
+    idents = set(list(sem_rank)[: max(limit * 5, 40)]) | (set(lex_rank) & set(docs))
+    for ident in idents:
+        e = docs[ident]
+        tier = e.get("tier", "notes")
+        if tiers and tier not in tiers:
+            continue
+        rrf = 0.0
+        if ident in sem_rank:
+            rrf += 1.0 / (K + sem_rank[ident])
+        if ident in lex_rank:
+            rrf += 1.0 / (K + lex_rank[ident])
+        w = sources.TIER_WEIGHT.get(tier, 0.5)
+        rec = sources.recency_factor(e.get("mtime", now), now)
+        sim = sem_sim.get(ident, 0.0)
+        out.append({
+            "id": ident, "tier": tier, "path": e.get("path", ident),
+            "sim": sim, "score": rrf * w * rec,
+        })
+    # Filter before slicing, or --no-archive silently returns fewer than `limit`.
+    if no_archive:
+        out = [r for r in out if not r["id"].startswith("Archive/")]
+    # With a single tier requested, tier weight is a constant and only muddies
+    # the order: rank by raw similarity so the printed score matches the sort.
+    if tiers and len(tiers) == 1:
+        out.sort(key=lambda r: -r["sim"])
+    else:
+        out.sort(key=lambda r: -r["score"])
+    return out[:limit], ""
+
+
 def main(argv: list[str]) -> int:
     ap = argparse.ArgumentParser(
         prog="vault-search",
-        description="Semantic + keyword search over the Obsidian vault.",
+        description="Semantic + keyword search over notes, papers and lxplus code.",
     )
     ap.add_argument("query", nargs="*", help="Natural-language query")
     ap.add_argument("--limit", type=int, default=8, help="Max results (default 8)")
     ap.add_argument("--build", action="store_true", help="Rebuild the index, then exit")
     ap.add_argument("--no-archive", action="store_true", help="Hide Archive/ hits")
     ap.add_argument("--paths-only", action="store_true", help="Print paths, no scores/snippets")
+    ap.add_argument(
+        "--tier", action="append", choices=["notes", "papers", "code"],
+        help="Restrict to a tier (repeatable). Default: all, notes ranked first.",
+    )
+    ap.add_argument(
+        "--notes-only", action="store_true",
+        help="Search only vault notes (skips the multi-source index)",
+    )
     args = ap.parse_args(argv)
 
     vault = vault_root()
@@ -142,6 +246,34 @@ def main(argv: list[str]) -> int:
     query = " ".join(args.query).strip()
     if not query:
         ap.error("a query is required (or use --build)")
+
+    # Multi-source path (notes + papers + code) unless notes-only is forced.
+    # Falls through to the notes-only index if it is unavailable, so this
+    # never becomes a hard dependency.
+    if not args.notes_only:
+        results, err = search_multi(vault, query, args.limit, args.tier, args.no_archive)
+        if not err:
+            if results:
+                for r in results:
+                    ident = r["id"]
+                    if args.paths_only:
+                        print(ident)
+                        continue
+                    label = {"papers": " [PDF]", "code": " [CODE]"}.get(r["tier"], "")
+                    if ident.startswith("Archive/"):
+                        label += " [ARCHIVED]"
+                    print(f"{r['sim']:.3f}  {ident}{label}")
+                    snip = snippet(vault, ident, query) if r["tier"] == "notes" else ""
+                    if snip:
+                        print(f"        {snip}")
+                return 0
+        elif args.tier:
+            # An explicit --tier request cannot be served by the notes-only
+            # fallback, so say why instead of silently changing the scope.
+            print(f"vault-search: {err}", file=sys.stderr)
+            return 1
+        else:
+            print(f"[multi-source unavailable: {err}]", file=sys.stderr)
 
     # Ripgrep pass, shaped as the [{path,title,score}] the fuser expects.
     # Already rank-ordered by match count.
