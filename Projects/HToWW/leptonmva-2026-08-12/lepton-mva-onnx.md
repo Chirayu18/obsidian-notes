@@ -35,6 +35,14 @@ style: |
   }
   pre { font-size: 17px; line-height: 1.42; }
   pre code { background: #10243e; color: #e8eaed; padding: 13px; display: block; }
+  /* Marp's default highlight palette puts near-navy tokens on the navy code
+     ground, which makes long paths unreadable. Force a light-on-dark set. */
+  pre code span { color: #e8eaed !important; }
+  pre code .hljs-attr, pre code .hljs-attribute,
+  pre code .hljs-keyword { color: #8fc7f0 !important; }
+  pre code .hljs-string, pre code .hljs-literal,
+  pre code .hljs-number { color: #f0c98f !important; }
+  pre code .hljs-comment { color: #9aa6b2 !important; font-style: italic; }
   strong { color: #8a1c1c; }
   section.lead { justify-content: center; text-align: center; }
   section.lead h1 { border-bottom: none; font-size: 50px; }
@@ -218,6 +226,28 @@ That is float32 round-off. **The conversion is exact.**
 
 ---
 
+# Test suite — `test_leptonmva.py`
+
+| | test | what it guards against |
+|---|---|---|
+| **T1** | ONNX vs `TMVA::Reader` | misread format — the authoritative check |
+| **T2** | ONNX vs independent numpy walk | ONNX emitter bugs |
+| **T3** | score finite and in (−1, 1) | wrong squashing; ±1e6 inputs probed |
+| **T4** | 500 trees / 13 features vs XML | truncated or dropped trees |
+| **T5** | determinism on repeat | nondeterministic kernels |
+| **T6** | single-row == full batch | cross-row leakage |
+| **T7** | `jetIdx=−1` → btag 0, slot 7 influential | the guard, and a vacuous test |
+| **T8** | float64 input rejected | silent dtype coercion |
+
+<div class="verdict">
+
+**20 / 20 PASS.** T7 also confirms slot 7 matters (max shift 1.40 muon, 0.55 electron)
+— so the `jetIdx` guard is not cosmetic.
+
+</div>
+
+---
+
 # So: should we use it?
 
 The conversion succeeded. That does not by itself mean the cut belongs in our
@@ -373,6 +403,152 @@ Where the converted models could still earn their keep:
 
 ---
 
+# Wiring plan — PROPOSAL, not implemented
+
+**No production code has been modified.** This is the plan someone would follow.
+
+Template to copy: the existing **`negrw`** integration —
+`analysis/processors/base.py:142-147` plus the `negrw:` block in the workflow YAML.
+Same shape: config-gated, lazily-loaded model, extra dumped columns.
+
+Six steps. Steps 1–2 are the ones that break a condor submission if skipped.
+
+| # | step |
+|---|---|
+| 1 | model files on **AFS** ✅ done |
+| 2 | `leptonmva:` config block in the workflow YAML |
+| 3 | per-lepton model routing by `pdgId` |
+| 4 | feature construction — 13 columns, XML order |
+| 5 | dump as columns, **apply no cut** |
+| 6 | pre-flight checks |
+
+---
+
+# Step 1 — models on AFS (already done)
+
+<div class="warn">
+
+**The trap that would break the first submission.** Your own `negrw` config says it:
+
+> *must be on AFS, not EOS — the worker singularity container cannot read
+> `/eos/user` paths (PermissionError), but it reads AFS fine.*
+
+The converted models were written to **EOS only**.
+
+</div>
+
+Already staged, mirroring `negrw_model/`:
+
+```
+/afs/cern.ch/user/c/cgupta/leptonmva_model/
+  muon_mvaTTH_2022EE.onnx        0.38 MB
+  electron_mvaTTH_2022EE.onnx    0.40 MB
+```
+
+Master copies stay on EOS. Note AFS quota is at **91%** — 0.8 MB is negligible,
+but it is close to the limit.
+
+---
+
+# Step 2 — the config block
+
+Added to the workflow YAML alongside `negrw:`, so nothing else is affected:
+
+```yaml
+# AFS paths -- workers cannot read /eos/user (see the negrw note).
+# Master copies live in /eos/user/c/cgupta/HToWW/leptonmva/onnx/
+leptonmva:
+  model_dir: /afs/cern.ch/user/c/cgupta/leptonmva_model
+  muon_model: muon_mvaTTH_2022EE.onnx
+  electron_model: electron_mvaTTH_2022EE.onnx
+  dxy_floor: 1.0e-6     # OPEN -- training convention unknown
+```
+
+<div class="warn">
+
+**Differs from `negrw`: no `datasets:` gating.** All 13 inputs are reco-level, so
+this runs on **data as well as MC**. `negrw` is gen-level and therefore MC-only.
+
+</div>
+
+---
+
+# Step 3 — per-lepton model routing
+
+<div class="warn">
+
+`objects["ll_pair"].l1` / `.l2` are ordered by **p<sub>T</sub>, not flavour.**
+`l1` is the muon in some events and the electron in others.
+
+</div>
+
+Route on `abs(pdgId)` — **13 → muon model, 11 → electron model**:
+
+```python
+is_mu_l1 = abs(ll.l1.pdgId) == 13
+```
+
+The selection guarantees exactly one muon and one electron per event
+(`one_muon_one_electron`), so the clean implementation is:
+
+1. score the muon collection with the muon model
+2. score the electron collection with the electron model
+3. map each back into its `l1` / `l2` slot
+
+Scoring `l1` with a single model would silently mix the two BDTs.
+
+---
+
+# Step 4 — feature construction
+
+13 columns in **XML order** (slide 3). Cached session, lazy-loaded exactly like
+`self._negrw_bundle`:
+
+```python
+if self._leptonmva_sess is None:                    # once per worker
+    self._leptonmva_sess = ort.InferenceSession(cfg["muon_model"], ...)
+
+idx  = lep.jetIdx
+safe = ak.where(idx > -1, idx, 0)                   # mask BEFORE indexing
+btag = ak.where(idx > -1, events.Jet.btagDeepFlavB[safe], 0.0)
+...
+X = np.column_stack([...]).astype(np.float32)       # float32 or it raises
+s = ak.unflatten(sess.run(None, {"X": X})[0].ravel(), ak.num(lep.pt))
+```
+
+| trap | consequence if missed |
+|---|---|
+| index without the `-1` guard | silently reads the **last jet** in the event |
+| `InferenceSession` per chunk | dominates runtime |
+| float64 passed in | raises (T8) |
+| `log\|dxy\|` when `dxy == 0` | `-inf` — **floor convention still open** |
+
+---
+
+# Steps 5 & 6 — output and pre-flight
+
+### 5 · Dump columns, apply no cut
+
+```python
+variables_map["lep_mva_l1"] = score_l1
+variables_map["lep_mva_l2"] = score_l2
+```
+
+Keeps the wiring **use-agnostic** — cut vs. CR vs. input feature is still
+undecided, and the measurement says do not cut in the SR. Columns cost nothing
+and let the decision be made later from the parquet.
+
+### 6 · Pre-flight
+
+1. confirm `onnxruntime` is in the **condor worker** env (1.17.3 in `b_hive`
+   interactively — the worker env must be checked, not assumed)
+2. run `test_leptonmva.py` → expect 20/20
+3. one-file local run, then compare a handful of scores against the standalone
+   diagnostic
+4. resolve the `dxy` floor before any *physics* use of the scores
+
+---
+
 # Artifacts — all durable on EOS
 
 ```
@@ -385,13 +561,17 @@ Where the converted models could still earn their keep:
   validate_vs_tmva.py      the comparison
   tmva_reference.npz       frozen reference inputs + scores
   diagnostic_nonprompt.py  the eµ measurement
+  test_leptonmva.py        the 20-test suite (T1-T8)
+
+/afs/cern.ch/user/c/cgupta/leptonmva_model/     <- worker-readable copies
+  muon_mvaTTH_2022EE.onnx, electron_mvaTTH_2022EE.onnx
 ```
 
-Re-run validation at any time:
+Re-run the full suite at any time:
 
 ```bash
 cd /eos/user/c/cgupta/HToWW/leptonmva
-$MAMBA_EXE run -n b_hive python3 validate_vs_tmva.py
+$MAMBA_EXE run -n b_hive python3 test_leptonmva.py     # expect 20/20
 ```
 
 **No production code was modified.**
@@ -402,10 +582,13 @@ $MAMBA_EXE run -n b_hive python3 validate_vs_tmva.py
 
 # Summary
 
-**Conversion:** exact — corr = 1.0000000000 vs `TMVA::Reader`
+**Conversion:** exact — corr = 1.0000000000 vs `TMVA::Reader`, 20/20 tests pass
 
 **Nonprompt in our eµ selection:** 0.3–0.5%
 
 **A cut would cost ~6% of signal to remove ~0.45% of background**
 
 ### Recommend: do not cut. Keep the models for a nonprompt CR.
+
+Wiring plan is ready to execute if wanted — models already staged on AFS,
+columns-only, no cut. Open item: the `log|dxy|` floor convention.
