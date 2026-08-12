@@ -84,7 +84,12 @@ Only worth doing inside a reprocessing campaign that is happening anyway.
 
 ### A4. Pre-flight before submitting the campaign
 
-- [ ] EOS space check — was ~95% full; campaign needs headroom.
+- [x] **EOS space — OK as of 2026-08-12 ~14:30.** Quota node reports
+      **1.46 TB / 2.00 TB = 73.06%, vol-status `ok`**, inodes 2.34M / 5.00M.
+      ~540 GB free, enough for the campaign.
+      NOTE: a reading ~20 min earlier showed 1.99 TB / 99.51% `exceeded`; something
+      finished writing or was cleaned between the two checks. **Re-check
+      immediately before submitting** — this number moves.
       **Do not delete anything on EOS without confirming first.**
 - [ ] Grid proxy live (node-local; use the AFS copy at
       `private/x509up_u151861`, not `cms.proxy`).
