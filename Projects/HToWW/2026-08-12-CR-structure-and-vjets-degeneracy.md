@@ -7,6 +7,31 @@ source: lxplus
 
 # CR structure, the per-channel result, and the xsec_vjets degeneracy
 
+## 0. Builder bug found and fixed: uproot.update() crash on data_obs
+
+`make_combine_inputs_v2.py` wrote the ROOT file with `uproot.recreate()`, closed
+it, then reopened it with `uproot.update()` to append the per-channel `data_obs`
+histograms. The reopen makes uproot re-parse the file's free-segments record,
+which fails on files written to EOS:
+
+```
+struct.error: unpack requires a buffer of 10 bytes
+  uproot/writing/_cascade.py, FreeSegmentsData.deserialize
+```
+
+**The crash happens AFTER all histogram content is already on disk**, so the
+build has in fact succeeded — it just exits non-zero. That is worse than a clean
+failure: it sends you hunting for a problem that does not exist, and it is what
+made a 25-minute rebuild look like a hang.
+
+**Fix**: build `data_obs` in memory (`build_data_obs_v2`) and pass it to
+`write_root_v2(..., extra_hists=...)` so everything is written in ONE
+`recreate` pass. No reopen, so the failure mode is gone rather than retried.
+
+> `make_combine_inputs.py:364` (**v1**) has the identical `uproot.update()`
+> pattern in its own `write_data_obs`. It has not tripped recently, but the
+> latent bug is the same — see task #36.
+
 ## 1. Per-channel binning variant: MEASURED, and it is NEGATIVE
 
 | configuration | limit | vs baseline |
