@@ -38,3 +38,8 @@ nul
 
 # Marp slide previews (regenerable: npx @marp-team/marp-cli <deck>.md --images png)
 Projects/HToWW/argmax-kinematics-2026-08-07/slide.*.png
+
+# TMVA lepton-MVA weight XMLs -- large regenerable inputs, master copy on EOS
+# at /eos/user/c/cgupta/HToWW/leptonmva/
+Muon-mvaTTH.*.weights.xml
+Electron-mvaTTH.*.weights*.xml
