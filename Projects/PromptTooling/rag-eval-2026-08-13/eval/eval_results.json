@@ -1,0 +1,505 @@
+[
+  {
+    "q": "why did the upper limit come out wrong because of event weights",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+      "Projects/HToWW/2026-06-17-LIMIT-ISSUE.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/argmax-kinematics-2026-08-07/2026-08-07-v11-argmax-implicit-cuts.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md"
+      ],
+      "rr": 0.5,
+      "hit": 1,
+      "dt": 0.008024845999898389
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/negrw-training/slides.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-route-to-a-better-limit.md",
+        "Projects/HToWW/argmax-kinematics-2026-08-07/2026-08-07-v11-argmax-implicit-cuts.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.6795256840123329
+    }
+  },
+  {
+    "q": "the yield looked right but the uncertainty was inflated",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+      "Projects/HToWW/2026-06-17-LIMIT-ISSUE.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-provenance-audit.md",
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Archive/2026-06-22/References/Slides_20March/HToWW status update.md"
+      ],
+      "rr": 0.25,
+      "hit": 1,
+      "dt": 0.00628536898875609
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-provenance-audit.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-jes-jer-bug-fixed.md",
+        "References/MVA_Studies_Athens_2026/TRANSCRIPT.md",
+        "Projects/HToWW/negrw-training/2026-07-17-closure-renormalization-decision.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-12-v2-builder-and-both-features-measured.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.6995909810066223
+    }
+  },
+  {
+    "q": "normalisation was silently wrong because the totals came from the wrong place",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-07-31-sumw-normalization-trap.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/decks-2026-07-31/ctag-sf-deck.md",
+        "Projects/HToWW/2026-08-12-postEE-background-audit-vs-AN.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.007750216987915337
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-31-sumw-normalization-trap.md",
+        "Projects/HToWW/2026-08-12-postEE-background-audit-vs-AN.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-lessons-from-AN-24-091.md",
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7037699760112446
+    }
+  },
+  {
+    "q": "grid jobs died because they asked for too little memory",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md",
+        "Projects/HToWW/2026-07-11-negweight-reweight-training-region.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/README.md",
+        "Projects/HToWW/cjet-acceptance-2026-08-08/2026-08-08-cjet-acceptance-study.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.008318948006490245
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md",
+        "Projects/HToWW/cjet-acceptance-2026-08-08/2026-08-08-cjet-acceptance-study.md",
+        "Projects/HToWW/closure-2026-07-29/README.md",
+        "Archive/2026-06-22/Z TO MuMu.md",
+        "Archive/2026-06-22/Central Production.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7432479170092847
+    }
+  },
+  {
+    "q": "how much signal survives the charm jet requirement",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/cjet-acceptance-2026-08-08/2026-08-08-cjet-acceptance-study.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/Flashjet/presentation/flashjet-substructure-v2.md",
+        "Projects/Flashjet/presentation/flashjet-substructure.md",
+        "Projects/Flashjet/presentation/flashjet-substructure_comments.md",
+        "Projects/Flashjet/plots.md",
+        "Projects/HToWW/argmax-kinematics-2026-08-07/2026-08-07-v11-argmax-implicit-cuts.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.0068783939932473
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/cjet-acceptance-2026-08-08/2026-08-08-cjet-acceptance-study.md",
+        "Projects/HToWW/2026-07-19-ctag2d-full-documentation.md",
+        "Projects/HToWW/2026-07-31-sumw-normalization-trap.md",
+        "Projects/Flashjet/plots.md",
+        "Projects/HToWW/argmax-kinematics-2026-08-07/2026-08-07-v11-argmax-implicit-cuts.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.707223868026631
+    }
+  },
+  {
+    "q": "which knobs did we decide to treat as one nuisance instead of splitting",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-07-19-ctag2d-full-documentation.md",
+      "Projects/HToWW/2026-07-24-systematics-master-list.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/Flashjet/presentation/flashjet-substructure-v2.md",
+        "Projects/Flashjet/presentation/flashjet-substructure.md",
+        "Projects/Flashjet/presentation/flashjet-substructure_comments.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.00811552899540402
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-08-12-master-task-list.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-jes-jer-bug-fixed.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-lessons-from-AN-24-091.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-TODO-and-implementation-map.md",
+        "Projects/HToWW/2026-07-24-systematics-master-list.md"
+      ],
+      "rr": 0.2,
+      "hit": 1,
+      "dt": 0.7055487610050477
+    }
+  },
+  {
+    "q": "converting the trained model so it runs inside the framework",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-08-12-lepton-mva-onnx-conversion.md",
+      "Projects/HToWW/leptonmva-2026-08-12/lepton-mva-onnx.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "Projects/HToWW/argmax-kinematics-2026-08-07/2026-08-07-v11-argmax-implicit-cuts.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA.md",
+        "Projects/HToWW/leptonmva-2026-08-12/lepton-mva-onnx.md"
+      ],
+      "rr": 0.2,
+      "hit": 1,
+      "dt": 0.006718527991324663
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-12-negweight-phase3-SR-inference-handoff.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/HPlusCHToWW_MVA_Guide.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/framework.md",
+        "Projects/HToWW/negrw-training/slides.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.7434878920030314
+    }
+  },
+  {
+    "q": "what order do I run things in to get from ntuples to a limit",
+    "kind": "paraphrase",
+    "gold": [
+      "Projects/HToWW/2026-07-24-run-analysis-steps.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/Flashjet/presentation/flashjet-substructure.md",
+        "Projects/Flashjet/presentation/flashjet-substructure_comments.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_slides.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.009263012994779274
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "CLAUDE.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-wiring-status-and-what-moves-the-limit.md",
+        "Projects/HToWW/2026-07-24-run-analysis-steps.md"
+      ],
+      "rr": 0.2,
+      "hit": 1,
+      "dt": 0.7222806069767103
+    }
+  },
+  {
+    "q": "trigger efficiency measurement",
+    "kind": "partial",
+    "gold": [
+      "Projects/HToWW/2026-07-07-trigger-efficiency.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/2026-07-07-trigger-efficiency.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/workflows-README.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA.md",
+        "Projects/HToWW/2026-07-24-systematics-master-list.md",
+        "Projects/HToWW/leptonmva-2026-08-12/lepton-mva-onnx.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.006147742009488866
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-07-trigger-efficiency.md",
+        "Projects/HToWW/2026-08-12-lepton-mva-onnx-conversion.md",
+        "Projects/HToWW/2026-07-07-cutflow-2022postEE.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/workflows-README.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-10-analysis-strategy-from-AN.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7260268070094753
+    }
+  },
+  {
+    "q": "cutflow numbers for 2022postEE",
+    "kind": "partial",
+    "gold": [
+      "Projects/HToWW/2026-07-07-cutflow-2022postEE.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "Archive/2026-06-22/References/Slides_20March/HToWW status update - Copy.md",
+        "Archive/2026-06-22/References/Slides/HToWW status update.md",
+        "Archive/2026-06-22/References/Slides/HToWW status update - Copy.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/Analysis QUICKSTART.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.006535055988933891
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-07-cutflow-2022postEE.md",
+        "Projects/HToWW/2026-07-07-trigger-efficiency.md",
+        "Archive/2026-06-22/HWW config.md",
+        "Projects/HToWW/2026-07-19-ctag2d-full-documentation.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/Analysis QUICKSTART.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.6971332879911643
+    }
+  },
+  {
+    "q": "control regions and the vjets degeneracy",
+    "kind": "partial",
+    "gold": [
+      "Projects/HToWW/2026-08-12-CR-structure-and-vjets-degeneracy.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/negrw-training/RESUME-condor-retrain.md",
+        "Projects/HToWW/2026-08-12-CR-structure-and-vjets-degeneracy.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA.md"
+      ],
+      "rr": 0.25,
+      "hit": 1,
+      "dt": 0.008063375018537045
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-08-12-CR-structure-and-vjets-degeneracy.md",
+        "References/HToWW/2026-08-11-mva-defined-regions-literature.md",
+        "References/HToWW/automcstats-slides/2026-06-24-automcstats-slides.md",
+        "Projects/HToWW/2026-07-12-negweight-phase3-SR-inference-handoff.md",
+        "Projects/HToWW/negrw-training/2026-07-17-closure-renormalization-decision.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7441793970065191
+    }
+  },
+  {
+    "q": "nonprompt lepton diagnostic",
+    "kind": "partial",
+    "gold": [
+      "Projects/HToWW/2026-08-12-lepton-mva-nonprompt-diagnostic.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/leptonmva-2026-08-12/lepton-mva-onnx.md",
+        "Projects/HToWW/2026-08-12-lepton-mva-onnx-conversion.md",
+        "Projects/HToWW/2026-08-12-lepton-mva-nonprompt-diagnostic.md",
+        "Archive/2026-06-22/References/Slides_20March/HToWW status update - Copy.md",
+        "Archive/2026-06-22/References/Slides/HToWW status update - Copy.md"
+      ],
+      "rr": 0.3333333333333333,
+      "hit": 1,
+      "dt": 0.005754688987508416
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-08-12-lepton-mva-nonprompt-diagnostic.md",
+        "Projects/HToWW/leptonmva-2026-08-12/lepton-mva-onnx.md",
+        "Projects/HToWW/2026-08-12-lepton-mva-onnx-conversion.md",
+        "Projects/HToWW/plots.md",
+        "Archive/2026-06-22/References/Slides/HToWW status update - Copy.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7298836109985132
+    }
+  },
+  {
+    "q": "blacklist memoryless re-admits failed sites",
+    "kind": "literal",
+    "gold": [
+      "Projects/HToWW/2026-08-12-master-task-list.md",
+      "Projects/HToWW/2026-07-31-sumw-normalization-trap.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md",
+        "Projects/HToWW/2026-07-31-sumw-normalization-trap.md",
+        "Archive/2026-06-22/References/Slides_20March/HToWW status update.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/lxplus-2026-06-17/higgscharm-docs/README.md"
+      ],
+      "rr": 0.5,
+      "hit": 1,
+      "dt": 0.005687074008164927
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-08-hplusc-hplusb-crab-status.md",
+        "Projects/HToWW/negrw-training/2026-07-18-v32-optimization-negative-results.md",
+        "Projects/HToWW/2026-08-12-master-task-list.md",
+        "Projects/HToWW/cjet-acceptance-2026-08-08/2026-08-08-cjet-acceptance-study.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-card-rebuild-1160.md"
+      ],
+      "rr": 0.3333333333333333,
+      "hit": 1,
+      "dt": 0.7444037130044308
+    }
+  },
+  {
+    "q": "autoMCStats",
+    "kind": "literal",
+    "gold": [
+      "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+      "Projects/HToWW/ProposedFix-Automcstats.md",
+      "Projects/HToWW/2026-06-17-LIMIT-ISSUE.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/lxplus-2026-06-17/combine-plots.md",
+        "References/HToWW/automcstats-slides/2026-06-24-automcstats-slides.md",
+        "Projects/HToWW/negrw-training/RESUME-condor-retrain.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.0068590459995903075
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-06-23-automcstats-rootcause.md",
+        "References/HToWW/automcstats-slides/2026-06-24-automcstats-slides.md",
+        "Projects/HToWW/lxplus-2026-06-17/combine-plots.md",
+        "References/HToWW/papers.md",
+        "Projects/HToWW/2026-06-17-LIMIT-ISSUE.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.709864139003912
+    }
+  },
+  {
+    "q": "kappa hce loss math",
+    "kind": "literal",
+    "gold": [
+      "Projects/HToWW/2026-07-01-kappa-hce-loss-math.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA.md",
+        "Projects/HToWW/2026-07-01-kappa-hce-loss-math.md",
+        "Archive/export/HToWW status update/plugin/math/mathjax/README.md",
+        "Archive/export/slides/plugin/math/mathjax/README.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA_presentation.md"
+      ],
+      "rr": 0.5,
+      "hit": 1,
+      "dt": 0.0075377149914857
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-01-kappa-hce-loss-math.md",
+        "Archive/2026-06-22/References/Slides_20March/HToWW status update.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/MVA_presentation.md",
+        "References/MVA_Studies_Athens_2026/TRANSCRIPT.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7488117649918422
+    }
+  },
+  {
+    "q": "systematics master list",
+    "kind": "literal",
+    "gold": [
+      "Projects/HToWW/2026-07-24-systematics-master-list.md"
+    ],
+    "grep": {
+      "results": [
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_plan.md",
+        "Projects/HToWW/decks-2026-07-31/negrw-deck.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/combine.md",
+        "Projects/HToWW/2026-07-25-tt-2024-samples/2026-07-25-tt-2024-dataset-list.md",
+        "Archive/2026-06-22/2D tagging.md"
+      ],
+      "rr": 0.0,
+      "hit": 0,
+      "dt": 0.007927316008135676
+    },
+    "rag": {
+      "results": [
+        "Projects/HToWW/2026-07-24-systematics-master-list.md",
+        "Projects/HToWW/2026-08-12-master-task-list.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/systematics_reference.md",
+        "Projects/HToWW/lxplus-2026-06-17/bhive-docs/migration_v2_state.md",
+        "Projects/HToWW/strategy-2026-08-10/2026-08-11-action-items-to-finish.md"
+      ],
+      "rr": 1.0,
+      "hit": 1,
+      "dt": 0.7271877730090637
+    }
+  }
+]

@@ -38,10 +38,10 @@ def vault_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def keyword_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, int], str]:
-    """Count per-file matches for the query's content words.
+def keyword_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, float], str]:
+    """Rank files by length-normalised match count for the query's content words.
 
-    Returns ({relpath: hit_count}, error_message). Prefers ripgrep but falls
+    Returns ({relpath: score}, error_message). Prefers ripgrep but falls
     back to POSIX grep: `rg` is often a shell function/alias rather than a real
     binary (and is absent on lxplus), which shutil.which cannot see -- relying
     on it alone silently disabled this whole arm.
@@ -81,13 +81,30 @@ def keyword_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, int], s
         proc = subprocess.run(cmd, cwd=vault, capture_output=True, text=True, timeout=60)
     except (subprocess.SubprocessError, OSError) as exc:
         return {}, f"keyword search failed: {exc}"
-    hits: dict[str, int] = {}
+    hits: dict[str, float] = {}
     for line in proc.stdout.splitlines():
         path, _, count = line.rpartition(":")
         # grep -c emits a 0 line for every non-matching file; drop those.
         if not path or not count.isdigit() or int(count) == 0:
             continue
-        hits[path.lstrip("./")] = int(count)
+        rel = path.lstrip("./")
+        n = int(count)
+        # Normalise by document length. Raw counts rank a long document that
+        # says "list" 19 times above the note whose *title* is the query --
+        # which is how "systematics master list" missed
+        # 2026-07-24-systematics-master-list.md entirely.
+        try:
+            kb = max(1.0, (vault / rel).stat().st_size / 1024.0)
+        except OSError:
+            kb = 1.0
+        score = n / (kb ** 0.5)
+        # A term appearing in the filename is a much stronger signal than the
+        # same term buried in prose: filenames are chosen, not incidental.
+        stem = Path(rel).stem.lower().replace("-", " ").replace("_", " ")
+        matched = sum(1 for t in terms if t in stem)
+        if matched:
+            score *= 1.0 + 2.0 * (matched / len(terms))
+        hits[rel] = score
     return dict(sorted(hits.items(), key=lambda kv: -kv[1])[: limit * 4]), ""
 
 

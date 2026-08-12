@@ -1,0 +1,32 @@
+{
+  "measured": {
+    "grep": {
+      "solved": 9,
+      "calls": 64,
+      "tokens": 322340.75
+    },
+    "rag": {
+      "solved": 12,
+      "calls": 46,
+      "tokens": 91392.75
+    }
+  },
+  "n_queries": 16,
+  "vanilla": {
+    "tokens": 3161908.05,
+    "calls": 985,
+    "solved": 10,
+    "per_q_tokens": 197619.253125
+  },
+  "inputs": {
+    "vault_md_files": 191,
+    "vault_md_bytes": 1400000,
+    "repo_src_files": 168,
+    "repo_src_bytes": 7517548,
+    "repo_commits": 856,
+    "orient_frac": 0.15,
+    "rederive_tokens": 180000,
+    "rederive_calls": 60,
+    "underivable_frac": 0.35
+  }
+}

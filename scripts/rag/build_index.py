@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 from pathlib import Path
@@ -24,7 +25,9 @@ import sources  # noqa: E402
 import semantic_search as ss  # noqa: E402
 
 INDEX_FILE = ".vault-rag-index.json"
-FORMAT = 3  # bump when the stored shape changes, to force a clean rebuild
+# Bump when the stored shape OR what gets embedded changes -- vectors built
+# under a different header are not comparable to new ones. (4: identity headers)
+FORMAT = 4
 CHUNK_CHARS = 1200
 MAX_CHUNKS = 12
 
@@ -164,7 +167,20 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
             failed += 1
             continue
 
-        header = f"{d['tier']}: {d['id']}"
+        # Identity header, prepended to every chunk so a document stays
+        # reachable by what it IS, not only by wording buried in one chunk.
+        # A bare path is a poor signal -- "systematics master list" failed to
+        # match `notes: Projects/.../2026-07-24-systematics-master-list.md`
+        # until the stem was spelled out as words.
+        if d["tier"] == "notes":
+            header, body = ss.prepare_note_text(p.stem, text)
+            text = body or text
+            header = header.strip()
+        else:
+            # Turn a path into words: separators become spaces so
+            # "submit_condor.py" matches "how are condor jobs submitted".
+            words = re.sub(r"[/_\-.]+", " ", d["id"])
+            header = f"{d['tier']} | {p.stem} | {words}"
         vecs = _embed_doc(text, header)
         if not vecs:
             failed += 1
