@@ -55,6 +55,3 @@ __pycache__/
 .vault-rag-index.json
 .vault-rag-index.lock
 .vault-rag-index.log
-
-# Rendered Marp decks (regenerable: npx @marp-team/marp-cli <deck>.md --pdf --allow-local-files)
-Projects/PromptTooling/rag-eval-2026-08-13/rag-system-deck.pdf
