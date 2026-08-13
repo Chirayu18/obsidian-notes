@@ -6,9 +6,9 @@
       "tokens": 322340.75
     },
     "rag": {
-      "solved": 12,
+      "solved": 14,
       "calls": 46,
-      "tokens": 91392.75
+      "tokens": 87263.75
     }
   },
   "n_queries": 16,

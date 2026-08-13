@@ -168,9 +168,13 @@ Tier weight **multiplies** the fused score, so an
 equally-relevant note outranks a code file — one
 blended list, not three separate ones.
 
-Recency is a gentle tiebreak: 900-day half-life,
-floor 0.70. A fresh note wins among equals; a
-2-year-old note stays findable.
+Recency is a **tiebreak**: 240-day half-life,
+floor 0.50, swept against the benchmark. A fresh
+note wins among equals; old ones stay findable.
+
+Notes marked `status: superseded` are demoted
+×0.55 and tagged in results — age alone can't tell
+a stale number from a still-valid method note.
 
 </span>
 </div>
@@ -243,9 +247,9 @@ deliberately **not** using the note's own vocabulary.
 
 |  | grep | RAG |
 |---|---|---|
-| hit@5 (all) | 62% | <span class="ok">88%</span> |
+| hit@5 (all) | 62% | <span class="ok">94%</span> |
 | MRR (all) | 0.35 | <span class="ok">0.73</span> |
-| MRR paraphrase | 0.24 | <span class="ok">0.55</span> |
+| MRR paraphrase | 0.24 | <span class="ok">0.53</span> |
 | MRR partial | 0.40 | <span class="ok">1.00</span> |
 
 **MRR 0.73 vs 0.35** — with the RAG the right note is
@@ -302,13 +306,13 @@ rank order (give up after 4)
 <div class="cols">
 <div>
 
-<span class="ok">**3.5× less context burned**</span>
-<span class="small">322k → 91k tokens across 16 queries</span>
+<span class="ok">**3.7× less context burned**</span>
+<span class="small">322k → 87k tokens across 16 queries</span>
 
 </div>
 <div>
 
-<span class="small">More queries solved (9 → 12), in **fewer** tool
+<span class="small">More queries solved (9 → 14), in **fewer** tool
 calls (64 → 46). The win isn't accuracy — it's
 **not reading the wrong files.**</span>
 
@@ -332,14 +336,14 @@ calls (64 → 46). The win isn't accuracy — it's
 The RAG is **not** uniformly better:
 
 - <span class="hl">Query 2</span> *"yield looked right but uncertainty
-  inflated"* — grep found it, RAG missed. The
-  note's framing is numeric, not linguistic.
-- <span class="hl">Query 13</span> *"blacklist…"* — grep ranked it 2nd,
-  RAG 3rd. Rare exact terms are grep's home turf.
+  inflated"* — grep found it, RAG missed
+  (rr 0.25 → 0). Numeric framing, not linguistic.
+  **The one query grep wins outright.**
+- <span class="hl">Query 6</span> *"which knobs did we treat as one
+  nuisance"* — unsolved by both. The decision is
+  recorded, just not in language resembling the ask.
 
-4 of 16 remain unsolved by both. Those are notes
-whose content genuinely doesn't resemble the
-question asked.
+2 of 16 unsolved by the RAG; 7 by grep.
 
 **`rg` is still the right tool when you know the
 exact string.** This layer is for when you don't.
@@ -410,9 +414,9 @@ investigation took weeks of human work.
 
 | | tokens | vs RAG |
 |---|---|---|
-| A. vanilla *(modelled)* | ~3,162k | **35×** |
-| B. vault + grep | 322k | 3.5× |
-| C. vault + RAG | 91k | — |
+| A. vanilla *(modelled)* | ~3,162k | **36×** |
+| B. vault + grep | 322k | 3.7× |
+| C. vault + RAG | 87k | — |
 
 </span>
 </div>
@@ -422,7 +426,7 @@ investigation took weeks of human work.
 
 Note the **right panel**: vanilla answers *fewer*
 questions than grep-on-the-vault, while burning
-35× the context. <span class="hl">More tokens does not buy
+36× the context. <span class="hl">More tokens does not buy
 the answer.</span>
 
 </span>
@@ -463,6 +467,54 @@ Dead ends and "we tried X, it failed because Y" leave
 
 The RAG makes that record cheap to reach — it does not
 create it. You do, by writing it down.
+
+</span>
+</div>
+</div>
+
+---
+
+## Tuning: what the sweep actually revealed
+
+<span class="small">
+
+An aggressive recency setting (120-day half-life) was added to make updated
+results outrank the ones they replace. It **cost 0.16 MRR** — it pushed correct
+but slightly older notes down. Sweeping half-life × floor found a broad plateau;
+240/0.50 sits in its interior, restoring MRR 0.73 and lifting hit@5 to 94%.
+
+</span>
+
+<div class="cols">
+<div>
+
+**Then a second benchmark, and the real finding**
+<span class="small">
+
+Every gold note in the 16-query set is **under 58 days
+old** (median 26). The set contains no stale/fresh
+pairs — so it can only ever *punish* recency, never
+reward it. Tuning against it was optimising the wrong
+thing, which is why it kept pushing toward "no recency".
+
+</span>
+</div>
+<div>
+
+**Recency cannot fix supersession**
+<span class="small">
+
+A separate pair-benchmark (current vs stale note on the
+same quantity) scores a flat <span class="hl">50% at every
+setting</span> — 120/0.35, 240/0.50, 3000/0.95, identical.
+
+When the older note is the better *topical* match it wins
+by ~50 ranks. A multiplier on RRF scores cannot close
+that gap at any half-life.
+
+<span class="ok">Marking `status: superseded` moved one stale
+note from rank 2 → 19.</span> That is the mechanism; recency
+is only a tiebreak.
 
 </span>
 </div>
@@ -579,7 +631,7 @@ A long note saying "list" 19× outranked it;
 semantic had it at rank 1, RRF averaged it to 24.
 
 <span class="ok">Fix:</span> normalise by $\sqrt{\text{size}}$, boost
-filename matches. hit@5 62% → 88%.
+filename matches. hit@5 62% → 94%.
 
 </span>
 </div>
@@ -622,7 +674,7 @@ works here at all. The index is not a substitute for writing things down well.
 
 Semantic (`bge-m3`) + keyword, fused by RRF,
 shaped by tier weight × recency.
-309 docs / 1828 chunks / 38 MB, gitignored.
+311 docs / ~1830 chunks / 38 MB, gitignored.
 Self-pruning, hook-refreshed, 8 ms to fire.
 
 </span>
@@ -632,8 +684,8 @@ Self-pruning, hook-refreshed, 8 ms to fire.
 **What it buys**
 <span class="small">
 
-hit@5 **62% → 88%**, MRR **0.35 → 0.73**.
-Context read to answer: **322k → 91k tokens**.
+hit@5 **62% → 94%**, MRR **0.35 → 0.73**.
+Context read to answer: **322k → 87k tokens**.
 Paraphrased questions go from coin-flip to reliable.
 
 </span>
@@ -642,7 +694,7 @@ Paraphrased questions go from coin-flip to reliable.
 
 <br>
 
-<span class="small">**The bigger effect is the vault, not the index.** A cold agent burns ~35× the context and
+<span class="small">**The bigger effect is the vault, not the index.** A cold agent burns ~36× the context and
 still answers *fewer* questions — because a third of them are judgement calls that were
 never in the code. The RAG makes that record cheap to reach; writing it down is what
 makes it exist.</span>

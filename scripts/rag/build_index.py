@@ -139,6 +139,21 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
     old = cache.get("docs", {}) if reusable else {}
 
     docs, warnings = collect(vault)
+
+    # If a tier's source is unreachable (dead sshfs), collect() returns nothing
+    # for it -- which the prune below would read as "every file was deleted".
+    # Carry the previous entries over untouched instead. Losing the code tier to
+    # a flaky mount is far worse than a few stale entries.
+    stranded = {
+        t for t in ("code", "papers", "notes")
+        if any(e.get("tier") == t for e in old.values())
+        and not any(d["tier"] == t for d in docs)
+    }
+    if stranded:
+        warnings.append(
+            f"tier(s) {', '.join(sorted(stranded))} unreachable -- "
+            f"keeping cached entries instead of pruning them")
+
     new: dict = {}
     embedded = reused = failed = 0
 
@@ -207,6 +222,11 @@ def build(vault: Path, full: bool = False, verbose: bool = True) -> dict:
         embedded += 1
         if verbose and embedded % 25 == 0:
             print(f"  embedded {embedded}...", file=sys.stderr)
+
+    # Re-admit entries from unreachable tiers so they survive this rebuild.
+    for k, e in old.items():
+        if e.get("tier") in stranded and k not in new:
+            new[k] = e
 
     pruned = len(old) - sum(1 for k in old if k in new)
     out = {

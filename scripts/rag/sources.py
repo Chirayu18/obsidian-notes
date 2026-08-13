@@ -21,16 +21,19 @@ from pathlib import Path
 # --- tier weights -----------------------------------------------------------
 TIER_WEIGHT = {"notes": 1.0, "papers": 0.7, "code": 0.5}
 
-# Recency. This has to be strong enough to actually decide a tie: semantic
-# similarity between two notes on the same topic varies by far more than a few
-# percent, so a gentle curve is cosmetic. With a 120-day half-life a fresh note
-# beats a year-old one by ~2.3x, which is what makes an updated limit outrank
-# the superseded one it replaced.
+# Recency. Tuned by sweeping half-life x floor against the 16-query topical
+# benchmark (scripts live in Projects/PromptTooling/rag-eval-2026-08-13/eval/).
+# 240/0.50 sits in the interior of a broad plateau at hit@5 0.94 / MRR ~0.74;
+# the previous 120/0.35 sat on the steep edge and cost 0.16 MRR by pushing
+# correct-but-older notes down.
 #
-# The floor keeps old-but-still-valid notes reachable -- they are demoted, never
-# hidden, and an exact term or --tier still finds them.
-RECENCY_HALFLIFE_DAYS = 120.0
-RECENCY_FLOOR = 0.35
+# Deliberately NOT more aggressive. A separate benchmark (recency_eval.py) shows
+# recency cannot fix a stale-outranks-current case at ANY setting: when the old
+# note is the better topical match it wins by ~50 ranks, and a multiplier on RRF
+# scores cannot close that. Marking the old note `status: superseded` is what
+# fixes it -- see SUPERSEDED_PENALTY. Recency is a tiebreak, not a truth signal.
+RECENCY_HALFLIFE_DAYS = 240.0
+RECENCY_FLOOR = 0.50
 
 # A note explicitly marked superseded is not merely old -- it has been replaced.
 # Age cannot express that: a June limit number is stale while a June methodology
@@ -106,10 +109,28 @@ def code_roots_available() -> tuple[list[Path], str]:
                 return [], f"lxplus mount not active at {mount} -- code tier skipped"
         except (subprocess.SubprocessError, OSError):
             return [], f"could not probe {mount} -- code tier skipped"
-    live = [r for r in roots if r.is_dir()]
-    missing = [r.name for r in roots if not r.is_dir()]
-    note = f"missing code roots: {', '.join(missing)}" if missing else ""
-    return live, note
+    # is_dir() is not enough: a dead sshfs connection still answers as a
+    # mountpoint, and its children raise EACCES/EIO. Probing readability is what
+    # distinguishes "mount is up" from "mount is a corpse" -- and getting this
+    # wrong silently PRUNED all 105 code docs, because unreadable reads exactly
+    # like deleted to the incremental indexer.
+    live, missing, unreadable = [], [], []
+    for r in roots:
+        if not r.is_dir():
+            missing.append(r.name)
+            continue
+        try:
+            next(iter(os.scandir(r)), None)
+        except OSError:
+            unreadable.append(r.name)
+            continue
+        live.append(r)
+    notes = []
+    if missing:
+        notes.append(f"missing code roots: {', '.join(missing)}")
+    if unreadable:
+        notes.append(f"UNREADABLE code roots (stale mount?): {', '.join(unreadable)}")
+    return live, "; ".join(notes)
 
 
 def iter_code_files(roots: list[Path]):
