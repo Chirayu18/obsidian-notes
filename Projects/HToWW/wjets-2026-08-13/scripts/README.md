@@ -27,3 +27,4 @@ Needs Rucio for `repoint.py` / `fix81.py`:
 ```bash
 source /cvmfs/cms.cern.ch/rucio/setup-py3.sh
 ```
+| `quar_tbbarq.py` | Quarantines stale `TBbarQ`/`TbarBQ` outputs that block postprocess. Anchored exact-name + regex matching, moves never deletes. Run on AFS (postprocess reads AFS, not EOS). |

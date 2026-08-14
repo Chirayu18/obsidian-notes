@@ -15,10 +15,13 @@ physics/config detail) and [[2026-08-12-master-task-list]].
 ## 0. WHERE WE ARE — one paragraph
 
 Reprocessing of the three jet-binned W+jets samples is **COMPLETE (550/550
-partitions)**. The next step, `run_postprocess.py`, **fails immediately** on a
-pre-existing problem unrelated to this work: stale `TBbarQ`/`TbarBQ` output
-parquets from samples that were disabled in the config on 2026-08-12.
-**A decision is needed on those before anything else can proceed** (§4).
+partitions, 4,851 surviving SR rows vs 519 for the old inclusive = 9.3×)**. A
+blocker in `run_postprocess.py` (stale `TBbarQ` outputs from samples disabled on
+2026-08-12) has been **resolved by quarantining them on AFS** (§4).
+**Next action: run `run_postprocess.py` — see §5.** Nothing downstream
+(postprocess, inference, datacard, limit) has been run yet, so the **1160
+baseline card is still untouched and the whole change is still fully
+reversible** (§7).
 
 ---
 
@@ -154,9 +157,9 @@ and then **must be restored** (178 lines for 1J) or later resubmissions break.
 
 ---
 
-## 4. ⛔ BLOCKER — decide this first
+## 4. TBbarQ blocker — RESOLVED (quarantined), postprocess NOT yet run
 
-`run_postprocess.py` fails immediately:
+`run_postprocess.py` failed immediately with:
 
 ```
 KeyError: 'TBbarQ'
@@ -164,33 +167,66 @@ KeyError: 'TBbarQ'
 ```
 
 **Cause:** `TBbarQ`/`TbarBQ` were deliberately disabled in
-`2022postEE_nanov12.yaml` on 2026-08-12 (commented out, see line ~140/199/215),
-but their **output parquets still exist**: 13 on AFS, 13 on EOS. Postprocess
-globs output directories and looks each up in the config, so it dies on orphans.
+`2022postEE_nanov12.yaml` on 2026-08-12 (commented out, lines ~140/199/215), but
+their **output parquets still existed**. Postprocess globs output directories and
+looks each up in the config, so it dies on orphans. **Pre-existing, unrelated to
+the W+jets work.**
 
-**This is pre-existing and unrelated to the W+jets work.**
+**ACTION TAKEN 2026-08-13 ~22:20 — quarantined, nothing deleted:**
 
-The question put to the user (unanswered — they asked for this handoff instead):
+```
+/afs/.../higgscharm/outputs/hww_combine_2dcat/2022postEE_disabled_tbbarq/
+   39 items moved (merged parquets kept under their <shiftdir>/ subdir,
+                   raw partition dirs under partitions/)
+   remaining in the live AFS tree: 0
+```
 
-1. **Quarantine them** (recommended, matches what was done for the inclusive
-   W+jets): move the 26 stale parquets aside. Nothing deleted, one `mv` to undo.
-2. **Delete them** — irreversible.
-3. **Re-enable TBbarQ in the config** — makes postprocess succeed without moving
-   data, but changes physics content; those samples were disabled deliberately
-   and the reason is not recorded. **Do not do this without the user's reason.**
+EOS reported 0 moved — **postprocess reads from AFS**
+(`<repo>/outputs/hww_combine_2dcat/2022postEE`), not EOS, so the AFS copy was the
+one blocking. The 13 stale EOS parquets are still in place and are harmless for
+postprocess, but **will need the same treatment before `make_combine_inputs`**
+if that builder globs EOS — CHECK THIS.
 
-⚠️ Per the standing rule, **do NOT delete or move anything on EOS without
-confirming with the user at that moment.**
+Used anchored regex `(TBbarQ|TbarBQ)(?:_\d+)?` and exact basename matching, not a
+glob — see mistake #1 in §8.
+
+> To undo: `mv` the contents of `2022postEE_disabled_tbbarq/` back. Nothing was
+> deleted.
+
+### ⛔ WHERE IT STOPPED
+
+**`run_postprocess.py` has NOT been successfully run yet.** The rerun attempt
+failed only because the helper `/tmp/postproc.sh` had been cleared from the
+node's `/tmp` (`bash: /tmp/postproc.sh: No such file or directory`) — a lost
+scratch file, **not** an analysis problem. Recreate it and run (§5).
 
 ---
 
-## 5. Remaining pipeline after the blocker clears
+## 5. Remaining pipeline — START HERE
+
+Step 1 is the immediate next action. Run it inside tmux (it takes a while):
 
 ```bash
-# 1. postprocess  (NOTE: there is NO --mva flag; merging is the default,
-#    --skipmerging disables it. README_HToWW.md wrongly documents --mva — fix it.)
-python3 run_postprocess.py --workflow hww_combine_2dcat --year 2022postEE \
-        --postprocess --output_format parquet
+cat > /tmp/postproc.sh <<'EOF'
+#!/bin/bash
+export X509_USER_PROXY=/tmp/x509up_u$(id -u)
+export MAMBA_EXE=/eos/user/c/cgupta/EPR_task/b-hive/micromamba/micromamba
+export MAMBA_ROOT_PREFIX=/eos/user/c/cgupta/EPR_task/b-hive/micromamba
+cd /afs/cern.ch/user/c/cgupta/higgscharm_thomas/higgscharm_thomas_new/higgscharm
+$MAMBA_EXE run -n b_hive python3 run_postprocess.py \
+   --workflow hww_combine_2dcat --year 2022postEE \
+   --postprocess --output_format parquet 2>&1 | tail -30
+echo "POSTPROCESS_EXIT=${PIPESTATUS[0]}"
+EOF
+chmod +x /tmp/postproc.sh
+tmux new-session -d -s pp "bash /tmp/postproc.sh > /tmp/postproc.log 2>&1"
+tail -f /tmp/postproc.log
+```
+
+> **NOTE: there is NO `--mva` flag.** Merging is the default; `--skipmerging`
+> disables it. `README_HToWW.md` wrongly documents `--mva` — fix that too.
+> Expect more orphan `KeyError`s if other samples were disabled without their
+> outputs being cleared; same quarantine treatment applies (§4).
 
 # 2. inference — MUST cover nominal + all 12 shift dirs
 python3 scripts/mva/run_inference.py --workflow hww_combine_2dcat --year 2022postEE \
