@@ -115,17 +115,17 @@ for now, full decorrelation deferred to a whole-card pass. HiggsDNA's
 **Revised ranking from the 2026-08-12 impacts scan** (limit with nuisance
 frozen; nominal 1160):
 
-| nuisance | frozen | delta |
-|---|---|---|
-| `scalevar_muF` | 1091 | **-69** |
-| `CMS_ctag2d_2022` | 1125 | **-35** |
-| `ps_fsr` | 1135 | -25 |
-| `scalevar_muR_muF` | 1144 | -16 |
-| `scalevar_muR` | 1151 | -9 |
-| `lhe_alphaS` | 1156 | -4 |
-| `lhe_pdf`, `CMS_scale_j_2022` | 1159 | -1 |
-| all others | 1160 | 0 |
-| `xsec_vjets` | 1173 | **+13** (fit uses it to absorb something) |
+| nuisance                      | frozen | delta                                     |
+| ----------------------------- | ------ | ----------------------------------------- |
+| `scalevar_muF`                | 1091   | **-69**                                   |
+| `CMS_ctag2d_2022`             | 1125   | **-35**                                   |
+| `ps_fsr`                      | 1135   | -25                                       |
+| `scalevar_muR_muF`            | 1144   | -16                                       |
+| `scalevar_muR`                | 1151   | -9                                        |
+| `lhe_alphaS`                  | 1156   | -4                                        |
+| `lhe_pdf`, `CMS_scale_j_2022` | 1159   | -1                                        |
+| all others                    | 1160   | 0                                         |
+| `xsec_vjets`                  | 1173   | **+13** (fit uses it to absorb something) |
 
 `scalevar_muF` at -69 is nearly 2x ctag2d. **This, not ctag2d, is the biggest
 single lever.** Investigate: is the muF variation being applied per-process
