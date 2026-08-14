@@ -1,9 +1,18 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-08-14-wjets-postprocess-to-limit]]"
 date: 2026-08-13
 source: lxplus
 ---
+
+> [!warning] Superseded by [[2026-08-14-wjets-postprocess-to-limit]]
+> Still useful for the reprocessing/XRootD history, but **three claims here are
+> wrong**: `outputs/` is a symlink to EOS (AFS and EOS are one tree, §4 is
+> confused), `make_combine_inputs` does *not* glob `parquets_*` (the "CHECK THIS"
+> is answered — stale dirs are inert), and the `mva` dir-count check in §5
+> ("baseline 14, must grow") is misleading — it counts *variations*, not
+> datasets, and will not grow. See §1 of the new note.
 
 # HANDOFF — W+jets jet-binned replacement, session state at 2026-08-13 22:15
 
