@@ -13,16 +13,23 @@ Continues [[2026-08-13-wjets-session-handoff]] (now superseded) and
 
 ---
 
-## 0. WHERE WE ARE
+## 0. WHERE WE ARE — RESULT
 
 The 2026-08-13 session left the reprocessing done but **nothing downstream run**.
-This session ran the pipeline forward: **postprocess ✅ → inference ✅ →
-datacard (running) → limit (chained, auto-fires)**.
+This session ran the whole pipeline forward:
+**postprocess ✅ → inference ✅ → datacard ✅ → limit ✅**.
 
-> **RESULTS SECTION IS §6 — filled when combine returns.**
+> ### 🎯 **Expected limit 1160 → 1034 (−126, −10.9%)**
+> ### V+jets `n_eff` in SR_hplusc: **279.8 → 1169.6 (×4.18)**, rel. stat. err **5.98% → 2.92%**
+>
+> Full detail and caveats in **§6**. The gain is **4.18×, not the 15.6× projected** —
+> and the comparison is **not a clean A/B test** (§6 caveat, §10).
 
 The **1160 baseline card was backed up before the rebuild** (§5), so the
 comparison point is preserved even though the builder overwrites in place.
+
+**Next action:** the open questions in **§10**, chiefly re-deriving a clean
+baseline so the W+jets contribution can be isolated.
 
 ---
 
@@ -259,23 +266,66 @@ Reproduces the known 280 / 5.98% exactly.
 
 ---
 
-## 6. RESULTS — *pending, filled when combine returns*
+## 6. RESULTS ✅
 
 ```
 combine -M AsymptoticLimits v11_hplusc_2dcat.txt -t -1 --run blind \
-        --noFitAsimov --mass 120 -n JetBinnedWJets
+        --noFitAsimov --mass 120 -n JetBinnedWJets      # LIMIT_EXIT=0
 ```
 
 | quantity | baseline (2026-08-12) | jet-binned | change |
 |---|---|---|---|
-| expected limit | 1160 | *pending* | |
-| V+jets `n_eff` (SR_hplusc) | 279.8 | *pending* | |
-| V+jets rel. stat. err (SR) | 5.98% | *pending* | |
-| V+jets rate (SR_hplusc) | 1507.72 | *pending* | |
+| **expected limit (50%)** | **1160** | **1034** | **−126 (−10.9%)** |
+| V+jets `n_eff` (SR_hplusc) | 279.8 | **1169.6** | **×4.18** |
+| V+jets rel. stat. err (SR) | 5.98% | **2.92%** | **halved** |
+| V+jets Σσ² (SR) | 8125.65 | 1983.65 | ÷4.1 |
+| V+jets rate (SR_hplusc) | 1507.72 | 1523.15 | +1.0% |
 
-Projection from the previous session was ~4,400 / ~1.5%, but that used a 15.6×
-estimate across all three samples while the SR gain is driven by 1J/2J —
-**re-measured, not trusted.**
+Full expected band: **517 / 707 / 1034 / 1599 / 2480**.
+
+### The gain is 4.18×, NOT the projected 15.6×
+
+The previous session projected `n_eff` ~4,400 / ~1.5% and explicitly said to
+re-measure rather than trust it. **That warning was correct.** The 15.6× was an
+*effective-luminosity* estimate over the whole samples; the SR gain depends on
+which events survive the ≥1 c-jet selection, and negrw was already recovering
+part of the cancellation loss in the baseline. **4.18× is the real number.**
+
+### The yield barely moved — this is a statistics gain, not a yield change
+
+V+jets SR rate moved only **+1.0%** (1507.72 → 1523.15) while the statistical
+error **halved**. That is the signature you want. A large rate shift would have
+indicated a normalisation bug (double-count, wrong xsec, negrw renorm failure).
+It did not happen — and §1.2 independently proves the old inclusive cannot enter
+the card.
+
+### ⚠️ CAVEAT — the comparison is not purely a W+jets A/B test
+
+Other processes also moved between the two cards, though **only W+jets was
+intentionally changed**:
+
+| process | baseline SR | new SR | Δ |
+|---|---|---|---|
+| hplusc | 0.2610 | 0.260 | −0.4% |
+| higgsbkg | 131.09 | 132.47 | +1.1% |
+| **tt** | **16938.76** | **17744.25** | **+4.8%** |
+| **st** | **1486.76** | **1542.85** | **+3.8%** |
+| diboson | 599.53 | 609.30 | +1.6% |
+| vjets | 1507.72 | 1523.15 | +1.0% |
+
+Most likely cause: this session **re-merged all 887 partitions from scratch**,
+whereas the Aug-12 baseline used whatever merge existed then — so the new card
+probably has *more complete* `tt`/`st` inputs. (`TBbarQ`/`TbarBQ` were disabled
+before the baseline was built, so that is not the explanation.)
+
+**Direction matters:** more background yield normally makes a limit *worse*, so
+this effect works **against** the improvement. The true W+jets contribution is
+therefore plausibly **larger** than 126 units, not smaller. But this is
+**unverified** — see §10.
+
+Also logged: `Clipped 67 non-positive nominal bins to floor`, 1626 histograms
+written, 6 object-shift systematics folded. The clip count was **not** compared
+against the baseline build (no log kept from Aug 12).
 
 ---
 
@@ -341,3 +391,41 @@ node): `postproc.sh`, `infer.sh`, `card.sh`, `limit.sh`, `verify_parts.py`,
    was an Aug 10 leftover; timestamps corrected the story.
 5. **Nested-quoting through `ssh 'bash -c "..."'` mangled a Python f-string.**
    Write the script locally and pipe it: `cat f.py | ssh lx980 'cat > /tmp/f.py'`.
+6. **Twice misread the card build's phase from its log** — called an empty `ps`
+   "the process died" (wrong PID via `tail -1`), and called the finished
+   per-sample loop "writing now" when a 13-cycle object-shift pass was still to
+   come. Both produced over-optimistic ETAs. **Measure a line rate; do not infer
+   progress from what the code "should" be doing.**
+7. **Listed LOWESS smoothing as a cost of the card build without checking.** It
+   is `smooth_shapes: false` (disabled 2026-07-31 because negrw *replaces*
+   template smoothing). The user caught this. Smoothing and clipping also run
+   once at the end, never per cycle.
+
+---
+
+## 10. OPEN QUESTIONS / NEXT ACTIONS
+
+1. **⚠️ Isolate the true W+jets effect (highest priority).** `tt` (+4.8%) and
+   `st` (+3.8%) moved between the cards even though only W+jets changed (§6
+   caveat). The 1160 baseline is from **2026-08-12**, before this session
+   re-merged everything. **Until a baseline is rebuilt from the current
+   inputs with only the inclusive W+jets restored, the 126-unit improvement
+   cannot be attributed wholly to W+jets.** Since the background yields moved
+   *up*, the W+jets gain is probably *understated* — but verify, do not assume.
+   The rollback material for exactly this test is in §5 and §7 of
+   [[2026-08-13-wjets-session-handoff]].
+2. **Per-process `n_eff` comparison was never completed.** The script
+   (`/tmp/cmp_cards.py`, laptop copy in the job scratch) opens both cards and
+   diffs rate + `n_eff` per channel × process. The SSH master died before it
+   finished; **only the SR yields were recovered, from the logs.** Re-run it.
+3. **Compare the "Clipped 67 non-positive nominal bins" count** against a
+   baseline build. Expected to grow with sparser shift templates, but unverified.
+4. **Re-run the frozen-autoMCStats test.** The whole premise was that
+   autoMCStats costs −255, of which −225 is the SR. With SR V+jets `n_eff` now
+   4.18× larger, re-measure how much of that penalty remains — that tells you
+   whether V+jets statistics is still the leading lever or whether the next
+   systematic (`scalevar_muF`, −69) has taken over.
+5. **The 10 missing samples of §7** — decide whether to process them.
+6. **`mva_labeled` is scored as a 14th pseudo-variation** by
+   `discover_variations()` (it contains an `mva/` subdir). Harmless but wasteful;
+   consider adding it to the skip list alongside `mva`/`training`/`filelists`.
