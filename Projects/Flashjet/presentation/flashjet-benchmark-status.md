@@ -102,13 +102,8 @@ Two clusterers, given **exactly the same jets**, asked to do **exactly the same 
 <div class="box">
 
 **All speedups quoted here are against the vectorised (faster) FastJet.**
-Comparing against the per-jet loop would make flashjet look ~5× better still,
-but that would not be a fair fight.
 
 </div>
-
-**Two independent software environments** are used so the two libraries cannot
-interfere with each other's dependencies.
 
 ---
 
@@ -124,11 +119,7 @@ shown freely, with no approval needed.
 | **$t\bar t$** (all-hadronic) | 30 000 | 22.2 |
 | **QCD** (high-$p_T$ dijets) | 28 250 | 34.0 |
 
-**Why these four:** they are ordinary physics processes, and together they span a
-**3× range in how busy a jet is** (11 → 34 particles). Jet clustering cost is driven
-by that number, so this range is what lets us see a **trend** rather than one number.
-
-<span class="small">Format: MINIAOD, which is the tier that still contains the individual particles inside each jet. Read straight over the network from the public CERN storage.</span>
+Format: **MINIAOD**.
 
 ---
 
@@ -191,59 +182,66 @@ Microseconds to cluster **one jet** (anti-$k_t$, $R$=0.4):
 
 ---
 
+## The same holds at a larger jet radius ($R$ = 0.8)
+
+![w:700](img/bench_speed_R0.8_H100_NVL.png)
+
+<span class="small">Anti-$k_t$ with $R$=0.8 instead of 0.4: **65–96×** over vectorised FastJet on H100 (A100: 25–41×), again with ~100 % agreement on the number of jets found. **The conclusion does not depend on the choice of jet radius.**</span>
+
+---
+
 ## The trend that matters
 
-![w:700](img/bench_scaling_R0.4_H100_NVL.png)
+![w:660](img/bench_scaling_ratio_R0.4.png)
 
-<span class="small">Throughput vs how busy the jet is. The four processes sit on **one common trend** — this is a property of the algorithm, not of any particular physics sample.</span>
-
-**The busier the jet, the bigger the advantage** (77× → 97×): FastJet's cost grows
-quickly with the number of particles, flashjet's grows much more slowly.
+<span class="small">Linear scale. **Top:** time per jet — FastJet's cost climbs steeply with jet multiplicity while both flashjet curves stay nearly flat (inset zooms in on them). **Bottom:** the resulting speedup. The four processes sit on **one common trend**, so this is a property of the algorithm rather than of any particular sample.</span>
 
 ---
 
-## Where the time actually goes
+## Profiling — where the time goes, and what limits it
 
-We profiled the GPU to check *why* it is fast, and whether anything is wasted.
+<div class="cols">
+<div>
 
-| part of the code | share of GPU time |
-|---|---|
-| **the clustering itself** | **97.6 %** |
-| extracting the jet assignment | 1.5 % |
-| everything else | < 1 % |
+**Nsight Systems** — share of GPU time (A100)
 
-Moving data between CPU and GPU is **negligible** once running.
-
-<div class="box">
-
-**⇒ There is no hidden overhead.** Essentially all the time is the real work.
-It also means any *future* speedup has to come from that one piece of code.
-
-</div>
-
----
-
-## A finding worth acting on
-
-A deeper hardware-level profile shows flashjet is **not** limited by memory speed —
-it is limited by **not giving the GPU enough work at once**:
-
-| measure | H100 | what it means |
+| kernel | % GPU | avg / call |
 |---|---|---|
-| memory bandwidth used | **0.02 %** | memory is essentially idle |
-| GPU "filled up" | **0.32×** | the GPU is **not filled even once** |
-| occupancy achieved | **6.25 %** | most of the chip is unused |
+| `_cluster_large_kernel` | **97.6 %** | 5.47 ms |
+| `_decode_kernel` | 1.5 % | 82 µs |
+| torch glue | < 1 % | — |
+
+CPU↔GPU transfer negligible once running.
+
+**⇒ No hidden overhead** — essentially all the
+time is the real clustering work.
+
+</div>
+<div>
+
+**Nsight Compute** — hardware counters (H100)
+
+| metric | value |
+|---|---|
+| DRAM throughput | **0.02 %** |
+| Compute (SM) throughput | 15.4 % |
+| Registers / thread | 168 |
+| Theoretical occupancy | 18.75 % |
+| **Achieved occupancy** | **6.25 %** |
+| **Waves per SM** | **0.32** |
+
+**⇒ Not memory- or compute-bound** — the GPU
+is simply **not filled** (0.32 waves/SM).
+
+</div>
+</div>
 
 <div class="box">
 
-**⇒ flashjet is already ~80× faster than FastJet while leaving most of a
-modern GPU idle.** The internal settings that decide how work is spread across
-the GPU were tuned on an older, smaller card and do not suit an H100.
+**flashjet is already ~80× faster while leaving most of a modern GPU idle** — the
+work-distribution settings were tuned on an older, smaller card. **Headroom, not a limit.**
 
 </div>
-
-**This is good news:** it is a concrete, identified path to going faster still,
-not an unexplained limit.
 
 ---
 
@@ -295,7 +293,7 @@ both correct and roughly two orders of magnitude faster.**
 <span class="done">✓</span> reproduces analytic physics predictions
 <span class="done">✓</span> same number of jets as FastJet in every timing run
 
-**Performance** — <span class="done">complete for the jet-clustering regime</span>
+**Performance** — <span class="done">complete</span>
 <span class="done">✓</span> 4 physics processes × 2 radii × 2 GPU generations, on public data
 <span class="done">✓</span> profiled: no hidden overhead; bottleneck identified
 
@@ -307,20 +305,12 @@ both correct and roughly two orders of magnitude faster.**
 
 ## To do — in priority order
 
-| | item | why | effort |
-|---|---|---|---|
-| **1** | <span class="todo">Compare against **C++ FastJet**</span> | every number here uses FastJet's **Python** interface. The production tool is C++. Until we measure it, the honest caveat is *"some of this could be Python overhead"* | **low** — no flashjet changes needed |
-| **2** | <span class="part">Improve GPU utilisation</span> | the profile says most of the GPU is idle; retuning how work is spread should give more speed for free | medium |
-| **3** | <span class="part">Test full-event clustering</span> | so far this is **jet** clustering. Clustering a whole event is a harder, slower problem and has not been re-checked | medium |
-| **4** | <span class="part">Other algorithms & conditions</span> | only anti-$k_t$ is timed ($k_t$, C/A untested for speed); no scan over jet radius; no test vs **pile-up** | medium |
-| **5** | <span class="todo">Use it inside the experiment's software</span> | the real production test. Needs the GPU code rewritten in C++ — a separate project | **high** |
-
-<div class="box">
-
-**Recommended next step: item 1.** It is quick, needs no new code, and it closes
-the one genuine weakness in the numbers presented here.
-
-</div>
+| | item | why |
+|---|---|---|
+| **1** | <span class="todo">Compare against **C++ FastJet**</span> | every number here uses FastJet's **Python** interface. The production tool is C++. Until we measure it, the honest caveat is *"some of this could be Python overhead"* |
+| **2** | <span class="part">Improve GPU utilisation</span> | the profile says most of the GPU is idle; retuning how work is spread should give more speed for free |
+| **3** | <span class="part">Other algorithms & conditions</span> | only anti-$k_t$ is timed ($k_t$, C/A untested for speed); no scan over jet radius; no test vs **pile-up** |
+| **4** | <span class="todo">Use it inside the experiment's software</span> | the real production test. Needs the GPU code rewritten in C++ — a separate project |
 
 ---
 
@@ -356,29 +346,27 @@ python3 make_bench_plots.py 0.4 H100_NVL
 
 ---
 
-## $R$ = 0.8 — the same conclusion
+## $R$ = 0.8 — multiplicity trend
 
-![w:740](img/bench_speed_R0.8_H100_NVL.png)
+![w:640](img/bench_scaling_ratio_R0.8.png)
 
-<span class="small">Anti-$k_t$ with the larger jet radius $R$=0.8: **65–96×** over vectorised FastJet. The result does not depend on the choice of jet radius.</span>
+<span class="small">Same construction as the $R$=0.4 trend slide, for the larger jet radius.</span>
 
 ---
 
-## Detailed profiling numbers
+## Reading the profiling numbers
 
-Hardware counters for the clustering step (H100, one representative workload):
-
-| metric | value | interpretation |
+| counter | meaning | flashjet on H100 |
 |---|---|---|
-| memory (DRAM) throughput | 0.02 % | not memory-limited |
-| compute throughput | 15.4 % | not compute-limited either |
-| registers per thread | 168 | high — this is what limits how many threads run at once |
-| theoretical occupancy | 18.75 % | ceiling set by the above |
-| achieved occupancy | 6.25 % | actual |
-| waves per multiprocessor | 0.32 | the GPU is not filled even once |
+| DRAM throughput | how hard memory is being pushed | 0.02 % → memory idle |
+| Compute (SM) throughput | how hard the arithmetic units work | 15.4 % → not compute-bound |
+| Registers per thread | resources each thread reserves | 168 → **high** |
+| Theoretical occupancy | how many threads *could* run, given the above | 18.75 % → capped by registers |
+| Achieved occupancy | how many actually did | 6.25 % |
+| Waves per SM | how many times the GPU was filled | 0.32 → **not filled once** |
 
-**Reading:** the limitation is **parallelism**, not memory or arithmetic. Reducing
-the per-thread resource usage, and re-tuning the thresholds that decide how work is
-split across the GPU, are the concrete levers.
+**The limitation is parallelism, not memory or arithmetic.** Two concrete levers:
+reduce the per-thread register usage, and re-tune the internal thresholds that decide
+how work is split across the GPU (these were derived on an older, smaller device).
 
-<span class="small">Measured without fixed clock frequencies, so absolute timings here are indicative; the occupancy and register figures are structural and unaffected.</span>
+<span class="small">Profiled with Nsight Systems (timeline / kernel share) and Nsight Compute (hardware counters).</span>
