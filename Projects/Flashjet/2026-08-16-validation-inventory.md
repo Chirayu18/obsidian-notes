@@ -37,23 +37,79 @@ Related: [[2026-07-31-ml4jets-abstract]], [[2026-07-13-cms-validation]],
 |---|---|---|---|
 | B1 | flashjet vs FastJet, real ttbar (HLT ntuple, 16 384 jets) | Tesla T4 | ~11× vs vectorised FastJet, 100 % agreement |
 | B2 | Same, re-measured 2026-08-15 | **full A100-PCIE-40GB** | **0.24 µs/jet vs 7.23 (awkward) → ~30×**; classic 39.6 µs/jet |
-| B3 | **4-process CMS Open Data sweep**, R=0.4 and 0.8 | H100 **MIG 1g.12gb** (~1/7 card) | **8–13×** vs vectorised FastJet, ~100 % agreement (see table below) |
+| B3 | **4-process CMS Open Data sweep**, R=0.4 and 0.8 | **H100 NVL** (full card) | **65–97×** vs vectorised FastJet, ~100 % agreement |
+| B3b | same sweep | **A100-PCIE-40GB** (full card) | **25–41×** |
+| B3c | same sweep | H100 **MIG 1g.12gb** (~1/7 card) | **8–13×** — useful as a shared-GPU / partitioned-deployment point |
 | B4 | GPU backend sweep (synthetic), B=1024 | T4 | triton-large up to 176× over torch backend |
 | B5 | Throughput/latency sweep | A100 | 130–145 Mpart/s, 0.08–0.76 µs/jet (jet regime); event regime falls 47→1.1 Mpart/s with $O(N^2)$ |
 | B6 | nsys kernel breakdown | A100, H100 MIG | `_cluster_large_kernel` **96–99.6 %** of GPU time; decode 0.3–1.5 %; no steady-state H↔D traffic |
-| B7 | ncu microarchitecture | **T4 only** | L1/occupancy-bound, not DRAM-bound; 168 reg/thread caps occupancy at 37.5 % |
+| B7 | ncu microarchitecture | T4 (2026-06) | L1/occupancy-bound, not DRAM-bound; 168 reg/thread caps occupancy at 37.5 % |
+| B7b | **ncu on H100 NVL** (NEW, 2026-08-16) | H100 NVL, B=128 N=512 | **collected successfully** — see below. This is the measurement Alex's report could not obtain |
 
 ### B3 detail — CMS Open Data (UL16 MINIAOD), anti-$k_t$ R=0.4
 
-| dataset | jets | ⟨n⟩ const | flashjet µs/jet | FastJet awkward | FastJet classic | speedup | agreement |
-|---|---|---|---|---|---|---|---|
-| DY+jets | 30 000 | 10.8 | 0.603 | 6.50 | 36.87 | 11× | 100 % |
-| W+jets | 30 000 | 15.1 | 1.068 | 8.82 | 47.95 | 8× | 100 % |
-| $t\bar t$ (hadronic) | 30 000 | 22.2 | 1.331 | 15.14 | 71.06 | 11× | 99.997 % |
-| QCD (470–600) | 28 250 | 34.0 | 1.929 | 24.65 | 108.26 | 13× | 100 % |
+µs per jet; speedup quoted against the **vectorised (awkward)** FastJet interface,
+which is the fair Python baseline.
 
-R=0.8 gives the same picture (9–13×). **These are on ~1/7 of an H100** — a floor,
-not the headline. Full-A100/H100 runs are queued.
+| dataset | jets | ⟨n⟩ const | **flashjet H100 NVL** | **flashjet A100** | FastJet awkward | FastJet classic | speedup (H100) | agreement |
+|---|---|---|---|---|---|---|---|---|
+| DY+jets | 30 000 | 10.8 | **0.081** | 0.223 | 6.20 | 32.43 | **77×** | 100 % |
+| W+jets | 30 000 | 15.1 | **0.137** | 0.373 | 9.67 | 44.84 | **71×** | 100 % |
+| $t\bar t$ (hadronic) | 30 000 | 22.2 | **0.170** | 0.373 | 13.46 | 59.95 | **79×** | 99.997 % |
+| QCD (470–600) | 28 250 | 34.0 | **0.249** | 0.549 | 24.24 | 91.64 | **97×** | 100 % |
+
+R=0.8 gives the same picture (H100 65–96×, A100 25–41×), so the result is not an
+R artifact. Speedup **grows with multiplicity** — flashjet's per-jet cost rises far
+more slowly than FastJet's, which is the physics-independent statement worth showing.
+
+A full H100 NVL is ~**8× faster than one of its own MIG 1g.12gb slices**
+(0.081 vs 0.603 µs/jet on DY), consistent with the slice being ~1/7 of the card.
+
+Plots: `bench_speed_R{0.4,0.8}_{A100_PCIE_40GB,H100_NVL}.png` and
+`bench_scaling_*` in `/eos/home-c/cgupta/flashjet/bench_opendata/`.
+
+### B6/B7b detail — profiling on modern hardware (NEW)
+
+**nsys** (`_cluster_large_kernel` share of GPU time): A100 **97.6 %**, H100 MIG
+**97.8 %**, decode 1.5 % in both. The kernel-bound picture from the T4 era holds
+on current hardware — any further speedup must come from that one kernel.
+
+**ncu on H100 NVL**, `_cluster_large_kernel`, B=128 N=512:
+
+| metric | H100 NVL | T4 (2026-06) |
+|---|---|---|
+| Duration | 1.53 ms | 11.31 ms |
+| DRAM throughput | **0.02 %** | 0.36 % |
+| Memory throughput | 17.25 % | — |
+| Compute (SM) throughput | **15.42 %** | 39.4 % |
+| Registers / thread | **168** | 168 |
+| Theoretical occupancy | **18.75 %** | 37.5 % |
+| Achieved occupancy | **6.25 %** | 33.2 % |
+| Waves per SM | **0.32** | 1.07 |
+
+**Reading:** the T4 conclusion *does not* carry over unchanged, and the situation on
+H100 is worse in the way that matters. Register pressure is unchanged (168/thread)
+but on H100 that caps theoretical occupancy at **18.75 %**, and achieved occupancy
+is only **6.25 %**. With **0.32 waves/SM** the kernel does not even fill the GPU
+once — at this shape H100 is largely idle. DRAM is essentially untouched (0.02 %),
+so this is *not* a bandwidth problem: it is occupancy/parallelism starvation.
+
+Actionable consequences:
+1. **Register pressure is now the top optimisation lever** (it was already suspected
+   on T4; on H100 it costs proportionally more). This is direct evidence for the
+   `tune_large.py` crossover re-measurement the 2026-07-01 audit asked for.
+2. Grid size 128 with block size 128 is far too small for an H100 — the **auto-dispatch
+   thresholds are tuned for older, smaller GPUs** and should be re-derived per device.
+3. Caveat: measured with `--clock-control none` (clocks not locked, see below), so
+   absolute values are indicative; the occupancy/register figures are structural and
+   not clock-dependent.
+
+**Tooling notes (resolves a long-standing blocker).** Alex's June report could not
+collect ncu because DCGM held the performance counters. On lxplus GPU workers
+**DCGM is absent** (`nv-hostengine`/`dcgm-exporter` not running, `RmProfilingAdminOnly=0`),
+so that blocker does not apply. A *different* one does: **ncu cannot lock clocks on a
+MIG slice** (`Cannot lock GPU clock frequencies on MIG!`), so profiling must target a
+full card, optionally with `--clock-control none`.
 
 ---
 
@@ -74,12 +130,13 @@ measured, not assumed. Setup started: IB `CMSSW_20_1_X_2026-08-16-0000` (see [[2
 ### C3. Full-GPU numbers on A100 + H100 NVL for the Open Data sweep
 Queued. Needed so the headline is not a MIG slice.
 
-### C4. ncu on modern hardware
-Only ever collected on a T4. Alex's report says the T4 profile "does not transfer to
-the A100". Blockers now understood: DCGM is absent on lxplus GPU nodes (good), but
-**ncu cannot lock clocks on a MIG slice** — needs a full card (`--clock-control none`
-as fallback). So the standing optimisation advice (reduce register pressure) is
-unverified on A100/H100.
+### C4. ~~ncu on modern hardware~~ — **DONE 2026-08-16** (see B7b)
+Collected on H100 NVL. Result is actionable and *changes* the T4 conclusion:
+occupancy 6.25 % achieved / 18.75 % theoretical, 0.32 waves/SM, DRAM 0.02 % — the
+kernel starves the GPU rather than saturating memory. Register pressure (168/thread)
+is confirmed as the top lever, and the auto-dispatch thresholds look mistuned for
+H100-class devices. **Still missing:** the same ncu pass on A100, and a large-N shape
+where scratch may spill past cache and DRAM could start to matter.
 
 ### C5. Event-regime (large-N) validation and profiling
 Almost everything is the jet regime (small N, large batch). The event regime is
