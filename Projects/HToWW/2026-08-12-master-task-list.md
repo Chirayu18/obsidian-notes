@@ -127,6 +127,7 @@ frozen; nominal 1160):
 | all others                    | 1160   | 0                                         |
 | `xsec_vjets`                  | 1173   | **+13** (fit uses it to absorb something) |
 |                               |        |                                           |
+|                               |        |                                           |
 
 `scalevar_muF` at -69 is nearly 2x ctag2d. **This, not ctag2d, is the biggest
 single lever.** Investigate: is the muF variation being applied per-process
