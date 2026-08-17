@@ -198,6 +198,23 @@ Microseconds to cluster **one jet** (anti-$k_t$, $R$=0.4):
 
 ---
 
+## What the GPU is actually doing
+
+![w:980](img/nsys_timeline_H100.png)
+
+<span class="small">Nsight Systems timeline, H100, three consecutive iterations. Each blue block is **one clustering call**; the rows are labelled by the tool itself as **">99.9 % Kernels"** and **"<0.1 % Memory"**.</span>
+
+<div class="box">
+
+**The kernels run back to back with nothing in between.** The memory row is
+**empty** — no data is shuffled between CPU and GPU while clustering runs.
+That is the property that makes the speedup real rather than an artefact of
+where the timer was started.
+
+</div>
+
+---
+
 ## Profiling — where the time goes, and what limits it
 
 <div class="cols">
@@ -245,6 +262,25 @@ work-distribution settings were tuned on an older, smaller card. **Headroom, not
 
 ---
 
+## The profiler names the bottleneck — and prices it
+
+![w:940](img/ncu_occupancy_H100.png)
+
+<span class="small">Nsight Compute, occupancy section. Nothing here is our interpretation — these are the tool's own conclusions.</span>
+
+- *"This kernel's theoretical occupancy (18.8 %) is **limited by the number of
+  required registers**."* → the cause is identified, not guessed.
+- **Estimated speedup if fixed: 81 %** (theoretical occupancy) / **67 %** (achieved).
+
+<div class="box">
+
+**⇒ NVIDIA's own tooling estimates a further ~1.7–1.8× is available** from
+register pressure alone — on top of the 65–97× already measured.
+
+</div>
+
+---
+
 <!-- _class: lead -->
 
 # Conclusions
@@ -266,8 +302,9 @@ work-distribution settings were tuned on an older, smaller card. **Headroom, not
 4. **The result is robust**, not tuned: four unrelated physics processes,
    two jet radii, two GPU generations, all consistent.
 
-5. **There is still significant headroom.** The GPU is largely idle; the
-   work-distribution settings were inherited from older hardware.
+5. **There is still significant headroom.** The GPU is largely idle, and the
+   profiler attributes this to register pressure — it estimates a further
+   **~1.7–1.8×** is available from that alone.
 
 <div class="box">
 
