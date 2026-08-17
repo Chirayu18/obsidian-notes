@@ -90,3 +90,37 @@ directly beneath them. Always read the following lines before filling a section.
 - Commented-out block at ~line 475 describing the $\eta$-split cluster-size
   trends refers to `fig:csize_y`, which no longer exists. Restore or delete.
 - Push to Overleaf: `git -C 6a5a2a3da030d5296033a920 commit -am "..." && git push`
+
+## 8-page restructure (2026-08-17, later)
+
+Target was 8 pp. Landed at **12 total = 9 body + 3 appendix**.
+
+**The page count was a layout problem, not a content problem.** `\usepackage{float}`
++ `[H]` pinned every figure in place, leaving 4 near-empty pages (one had 11 text
+lines). Fixes that recovered ~4 pp:
+- freed body floats `[H]` → `[htbp]`
+- suppressed the auto TOC (`jinstpub` emits it from `\maketitle`)
+- relaxed float params (`topfraction` .92, `textfraction` .08, `totalnumber` 5)
+- shrank body figures (~0.32-0.6\textwidth)
+
+**Measured, don't assume:** splitting the 3-panel resolution figure (§7) and the
+x+y cluster-size figure (§8) into body+appendix **saved zero body pages** — 9 pp
+either way, body pages 1-7 byte-identical — and *cost* one extra appendix page for
+the extra floats/captions. Both were restored intact.
+
+Appendix A now holds only genuinely repetitive figures:
+extreme cluster comparison, η-split cluster size L1, η-split cluster size L2.
+
+Body text now fills 9 pp on its own, so the last page would have to come out of
+prose — conflicts with keeping DP wording verbatim. Left as a decision for Chirayu.
+
+### Concurrent-edit collision
+Chirayu was editing Overleaf while this ran. His new cluster-size paragraph
+duplicated one written here (both explained the fill-to-fill spread, both cited
+`pixelplots`). **Kept his, deleted the duplicate**, and fixed its stale "x and y
+directions" phrasing. Check for this whenever both sides edit at once.
+
+The commented-out η-split block in his file has a copy-paste bug (pulls
+`fig10_..._outer` into the L1 pair) — appendix figures were rebuilt from the DP
+originals instead.
+
