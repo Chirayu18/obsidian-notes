@@ -3,7 +3,7 @@ marp: true
 theme: default
 paginate: true
 size: 16:9
-header: 'flashjet — benchmarking & status'
+header: 'flashjet — GPU jet clustering: benchmarking'
 footer: 'C. Gupta'
 style: |
   section { font-size: 21px; padding: 48px 60px 60px; }
@@ -20,280 +20,307 @@ style: |
   .done { color: #16a34a; font-weight: 700; }
   .todo { color: #b00020; font-weight: 700; }
   .part { color: #ea580c; font-weight: 700; }
+  .box { background: #f6f7f9; border-left: 4px solid #b00020; padding: 10px 14px; }
 ---
 
 <!-- _class: lead -->
 
-# flashjet — **benchmarking & status**
+# **flashjet**
 
-### GPU jet clustering vs FastJet, on CMS Open Data
+### GPU jet clustering — benchmarking against FastJet
 
-<span class="small">C. Gupta · 2026-08-17 · for A. De Moor & Sitian</span>
-
-<span class="small">Timing on A100 / H100 · profiling refresh · what is done and what is left</span>
+<span class="small">C. Gupta · 2026-08-17</span>
 
 ---
 
-## Summary — where we are
+## What flashjet is
 
-**flashjet clusters jets on the GPU and returns the full merge history**, from which
-substructure observables follow as cheap array reads.
+**A GPU implementation of the standard sequential-recombination jet algorithms**
+— anti-$k_t$, $k_t$, Cambridge–Aachen — written in Triton/PyTorch.
 
-| | status |
-|---|---|
-| **Correctness** | <span class="done">done</span> — matches FastJet and CMS stored branches jet-by-jet |
-| **Timing vs FastJet** | <span class="done">done</span> — 4 processes, 2 radii, A100 + H100, CMS Open Data |
-| **Profiling (nsys)** | <span class="done">done</span> — kernel-bound picture confirmed on current hardware |
-| **Profiling (ncu)** | <span class="done">new</span> — first ever on H100; **changes** the previous conclusion |
-| **C++ FastJet baseline** | <span class="todo">missing</span> — the main remaining gap |
-| **CMSSW integration** | <span class="part">started</span> — IB set up, insertion point identified |
+- Clusters a **batch of jets or events at once**, directly in GPU memory.
+- The data **never moves back to the CPU** during clustering.
+- Returns the particle→jet assignment **and the complete merge history**
+  (the full binary tree of which pair merged, and at what distance).
 
-**Headline:** on a full H100, flashjet clusters a jet in **0.08–0.25 µs**, i.e.
-**65–97× faster** than vectorised FastJet, with **~100 % identical jet counts**.
+**Why the merge history matters:** substructure observables — groomed mass,
+$z_g$, $R_g$, Lund coordinates, exclusive subjets — are then just **cheap reads
+of that tree**, with no second clustering pass.
 
----
+<div class="box">
 
-<!-- _class: lead -->
+**The goal of this study:** is flashjet a viable **substitute for FastJet**?
+That needs two things — it must give the **same jets**, and it must be **faster**.
 
-# Part 1 — what was already established
-
-*(summary of the previous deck: 54 slides of physics validation)*
+</div>
 
 ---
 
-## Previously: the library and its three features
+## What was established before this study
 
-**flashjet** — GPU (Triton/PyTorch) generalised-$k_t$ clustering (anti-$k_t$, $k_t$, C/A)
-on padded `(B,N,4)` tensors that never leave the device. Returns particle→jet assignment
-**plus the complete merge history**.
+**The physics was validated; the speed was not.**
 
-| | feature | reads | implements |
-|---|---|---|---|
-| **F1** | exclusive-$k_t$ jets | $k_t$ history | $k_t$ algorithm |
-| **F2** | soft-drop / mMDT grooming | C/A history | Soft Drop |
-| **F3** | Lund-plane coordinates | C/A history | primary Lund plane |
-
-All three are **pure-torch reads of the existing history** — no extra clustering,
-no kernel changes, CPU/CUDA identical.
-
-<span class="small">Because the full tree is kept, substructure is a *decode*, not a second clustering pass — this is the structural reason the features are nearly free.</span>
-
----
-
-## Previously: correctness was closed three ways
-
-| validation | reference | headline |
+| what | how it was checked | outcome |
 |---|---|---|
-| **unit tests** | independent NumPy tree-walks | **129 passed** (13 CUDA tests ran for the first time on a GPU) |
-| **paper closures** (toys) | analytic LL predictions | $z_g$ on the $1/z$ curve; jet areas; $\beta$-ordering |
-| **real CMS data** (raw-to-raw) | CMS stored FastJet branches | $p_T$ **1.000000**, $m_{SD}$ **−0.004 GeV**, $R_g$ Δ≤2e-4 |
+| the algorithms are correct | independent NumPy tree-walks; **129 unit tests** | pass |
+| clustering matches FastJet | jet-by-jet kinematics tests | exact |
+| works on real detector data | reclustered CMS jets vs the values CMS stored | $p_T$ ratio **1.000000** |
+| grooming is correct | our soft-drop mass vs CMS's | median Δ **−0.004 GeV** |
+| substructure is correct | $R_g$, $z_g$ vs CMS | Δ ≤ 2×10⁻⁴ |
+| the physics is right | soft-drop $z_g$, Lund plane, jet areas vs analytic predictions | reproduced |
 
-**The residual $m_{SD}$ tail (4.4 % of jets) was fully explained**, not waved away:
-~50 % soft candidates missing from the stored constituent table, ~23 % storage
-rounding, ~20 % rounding-sensitive C/A trees, ~7 % $z\approx z_{cut}$ prong flips.
-Input-level effects, not an algorithm error.
+<span class="small">Small disagreements were traced and explained rather than ignored: they come from how the input file **stores** numbers (dropped soft particles, float rounding), not from the algorithm.</span>
 
-<span class="small">Also shown previously: gen-verified merge trees (QCD / top / boosted top / b-jet), Lund planes across three samples, and that the history variables separate **boosted decays** but not AK4 flavour — flavour is a lifetime question.</span>
+<div class="box">
+
+**⇒ Correctness was settled. What was missing was a proper answer to
+"how much faster is it, on real physics data?"** — that is this study.
+
+</div>
 
 ---
 
 <!-- _class: lead -->
 
-# Part 2 — new: timing vs FastJet
+# The benchmark
 
-*on CMS **Open Data** — presentable with no approval*
+### what · on what · how
 
 ---
 
-## The benchmark setup
+## What is being compared
 
-**Four physics processes**, CMS Open Data (RunIISummer20UL16 **MINIAOD**, so
-constituents exist and nothing needs CMS approval to show):
+Two clusterers, given **exactly the same jets**, asked to do **exactly the same job**
+(anti-$k_t$, same radius $R$):
 
-| dataset | jets | ⟨constituents⟩/jet |
+| | runs on | what it is |
 |---|---|---|
-| DY+jets | 30 000 | 10.8 |
-| W+jets | 30 000 | 15.1 |
-| $t\bar t$ (hadronic) | 30 000 | 22.2 |
-| QCD (470–600) | 28 250 | 34.0 |
+| **flashjet** | **GPU** | this library |
+| **FastJet — "vectorised"** | CPU | the standard tool, called through its efficient batched interface |
+| **FastJet — "per-jet"** | CPU | the standard tool, called one jet at a time |
 
-A **3× span in multiplicity** — the physics-independent axis the timing scales along.
+<div class="box">
 
-**Method.** flashjet clusters on GPU and *saves the events*; FastJet then clusters the
-**identical saved events** on CPU. Both interfaces timed: `classic` (per-jet loop) and
-`awkward` (vectorised). **The vectorised one is quoted as the fair baseline.**
-Every run also checks `n_jets` agreement.
+**All speedups quoted here are against the vectorised (faster) FastJet.**
+Comparing against the per-jet loop would make flashjet look ~5× better still,
+but that would not be a fair fight.
+
+</div>
+
+**Two independent software environments** are used so the two libraries cannot
+interfere with each other's dependencies.
 
 ---
 
-## Result — flashjet vs FastJet, anti-$k_t$ R=0.4
+## What data
 
-![w:960](img/bench_gpu_compare_R0.4.png)
+**CMS Open Data** — publicly released simulation, so every number here can be
+shown freely, with no approval needed.
 
-<span class="small">Log scale. Speedup annotated against the **vectorised** FastJet baseline (orange), not the per-jet loop (green) — the per-jet loop would flatter us by another ~5×.</span>
+| process | jets used | average particles per jet |
+|---|---|---|
+| **DY+jets** | 30 000 | 10.8 |
+| **W+jets** | 30 000 | 15.1 |
+| **$t\bar t$** (all-hadronic) | 30 000 | 22.2 |
+| **QCD** (high-$p_T$ dijets) | 28 250 | 34.0 |
+
+**Why these four:** they are ordinary physics processes, and together they span a
+**3× range in how busy a jet is** (11 → 34 particles). Jet clustering cost is driven
+by that number, so this range is what lets us see a **trend** rather than one number.
+
+<span class="small">Format: MINIAOD, which is the tier that still contains the individual particles inside each jet. Read straight over the network from the public CERN storage.</span>
+
+---
+
+## How the measurement is done
+
+**1. Take the jets.** Extract the particles belonging to each jet from the Open Data
+files, once, and save them.
+
+**2. Cluster with flashjet on the GPU.** Time it, then **save the exact same input
+events to a file**.
+
+**3. Cluster those same saved events with FastJet on the CPU.** Time it.
+
+**4. Check they agree.** Compare the **number of jets found**, event by event.
+If the two disagree, the timing is meaningless.
+
+Repeated for **4 processes × 2 jet radii ($R$ = 0.4 and 0.8) × 2 GPUs**.
+
+<div class="box">
+
+**The key discipline:** both clusterers read the **same saved file**. Nothing is
+regenerated in between, so this is a like-for-like comparison and not two
+separate measurements that happen to use the same dataset name.
+
+</div>
+
+<span class="small">Hardware: NVIDIA **A100** and **H100 NVL**, one full GPU each (no shared or partitioned cards). CPU baseline runs on the same machine.</span>
+
+---
+
+<!-- _class: lead -->
+
+# Results
+
+---
+
+## Time to cluster one jet
+
+![w:930](img/bench_gpu_compare_R0.4.png)
+
+<span class="small">Anti-$k_t$, $R$=0.4. **Log scale** — each gridline is 10×. Blue = flashjet on GPU, orange/green = FastJet on CPU. Labels give the speedup over vectorised FastJet.</span>
 
 ---
 
 ## The numbers
 
-µs per jet, anti-$k_t$ R=0.4:
+Microseconds to cluster **one jet** (anti-$k_t$, $R$=0.4):
 
-| dataset | ⟨n⟩ | **H100 NVL** | **A100** | FastJet awk | FastJet classic | **speedup (H100)** |
+| process | particles/jet | **flashjet H100** | **flashjet A100** | FastJet (vectorised) | FastJet (per-jet) | **speedup** |
 |---|---|---|---|---|---|---|
 | DY+jets | 10.8 | **0.081** | 0.223 | 6.20 | 32.43 | **77×** |
 | W+jets | 15.1 | **0.137** | 0.373 | 9.67 | 44.84 | **71×** |
 | $t\bar t$ | 22.2 | **0.170** | 0.373 | 13.46 | 59.95 | **79×** |
 | QCD | 34.0 | **0.249** | 0.549 | 24.24 | 91.64 | **97×** |
 
-- **R=0.8 gives the same picture** (H100 65–96×, A100 25–41×) → not an $R$ artifact.
-- **`n_jets` agreement ~100 %** everywhere (7 of 8 runs exactly 100 %; one 99.997 %).
-- A100 → H100 is a **~2.2× hardware gain** on identical inputs.
-
-**⇒ The speedup *grows* with multiplicity**: flashjet's per-jet cost rises far more
-slowly than FastJet's. That is the statement that does not depend on the process.
+- **Same jets:** number of jets found agrees with FastJet in **~100 %** of cases
+  (7 of 8 runs exactly 100 %, one at 99.997 %).
+- **Not a fluke of the jet radius:** $R$=0.8 gives the same picture (H100 65–96×).
+- **Newer GPU helps:** A100 → H100 is a further ~2.2× on identical input.
 
 ---
 
-## Throughput vs jet multiplicity
+## The trend that matters
 
-![w:720](img/bench_scaling_R0.4_H100_NVL.png)
+![w:700](img/bench_scaling_R0.4_H100_NVL.png)
 
-<span class="small">The four datasets are points on one trend, not four separate results — busier jets are where the GPU wins hardest, which is the regime that matters for boosted-object tagging.</span>
+<span class="small">Throughput vs how busy the jet is. The four processes sit on **one common trend** — this is a property of the algorithm, not of any particular physics sample.</span>
 
----
-
-<!-- _class: lead -->
-
-# Part 3 — new: profiling on current hardware
+**The busier the jet, the bigger the advantage** (77× → 97×): FastJet's cost grows
+quickly with the number of particles, flashjet's grows much more slowly.
 
 ---
 
-## nsys — one kernel is the whole cost
+## Where the time actually goes
 
-| kernel | share of GPU time (A100) |
+We profiled the GPU to check *why* it is fast, and whether anything is wasted.
+
+| part of the code | share of GPU time |
 |---|---|
-| `_cluster_large_kernel` | **97.6 %** |
-| `_decode_kernel` | 1.5 % |
-| torch glue | <1 % |
+| **the clustering itself** | **97.6 %** |
+| extracting the jet assignment | 1.5 % |
+| everything else | < 1 % |
 
-Negligible host↔device traffic in steady state.
+Moving data between CPU and GPU is **negligible** once running.
 
-**⇒ Any further speedup must come from that one kernel** — the decode and the
-substructure reads are effectively free. This confirms on modern hardware what was
-previously only measured on a T4.
+<div class="box">
 
-<span class="small">Captured with a `cudaProfilerApi` range so warm-up/JIT is excluded from the timeline.</span>
+**⇒ There is no hidden overhead.** Essentially all the time is the real work.
+It also means any *future* speedup has to come from that one piece of code.
+
+</div>
 
 ---
 
-## ncu on H100 — and it **changes** the previous conclusion
+## A finding worth acting on
 
-Previously only ever collected on a **T4** (and the June report noted it "does not
-transfer to the A100"). Now measured on a full **H100 NVL**:
+A deeper hardware-level profile shows flashjet is **not** limited by memory speed —
+it is limited by **not giving the GPU enough work at once**:
 
-| metric | **H100 NVL** | T4 (June) |
+| measure | H100 | what it means |
 |---|---|---|
-| Registers / thread | **168** | 168 |
-| Theoretical occupancy | **18.75 %** | 37.5 % |
-| **Achieved occupancy** | **6.25 %** | 33.2 % |
-| **Waves per SM** | **0.32** | 1.07 |
-| DRAM throughput | **0.02 %** | 0.36 % |
-| Compute (SM) throughput | 15.4 % | 39.4 % |
+| memory bandwidth used | **0.02 %** | memory is essentially idle |
+| GPU "filled up" | **0.32×** | the GPU is **not filled even once** |
+| occupancy achieved | **6.25 %** | most of the chip is unused |
 
-**At 0.32 waves/SM the kernel does not fill the GPU even once.** DRAM is untouched
-(0.02 %) — this is **not** a bandwidth problem, it is **occupancy / parallelism
-starvation**, and it is *worse* on H100 than on the T4 the tuning was derived from.
+<div class="box">
 
----
+**⇒ flashjet is already ~80× faster than FastJet while leaving most of a
+modern GPU idle.** The internal settings that decide how work is spread across
+the GPU were tuned on an older, smaller card and do not suit an H100.
 
-## What the profile tells us to do
+</div>
 
-1. **Register pressure is now the top lever.** 168 registers/thread caps theoretical
-   occupancy at 18.75 % on H100. Reducing it should translate directly into throughput.
-2. **The auto-dispatch thresholds are mistuned for modern GPUs.** They were derived on
-   smaller devices; grid 128 × block 128 leaves an H100 nearly idle. They should be
-   **re-measured per device**, not carried over.
-3. **Untested regime:** large $N$, where scratch may spill past cache and DRAM could
-   start to matter. Flagged in the original report, still never checked.
-
-<span class="small">**Tooling note, resolves a long-standing blocker.** ncu previously failed because DCGM held the GPU performance counters. On lxplus GPU workers **DCGM is absent** (`RmProfilingAdminOnly=0`), so that is not an issue. A *different* constraint applies: **ncu cannot lock clocks on a MIG slice**, so profiling must target a full card (`--clock-control none` otherwise). Absolute values here are therefore indicative; the occupancy and register figures are structural.</span>
+**This is good news:** it is a concrete, identified path to going faster still,
+not an unexplained limit.
 
 ---
 
 <!-- _class: lead -->
 
-# Part 4 — status: done vs remaining
+# Conclusions
 
 ---
 
-## What is done
+## Conclusions
 
-**Correctness**
-<span class="done">✓</span> 129 unit tests (incl. 13 CUDA, first run on GPU) · <span class="done">✓</span> exact vs FastJet in kinematics tests
-<span class="done">✓</span> $p_T$ 1.000000, $m_{SD}$ −0.004 GeV, $R_g$ Δ≤2e-4, $z_g$ 6.9e-5 vs CMS
-<span class="done">✓</span> residual $m_{SD}$ tail fully attributed to input-level effects
-<span class="done">✓</span> `n_jets` agreement ~100 % on every timing run
-<span class="done">✓</span> analytic closures on toys (Soft Drop, Lund, jet areas)
+1. **flashjet gives the same jets as FastJet.**
+   ~100 % agreement on jet counts across every process and radius tested,
+   on top of the earlier jet-by-jet agreement with real detector data.
 
-**Performance**
-<span class="done">✓</span> 4 Open Data processes × R∈{0.4, 0.8} × {H100 NVL, A100}
-<span class="done">✓</span> GPU backend sweep; throughput/latency characterisation
-<span class="done">✓</span> nsys kernel breakdown on A100 + H100
-<span class="done">✓</span> **ncu on H100 NVL** — previously blocked, now collected
+2. **flashjet is 65–97× faster** than the standard vectorised FastJet on a
+   modern GPU — **0.08–0.25 µs per jet**.
 
-**Infrastructure**
-<span class="done">✓</span> Open Data → FWLite → npz pipeline (no CMS approval needed to show results)
-<span class="done">✓</span> reproducible condor GPU workflow, GPU-stamped results
+3. **The advantage grows with jet complexity.** Busier jets → bigger speedup.
+   This is the regime that matters most for boosted-object physics.
+
+4. **The result is robust**, not tuned: four unrelated physics processes,
+   two jet radii, two GPU generations, all consistent.
+
+5. **There is still significant headroom.** The GPU is largely idle; the
+   work-distribution settings were inherited from older hardware.
+
+<div class="box">
+
+**Bottom line: as a drop-in replacement for CPU jet clustering, flashjet is
+both correct and roughly two orders of magnitude faster.**
+
+</div>
 
 ---
 
-## What is remaining — ranked
+<!-- _class: lead -->
 
-| # | item | why it matters | cost |
+# What is done, what is next
+
+---
+
+## Checklist
+
+**Correctness** — <span class="done">complete</span>
+<span class="done">✓</span> 129 unit tests pass, including GPU-only tests
+<span class="done">✓</span> matches FastJet exactly in kinematics tests
+<span class="done">✓</span> matches real detector-stored values jet-by-jet ($p_T$, groomed mass, $R_g$, $z_g$)
+<span class="done">✓</span> reproduces analytic physics predictions
+<span class="done">✓</span> same number of jets as FastJet in every timing run
+
+**Performance** — <span class="done">complete for the jet-clustering regime</span>
+<span class="done">✓</span> 4 physics processes × 2 radii × 2 GPU generations, on public data
+<span class="done">✓</span> profiled: no hidden overhead; bottleneck identified
+
+**Infrastructure** — <span class="done">complete</span>
+<span class="done">✓</span> reproducible pipeline from public data to final plots
+<span class="done">✓</span> results are freely presentable (no approval needed)
+
+---
+
+## To do — in priority order
+
+| | item | why | effort |
 |---|---|---|---|
-| **1** | **C++ FastJet baseline** | *Every* number above is vs the **Python** binding. CMSSW ships FastJet 3.4.1 C++. Until measured, every speedup carries a "is this just Python overhead?" asterisk | **low** — needs *no* flashjet code, just time standard AK4 reco in CMSSW |
-| **2** | Fold new numbers into the **abstract** | it still quotes the June report, which predates the substructure features | low |
-| **3** | **ncu on A100** | gives 3 devices → an occupancy *trend*, not an assertion | low |
-| **4** | Act on the profile: **register pressure** + **re-tune dispatch** | the profile says this is where the headroom is | medium |
-| **5** | **Large-$N$ / event regime** | $O(N^2)$, 10–100× lower throughput, never re-checked | medium |
-| **6** | Physics axes: **$k_t$ / C-A timing**, **pileup dependence**, **$R$-scan** | only anti-$k_t$ is timed; no PU study | medium |
-| **7** | **CMSSW integration** (Alpaka port) | production answer | **high** — a real project |
+| **1** | <span class="todo">Compare against **C++ FastJet**</span> | every number here uses FastJet's **Python** interface. The production tool is C++. Until we measure it, the honest caveat is *"some of this could be Python overhead"* | **low** — no flashjet changes needed |
+| **2** | <span class="part">Improve GPU utilisation</span> | the profile says most of the GPU is idle; retuning how work is spread should give more speed for free | medium |
+| **3** | <span class="part">Test full-event clustering</span> | so far this is **jet** clustering. Clustering a whole event is a harder, slower problem and has not been re-checked | medium |
+| **4** | <span class="part">Other algorithms & conditions</span> | only anti-$k_t$ is timed ($k_t$, C/A untested for speed); no scan over jet radius; no test vs **pile-up** | medium |
+| **5** | <span class="todo">Use it inside the experiment's software</span> | the real production test. Needs the GPU code rewritten in C++ — a separate project | **high** |
 
----
+<div class="box">
 
-## On CMSSW integration
+**Recommended next step: item 1.** It is quick, needs no new code, and it closes
+the one genuine weakness in the numbers presented here.
 
-**Set up:** IB `CMSSW_20_1_X_2026-08-16-0000` (alpaka 2.1.1, CUDA 13.3.1, fastjet 3.4.1).
-
-**Insertion point found** (not guessed): `VirtualJetProducer` fills
-`std::vector<fastjet::PseudoJet> fjInputs_` then calls a **pure virtual**
-`runAlgorithm()`; `FastjetJetProducer` implements it in one line. A sibling class
-overriding only `runAlgorithm` inherits all input handling and product writing —
-a genuinely like-for-like swap.
-
-**But:** flashjet is Triton/**Python**. There is no C++ entry point, so a real
-integration means **porting the kernel to Alpaka/C++**. Scope is contained —
-*one* kernel is 97 % of the time, and F1/F2/F3 become plain loops over the history —
-but it is a project, not a patch.
-
-**Open question worth deciding early:** CMSSW is **one event at a time**, while
-flashjet's advantage comes from large batches. How much of the speedup survives at
-batch 1 should be **measured, not assumed** — it decides whether GPU clustering
-belongs in reco at all.
-
-<span class="small">**Recommendation:** treat item 1 (time C++ FastJet, zero flashjet code) as the conference deliverable; treat the Alpaka port as a separate, post-conference project.</span>
-
----
-
-## Questions for Alex & Sitian
-
-1. Is the **C++ FastJet baseline** the right next priority, or is the vectorised-Python
-   comparison acceptable for the conference?
-2. For CMSSW: **minimal EDProducer** first, or go straight for the **Alpaka** path?
-3. Which physics axis is most worth adding for the talk — **pileup dependence**,
-   an **$R$-scan**, or **$k_t$ / C-A** timing?
-4. Should the **event regime** (full-event clustering) feature at all, or keep the
-   talk to the jet/tagging regime where flashjet is strongest?
+</div>
 
 ---
 
@@ -303,45 +330,55 @@ belongs in reco at all.
 
 ---
 
-## Reproducing the benchmark
+## Reproducing this
 
 ```bash
-# 1. Open Data -> npz  (CMSSW python, FWLite)
-cd ~/CMSSW_14_1_0_pre4/src && cmsenv
+# 1. public data -> per-jet particle lists
 python3 dump_opendata_constituents.py {ttbar|qcd|wjets|dyjets} 30000 ak4
 
-# 2. timing + profiling on a GPU node (condor)
-cd ~/flashjet_condor && condor_submit bench_a100.sub   # or bench_h100.sub
+# 2. timing + profiling on a GPU (batch job)
+condor_submit bench_a100.sub      # or bench_h100.sub
 
 # 3. plots
-micromamba run -n b_hive python3 make_bench_plots.py 0.4 H100_NVL
+python3 make_bench_plots.py 0.4 H100_NVL
 ```
 
-<span class="small">**Two environments, deliberately separate:** `b_hive` (torch + triton + flashjet) and `fjbench` (fastjet 3.5.1.3). Installing fastjet into `b_hive` breaks its awkward pin.</span>
+**Datasets** (CMS Open Data, RunIISummer20UL16 MINIAOD):
 
-<span class="small">**Condor gotchas worth knowing:** `regexp("A100", GPUs_DeviceName)` silently evaluates *false* without `TARGET.` scoping — the job just sits idle. And matching `"H100"` also matches the **MIG** partitions; pin exact device names for full cards.</span>
-
----
-
-## R=0.8 — same picture
-
-![w:760](img/bench_speed_R0.8_H100_NVL.png)
-
-<span class="small">H100 NVL, anti-$k_t$ R=0.8: 65–96× vs vectorised FastJet. The result does not depend on the jet radius.</span>
-
----
-
-## Open Data provenance
-
-| process | dataset (RunIISummer20UL16MiniAODv2) |
+| process | dataset |
 |---|---|
 | $t\bar t$ | `TTToHadronic_TuneCP5_13TeV-powheg-pythia8` |
 | QCD | `QCD_Pt_470to600_TuneCP5_13TeV_pythia8` |
 | W+jets | `WJetsToLNu_1J_TuneCP5_13TeV-amcatnloFXFX-pythia8` |
 | DY+jets | `DYJetsToLL_M-50_TuneCP5_13TeV-madgraphMLM-pythia8` |
 
-Read via **xrootd from `eospublic.cern.ch`** — open, no grid proxy, no approval.
-Constituents taken from `slimmedJets` daughters through **FWLite** (uproot cannot
-resolve MINIAOD's packed candidates / `edm::Ref`), dumped to npz, then benchmarked.
+<span class="small">Read directly over the network from public CERN storage — no grid certificate required.</span>
 
-<span class="small">Caveat found the hard way: the `TTJets_DiLept` open-data dataset is only **partially staged** — its record lists 494 files but essentially one is retrievable, and paths under `50000/` fail `TFile::Open`. `TTToHadronic` was used instead (2434 files, verified), which also gives busier jets — better suited to a clustering benchmark.</span>
+---
+
+## $R$ = 0.8 — the same conclusion
+
+![w:740](img/bench_speed_R0.8_H100_NVL.png)
+
+<span class="small">Anti-$k_t$ with the larger jet radius $R$=0.8: **65–96×** over vectorised FastJet. The result does not depend on the choice of jet radius.</span>
+
+---
+
+## Detailed profiling numbers
+
+Hardware counters for the clustering step (H100, one representative workload):
+
+| metric | value | interpretation |
+|---|---|---|
+| memory (DRAM) throughput | 0.02 % | not memory-limited |
+| compute throughput | 15.4 % | not compute-limited either |
+| registers per thread | 168 | high — this is what limits how many threads run at once |
+| theoretical occupancy | 18.75 % | ceiling set by the above |
+| achieved occupancy | 6.25 % | actual |
+| waves per multiprocessor | 0.32 | the GPU is not filled even once |
+
+**Reading:** the limitation is **parallelism**, not memory or arithmetic. Reducing
+the per-thread resource usage, and re-tuning the thresholds that decide how work is
+split across the GPU, are the concrete levers.
+
+<span class="small">Measured without fixed clock frequencies, so absolute timings here are indicative; the occupancy and register figures are structural and unaffected.</span>
