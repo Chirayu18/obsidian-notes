@@ -262,20 +262,61 @@ work-distribution settings were tuned on an older, smaller card. **Headroom, not
 
 ---
 
-## The profiler names the bottleneck — and prices it
+## The profiler names the bottleneck
 
-![w:940](img/ncu_occupancy_H100.png)
+![w:620](img/ncu_details_sol_launch_H100.png)
 
-<span class="small">Nsight Compute, occupancy section. Nothing here is our interpretation — these are the tool's own conclusions.</span>
+<div class="cols">
+<div>
 
-- *"This kernel's theoretical occupancy (18.8 %) is **limited by the number of
-  required registers**."* → the cause is identified, not guessed.
-- **Estimated speedup if fixed: 81 %** (theoretical occupancy) / **67 %** (achieved).
+<span class="small">**"Small Grid"** — *"This kernel grid is **too small to fill the available resources** on this device, resulting in only **0.32 full waves** across all SMs."*</span>
+
+</div>
+<div>
+
+<span class="small">**Grid size = 128 blocks** but **# SMs = 132** — the kernel launches **fewer blocks than the GPU has processors**, so some are guaranteed to sit idle.</span>
+
+</div>
+</div>
+
+<span class="small">Nsight Compute, Speed-of-Light + Launch Statistics — the tool's own words and numbers.</span>
+
+---
+
+## …and prices the fix
+
+<div class="cols">
+<div>
+
+![w:520](img/ncu_workload_imbalance_H100.png)
+
+</div>
+<div>
+
+**The tool's own speedup estimates:**
+
+| finding | est. speedup |
+|---|---|
+| Theoretical occupancy (registers) | **81 %** |
+| Achieved occupancy | **67 %** |
+| SM workload imbalance | 19 % |
+| SMSP / L1 imbalance | 19 % |
+
+*"…theoretical occupancy (18.8 %) is **limited by
+the number of required registers**."*
+
+*"One or more SMs have a much lower number of
+active cycles… **minimum instance value is
+100 % below the average**."* → **some SMs do
+no work at all.**
+
+</div>
+</div>
 
 <div class="box">
 
-**⇒ NVIDIA's own tooling estimates a further ~1.7–1.8× is available** from
-register pressure alone — on top of the 65–97× already measured.
+**⇒ ~1.7–1.8× more is available**, by NVIDIA's own estimate — from launch
+configuration and register budget, not from the algorithm.
 
 </div>
 
@@ -403,7 +444,12 @@ python3 make_bench_plots.py 0.4 H100_NVL
 | Waves per SM | how many times the GPU was filled | 0.32 → **not filled once** |
 
 **The limitation is parallelism, not memory or arithmetic.** Two concrete levers:
-reduce the per-thread register usage, and re-tune the internal thresholds that decide
-how work is split across the GPU (these were derived on an older, smaller device).
+
+1. **Launch geometry** — the kernel launches **128 blocks on a 132-SM device**, so
+   it cannot fill the GPU by construction, regardless of anything else.
+2. **Register budget** — 168 registers/thread caps how many warps can be resident,
+   which is what the profiler flags as limiting theoretical occupancy.
+
+Both are configuration inherited from smaller GPUs, not properties of the algorithm.
 
 <span class="small">Profiled with Nsight Systems (timeline / kernel share) and Nsight Compute (hardware counters).</span>
