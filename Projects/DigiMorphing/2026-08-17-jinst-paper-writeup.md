@@ -46,22 +46,47 @@ physics performance. Summary + abstract also revised.
   merging same-angle fragments is *wanted*, not a flaw
 - central region "lies outside the morphed rings and is unchanged by construction"
 - $p_T \approx 10$ GeV, not $> 10$ GeV
-- dropped the $d_{xy}$ claim (reviewer: not shown) — **but the paper still has
-  `fig06_res_dxy.png`**; either cite it or drop the figure
 - "forward physics" → "recovered physics performance at high $|\eta|$"
-- softened the J/$\psi$ result: 2025G vs 2025G-digi differ in *detector conditions*
-  too, so it is not a controlled A/B test
+
+**Not applied** (poster-only comments, rejected for the paper):
+- the $d_{xy}$ drop — that comment was scoped to the poster, where the figure
+  wasn't shown. The paper *does* show it, and Chirayu's tracking section keeps it.
+- softening the J/$\psi$ result — rejected; the direct claim stands.
+
+## Overleaf is the live copy — `6a5a2a3da030d5296033a920/` in the vault
+
+Cloned 2026-08-17. **The Overleaf version had drifted well ahead of the Jul 17
+local file**, so `jinst_paper/main_v2_writeup.tex` (built on the stale base) is
+**superseded — do not paste it over Overleaf.** It would have destroyed work.
+
+Already written by Chirayu on Overleaf, left untouched:
+- **HLT tracking performance** — full section, keeps the $d_{xy}$ result
+- **Physics performance (HLT scouting)** — cites the scouting stream `\cite{HLTscout}`
+- cluster-size *definition* paragraph
+- figure restructuring: `fig07/fig08` merged into one (a)/(b) float `fig:csize_xy`;
+  `fig:csizex`, `fig:csizey`, `fig:csizeyL1eta/L2eta`, `fig:jpsiyield` now commented out
+- `\usepackage{float}` + `[H]` floats; bib keys `AlpakaDP`, `HLTscout`, `timing`
+
+Filled in only the genuinely empty sections: **Introduction**, **the algorithm**
+(incl. implementation/deployment), **Impact on clusters**, **HLT local
+reconstruction**, plus the **cluster-size trends** discussion appended after the
+existing definition paragraph. Removed 6 stale `% TODO` markers (two sat above
+prose that was already written).
+
+Diff verified: **only deletions are the 6 TODO markers**; everything else is
+pure addition. Compiles clean — 14 pp, no undefined refs, 0 overfull boxes.
+
+### Lesson
+`% TODO: writeup` markers on Overleaf are **stale** — two had finished prose
+directly beneath them. Always read the following lines before filling a section.
 
 ## Open items
 
-- **Author list** — poster has 4 (Gupta, Nandakumar, Delcourt, Petersen/UCLouvain);
-  skeleton had 2. Applied the poster's list, flagged in a comment. Confirm.
-- **DP note number** unassigned: `CMS-DP-2026-XXX` in `\bibitem{dpnote}`.
-- **Figures are still PNG** in `jinst_paper/figs/`. Vector PDFs exist in
-  `twiki/Alpaka-poster/newfigs/` — swap them in for print quality.
+- **DP note number** unassigned (`AlpakaDP` bibitem).
+- **Figures are still PNG**. Vector PDFs exist in `twiki/Alpaka-poster/newfigs/`.
   Four have no vector source (sensor cross-sections, config grid, detector regions).
-- **Overleaf not reconciled** — `main_v2_writeup.tex` is based on the *local* Jul 17
-  file, which may have drifted from Overleaf. Diff before pasting.
-
-Overleaf git clone needs a token (Account Settings → Git integration), username `git`:
-`git clone https://git.overleaf.com/6a5a2a3da030d5296033a920`
+- Typos in the pre-existing text: "iimproves" (fig:efficiency caption),
+  "the cluster size in x" (lowercase sentence start, cluster-size section).
+- Commented-out block at ~line 475 describing the $\eta$-split cluster-size
+  trends refers to `fig:csize_y`, which no longer exists. Restore or delete.
+- Push to Overleaf: `git -C 6a5a2a3da030d5296033a920 commit -am "..." && git push`

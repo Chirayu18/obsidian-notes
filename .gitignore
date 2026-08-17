@@ -55,3 +55,6 @@ __pycache__/
 .vault-rag-index.json
 .vault-rag-index.lock
 .vault-rag-index.log
+
+# Overleaf clone is its own git repo (pushes to git.overleaf.com)
+6a5a2a3da030d5296033a920/
