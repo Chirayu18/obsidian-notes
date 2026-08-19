@@ -888,19 +888,17 @@ uncertainty, ≈14% per bin. Postfit errors are absent because combine writes a
 
 # Nuisance pulls and constraints
 
-![h:480](img/pulls.png)
+![h:360](img/pulls.png)
 
 <div class="key">
 
-All Gaussian nuisances sit at **zero pull with ~unit width** — correct for an Asimov
-fit, and the check that nothing is being pulled or over-constrained.
-
-Two entries are not Gaussian and should not be read as pulls:
+All Gaussian nuisances sit at **zero pull with ~unit width** — correct for Asimov.
+The two non-zero entries are **not Gaussian** and are not pulls:
 
 | entry | value | why |
 |---|---|---|
-| `rate_tt` | 1.000 ± 0.017 | free rateParam, pinned by the 94%-pure CR_tt |
-| `prop_binCR_vjets_bin7_higgsbkg` | 1.000 ± 0.97 | that bin has $n_{eff}=2.1$, **below the autoMCStats threshold of 10**, so it gets an individual **Poisson** term — 1.000 is its nominal scale, not a 1σ pull |
+| `rate_tt` | 1.000 ± 0.017 | free rateParam, pinned by CR_tt |
+| `prop_binCR_vjets_bin7_higgsbkg` | 1.000 ± 0.97 | $n_{eff}=2.1$ — below the autoMCStats threshold, so a **Poisson** term at its nominal scale |
 
 </div>
 
