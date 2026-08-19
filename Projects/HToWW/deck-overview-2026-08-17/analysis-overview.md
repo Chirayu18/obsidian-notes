@@ -220,9 +220,12 @@ for all five. The shapes carry real constraint, so all six channels keep 10 bins
 
 ---
 
-# Templates in all six regions
+# Templates entering the fit
 
-![w:900](img/B1_all_channels_stacked.png)
+![w:1060](img/B1_all_channels_stacked.png)
+
+6 channels × 6 processes × 10 bins. **CR_vjets** (bottom right) is the only region
+where V+jets (orange) is visible — it carries 59.6% of all V+jets in the fit.
 
 ---
 
