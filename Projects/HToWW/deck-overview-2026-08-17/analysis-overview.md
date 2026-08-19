@@ -1025,13 +1025,6 @@ term-by-term comparison against AN-23-102 Table 17 is not yet settled.
 
 # What is still missing
 
-<div class="warn">
-
-**No data/MC agreement plots yet** — the analysis is blind and the comparison
-plots are still being produced.
-
-</div>
-
 | item | status |
 |---|---|
 | **negrw retrain** | classifier to be retrained on the jet-binned W+jets samples |
