@@ -494,27 +494,28 @@ Integrated gain **1.6×**; per-bin ratio **≈3×** in the signal-rich bins.
 # SR closure and the renormalisation
 
 The SR is a small, kinematically-biased corner of the training domain, so the
-per-event $g$ does not average to the *local* positive fraction:
+per-event $g$ does not average to the *local* positive fraction. Applied
+**per dataset** in the card builder:
 
-| dataset | rows | $\sum\lvert w\rvert g \,/\, \sum w$ |
-|---|---|---|
-| `DYto2L_2Jets_50` | 9,646 | 1.014 |
-| `WtoLNu_2Jets` | 485 | 1.133 |
-| **total** | 10,205 | **1.058** |
+| dataset | $\sum w$ | $\sum\lvert w\rvert g$ | renorm |
+|---|---|---|---|
+| `DYto2L_2Jets_50` | 1.007e8 | 1.016e8 | **0.9907** |
+| `WtoLNu_2Jets` | 5.238e7 | 5.876e7 | **0.8914** |
+| `DYto2L_2Jets_10to50` | 6.942e5 | 1.144e6 | **0.6070** |
 
 <div class="key">
 
-**The reweighted template is renormalised to the nominal yield, per dataset**
-(DY ×0.986, WtoLNu ×0.900). The yield is therefore **restored exactly**, while the
-variance reduction — which comes from per-bin spread, not the integral — is untouched.
+The reweighted template is scaled back to the nominal yield, so the **yield is
+restored exactly** while the variance reduction — which comes from per-bin
+spread, not the integral — is untouched.
 
 </div>
 
 <div class="warn">
 
-This renormalisation is **our extension, not the paper's**. `CMS_negrw_vjets`
-covers the residual *method* uncertainty (the ensemble spread), which profiles
-to **0.0%**.
+**These factors predate the W+jets sample change** — they are for the old
+inclusive `WtoLNu_2Jets`. **The classifier will be retrained on the jet-binned
+0J/1J/2J samples** and the factors re-derived.
 
 </div>
 
@@ -1034,6 +1035,7 @@ plots are still being produced.
 
 | item | status |
 |---|---|
+| **negrw retrain** | classifier to be retrained on the jet-binned W+jets samples |
 | **4FS/5FS signal theory** | placeholder 1.30 — needs re-derivation at 13.6 TeV |
 | **Trigger scale factors** | implemented, **not yet enabled** |
 | **Higgs heavy-flavour** (`higgs_plus_c`) | implemented, pending activation |
