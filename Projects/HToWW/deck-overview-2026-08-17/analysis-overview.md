@@ -861,6 +861,15 @@ Within **~5%** of the published analysis scaled to our luminosity, on
 
 <div class="warn">
 
+**The scaling is indicative, not rigorous.** $431\times\sqrt{138/26.7}=980$ assumes a
+purely statistics-limited extrapolation. AN-23-102's own Table 17 puts its statistical
+term at 73.8%, so it is *not* fully statistics-limited and the true scaled value would
+be somewhat worse than 980 — i.e. our gap is likely **smaller** than 5%, not larger.
+
+</div>
+
+<div class="warn">
+
 The systematic breakdown of the 1034 is **under investigation** — the full
 term-by-term comparison against AN-23-102 Table 17 is not yet settled.
 
