@@ -607,6 +607,7 @@ re-verified independently: **1160** and **1034**.
 | `electron_id`, `electron_reco` ×3 | **lnN** |
 | `CMS_ctag2d_2022` | `lumi_13p6TeV`, `xsec_st/diboson/vjets/higgsbkg` |
 | `CMS_negrw_vjets` | `BR_HtoWW`, `BR_Htautau`, `xsec_hplusc_4FS_5FS` |
+| `flavor_composition_ggH` (placeholder — see §Higgs heavy-flavour) |
 
 Plus **`rate_tt`** (free rateParam, tt from data) and **autoMCStats** (threshold 10).
 
@@ -756,6 +757,14 @@ Each nuisance frozen in turn; **Δ is the improvement in the expected limit.**
 | `rate_tt` | 1011 | 23 | 2.2% |
 | JES | 1023 | 11 | 1.1% |
 
+<div class="key">
+
+**autoMCStats is no longer the leading term.** It was dominant before the W+jets
+change; at 7.5% the analysis is no longer MC-stat-limited in the way it was.
+Signal theory now leads.
+
+</div>
+
 <div class="warn">
 
 **Rows overlap and do not add.** `scalevar_muF` sits inside the theory group;
@@ -768,12 +777,14 @@ not a decomposition.
 
 # Prefit vs postfit — signal region
 
-![w:1000](img/prepost2.png)
+![w:1000](img/prepost3.png)
 
 <div class="key">
 
 **The prefit uncertainty band (hatched) collapses after the fit** — that is the
-constraint the control regions provide. Asimov, r = 1 injected; signal overlaid ×20k.
+constraint the control regions provide. The ratio panel makes it explicit: prefit
+band ±10%, postfit a line. Asimov r = 1, so the ratio is 1 by construction;
+signal overlaid ×20k.
 
 </div>
 
@@ -899,13 +910,6 @@ plots are still being produced.
 | | DY → Z→ττ filtered |
 | | tt / single-top `-ext` samples |
 | | `WZto3LNu` |
-
-<div class="key">
-
-Everything else in AN-23-102 Table 16 is **covered and in the card**:
-22 shape + 9 lnN + `rate_tt` + autoMCStats.
-
-</div>
 
 ---
 
