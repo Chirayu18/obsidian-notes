@@ -442,6 +442,38 @@ information the NLO subtraction encodes.
 
 ---
 
+# The reweight factor and its spread
+
+![w:820](img/06_g_and_dg.png)
+
+| quantity | value | reading |
+|---|---|---|
+| $g$ mean | **0.672** | $=2\times0.836-1$, matching the global positive fraction |
+| $g$ range | $[-0.991,\,0.993]$ | inside the physical $[-1,1]$ — no pathological events |
+| $\delta g$ mean / max | **0.006** / 0.467 | 20-model ensemble agreement is tight |
+
+$\delta g$ is the ensemble spread and becomes the **`CMS_negrw_vjets`** nuisance.
+
+---
+
+# Is $P_+$ calibrated outside the training region?
+
+![w:520](img/V1_calibration.png)
+
+Bin SR events by **predicted** $P_+$, plot the **observed** fraction with $w>0$.
+Points land on the diagonal across the full range ($P_+ \approx 0.15 \to 0.93$) —
+the classifier is calibrated where it is applied, not only where it was trained.
+
+---
+
+# Which features carry the information
+
+![w:620](img/04_feature_importance.png)
+
+Permutation importance: the increase in log-loss when a feature is scrambled.
+
+---
+
 # Closure
 
 ![w:800](img/07_closure.png)
@@ -771,15 +803,23 @@ not a decomposition.
 
 # Template composition — signal region
 
-![w:1000](img/prepost3.png)
+![w:940](img/prepost3.png)
 
-Stacked backgrounds with the H+c signal overlaid (×20k). The hatched band is the
-**prefit** total uncertainty, ≈14% per bin.
+Backgrounds stacked, H+c overlaid (×20k). Hatched band = **prefit** total
+uncertainty, ≈14% per bin. Postfit errors are absent because combine writes a
+**zero postfit covariance** on an Asimov fit.
 
-<div class="warn">
+---
 
-Postfit errors are not shown: on an Asimov fit combine writes a **zero postfit
-covariance**, so no postfit band can be drawn from this output.
+# Nuisance pulls and constraints
+
+![h:480](img/pulls.png)
+
+<div class="key">
+
+All nuisances sit at **zero pull with ~unit width** — correct for an Asimov fit, and
+the check that nothing is being pulled or over-constrained. **`rate_tt` is the
+exception**: pinned at 1.00 ± 0.05 by the 94%-pure CR_tt.
 
 </div>
 
