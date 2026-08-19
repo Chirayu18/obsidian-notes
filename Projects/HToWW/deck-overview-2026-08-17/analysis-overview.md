@@ -65,8 +65,6 @@ Chirayu Gupta · VUB · August 2026
 | 6 | Systematics and impacts |
 | 7 | Status and outlook |
 
-Dedicated decks: `ctag-sf-deck.pdf` (34 slides) · `negrw-deck.pdf` (57 slides)
-
 ---
 
 <!-- _class: sec -->
@@ -136,9 +134,6 @@ eµ removes the Z→ee/µµ peak **by construction** — the irreducible backgro
 | **total** | **21,552** | |
 
 <div class="warn">
-
-The signal is **0.26 events** against ~21,600 background — which is why MC
-statistics, rather than data statistics, drives the sensitivity.
 
 </div>
 
@@ -444,15 +439,11 @@ information the NLO subtraction encodes.
 
 # The reweight factor and its spread
 
-![w:820](img/06_g_and_dg.png)
+![w:640](img/06_g_and_dg.png)
 
-| quantity | value | reading |
-|---|---|---|
-| $g$ mean | **0.672** | $=2\times0.836-1$, matching the global positive fraction |
-| $g$ range | $[-0.991,\,0.993]$ | inside the physical $[-1,1]$ — no pathological events |
-| $\delta g$ mean / max | **0.006** / 0.467 | 20-model ensemble agreement is tight |
-
-$\delta g$ is the ensemble spread and becomes the **`CMS_negrw_vjets`** nuisance.
+$g$ mean **0.672** $=2\times0.836-1$, matching the global positive fraction ·
+range $[-0.991, 0.993]$, inside the physical $[-1,1]$ ·
+$\delta g$ mean **0.006**, which becomes the **`CMS_negrw_vjets`** nuisance.
 
 ---
 
@@ -542,13 +533,6 @@ AN-23-102 §2.3 rejects the inclusive NLO sample outright:
 Cross sections from **XSDB**; sum within **+1.6%** of the inclusive — normal NLO
 merging spread, not a double-count. Measured negative-weight fractions match XSDB
 to ~1%.
-
-<div class="warn">
-
-XSDB labels these `accuracy: "LO"` — **wrong**, auto-populated. `amcatnloFXFX` is
-NLO, proven by the 10–35% negative weights, impossible at LO.
-
-</div>
 
 ---
 
@@ -741,18 +725,8 @@ ggH is only **13.1%** of the merged `higgsbkg` group (VBF 29.0%, ggZH 23.3%,
 ZH 21.0%, WH 9.1%), so a flat lnN on the group either over-penalises the other 87%
 or must be diluted to an average — and cannot produce a shape effect.
 
-**Implemented as a per-event weight instead**, keyed on gen-jet flavour.
-
-<div class="warn">
-
-**Why our Bkg-Higgs impact stays small even once activated.** Freezing it moves the
-limit by <1 unit, against **7.6%** in AN-23-102. Two causes: the per-event weight is
-**not yet active**, *and* `higgsbkg` is only **0.6% of our SR** — ours is
-tt-dominated, theirs is Higgs-background-dominated. It will rise, but **not to 7.6%**.
-
-</div>
-
-**Replaced with a per-event weight**, ported from HiggsDNA `Higgs_plus_HF_syst`:
+**Implemented as a per-event weight instead**, ported from HiggsDNA
+`Higgs_plus_HF_syst`:
 
 ```python
 num_HF_jets = ak.sum(genJets.hadronFlavour == 4, axis=-1)   # pT>25, |eta|<2.5
@@ -760,10 +734,23 @@ up   = where(num_HF_jets > 0, 1.5, 1.0)     # AN-23-102: 50% on ggH
 down = where(num_HF_jets > 0, 0.5, 1.0)
 ```
 
-<div class="key">
+Keyed on **gen-jet flavour**, so process grouping stops mattering.
 
-Keys on **gen-jet flavour**, so process grouping stops mattering — and it produces
-the shape a flat lnN structurally cannot.
+---
+
+# Why the Bkg-Higgs impact stays small
+
+Freezing it moves the limit by **<1 unit**, against **7.6%** in AN-23-102.
+
+| cause | |
+|---|---|
+| the per-event weight is **not yet active** | the 1.066 lnN placeholder stands in |
+| `higgsbkg` is **0.6% of our SR** | ours is tt-dominated, theirs Higgs-bkg-dominated |
+
+<div class="warn">
+
+It will rise once activated, but **not to 7.6%** — the two analyses have different
+signal-region compositions.
 
 </div>
 
@@ -860,9 +847,8 @@ Each nuisance frozen in turn; **Δ is the improvement in the expected limit.**
 
 <div class="key">
 
-**autoMCStats is no longer the leading term.** It was dominant before the W+jets
-change; at 7.5% the analysis is no longer MC-stat-limited in the way it was.
-Signal theory now leads.
+**autoMCStats is no longer the leading term** — 7.5%, down from dominant before
+the W+jets change. Signal theory now leads.
 
 </div>
 
@@ -888,19 +874,21 @@ uncertainty, ≈14% per bin. Postfit errors are absent because combine writes a
 
 # Nuisance pulls and constraints
 
-![h:360](img/pulls.png)
+![h:470](img/pulls.png)
 
-<div class="key">
+---
 
-All Gaussian nuisances sit at **zero pull with ~unit width** — correct for Asimov.
-The two non-zero entries are **not Gaussian** and are not pulls:
+# Reading the pulls
+
+All **Gaussian** nuisances sit at **zero pull with ~unit width** — correct for an
+Asimov fit, and the check that nothing is pulled or over-constrained.
+
+The two non-zero entries are **not Gaussian** and must not be read as pulls:
 
 | entry | value | why |
 |---|---|---|
 | `rate_tt` | 1.000 ± 0.017 | free rateParam, pinned by CR_tt |
-| `prop_binCR_vjets_bin7_higgsbkg` | 1.000 ± 0.97 | $n_{eff}=2.1$ — below the autoMCStats threshold, so a **Poisson** term at its nominal scale |
-
-</div>
+| `prop_binCR_vjets_bin7_higgsbkg` | 1.000 ± 0.97 | $n_{eff}=2.1$, below the autoMCStats threshold → an individual **Poisson** term at its nominal scale |
 
 ---
 
@@ -947,9 +935,8 @@ returns **r̂ = 0.99996, −513/+483**, i.e. exactly the injected Asimov value.
 
 # Reading the impacts — the asymmetries
 
-**Left panel** — the pull $(\hat\theta-\theta_0)/\sigma_\theta$. All pulls sit at zero:
-this is an **Asimov** fit, so by construction nothing is pulled. A non-zero pull here
-would mean the fit is being dragged, and would need explaining.
+**Left panel** — the pull $(\hat\theta-\theta_0)/\sigma_\theta$. All sit at zero: this
+is an **Asimov** fit, so nothing is pulled by construction.
 
 **Right panel** — $\Delta\hat r$ when each nuisance is moved by $\pm1\sigma$.
 
@@ -967,9 +954,8 @@ would mean the fit is being dragged, and would need explaining.
 
 <div class="warn">
 
-The **fit range matters**. An earlier run with `--rMin 0` clipped every −1σ impact
-at the boundary and produced a one-sided plot. A symmetric range around $\hat r$ is
-required for the impacts to be meaningful.
+The **fit range matters**: a symmetric range around $\hat r$ is required, or the
+−1σ impacts clip at the boundary and the plot comes out one-sided.
 
 </div>
 
@@ -1007,17 +993,15 @@ a **9.6% improvement**, on **5× less data**.
 
 <div class="warn">
 
-**The scaling is indicative, not rigorous.** $503\times\sqrt{138/26.7}=1144$ assumes a
-purely statistics-limited extrapolation. AN-23-102's Table 17 puts its statistical term
-at 73.8%, so it is *not* fully statistics-limited — the true scaled value would be
-somewhat **worse** than 1144, making our margin **larger** than 9.6%, not smaller.
+**The scaling is indicative.** $503\sqrt{138/26.7}=1144$ assumes a purely
+statistics-limited extrapolation; the AN is 73.8% statistical, so the true scaled
+value is **worse** than 1144 — our margin is **larger** than 9.6%.
 
 </div>
 
 <div class="warn">
 
-The systematic breakdown of the 1034 is **under investigation** — the full
-term-by-term comparison against AN-23-102 Table 17 is not yet settled.
+The systematic breakdown of the 1034 is **under investigation**.
 
 </div>
 
