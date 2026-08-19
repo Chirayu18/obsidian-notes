@@ -457,16 +457,32 @@ variance and nothing else.
 
 ---
 
-# The gain, and the honest caveat
+# The gain
 
-![w:780](img/07b_neff_gain.png)
+![w:620](img/07b_neff_gain.png)
 
-<div class="warn">
+Integrated gain **1.6×**; per-bin ratio **≈3×** in the signal-rich bins.
 
-**The SR closure carries an offset** — the SR is a small, kinematically-biased corner
-of the training space. Reweighting fixes **variance, not yield**; the benefit
-($N_{eff}$ from reduced per-bin variance) survives. Covered by `CMS_negrw_vjets`,
-which profiles to **0.0%**. *This caveat is our extension, not the paper's.*
+---
+
+# The honest caveat
+
+**The SR closure carries an offset.** The signal region is a small,
+kinematically-biased corner of the space the classifier was trained on, so a
+finite $\hat{P}_+$ does not close perfectly there.
+
+Why this is acceptable, stated plainly:
+
+- reweighting fixes **variance, not yield** — exact closure is what the identity
+  guarantees for a *perfect* classifier, not a finite one
+- it **keeps the entire benefit**: $N_{eff}$ comes from reduced per-bin variance,
+  which survives the offset
+- the residual is covered by **`CMS_negrw_vjets`**, which profiles to **0.0%**
+
+<div class="key">
+
+*This caveat is our extension, not the paper's* — their closure was clean because
+their evaluation region was not this starved.
 
 </div>
 
@@ -749,15 +765,20 @@ not a decomposition.
 
 # Prefit vs postfit — signal region
 
-![w:980](img/prepost_SR.png)
+![w:1000](img/prepost2.png)
 
-Asimov fit, r = 1 injected
+<div class="key">
+
+**The prefit uncertainty band (hatched) collapses after the fit** — that is the
+constraint the control regions provide. Asimov, r = 1 injected; signal overlaid ×20k.
+
+</div>
 
 ---
 
 # Likelihood scan
 
-![w:900](img/nll_scan2.png)
+![w:720](img/nll_scan2.png)
 
 Minimum at the injected **r̂ = 1**. The dashed line is the 68% CL crossing;
 the quoted **1034 is a CLs upper limit**, which is a different construction and is
@@ -848,6 +869,13 @@ term-by-term comparison against AN-23-102 Table 17 is not yet settled.
 ---
 
 # What is still missing
+
+<div class="warn">
+
+**No data/MC agreement plots yet** — the analysis is blind and the comparison
+plots are still being produced.
+
+</div>
 
 | item | status |
 |---|---|
