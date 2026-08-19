@@ -594,27 +594,6 @@ statistics gain, not a normalisation change.
 
 ---
 
-# Was the gain really W+jets?
-
-`tt` (+4.8%) and `st` (+3.8%) also moved between the two cards — both were
-re-merged from scratch. Checked per-process:
-
-| process | $n_{eff}$ ratio |
-|---|---|
-| **vjets (SR)** | **4.18×** |
-| vjets (CR_st) | **9.89×** |
-| vjets (CR_tt) | **5.86×** |
-| tt, st, diboson, higgsbkg | 0.87 – 1.13× |
-
-<div class="key">
-
-**The n_eff gain is confined to V+jets.** Other processes move by ≤13% in *both*
-directions — re-merge jitter, not a systematic shift. Both cards were also
-re-verified independently: **1160** and **1034**.
-
-</div>
-
----
 
 <!-- _class: sec -->
 
@@ -913,9 +892,15 @@ uncertainty, ≈14% per bin. Postfit errors are absent because combine writes a
 
 <div class="key">
 
-All nuisances sit at **zero pull with ~unit width** — correct for an Asimov fit, and
-the check that nothing is being pulled or over-constrained. **`rate_tt` is the
-exception**: pinned at 1.00 ± 0.05 by the 94%-pure CR_tt.
+All Gaussian nuisances sit at **zero pull with ~unit width** — correct for an Asimov
+fit, and the check that nothing is being pulled or over-constrained.
+
+Two entries are not Gaussian and should not be read as pulls:
+
+| entry | value | why |
+|---|---|---|
+| `rate_tt` | 1.000 ± 0.017 | free rateParam, pinned by the 94%-pure CR_tt |
+| `prop_binCR_vjets_bin7_higgsbkg` | 1.000 ± 0.97 | that bin has $n_{eff}=2.1$, **below the autoMCStats threshold of 10**, so it gets an individual **Poisson** term — 1.000 is its nominal scale, not a 1σ pull |
 
 </div>
 
