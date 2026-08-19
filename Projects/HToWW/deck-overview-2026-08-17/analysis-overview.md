@@ -8,15 +8,20 @@ description: Status of the H+c analysis — selection, MVA, c-tagging, negative 
 style: |
   section {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 25px; padding: 40px 52px;
+    font-size: 25px; padding: 38px 60px;
     background: #fcfcfb; color: #1a1c1f;
   }
+  section > p:first-of-type { margin-top: 2px; }
   h1 { font-size: 38px; color: #1f4e79; border-bottom: 3px solid #b8862b;
        padding-bottom: 8px; margin-bottom: 16px; }
   h2 { font-size: 30px; color: #1f4e79; margin-bottom: 10px; }
-  table { font-size: 21px; border-collapse: collapse; margin: 6px auto; }
-  th { background: #1f4e79; color: #fff; padding: 6px 13px; text-align: left; }
-  td { padding: 5px 13px; border-bottom: 1px solid #dde1e5; }
+  table { font-size: 22px; border-collapse: collapse; margin: 10px 0;
+          width: 100%; table-layout: auto; }
+  th { background: #1f4e79; color: #fff; padding: 8px 14px; text-align: left; }
+  td { padding: 7px 14px; border-bottom: 1px solid #dde1e5; }
+  /* numeric columns right-align; text columns stay left */
+  td, th { text-align: left; }
+  table.num td:not(:first-child), table.num th:not(:first-child) { text-align: right; }
   tr:nth-child(even) td { background: #f2f4f6; }
   code { background: #ebeef1; padding: 1px 5px; border-radius: 3px;
          font-family: "SF Mono", Menlo, Consolas, monospace; font-size: 0.85em; }
@@ -68,6 +73,30 @@ Dedicated decks: `ctag-sf-deck.pdf` (34 slides) · `negrw-deck.pdf` (57 slides)
 
 ---
 
+# Why H+c
+
+The Higgs coupling to **charm** is the least constrained of the accessible Yukawas.
+Associated production **H + c** probes it directly, without relying on the
+H→cc̄ decay.
+
+| | |
+|---|---|
+| production | pp → H + c (+X) |
+| decay | H → WW* → 2ℓ2ν |
+| final state | **opposite-sign eμ** + MET + ≥1 c-tagged jet |
+| dataset | 2022postEE, **26.7 fb⁻¹**, ReReco `22Sep2023` |
+
+<div class="key">
+
+The eμ requirement removes Z→ee/μμ by construction, so the irreducible background
+is **real tt̄** rather than Drell-Yan.
+
+</div>
+
+Reference: **AN-23-102**, the full Run 2 analysis at 138 fb⁻¹.
+
+---
+
 # Signal and final state
 
 **H → WW → 2ℓ2ν, produced with a charm quark.**
@@ -76,18 +105,40 @@ Final state: **opposite-sign eμ** + MET + **≥1 c-tagged jet**
 
 | object | selection |
 |---|---|
-| muons | tight ID + iso, p<sub>T</sub> > 10, \|η\| < 2.4 |
-| electrons | wp80iso, p<sub>T</sub> > 10, \|η\| < 2.5 |
-| ll pair | OS, p<sub>T</sub> > 20 / 10, m<sub>ll</sub> > 12 |
-| c-jets | p<sub>T</sub> > 20, PNet medium CvL/CvB |
+| muons | tight ID + tight PF iso, p<sub>T</sub> > 10, \|η\| < 2.4 |
+| electrons | wp80iso, p<sub>T</sub> > 10, \|η\| < 2.5, ΔR(e,µ) > 0.4 |
+| ll pair | OS, p<sub>T</sub> > 20 / 10, pair p<sub>T</sub> > 30, m<sub>ll</sub> > 12 |
+| jets | p<sub>T</sub> > 30, \|η\| < 2.4, tight-lepveto ID, ΔR(j,ℓ) > 0.4 |
+| c-jets | p<sub>T</sub> > 20, **PNet medium** CvL/CvB |
+| MET | PuppiMET |
 
 <div class="key">
 
-eμ removes the Z peak by construction — the dominant background is **real tt̄**.
+eµ removes the Z→ee/µµ peak **by construction** — the irreducible background is
+**real tt̄**, not Drell-Yan. Triggers: MuonEG, SingleMu, SingleEle.
 
 </div>
 
-Data: ReReco `22Sep2023`, all eras.
+---
+
+# The selection is brutal on V+jets
+
+| process | SR yield | survival |
+|---|---|---|
+| tt̄ | 17,744 | dominant |
+| st | 1,543 | |
+| vjets | 1,523 | **1 in 542,000** |
+| diboson | 609 | |
+| higgsbkg | 132 | |
+| **H+c signal** | **0.26** | |
+
+<div class="warn">
+
+The signal is **0.26 events** against ~21,600 background. Everything in this
+analysis follows from that ratio — which is why MC statistics, not data
+statistics, has been the limiting factor.
+
+</div>
 
 ---
 
@@ -99,20 +150,60 @@ Data: ReReco `22Sep2023`, all eras.
 
 # Six classes, one network
 
-`[hplusc, higgsbkg, tt, st, diboson, vjets]`
-
-**argmax defines the region · the winning score is the discriminant**
-
-| region | events | dominant |
-|---|---|---|
-| SR_hplusc | 20,664 | tt 82% |
-| CR_tt | 44,199 | **tt 94%** |
-| CR_vjets | 9,214 | **vjets 43%** |
-| CR_higgsbkg / st / diboson | 6.6k–20k | tt-rich |
+| | |
+|---|---|
+| model | `SimpleMLP_MultiClass` (b-hive) |
+| classes | `hplusc, higgsbkg, tt, st, diboson, vjets` |
+| features | **26**, including the **11 c-tag one-hot categories** |
+| training | 30 epochs, batch 1024, lr 1e-3, loss weighting on |
+| split | 80/20, deterministic by NanoAOD `event` id |
 
 <div class="key">
 
-CR_tt at **94% purity** pins the free-floating `rate_tt`, which covers 82% of the SR.
+The 11 one-hot categories mean the network sees the **full 2D CvL/CvB plane** —
+the same information the scale factors are binned in, not a binary pass/fail.
+
+</div>
+
+---
+
+# argmax defines the regions
+
+**The winning class picks the channel; the winning score is the discriminant.**
+
+| region | events | dominant process |
+|---|---|---|
+| SR_hplusc | 20,664 | tt 82.0% |
+| CR_higgsbkg | 9,220 | tt 86.4% |
+| CR_tt | 44,199 | **tt 94.1%** |
+| CR_st | 20,135 | tt 87.6% |
+| CR_diboson | 6,585 | tt 72.4% |
+| CR_vjets | 9,214 | **vjets 43.2%** |
+
+Regions are **orthogonal by construction** — no cut optimisation to tune or defend,
+and every event is used somewhere.
+
+---
+
+# Four of five CRs are tt-dominated — by design
+
+The SR is itself **82% tt**: in an eμ final state tt̄ is dominant everywhere, so a
+tt-rich CR is expected, not a failure.
+
+<div class="key">
+
+**CR_tt: 94.1% purity over 44k events.** It pins the free-floating `rate_tt`, which
+covers 82% of the SR — the single most valuable constraint in the fit.
+
+</div>
+
+**CR_vjets holds 59.6% of all V+jets** in the fit. Without it there is no V+jets
+constraint from anywhere.
+
+<div class="warn">
+
+Collapsing the CRs to single bins was **measured**: +33 units for three CRs, ~+50
+for all five. The shapes carry real constraint, so all six channels keep 10 bins.
 
 </div>
 
@@ -120,7 +211,7 @@ CR_tt at **94% purity** pins the free-floating `rate_tt`, which covers 82% of th
 
 # Templates in all six regions
 
-![w:790](img/B1_all_channels_stacked.png)
+![w:900](img/B1_all_channels_stacked.png)
 
 ---
 
@@ -131,23 +222,49 @@ CR_tt at **94% purity** pins the free-floating `rate_tt`, which covers 82% of th
 
 ---
 
-# The 2D plane
+# From working points to a plane
 
-![w:620](img/ctag2d_plane_bins.png)
+PNet gives **two** discriminants per jet: **CvL** (charm vs light) and **CvB**
+(charm vs bottom). A single working-point cut throws most of that away.
 
-**11 categories** `L0, C0–C4, B0–B4` spanning the whole CvL/CvB plane.
+The calibration instead partitions the **whole plane** into **11 categories**
+`L0, C0–C4, B0–B4` — including the untagged `L0` bin.
+
+![w:760](img/ctag2d_plane_bins.png)
+
+---
+
+# Only 7 of 11 categories are populated
+
+| category | jets | c (%) | b (%) | light (%) |
+|---|---|---|---|---|
+| `L0` | 130,694 | 13.5 | 4.7 | **81.8** |
+| `C0` | 188,702 | 28.2 | 6.2 | 65.7 |
+| `C1` | 170,043 | 58.0 | 7.9 | 34.1 |
+| `C2` | 17,823 | 58.6 | 33.4 | 8.0 |
+| `C3` | 1,082 | 30.6 | **57.9** | 11.5 |
+
+The scheme is designed for a broader phase space than ours — the b-rich `B*`
+categories are essentially empty after the eμ + c-jet selection.
+
+<div class="key">
+
+Category index is computed from CvL/CvB already stored per jet — **no NanoAOD
+reprocessing was ever needed**.
+
+</div>
 
 ---
 
 # The scale factor matrix
 
-![w:740](img/C1_sf_matrix.png)
+![w:900](img/C1_sf_matrix.png)
 
 ---
 
 # The uncertainty band is the nuisance
 
-![w:720](img/C2_sf_band.png)
+![w:880](img/C2_sf_band.png)
 
 ---
 
@@ -177,61 +294,133 @@ Currently **one nuisance** covering the whole plane. Decorrelation is pending.
 
 # 4 · Negative-weight reweighting
 
+*full detail: `negrw-deck.pdf` (57 slides)*
+
 ---
 
-# The problem
+# The estimator is a cancellation
 
-![w:660](img/automcstats_issue.png)
+aMC@NLO events carry **signed** weights. The yield estimator
 
-aMC@NLO weights are **signed** — the yield is a cancellation.
+$$\hat{N}_B = \sum_{i \in B} w_i, \qquad w_i = \pm|w_i|$$
+
+is a **difference of two large numbers**.
+
+- the **expectation** is correct — the yield is unbiased
+- the **variance** is not: it scales with $\sum w_i^2 = \sum |w_i|^2$, the *unsigned*
+  statistics, while the mean is the much smaller signed sum
+- effective statistics collapse: $N_{eff} = (\sum w)^2/\sum w^2 \ll N$
+
+<div class="warn">
+
+**16.4%** of our V+jets events carried a negative weight. In a sparse bin the
+positives and negatives can cancel **completely** — leaving zero content with a
+large finite error.
+
+</div>
 
 ---
 
 # V+jets was starved exactly under the signal
 
-![w:900](img/vjets_neff.png)
+![w:960](img/automcstats_issue.png)
 
-$n_{eff} = (\sum w)^2 / \sum w^2$ — every other background sits at ≤1.1%.
-
----
-
-# The method
-
-$$w \;\to\; |w| \cdot g(x) \cdot \text{renorm}, \qquad g(x) = 2P_+(x) - 1$$
-
-**An algebraic identity, not an approximation** — yield-preserving by construction.
-
-- **generator-level features only** — $P_+$ is a property of the generator
-- **train loose, infer tight**, disjoint by construction from the eμ SR
-- same phase space, disjoint events → interpolation, never extrapolation
-
-arXiv:2510.16217
+**(A)** the MC-stat band explodes where the signal peaks — one bin was
+DY $= 0 \pm 41$ from ±79k weights cancelling · **(B)** $N_{eff}$ per bin: V+jets ≈10,
+every other process 10³–10⁴ · **(C)** DY per-event weights, uniformly ±10⁵
 
 ---
 
-# Classifier performance
+# The method — an algebraic identity
 
-![w:560](img/03_roc.png)
+Write the signed generator density as a difference of two positive densities:
 
-Ensemble **AUC 0.829** on an intrinsically stochastic target.
+$$\text{PDF}(\vec{x}) = a\,\text{PDF}_+ - b\,\text{PDF}_-, \qquad a-b=1$$
+
+With $P_+(\vec{x}) = a\text{PDF}_+ / (a\text{PDF}_+ + b\text{PDF}_-)$:
+
+$$\text{PDF}(\vec{x}) = \underbrace{(2P_+(\vec{x})-1)}_{g(\vec{x})}\cdot(a\text{PDF}_+ + b\text{PDF}_-)$$
+
+The right factor is the **unsigned** density — what $\sum|w|$ samples.
+
+<div class="key">
+
+So $\sum|w|\,g$ and $\sum w$ estimate **the same distribution**. Yield-preserving
+by construction, not an approximation.
+
+</div>
+
+Exact for the *true* $P_+$. We use $\hat{P}_+$ from a finite classifier — so closure
+becomes an **empirical** property that must be measured.
+
+---
+
+# Training region — train loose, infer tight
+
+$g(\vec{x})$ is a **generator property**; it does not know about the analysis selection.
+So we train on a far larger sample than the SR.
+
+| | region |
+|---|---|
+| **train** | all base cuts + veto of the eμ SR topology |
+| **infer** | the tight eμ signal region |
+
+<div class="key">
+
+**Disjoint by construction.** An event that is not "exactly one eμ pair" can never be
+an SR event — no event-id bookkeeping needed.
+
+</div>
+
+Rejected alternatives: inverting MET (kinematically softer → extrapolation) and
+inverting the c-jet requirement (flips into the *opposite* gen corner).
+
+---
+
+# Inputs — 20 generator-level features
+
+![w:720](img/08_input_features.png)
+
+Blue $w>0$, red $w<0$. The paper explicitly **rejects reco-level variables** —
+closure is only guaranteed on generator quantities.
+
+---
+
+# The classifier
+
+| | |
+|---|---|
+| model | `HistGradientBoostingClassifier` |
+| inputs | 20 gen-level (`lhe_*`, `genparton_*`) |
+| training events | 9.8M |
+| **ensemble AUC** | **0.829** |
+
+![w:620](img/03_roc.png)
+
+AUC 0.83 on an **intrinsically stochastic** target — the weight sign is not a
+deterministic function of kinematics, so a perfect classifier cannot exist.
 
 ---
 
 # Closure
 
-![w:620](img/07_closure.png)
+![w:800](img/07_closure.png)
 
-Training-region closure **0.994** on 9.8M events.
+Training-region closure **0.994** on 9.8M events — the reweighting removes
+variance and nothing else.
 
 ---
 
-# The gain
+# The gain, and the honest caveat
 
-![w:640](img/07b_neff_gain.png)
+![w:780](img/07b_neff_gain.png)
 
-<div class="key">
+<div class="warn">
 
-Method uncertainty `CMS_negrw_vjets` profiles to **0.0%** — negligible.
+**The SR closure carries an offset** — the SR is a small, kinematically-biased corner
+of the training space. Reweighting fixes **variance, not yield**; the benefit
+($N_{eff}$ from reduced per-bin variance) survives. Covered by `CMS_negrw_vjets`,
+which profiles to **0.0%**. *This caveat is our extension, not the paper's.*
 
 </div>
 
@@ -245,17 +434,51 @@ Method uncertainty `CMS_negrw_vjets` profiles to **0.0%** — negligible.
 
 # Inclusive → jet-binned
 
-AN-23-102 rejects the inclusive NLO sample: *large negative-weight fraction.*
+AN-23-102 §2.3 rejects the inclusive NLO sample outright:
+*"not used… 5 times smaller than LO and with large fraction of negative weights."*
 
-| sample | xsec (pb) | events | neg-w |
-|---|---|---|---|
-| 0J | 55,760 | 678M | 10% |
-| 1J | 9,529 | 523M | 26% |
-| 2J | 3,532 | 345M | 35% |
-| **sum** | **68,821** | **1,546M** | |
-| *inclusive* | *67,710* | *282M* | *16%* |
+| sample | xsec (pb) | events | files | neg-w |
+|---|---|---|---|---|
+| `WtoLNu-2Jets_0J` | 55,760 | 678M | 3,432 | 10.2% |
+| `WtoLNu-2Jets_1J` | 9,529 | 523M | 2,669 | 25.7% |
+| `WtoLNu-2Jets_2J` | 3,532 | 345M | 2,135 | 34.7% |
+| **sum** | **68,821** | **1,546M** | **8,236** | |
+| *old inclusive* | *67,710* | *282M* | *381* | *16.1%* |
 
-Cross sections from XSDB · sum within **+1.6%** of the inclusive.
+Cross sections from **XSDB**; sum within **+1.6%** of the inclusive — normal NLO
+merging spread, not a double-count. Measured negative-weight fractions match XSDB
+to ~1%.
+
+<div class="warn">
+
+XSDB labels these `accuracy: "LO"` — **wrong**, auto-populated. `amcatnloFXFX` is
+NLO, proven by the 10–35% negative weights, impossible at LO.
+
+</div>
+
+---
+
+# Why the gain is not simply 5.5×
+
+Raw events rise **5.5×**, but the useful quantity is effective statistics:
+
+| sample | $n_{eff}/N$ | equivalent lumi |
+|---|---|---|
+| 0J | 0.635 | 7.7 /fb |
+| 1J | 0.237 | 13.0 /fb |
+| 2J | 0.094 | 9.1 /fb |
+| **combined** | | **29.8 /fb** |
+| *inclusive* | *0.460* | ***1.9 /fb*** |
+
+The inclusive sample spends most of its cross section on **0-jet** events, which
+almost never survive the ≥1 c-jet requirement.
+
+<div class="key">
+
+Of the 4,851 surviving SR events, **2J alone contributes 69%** — despite being the
+smallest sample. The jet-binned samples are enriched in exactly what the selection needs.
+
+</div>
 
 ---
 
@@ -462,17 +685,9 @@ and should not be quoted term-by-term.
 
 ---
 
-# Templates entering combine
-
-![w:800](img/B1_all_channels_stacked.png)
-
-6 channels × 6 processes × 10 bins
-
----
-
 # Shape systematics in the signal region
 
-![w:780](img/B3_shapes_SR_hplusc.png)
+![w:900](img/B3_shapes_SR_hplusc.png)
 
 All shape nuisances, up (solid) vs down (dashed), ratio to nominal
 
@@ -480,7 +695,7 @@ All shape nuisances, up (solid) vs down (dashed), ratio to nominal
 
 # Prefit vs postfit — signal region
 
-![w:900](img/prepost_SR.png)
+![w:980](img/prepost_SR.png)
 
 Asimov fit, r = 1 injected
 
@@ -488,13 +703,43 @@ Asimov fit, r = 1 injected
 
 # Likelihood scan
 
-![w:640](img/nll_scan.png)
+![w:800](img/nll_scan.png)
 
 ---
 
 # Nuisance impacts
 
-![w:520](img/impacts_cur-1.png)
+![w:950](img/impacts_sym2-1.png)
+
+---
+
+# Reading the impacts — the asymmetries
+
+**Left panel** — the pull $(\hat\theta-\theta_0)/\sigma_\theta$. All pulls sit at zero:
+this is an **Asimov** fit, so by construction nothing is pulled. A non-zero pull here
+would mean the fit is being dragged, and would need explaining.
+
+**Right panel** — $\Delta\hat r$ when each nuisance is moved by $\pm1\sigma$.
+
+<div class="key">
+
+**Red (+1σ) and blue (−1σ) are not mirror images.** Three sources of asymmetry:
+
+</div>
+
+| source | why |
+|---|---|
+| **asymmetric lnN** | `xsec_st` is `0.9873/1.0167` — the up and down variations differ by construction |
+| **template shape** | up/down shifts of JES or ctag move events between bins non-linearly |
+| **re-profiling** | pushing one nuisance lets the others re-fit, and they respond differently in each direction |
+
+<div class="warn">
+
+The **fit range matters**. An earlier run with `--rMin 0` clipped every −1σ impact
+at the boundary and produced a one-sided plot. A symmetric range around $\hat r$ is
+required for the impacts to be meaningful.
+
+</div>
 
 ---
 
@@ -506,7 +751,7 @@ Asimov fit, r = 1 injected
 
 # The road so far
 
-![w:820](img/limit_cascade.png)
+![w:900](img/limit_cascade.png)
 
 ---
 
