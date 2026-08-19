@@ -262,19 +262,45 @@ region (e.g. c-depleted) would be actively harmful.
 | training-region closure | **0.994** on 9.8M events |
 | calibration of $\hat P_+$ in the SR | on the diagonal, $P_+ \approx 0.15\to0.93$ |
 | ensemble spread $\delta g$ | mean **0.006**, max 0.467 |
-| SR closure | **carries an offset** |
+| SR closure, **before** renorm | **1.058** (a 5.8% overshoot) |
 
-<div class="warn">
+The SR is a small, kinematically-biased corner of the training domain, so the
+per-event $g$ does not average to the *local* positive fraction:
 
-**The SR closure offset is real.** The SR is a small, kinematically-biased corner
-of the training space, so a finite $\hat P_+$ does not close perfectly there.
-*This caveat is our extension — the paper's evaluation region was not this starved.*
+| dataset | rows | $\sum\lvert w\rvert g \,/\, \sum w$ |
+|---|---|---|
+| `DYto2L_2Jets_50` | 9,646 | 1.014 |
+| `WtoLNu_2Jets` | 485 | 1.133 |
+| **total** | 10,205 | **1.058** |
+
+---
+
+# 10b · What we do about it
+
+<div class="key">
+
+**The reweighted V+jets template is renormalised to the nominal yield, per dataset.**
+Applied factors: DY×0.986, WtoLNu×0.900.
 
 </div>
 
-Why it is acceptable: reweighting fixes **variance, not yield**; the $n_{\rm eff}$
-benefit comes from reduced per-bin variance and survives the offset; and the
-residual is covered by `CMS_negrw_vjets`, which **profiles to 0.0%** in the fit.
+So the yield is **restored exactly** — after renormalisation the reweighted and
+nominal templates have the same integral by construction.
+
+| | preserved? |
+|---|---|
+| yield | **yes** — enforced by the renorm |
+| shape | **yes** — the renorm is a single scale factor per dataset |
+| variance reduction | **yes** — $n_{\rm eff}$ comes from per-bin variance, untouched by a global scale |
+
+<div class="warn">
+
+**This renormalisation is our extension, not the paper's** — their evaluation region
+was not this starved, so their closure was clean without it. `CMS_negrw_vjets` covers
+the residual **method** uncertainty (the ensemble spread), not the 5.8% offset, which
+is removed rather than assigned an uncertainty.
+
+</div>
 
 ---
 

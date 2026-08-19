@@ -491,24 +491,30 @@ Integrated gain **1.6×**; per-bin ratio **≈3×** in the signal-rich bins.
 
 ---
 
-# The honest caveat
+# SR closure and the renormalisation
 
-**The SR closure carries an offset.** The signal region is a small,
-kinematically-biased corner of the space the classifier was trained on, so a
-finite $\hat{P}_+$ does not close perfectly there.
+The SR is a small, kinematically-biased corner of the training domain, so the
+per-event $g$ does not average to the *local* positive fraction:
 
-Why this is acceptable, stated plainly:
-
-- reweighting fixes **variance, not yield** — exact closure is what the identity
-  guarantees for a *perfect* classifier, not a finite one
-- it **keeps the entire benefit**: $N_{eff}$ comes from reduced per-bin variance,
-  which survives the offset
-- the residual is covered by **`CMS_negrw_vjets`**, which profiles to **0.0%**
+| dataset | rows | $\sum\lvert w\rvert g \,/\, \sum w$ |
+|---|---|---|
+| `DYto2L_2Jets_50` | 9,646 | 1.014 |
+| `WtoLNu_2Jets` | 485 | 1.133 |
+| **total** | 10,205 | **1.058** |
 
 <div class="key">
 
-*This caveat is our extension, not the paper's* — their closure was clean because
-their evaluation region was not this starved.
+**The reweighted template is renormalised to the nominal yield, per dataset**
+(DY ×0.986, WtoLNu ×0.900). The yield is therefore **restored exactly**, while the
+variance reduction — which comes from per-bin spread, not the integral — is untouched.
+
+</div>
+
+<div class="warn">
+
+This renormalisation is **our extension, not the paper's**. `CMS_negrw_vjets`
+covers the residual *method* uncertainty (the ensemble spread), which profiles
+to **0.0%**.
 
 </div>
 
