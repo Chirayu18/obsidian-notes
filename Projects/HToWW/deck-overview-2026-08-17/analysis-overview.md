@@ -31,9 +31,10 @@ style: |
   section.sec { justify-content: center; background: #1f4e79; color: #fff; }
   section.sec h1 { color: #fff; border-bottom: 2px solid #b8862b; font-size: 42px; }
   section.sec p { color: #cfd8e0; font-size: 22px; }
+  section.sec code { background: rgba(255,255,255,.18); color: #fff; }
   .key { background: #edf4ed; border-left: 5px solid #2f6b3c; padding: 10px 16px; margin-top: 10px; }
   .warn { background: #fbf2e8; border-left: 5px solid #b5651d; padding: 10px 16px; margin-top: 10px; }
-  img { display: block; margin: 0 auto; }
+  img { display: block; margin: 0 auto; max-height: 545px; width: auto; }
   footer { color: #78818b; font-size: 14px; }
 ---
 
@@ -93,6 +94,14 @@ is **real tt̄** rather than Drell-Yan.
 
 </div>
 
+<div class="key">
+
+**What r = 1 means.** The signal template is normalised to the SM H+c prediction,
+**σ × B = 2.214 × 10⁻³ pb** for H→WW→2ℓ2ν. A limit of **r = 1034** therefore
+excludes ~1000× the SM rate at this luminosity.
+
+</div>
+
 Reference: **AN-23-102**, the full Run 2 analysis at 138 fb⁻¹.
 
 ---
@@ -123,14 +132,15 @@ eµ removes the Z→ee/µµ peak **by construction** — the irreducible backgro
 
 # The selection is brutal on V+jets
 
-| process | SR yield | survival |
+| process | SR yield | share of SR |
 |---|---|---|
-| tt̄ | 17,744 | dominant |
-| st | 1,543 | |
-| vjets | 1,523 | **1 in 542,000** |
-| diboson | 609 | |
-| higgsbkg | 132 | |
-| **H+c signal** | **0.26** | |
+| tt̄ | 17,744 | 82.3% |
+| st | 1,543 | 7.2% |
+| vjets | 1,523 | 7.1% |
+| diboson | 609 | 2.8% |
+| higgsbkg | 132 | 0.6% |
+| **H+c signal** | **0.26** | **0.001%** |
+| **total** | **21,552** | |
 
 <div class="warn">
 
@@ -173,7 +183,7 @@ the same information the scale factors are binned in, not a binary pass/fail.
 
 | region | events | dominant process |
 |---|---|---|
-| SR_hplusc | 20,664 | tt 82.0% |
+| SR_hplusc | 21,552 | **tt 82.3%** |
 | CR_higgsbkg | 9,220 | tt 86.4% |
 | CR_tt | 44,199 | **tt 94.1%** |
 | CR_st | 20,135 | tt 87.6% |
@@ -230,11 +240,25 @@ PNet gives **two** discriminants per jet: **CvL** (charm vs light) and **CvB**
 The calibration instead partitions the **whole plane** into **11 categories**
 `L0, C0–C4, B0–B4` — including the untagged `L0` bin.
 
-![w:760](img/ctag2d_plane_bins.png)
+| | |
+|---|---|
+| axes | CvL, CvB — **verified sufficient**, no third variable needed |
+| categories | 11: `L0`, `C0`–`C4`, `B0`–`B4` |
+| index | computed from CvL/CvB **already stored per jet** |
+| applied | natively in the processor (`CTag2DCorrector`) |
+
+<div class="key">
+
+Because the scheme spans the **full plane including `L0`**, the SF machinery works
+even for a selection with no working point at all.
+
+</div>
 
 ---
 
 # Only 7 of 11 categories are populated
+
+Occupancy of the five largest (`C4` and `B0` are populated but sparse):
 
 | category | jets | c (%) | b (%) | light (%) |
 |---|---|---|---|---|
@@ -244,8 +268,8 @@ The calibration instead partitions the **whole plane** into **11 categories**
 | `C2` | 17,823 | 58.6 | 33.4 | 8.0 |
 | `C3` | 1,082 | 30.6 | **57.9** | 11.5 |
 
-The scheme is designed for a broader phase space than ours — the b-rich `B*`
-categories are essentially empty after the eμ + c-jet selection.
+The scheme targets a broader phase space than ours — the b-rich `B1`–`B4`
+categories are empty after the eμ + c-jet selection.
 
 <div class="key">
 
@@ -482,7 +506,7 @@ smallest sample. The jet-binned samples are enriched in exactly what the selecti
 
 ---
 
-# Result
+# W+jets result: 1160 → 1034
 
 | | before | after |
 |---|---|---|
@@ -662,17 +686,18 @@ samples. Recorded as a **documented decision**, not an oversight.
 
 ---
 
-# The result
+# Statistical vs systematic
 
-| | limit | fraction |
+| | limit | fraction of 1034 |
 |---|---|---|
 | **full** | **1034** | 100% |
 | statistical only | **641** | **62%** |
-| systematics | — | **38%** |
+| systematic component | — | **38%** |
 
 <div class="key">
 
-**62% statistical · 38% systematic**
+**62% statistical · 38% systematic** — freezing all constrained nuisances takes the
+limit from 1034 to 641.
 
 </div>
 
@@ -703,13 +728,24 @@ Asimov fit, r = 1 injected
 
 # Likelihood scan
 
-![w:800](img/nll_scan.png)
+![w:900](img/nll_scan2.png)
+
+Minimum at the injected **r̂ = 1**. The dashed line is the 68% CL crossing;
+the quoted **1034 is a CLs upper limit**, which is a different construction and is
+*not* read off this curve.
 
 ---
 
-# Nuisance impacts
+# Nuisance impacts — top 10
 
-![w:950](img/impacts_sym2-1.png)
+![w:1080](img/impacts_top10.png)
+
+<div class="warn">
+
+The header `r̂ = 0 +500/−500` is a **plotImpacts rounding artefact** — the actual fit
+returns **r̂ = 0.99996, −513/+483**, i.e. exactly the injected Asimov value.
+
+</div>
 
 ---
 
