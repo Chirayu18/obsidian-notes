@@ -497,17 +497,16 @@ The SR is a small, kinematically-biased corner of the training domain, so the
 per-event $g$ does not average to the *local* positive fraction. Applied
 **per dataset** in the card builder:
 
-| dataset | $\sum w$ | $\sum\lvert w\rvert g$ | renorm |
+| process | $\sum w$ | $\sum\lvert w\rvert g$ | renorm |
 |---|---|---|---|
-| `DYto2L_2Jets_50` | 1.007e8 | 1.016e8 | **0.9907** |
-| `WtoLNu_2Jets` | 5.238e7 | 5.876e7 | **0.8914** |
-| `DYto2L_2Jets_10to50` | 6.942e5 | 1.144e6 | **0.6070** |
+| **DY** (both mass bins) | 1.014e8 | 1.027e8 | **0.987** |
+| **W→ℓν** | 5.238e7 | 5.876e7 | **0.891** |
 
 <div class="key">
 
-The reweighted template is scaled back to the nominal yield, so the **yield is
-restored exactly** while the variance reduction — which comes from per-bin
-spread, not the integral — is untouched.
+Applied **per dataset** in the card builder: the reweighted template is scaled
+back to the nominal yield, so the **yield is restored exactly** while the variance
+reduction — from per-bin spread, not the integral — is untouched.
 
 </div>
 
