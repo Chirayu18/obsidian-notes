@@ -34,7 +34,8 @@ style: |
   section.sec code { background: rgba(255,255,255,.18); color: #fff; }
   .key { background: #edf4ed; border-left: 5px solid #2f6b3c; padding: 10px 16px; margin-top: 10px; }
   .warn { background: #fbf2e8; border-left: 5px solid #b5651d; padding: 10px 16px; margin-top: 10px; }
-  img { display: block; margin: 0 auto; max-height: 545px; width: auto; }
+  img { display: block; margin: 0 auto; max-height: 460px !important;
+         width: auto !important; height: auto; object-fit: contain; }
   footer { color: #78818b; font-size: 14px; }
 ---
 
@@ -82,7 +83,7 @@ H→cc̄ decay.
 
 | | |
 |---|---|
-| production | pp → H + c (+X) |
+| **production** | pp → H + c (+X) |
 | decay | H → WW* → 2ℓ2ν |
 | final state | **opposite-sign eμ** + MET + ≥1 c-tagged jet |
 | dataset | 2022postEE, **26.7 fb⁻¹**, ReReco `22Sep2023` |
@@ -160,7 +161,7 @@ statistics, has been the limiting factor.
 
 # Six classes, one network
 
-| | |
+| setting | value |
 |---|---|
 | model | `SimpleMLP_MultiClass` (b-hive) |
 | classes | `hplusc, higgsbkg, tt, st, diboson, vjets` |
@@ -240,7 +241,7 @@ PNet gives **two** discriminants per jet: **CvL** (charm vs light) and **CvB**
 The calibration instead partitions the **whole plane** into **11 categories**
 `L0, C0–C4, B0–B4` — including the untagged `L0` bin.
 
-| | |
+| property | value |
 |---|---|
 | axes | CvL, CvB — **verified sufficient**, no third variable needed |
 | categories | 11: `L0`, `C0`–`C4`, `B0`–`B4` |
@@ -403,26 +404,47 @@ inverting the c-jet requirement (flips into the *opposite* gen corner).
 
 # Inputs — 20 generator-level features
 
-![w:720](img/08_input_features.png)
+| group | variables |
+|---|---|
+| LHE event | `lhe_njets`, `lhe_nb`, `lhe_nc`, `lhe_nuds`, `lhe_nglu`, `lhe_npnlo` |
+| LHE kinematics | `lhe_ht`, `lhe_htincoming`, `lhe_vpt`, `lhe_alphas` |
+| gen partons | multiplicity, `n_pt20/100/200`, incoming PDG IDs |
+| leading partons | `genparton1/2_pt`, `genparton1/2_eta` |
 
-Blue $w>0$, red $w<0$. The paper explicitly **rejects reco-level variables** —
-closure is only guaranteed on generator quantities.
+<div class="key">
+
+**All generator-level.** The paper explicitly **rejects reco-level variables** —
+closure is only guaranteed on quantities the generator itself sampled.
+
+</div>
+
+The two weight classes separate visibly in nearly every one of these features.
 
 ---
 
 # The classifier
 
-| | |
+| setting | value |
 |---|---|
-| model | `HistGradientBoostingClassifier` |
-| inputs | 20 gen-level (`lhe_*`, `genparton_*`) |
+| model | `HistGradientBoostingClassifier` (scikit-learn) |
+| inputs | 20 generator-level (`lhe_*`, `genparton_*`) |
 | training events | 9.8M |
 | **ensemble AUC** | **0.829** |
 
-![w:620](img/03_roc.png)
+<div class="key">
 
 AUC 0.83 on an **intrinsically stochastic** target — the weight sign is not a
-deterministic function of kinematics, so a perfect classifier cannot exist.
+deterministic function of the kinematics, so a perfect classifier cannot exist
+even in principle. 0.83 means the generator-level features genuinely carry the
+information the NLO subtraction encodes.
+
+</div>
+
+---
+
+# Classifier ROC
+
+![w:560](img/03_roc.png)
 
 ---
 
@@ -639,6 +661,13 @@ the shape a flat lnN structurally cannot.
 
 # What we fixed — 3 · MET unclustered energy
 
+<div class="warn">
+
+**Implemented, not yet in the card** — it needs the shifted trees from a
+reprocessing pass, so it does not appear in the 22 shape nuisances above.
+
+</div>
+
 The `CorrectedMETFactory` path **never runs for Run 3 PuppiMET**, so the
 unclustered-energy shift was silently absent.
 
@@ -662,9 +691,16 @@ same up/down ordering.
 | `CMS_ctag2d_2022` | **new** — 2D CvL/CvB SF applied natively in the processor |
 | `electron_reco` ×3 | **split** into p<sub>T</sub> bins (<20, 20–75, >75 GeV) |
 | `lhe_pdf`, `lhe_alphaS` | **added** — NNPDF replicas, MC2Hessian |
-| `top_pt` | **rewritten** to the hh2bbww theory form |
-| `higgs_plus_c` | **new** — per-event HF weight replacing the lnN |
-| MET unclustered | **new** object shift |
+| `top_pt` | **rewritten** to the hh2bbww theory form — *pending activation* |
+| `higgs_plus_c` | **new** per-event HF weight — *pending activation* |
+| MET unclustered | **new** object shift — *pending activation* |
+
+<div class="warn">
+
+The last three are implemented and verified but **not in the current card** — each
+needs its weight column or shifted tree from a reprocessing pass.
+
+</div>
 
 ---
 
@@ -686,35 +722,28 @@ samples. Recorded as a **documented decision**, not an oversight.
 
 ---
 
-# Statistical vs systematic
+# What moves the limit
 
-| | limit | fraction of 1034 |
-|---|---|---|
-| **full** | **1034** | 100% |
-| statistical only | **641** | **62%** |
-| systematic component | — | **38%** |
+Each nuisance frozen in turn; **Δ is the improvement in the expected limit.**
 
-<div class="key">
-
-**62% statistical · 38% systematic** — freezing all constrained nuisances takes the
-limit from 1034 to 641.
-
-</div>
+| frozen | limit | Δ | % of 1034 |
+|---|---|---|---|
+| **all constrained** (stat-only) | **641** | **393** | **38.0%** |
+| theory shapes (scale + PS + α<sub>S</sub>) | 883 | 151 | 14.6% |
+| `xsec_hplusc_4FS_5FS` | 921 | 113 | 10.9% |
+| `scalevar_muF` | 944 | 90 | 8.7% |
+| autoMCStats (all) | 956 | 78 | 7.5% |
+| `CMS_ctag2d_2022` | 964 | 70 | 6.8% |
+| `rate_tt` | 1011 | 23 | 2.2% |
+| JES | 1023 | 11 | 1.1% |
 
 <div class="warn">
 
-The 1034 number is **under investigation** — the systematic breakdown is not final
-and should not be quoted term-by-term.
+**Rows overlap and do not add.** `scalevar_muF` sits inside the theory group;
+freezing one nuisance also lets the others re-profile. Read this as a **ranking**,
+not a decomposition.
 
 </div>
-
----
-
-# Shape systematics in the signal region
-
-![w:900](img/B3_shapes_SR_hplusc.png)
-
-All shape nuisances, up (solid) vs down (dashed), ratio to nominal
 
 ---
 
@@ -788,6 +817,9 @@ required for the impacts to be meaningful.
 # The road so far
 
 ![w:900](img/limit_cascade.png)
+
+Note the suppressed zero on the y-axis — the c-tag step is a genuine but small
+**+14** increase, not the spike it appears to be.
 
 ---
 
