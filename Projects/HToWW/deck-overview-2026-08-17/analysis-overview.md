@@ -612,6 +612,81 @@ re-verified independently: **1160** and **1034**.
 
 <!-- _class: sec -->
 
+# 6 · The combine card
+
+---
+
+# Card structure
+
+```
+imax 6      # 6 channels: SR_hplusc + 5 argmax CRs
+jmax 5      # 6 processes minus one
+kmax *      # nuisances counted automatically
+
+shapes * SR_hplusc  v11_hplusc_2dcat.root \
+         SR_hplusc_$PROCESS  SR_hplusc_$PROCESS_$SYSTEMATIC
+   ... one line per channel
+```
+
+| | |
+|---|---|
+| channels | `SR_hplusc`, `CR_higgsbkg`, `CR_tt`, `CR_st`, `CR_diboson`, `CR_vjets` |
+| processes | `hplusc`, `higgsbkg`, `tt`, `st`, `diboson`, `vjets` |
+| binning | **10 bins per channel** — the winning MVA score |
+| histograms | 1,626 in the ROOT file (nominal + all up/down) |
+| observation | `-1` in every channel — **Asimov, blind** |
+
+---
+
+# The two special entries
+
+**A free-floating tt normalisation:**
+
+```
+rate_tt  rateParam  *  tt  1.0  [0,5]
+```
+
+One parameter, **shared across all six channels**, so CR_tt (94% pure, 44k events)
+determines the tt normalisation in the SR. This is why tt̄ carries no `xsec` lnN —
+its rate comes from data, following AN-23-102.
+
+**Bin-by-bin MC statistics:**
+
+```
+SR_hplusc    autoMCStats 10
+CR_higgsbkg  autoMCStats 10
+   ... one line per channel
+```
+
+Barlow–Beeston-lite. Threshold 10 means bins with $n_{eff} > 10$ get a single
+Gaussian nuisance; sparser bins get individual Poisson terms.
+
+---
+
+# How a template becomes a card entry
+
+```
+parquet  →  read_scale = lumi × xsec / sumw  →  TH1 per (channel, process)
+                                             →  + one TH1 per systematic ↑↓
+```
+
+<div class="key">
+
+**Normalisation is a two-place mechanism.** The per-event `genWeight` enters
+post-selection through the weights container; the denominator `sumw` is summed
+**pre-selection** and written to `sumw_records` — including chunks that select
+zero events. Reading it from parquet metadata instead undercounts.
+
+</div>
+
+Object shifts (JES/JER, lepton scale/res) cannot be weights — they change the MVA
+score, so each is a **separate parquet tree**, re-selected and re-scored, giving
+12 shifted directories.
+
+---
+
+<!-- _class: sec -->
+
 # 6 · Systematics
 
 ---
@@ -757,12 +832,27 @@ needs its weight column or shifted tree from a reprocessing pass.
 | **muon reco SF** | **not applicable** — HiggsDNA exposes no reco key; hh2bbww registers `mu_id_sf`/`mu_iso_sf` and no `mu_reco_sf`. Two frameworks, same conclusion. |
 | **PU jet ID** | absent from both frameworks for Run 3 |
 | **UE / tune** | requires **dedicated tune samples** — cannot be a weight |
-| `hdamp`, `mtop` | sample-based tt modelling; absent from AN-23-102 Table 16 too |
+| `hdamp`, `mtop` | sample-based tt modelling — **under consideration**, see next slide |
+
+---
+
+# tt modelling: `hdamp` and `mtop`
+
+Two standard Run 3 tt̄ modelling uncertainties, both **not currently in the card**:
+
+| term | what it is |
+|---|---|
+| **`hdamp`** | The Powheg damping parameter controlling the matching between the NLO matrix element and the parton shower. It sets how much hard radiation comes from the ME rather than the shower, so varying it changes the **jet multiplicity and jet p<sub>T</sub> spectrum** of tt̄. |
+| **`mtop`** | The top-quark mass used in generation. Varying it (typically ±1 GeV) shifts the tt̄ **kinematics and acceptance**. |
+
+Neither can be applied as an event weight — both require **dedicated alternative
+samples** generated with the varied parameter.
 
 <div class="warn">
 
-`hdamp` and `mtop` are standard Run 3 tt modelling terms. Both need alternative
-samples. Recorded as a **documented decision**, not an oversight.
+**Undecided whether to add these.** They are standard in Run 3 tt̄ analyses, but
+absent from AN-23-102 Table 16, and tt̄ normalisation here is already taken from
+data via the free `rate_tt`. Adding them means generating and processing new samples.
 
 </div>
 
