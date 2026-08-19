@@ -95,14 +95,6 @@ is **real tt̄** rather than Drell-Yan.
 
 </div>
 
-<div class="key">
-
-**What r = 1 means.** The signal template is normalised to the SM H+c prediction,
-**σ × B = 2.214 × 10⁻³ pb** for H→WW→2ℓ2ν. A limit of **r = 1034** therefore
-excludes ~1000× the SM rate at this luminosity.
-
-</div>
-
 Reference: **AN-23-102**, the full Run 2 analysis at 138 fb⁻¹.
 
 ---
@@ -131,7 +123,7 @@ eµ removes the Z→ee/µµ peak **by construction** — the irreducible backgro
 
 ---
 
-# The selection is brutal on V+jets
+# Signal region composition
 
 | process | SR yield | share of SR |
 |---|---|---|
@@ -145,9 +137,8 @@ eµ removes the Z→ee/µµ peak **by construction** — the irreducible backgro
 
 <div class="warn">
 
-The signal is **0.26 events** against ~21,600 background. Everything in this
-analysis follows from that ratio — which is why MC statistics, not data
-statistics, has been the limiting factor.
+The signal is **0.26 events** against ~21,600 background — which is why MC
+statistics, rather than data statistics, drives the sensitivity.
 
 </div>
 
@@ -620,27 +611,26 @@ applied as an event weight.
 Each is a **separate parquet tree**, re-run through the full selection *and*
 re-scored by the network — 12 shifted directories.
 
-<div class="warn">
+<div class="key">
 
-**This is the trap that once cost 500 units.** A partial inference run scored only
-19 of 57 directories and left object-shift templates frozen at nominal; the limit
-read 1676 instead of 1185. Inference coverage is now verified after every rebuild.
+Inference coverage over every shift directory is **verified after each rebuild** —
+a partially-scored set would leave object-shift templates frozen at nominal.
 
 </div>
 
 ---
 
-# What we fixed — 1 · top-p<sub>T</sub> reweighting
+# Top-p<sub>T</sub> reweighting
 
-Our first implementation was **wrong** and was corrected against `hh2bbww`
-(the Hamburg framework behind AN-24-091).
+Implemented following `hh2bbww` (the framework behind AN-24-091), using the
+**theory-based (NNLO/NLO)** parameterisation with the Run 3 rescaling:
 
-| | what we had | what we now apply |
-|---|---|---|
-| form | data-based exponential | **theory-based (NNLO/NLO)** |
-| Run 3 | none | **× (0.991 + 7.5e-5·p<sub>T</sub>)** |
-| nominal | left at 1.0 | **reweighted** |
-| p<sub>T</sub> cap | invented 500 GeV | **none** (form is well-behaved) |
+| property | value |
+|---|---|
+| form | theory-based NNLO/NLO |
+| Run 3 factor | × (0.991 + 7.5e-5·p<sub>T</sub>) |
+| nominal | reweighted |
+| p<sub>T</sub> cap | none — well-behaved at high p<sub>T</sub> |
 
 ```python
 sf_run2 = 0.103*exp(-0.0118*pT) - 0.000134*pT + 0.973
@@ -649,17 +639,17 @@ weight  = sqrt(prod(sf))       # over the two gen tops
 down    = 1.0                  # "no correction" is the variation
 ```
 
-Our original coefficients were real — but belonged to the *other*, data-driven variant.
+The variation is **down = 1.0** ("no correction"), symmetric about the nominal.
 
 ---
 
-# What we fixed — 2 · Higgs heavy-flavour
+# Higgs heavy-flavour
 
-The original **flat lnN on merged `higgsbkg` was mis-scoped**: ggH is only **13.1%**
-of that group (VBF 29.0%, ggZH 23.3%, ZH 21.0%, WH 9.1%).
+ggH is only **13.1%** of the merged `higgsbkg` group (VBF 29.0%, ggZH 23.3%,
+ZH 21.0%, WH 9.1%), so a flat lnN on the group either over-penalises the other 87%
+or must be diluted to an average — and cannot produce a shape effect.
 
-A flat lnN either over-penalises the other 87% (1.40) or must be watered down to an
-average (1.066) — and **cannot produce a shape effect at all**.
+**Implemented as a per-event weight instead**, keyed on gen-jet flavour.
 
 <div class="warn">
 
@@ -687,7 +677,7 @@ the shape a flat lnN structurally cannot.
 
 ---
 
-# What we fixed — 3 · MET unclustered energy
+# MET unclustered energy
 
 <div class="warn">
 
@@ -696,32 +686,28 @@ reprocessing pass, so it does not appear in the 22 shape nuisances above.
 
 </div>
 
-The `CorrectedMETFactory` path **never runs for Run 3 PuppiMET**, so the
-unclustered-energy shift was silently absent.
-
-Now taken directly from the NanoAOD branches:
+For Run 3 PuppiMET the shift is taken directly from the NanoAOD branches:
 
 ```python
 events.PuppiMET.ptUnclusteredUp / ptUnclusteredDown
 events.PuppiMET.phiUnclusteredUp / phiUnclusteredDown
 ```
 
-Independently confirmed against HiggsDNA `MET_syst_Unclustered` — same branches,
-same up/down ordering.
+Matches HiggsDNA `MET_syst_Unclustered` — same branches, same up/down ordering.
 
 ---
 
-# What we added
+# What is implemented
 
-| systematic | what was done |
+| systematic | implementation |
 |---|---|
-| `CMS_negrw_vjets` | **new** — ensemble spread of the negative-weight reweighting |
-| `CMS_ctag2d_2022` | **new** — 2D CvL/CvB SF applied natively in the processor |
-| `electron_reco` ×3 | **split** into p<sub>T</sub> bins (<20, 20–75, >75 GeV) |
-| `lhe_pdf`, `lhe_alphaS` | **added** — NNPDF replicas, MC2Hessian |
-| `top_pt` | **rewritten** to the hh2bbww theory form — *pending activation* |
-| `higgs_plus_c` | **new** per-event HF weight — *pending activation* |
-| MET unclustered | **new** object shift — *pending activation* |
+| `CMS_negrw_vjets` | ensemble spread of the negative-weight reweighting |
+| `CMS_ctag2d_2022` | 2D CvL/CvB SF, applied natively in the processor |
+| `electron_reco` ×3 | p<sub>T</sub>-binned (<20, 20–75, >75 GeV) |
+| `lhe_pdf`, `lhe_alphaS` | NNPDF replicas, MC2Hessian |
+| `top_pt` | hh2bbww theory form — *pending activation* |
+| `higgs_plus_c` | per-event HF weight — *pending activation* |
+| MET unclustered | object shift — *pending activation* |
 
 <div class="warn">
 
@@ -732,7 +718,7 @@ needs its weight column or shifted tree from a reprocessing pass.
 
 ---
 
-# What we checked and deliberately excluded
+# Deliberately excluded
 
 | item | decision |
 |---|---|
