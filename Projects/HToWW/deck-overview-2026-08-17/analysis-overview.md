@@ -769,15 +769,17 @@ not a decomposition.
 
 ---
 
-# Prefit vs postfit — signal region
+# Template composition — signal region
 
 ![w:1000](img/prepost3.png)
 
-<div class="key">
+Stacked backgrounds with the H+c signal overlaid (×20k). The hatched band is the
+**prefit** total uncertainty, ≈14% per bin.
 
-**The prefit uncertainty band (hatched) collapses after the fit** — that is the
-constraint the CRs provide. Prefit band ±10%, postfit a line. Asimov r = 1;
-signal overlaid ×20k.
+<div class="warn">
+
+Postfit errors are not shown: on an Asimov fit combine writes a **zero postfit
+covariance**, so no postfit band can be drawn from this output.
 
 </div>
 
