@@ -919,9 +919,27 @@ exception**: pinned at 1.00 ± 0.05 by the 94%-pure CR_tt.
 
 ![w:720](img/nll_scan2.png)
 
-Minimum at the injected **r̂ = 1**. The dashed line is the 68% CL crossing;
-the quoted **1034 is a CLs upper limit**, which is a different construction and is
-*not* read off this curve.
+---
+
+# What the likelihood scan shows
+
+The profile likelihood in the signal strength — all nuisances minimised at each
+point in r.
+
+| feature | value | meaning |
+|---|---|---|
+| minimum | **r̂ = 1** | the fit recovers the injected Asimov signal — no bias |
+| $-2\Delta\ln L = 1$ | **r ≈ 525** | the 1σ interval on r |
+| $-2\Delta\ln L = 3.84$ | **r ≈ 1075** | the 2σ crossing |
+| curvature | — | how fast the likelihood falls away = the sensitivity |
+
+<div class="key">
+
+The 3.84 crossing (**1075**) sits close to the quoted CLs limit (**1034**) — the two
+constructions agree when the background-only and signal+background hypotheses are
+well separated, which is the regime here.
+
+</div>
 
 ---
 
