@@ -124,12 +124,6 @@ CR_tt at **94% purity** pins the free-floating `rate_tt`, which covers 82% of th
 
 ---
 
-# Signal region template
-
-![w:700](img/B3_shapes_SR_hplusc.png)
-
----
-
 <!-- _class: sec -->
 
 # 3 · c-tagging
@@ -307,99 +301,200 @@ re-verified independently: **1160** and **1034**.
 
 <!-- _class: sec -->
 
-# 6 · Systematics and impacts
+# 6 · Systematics
 
 ---
 
-# What is in the card
+# The full inventory
 
-**Shape (weight):** pileup · `ps_isr/fsr` · `scalevar_muR/muF/muR_muF` ·
-`muon_id/iso` · `electron_id` · `electron_reco` (3 p<sub>T</sub> bins) ·
-`CMS_ctag2d_2022` · `CMS_negrw_vjets`
+**22 shape · 9 lnN · 1 rateParam · autoMCStats**
 
-**Shape (object shift):** JES · JER · electron scale/res · muon scale/res
+| shape (weight) | shape (object shift) |
+|---|---|
+| `pileup` | `CMS_scale_j_2022` (JES) |
+| `ps_isr`, `ps_fsr` | `CMS_res_j_2022` (JER) |
+| `scalevar_muR`, `_muF`, `_muR_muF` | `CMS_scale_e_2022`, `CMS_res_e_2022` |
+| `lhe_pdf`, `lhe_alphaS` | `CMS_scale_m_2022`, `CMS_res_m_2022` |
+| `muon_id`, `muon_iso` | |
+| `electron_id`, `electron_reco` ×3 | **lnN** |
+| `CMS_ctag2d_2022` | `lumi_13p6TeV`, `xsec_st/diboson/vjets/higgsbkg` |
+| `CMS_negrw_vjets` | `BR_HtoWW`, `BR_Htautau`, `xsec_hplusc_4FS_5FS` |
 
-**Rate:** lumi · `xsec_st/diboson/vjets/higgsbkg` · `BR_HtoWW` ·
-`xsec_hplusc_PDF` · `xsec_hplusc_4FS_5FS` · `alphaS_PDF`
-
-**Plus:** `rate_tt` free rateParam · autoMCStats (Barlow–Beeston)
-
----
-
-# Impacts — measured on the current card
-
-![w:880](img/freeze_scan_new.png)
+Plus **`rate_tt`** (free rateParam, tt from data) and **autoMCStats** (threshold 10).
 
 ---
 
-# The ranking has flipped
+# Object shifts need full reprocessing
 
-| frozen | before | **now** |
-|---|---|---|
-| autoMCStats (all) | −255 | **−78** |
-| `xsec_hplusc_4FS_5FS` | — | **−113** |
-| `scalevar_muF` | −69 | **−90** |
-| `CMS_ctag2d_2022` | −35 | −70 |
+JES/JER and lepton scale/resolution **change the MVA score**, so they cannot be
+applied as an event weight.
 
-<div class="key">
+Each is a **separate parquet tree**, re-run through the full selection *and*
+re-scored by the network — 12 shifted directories.
 
-**MC statistics is no longer the leading systematic.** Signal theory is.
+<div class="warn">
+
+**This is the trap that once cost 500 units.** A partial inference run scored only
+19 of 57 directories and left object-shift templates frozen at nominal; the limit
+read 1676 instead of 1185. Inference coverage is now verified after every rebuild.
 
 </div>
 
 ---
 
-# Ranked impacts (Asimov)
+# What we fixed — 1 · top-p<sub>T</sub> reweighting
 
-| nuisance | impact on r |
-|---|---|
-| `scalevar_muF` / `scalevar_muR_muF` | 153 |
-| `prop_bin` SR bins 8–9 | 122 / 98 |
-| `CMS_scale_j_2022` (JES) | 94 |
-| `rate_tt` | 87 |
-| `CMS_ctag2d_2022` | 43 |
+Our first implementation was **wrong** and was corrected against `hh2bbww`
+(the Hamburg framework behind AN-24-091).
+
+| | what we had | what we now apply |
+|---|---|---|
+| form | data-based exponential | **theory-based (NNLO/NLO)** |
+| Run 3 | none | **× (0.991 + 7.5e-5·p<sub>T</sub>)** |
+| nominal | left at 1.0 | **reweighted** |
+| p<sub>T</sub> cap | invented 500 GeV | **none** (form is well-behaved) |
+
+```python
+sf_run2 = 0.103*exp(-0.0118*pT) - 0.000134*pT + 0.973
+sf      = (0.991 + 0.000075*pT) * sf_run2
+weight  = sqrt(prod(sf))       # over the two gen tops
+down    = 1.0                  # "no correction" is the variation
+```
+
+Our original coefficients were real — but belonged to the *other*, data-driven variant.
 
 ---
 
-# Breakdown vs the Run 2 analysis
+# What we fixed — 2 · Higgs heavy-flavour
 
-![w:880](img/breakdown_vs_AN_new.png)
+The original **flat lnN on merged `higgsbkg` was mis-scoped**: ggH is only **13.1%**
+of that group (VBF 29.0%, ggZH 23.3%, ZH 21.0%, WH 9.1%).
 
-Both on the AN's metric: $|\Delta r|/r = \sqrt{\sigma_{full}^2-\sigma_{frozen}^2}/r$
+A flat lnN either over-penalises the other 87% (1.40) or must be watered down to an
+average (1.066) — and **cannot produce a shape effect at all**.
 
----
+**Replaced with a per-event weight**, ported from HiggsDNA `Higgs_plus_HF_syst`:
 
-# The comparison, term by term
-
-| group | **ours** | AN 1POI | ratio |
-|---|---|---|---|
-| Statistical | 37.7% | 73.8% | 0.5× |
-| **Signal theory (cH/bH)** | **29.8%** | 8.5% | **3.5×** |
-| **MC statistical** | **17.6%** | 5.4% | **3.3×** |
-| Charm tagging | 12.4% | 1.1% | 11× |
-| JES/JER | 6.3% | 1.1% | 5.7× |
-| tt normalization | 2.3% | 0.7% | 3.3× |
-| Bkg-Higgs | 2.7% | 7.6% | **0.4×** |
-| Other background | 1.9% | 1.4% | 1.4× |
+```python
+num_HF_jets = ak.sum(genJets.hadronFlavour == 4, axis=-1)   # pT>25, |eta|<2.5
+up   = where(num_HF_jets > 0, 1.5, 1.0)     # AN-23-102: 50% on ggH
+down = where(num_HF_jets > 0, 0.5, 1.0)
+```
 
 <div class="key">
 
-MC statistical was **28.7%** before the W+jets fix — now **17.6%**.
+Keys on **gen-jet flavour**, so process grouping stops mattering — and it produces
+the shape a flat lnN structurally cannot.
+
+</div>
+
+---
+
+# What we fixed — 3 · MET unclustered energy
+
+The `CorrectedMETFactory` path **never runs for Run 3 PuppiMET**, so the
+unclustered-energy shift was silently absent.
+
+Now taken directly from the NanoAOD branches:
+
+```python
+events.PuppiMET.ptUnclusteredUp / ptUnclusteredDown
+events.PuppiMET.phiUnclusteredUp / phiUnclusteredDown
+```
+
+Independently confirmed against HiggsDNA `MET_syst_Unclustered` — same branches,
+same up/down ordering.
+
+---
+
+# What we added
+
+| systematic | what was done |
+|---|---|
+| `CMS_negrw_vjets` | **new** — ensemble spread of the negative-weight reweighting |
+| `CMS_ctag2d_2022` | **new** — 2D CvL/CvB SF applied natively in the processor |
+| `electron_reco` ×3 | **split** into p<sub>T</sub> bins (<20, 20–75, >75 GeV) |
+| `lhe_pdf`, `lhe_alphaS` | **added** — NNPDF replicas, MC2Hessian |
+| `top_pt` | **rewritten** to the hh2bbww theory form |
+| `higgs_plus_c` | **new** — per-event HF weight replacing the lnN |
+| MET unclustered | **new** object shift |
+
+---
+
+# What we checked and deliberately excluded
+
+| item | decision |
+|---|---|
+| **muon reco SF** | **not applicable** — HiggsDNA exposes no reco key; hh2bbww registers `mu_id_sf`/`mu_iso_sf` and no `mu_reco_sf`. Two frameworks, same conclusion. |
+| **PU jet ID** | absent from both frameworks for Run 3 |
+| **UE / tune** | requires **dedicated tune samples** — cannot be a weight |
+| `hdamp`, `mtop` | sample-based tt modelling; absent from AN-23-102 Table 16 too |
+
+<div class="warn">
+
+`hdamp` and `mtop` are standard Run 3 tt modelling terms. Both need alternative
+samples. Recorded as a **documented decision**, not an oversight.
+
+</div>
+
+---
+
+# The result
+
+| | limit | fraction |
+|---|---|---|
+| **full** | **1034** | 100% |
+| statistical only | **641** | **62%** |
+| systematics | — | **38%** |
+
+<div class="key">
+
+**62% statistical · 38% systematic**
 
 </div>
 
 <div class="warn">
 
-Components are **not orthogonal** — they do not sum to 100%. The AN's own
-column sums to 100.8% for the same reason.
+The 1034 number is **under investigation** — the systematic breakdown is not final
+and should not be quoted term-by-term.
 
 </div>
 
 ---
 
+# Templates entering combine
+
+![w:800](img/B1_all_channels_stacked.png)
+
+6 channels × 6 processes × 10 bins
+
+---
+
+# Shape systematics in the signal region
+
+![w:780](img/B3_shapes_SR_hplusc.png)
+
+All shape nuisances, up (solid) vs down (dashed), ratio to nominal
+
+---
+
+# Prefit vs postfit — signal region
+
+![w:900](img/prepost_SR.png)
+
+Asimov fit, r = 1 injected
+
+---
+
 # Likelihood scan
 
-![w:660](img/nll_scan.png)
+![w:640](img/nll_scan.png)
+
+---
+
+# Nuisance impacts
+
+![w:520](img/impacts_cur-1.png)
 
 ---
 
@@ -417,39 +512,59 @@ column sums to 100.8% for the same reason.
 
 # Where we stand
 
-| | value |
+| | limit |
 |---|---|
 | AN-23-102 scaled to 26.7 fb⁻¹ | 980 |
 | **this analysis** | **1034** |
-| our stat-only | 676 |
-| AN stat-only scaled | ~723 |
+| our statistical only | **641** |
 
 <div class="key">
 
-**Our statistics-only limit already beats the AN's.**
-The remaining gap is entirely systematic.
+Within **~5%** of the published analysis scaled to our luminosity, on
+**5× less data**.
+
+</div>
+
+<div class="warn">
+
+The systematic breakdown of the 1034 is **under investigation** — the full
+term-by-term comparison against AN-23-102 Table 17 is not yet settled.
 
 </div>
 
 ---
 
-# Next steps
+# What is still missing
 
-| priority | item |
+| item | status |
 |---|---|
-| **1** | Re-derive `xsec_hplusc_4FS_5FS` at 13.6 TeV — now the largest lever |
-| **2** | Investigate `scalevar_muF` |
-| 3 | Add missing `-ext` tt/st samples |
-| 4 | DY → Z→ττ filtered samples |
-| 5 | Decorrelate `CMS_ctag2d_2022` |
-| 6 | Enable trigger SFs |
+| **4FS/5FS signal theory** | placeholder 1.30 — needs re-derivation at 13.6 TeV |
+| **Trigger scale factors** | implemented, **not yet enabled** |
+| **Higgs heavy-flavour** (`higgs_plus_c`) | implemented, pending activation |
+| **top-p<sub>T</sub> reweighting** | implemented, pending activation |
+| Dataset substitutions | W+jets p<sub>T</sub>-binned (full AN stitch) |
+| | DY → Z→ττ filtered |
+| | tt / single-top `-ext` samples |
+| | `WZto3LNu` |
 
-<div class="warn">
+<div class="key">
 
-Missing systematics: **trigger SFs** (implemented, not enabled) and a
-**re-derived 4FS/5FS** term.
+Everything else in AN-23-102 Table 16 is **covered and in the card**:
+22 shape + 9 lnN + `rate_tt` + autoMCStats.
 
 </div>
+
+---
+
+# Priorities
+
+| # | item | why |
+|---|---|---|
+| **1** | Re-derive `xsec_hplusc_4FS_5FS` | 30% flat lnN on a statistics-starved signal |
+| **2** | Enable trigger SFs | implemented, one flag |
+| **3** | Activate `higgs_plus_c` + `top_pt` | proper HF and tt treatment |
+| **4** | Add the missing datasets | more MC statistics |
+| 5 | Decorrelate `CMS_ctag2d_2022` | currently one nuisance over the whole plane |
 
 ---
 
@@ -457,10 +572,10 @@ Missing systematics: **trigger SFs** (implemented, not enabled) and a
 
 # Summary
 
-**Expected UL 1371 → 1034**
+**Expected UL 1371 → 1034** · statistical-only **641**
 
 V+jets $n_{eff}$ **280 → 1170**
 
-### The remaining gap is systematic, not statistical
+### Within ~5% of the Run 2 analysis scaled to our luminosity
 
-Signal theory is now the leading term, not MC statistics
+Remaining: 4FS/5FS re-derivation, trigger SFs, dataset substitutions
