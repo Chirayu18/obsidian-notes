@@ -595,7 +595,7 @@ re-verified independently: **1160** and **1034**.
 
 # The full inventory
 
-**22 shape · 9 lnN · 1 rateParam · autoMCStats**
+**22 shape · 9 lnN · `rate_tt` free rateParam · autoMCStats (threshold 10)**
 
 | shape (weight) | shape (object shift) |
 |---|---|
@@ -607,9 +607,8 @@ re-verified independently: **1160** and **1034**.
 | `electron_id`, `electron_reco` ×3 | **lnN** |
 | `CMS_ctag2d_2022` | `lumi_13p6TeV`, `xsec_st/diboson/vjets/higgsbkg` |
 | `CMS_negrw_vjets` | `BR_HtoWW`, `BR_Htautau`, `xsec_hplusc_4FS_5FS` |
-| `flavor_composition_ggH` (placeholder — see §Higgs heavy-flavour) |
+| `flavor_composition_ggH` (placeholder) |
 
-Plus **`rate_tt`** (free rateParam, tt from data) and **autoMCStats** (threshold 10).
 
 ---
 
@@ -661,6 +660,15 @@ of that group (VBF 29.0%, ggZH 23.3%, ZH 21.0%, WH 9.1%).
 
 A flat lnN either over-penalises the other 87% (1.40) or must be watered down to an
 average (1.066) — and **cannot produce a shape effect at all**.
+
+<div class="warn">
+
+**Why our Bkg-Higgs impact stays small even once activated.** Freezing it moves the
+limit by <1 unit, against **7.6%** in AN-23-102. Two causes: the per-event weight is
+**not yet active**, *and* `higgsbkg` is only **0.6% of our SR** — ours is
+tt-dominated, theirs is Higgs-background-dominated. It will rise, but **not to 7.6%**.
+
+</div>
 
 **Replaced with a per-event weight**, ported from HiggsDNA `Higgs_plus_HF_syst`:
 
@@ -782,8 +790,7 @@ not a decomposition.
 <div class="key">
 
 **The prefit uncertainty band (hatched) collapses after the fit** — that is the
-constraint the control regions provide. The ratio panel makes it explicit: prefit
-band ±10%, postfit a line. Asimov r = 1, so the ratio is 1 by construction;
+constraint the CRs provide. Prefit band ±10%, postfit a line. Asimov r = 1;
 signal overlaid ×20k.
 
 </div>
@@ -862,23 +869,23 @@ Note the suppressed zero on the y-axis — the c-tag step is a genuine but small
 
 | | limit |
 |---|---|
-| AN-23-102 scaled to 26.7 fb⁻¹ | 980 |
+| AN-23-102 scaled to 26.7 fb⁻¹ | **1144** |
 | **this analysis** | **1034** |
 | our statistical only | **641** |
 
 <div class="key">
 
-Within **~5%** of the published analysis scaled to our luminosity, on
-**5× less data**.
+**Better than** the published analysis scaled to our luminosity — 1034 vs 1144,
+a **9.6% improvement**, on **5× less data**.
 
 </div>
 
 <div class="warn">
 
-**The scaling is indicative, not rigorous.** $431\times\sqrt{138/26.7}=980$ assumes a
-purely statistics-limited extrapolation. AN-23-102's own Table 17 puts its statistical
-term at 73.8%, so it is *not* fully statistics-limited and the true scaled value would
-be somewhat worse than 980 — i.e. our gap is likely **smaller** than 5%, not larger.
+**The scaling is indicative, not rigorous.** $503\times\sqrt{138/26.7}=1144$ assumes a
+purely statistics-limited extrapolation. AN-23-102's Table 17 puts its statistical term
+at 73.8%, so it is *not* fully statistics-limited — the true scaled value would be
+somewhat **worse** than 1144, making our margin **larger** than 9.6%, not smaller.
 
 </div>
 
