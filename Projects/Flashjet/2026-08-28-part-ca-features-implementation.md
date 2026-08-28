@@ -183,6 +183,28 @@ Repo `/eos/user/c/cgupta/flashjet/b-hive` (backups `*.bak_ca`):
   into the group area under `output/DatasetConstructorTask/jet_class{,_ca}/`), so
   neither run rebuilds anything.
 
+## Measured overhead (first data point)
+
+Tesla T4, batch 128, `jet_class_ca`:
+
+```
+C/A clustering+walk   :  21.24 ms/batch  (166.0 us/jet)
+full train step (+CA) : 276.85 ms/batch
+clustering overhead   :    7.7 % of the training step
+```
+
+**Treat 7.7% as an upper bound.** Three biases all push the same way:
+- T4 is flashjet's worst card (6.25% achieved occupancy, 0.32 waves/SM, ~40 SMs).
+- Batch 128 is far below the 16k-jet regime the kernel is efficient in.
+- The ParT step it is compared against is *also* T4-slowed, which if anything
+  flatters the ratio.
+
+**The 166 us/jet needs pre-empting when shown.** The benchmark deck quotes
+~0.08 us/jet; that is 16384 jets in one launch. At 128 jets the kernel puts ~128
+blocks on the device and per-jet cost is launch-dominated, not work-dominated —
+same code, different regime. Anyone comparing the two numbers cold will think
+something is broken. Re-measure on A100/H100 at batch 512 before the talk.
+
 ## Running it
 
 ```bash
