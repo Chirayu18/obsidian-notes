@@ -5,15 +5,18 @@ date: 2026-08-28
 source: lxplus
 ---
 
-# Per-particle C/A features in b-hive — and a 4-vector ordering bug in the JetClass ParT
+# Per-particle C/A features in b-hive (+ a note on the JetClass ParT 4-vector ordering)
 
 Implements the per-particle Cambridge/Aachen branch-point features as extra ParT
 inputs, computed **live at train time** from flashjet. Two small-scale trainings are
-staged on lxplus. Along the way this uncovered a **pre-existing bug** in
-`ParticleTransformer2_JetClass` that would have made the baseline meaningless — see
-below, it matters more than the feature work.
+staged on lxplus.
 
-## The bug: ParT was reading the wrong 4 columns as its Lorentz vector
+Along the way I flagged the column ordering in `ParticleTransformer2_JetClass` as a
+bug and patched it. **That patch has been reverted** — the model is untouched
+upstream code. The observation is kept below as a question to settle with the
+authors, not as a defect to act on. **Nothing in the CA work depends on it.**
+
+## Open question: which 4 columns ParT uses as its Lorentz vector
 
 `ParticleTransformer2_JetClass.forward` splits its input as
 
@@ -89,17 +92,20 @@ kinematic 4-vector last** (e.g. `deepjettransformer.py:393` ends
 `..., Cpfcan_pt, Cpfcan_eta, Cpfcan_phi, Cpfcan_e`). The JetClass class was simply
 missing one.
 
-**Fix**: added an explicit `cpf_candidates` to `ParticleTransformer2_JetClass`,
-reordered so `part_px/py/pz/energy` are last. After the fix:
+**Status: not changed.** A one-line fix exists (declare an explicit
+`cpf_candidates` on the class with the momenta last — the pattern every other model
+in the repo follows, e.g. `deepjettransformer.py:393`), but it was reverted on the
+grounds that the upstream code is likely intentional. Reasons that may be so:
 
-```
-baseline  on-disk=23  model cpf width=23  InputProcess dim=19
-          last4 == (px,py,pz,E)? True     forward OK, finite
-```
+- `PairEmbed` is a *learned* MLP over 4 numbers, not a fixed physics formula; it can
+  extract structure from `part_deltaR` and the impact-parameter columns.
+- The model is constructed with `build_4v=False`, so it is not asserting these are
+  raw momenta the way `ParticleTransformer2` (`build_4v=True`) does.
+- Anyone reproducing published numbers with this class would presumably have noticed.
 
-> Anyone who ran the JetClass ParT training on this repo trained with a scrambled
-> pair-attention bias (though intact token features and a correct padding mask).
-> Worth raising with Alex/Sitian before comparing any numbers.
+**Worth confirming with Alex/Sitian** before quoting a baseline against the ParT
+paper — but it does not block the CA comparison, since both runs share whatever
+convention the model uses.
 
 ## The features (ascending scan only)
 
@@ -148,11 +154,13 @@ Repo `/eos/user/c/cgupta/flashjet/b-hive` (backups `*.bak_ca`):
    float64), then a pure-torch ascending walk. `_direct_parents` deliberately does
    **not** pointer-jump: the walk needs one hop at a time, unlike flashjet's
    `_resolve_parents` which resolves straight to the root.
-2. **`utils/models/particletransformer2.py`** — explicit `cpf_candidates` (the bug fix).
+2. **`utils/models/particletransformer2.py`** — **unmodified** (patch reverted).
 3. **`utils/models/base_model.py`** — compute C/A from the raw cpf, then concatenate
-   **after** `_subselect_features` and **before** the trailing 4-vector, so
-   `[-4:]` stays the four-momentum. Width accounting via `ca_feature_length`, added
-   to *both* branches of `model_feature_length`.
+   **after** `_subselect_features` and **before the trailing four columns**, whatever
+   those are: ParT-style models split `cpf_features` into `[:-4]` (tokens) and
+   `[-4:]` (PairEmbed), so appending at the very end would silently displace the
+   model's second input. Width accounting via `ca_feature_length`, which returns 0
+   unless a config sets `ca_features` — so every other model and config is inert.
    `calculate_feature_length` is deliberately **left alone** — it drives `input_dims`,
    which reshapes the on-disk array; +5 there would corrupt the read.
 4. **NEW `config/jet_class_ca.yml`** — `jet_class.yml` + `ca_features: true`,
@@ -164,8 +172,10 @@ Repo `/eos/user/c/cgupta/flashjet/b-hive` (backups `*.bak_ca`):
 - **Walk correctness** vs an independent NumPy tree walk:
   `checked 477 particles, 28 with no branch point, MISMATCHES = 0`,
   `ln z max = -0.7011` (≤ ln 0.5 = -0.6931).
-- **Plumbing**, both configs: baseline cpf width 23, CA 28, `last4 == (px,py,pz,E)`
-  True in both, forward pass finite, `has_bp frac ≈ 0.97`.
+- **Plumbing**, both configs: baseline cpf width 23, CA 28, forward pass finite,
+  `has_bp frac ≈ 0.97`. Crucially the **trailing four columns are bit-identical
+  between baseline and CA**, and the momenta are untouched at 12:16 — so the CA run
+  differs from the baseline *only* by the 5 added token features.
 - **On-disk layout identical** for both configs —
   `input_dims = [(1,15),(128,23),(0,0),(0,0),(0,0)]` — so both read the same
   prebuilt dataset.
