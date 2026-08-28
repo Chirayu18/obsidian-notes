@@ -31,12 +31,19 @@ The trailing `.split(".")[0]` truncates at the **first dot**. For an XRootD URL
 for *every* file, because the hostname's first dot cuts everything after it.
 The code implicitly assumes a local, dot-free path.
 
-Measured on the same 50 val files:
+Measured:
 
-| filelist form | unique output basenames |
-|---|---|
-| `root://eoscms.cern.ch/...` | **1** (`_eoscms`) |
-| `/eos/cms/store/...` | **50** |
+| filelist | files | unique output basenames |
+|---|---|---|
+| `jetclass_val.txt` (`root://...`) | 50 | **1** (`_eoscms`) |
+| `jetclass_val_local.txt` (`/eos/...`) | 50 | **50** |
+| **`filelists/shuffled_ParT_files.txt`** (shipped in the repo) | 200 | **1** (`_eoscms`) |
+
+**The repo's own committed filelist has this defect.** It is not specific to how I
+built mine, and directory structure is irrelevant — truncation happens at the first
+dot of `eoscms.cern.ch`, before any path component is reached. Anyone using the
+shipped XRootD filelist either crashes the same way or silently trains on a fraction
+of their data.
 
 Two consequences, the first much worse than the second:
 1. **Silent data loss** — all files of a class write to the same `.npy` names and
