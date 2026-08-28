@@ -24,7 +24,6 @@ cpf_4v = cpf_features[:, :, -4:]   # fed to PairEmbed
 
 `PairEmbed` → `pairwise_lv_fts` → `to_ptrapphim`, which **requires
 `(px, py, pz, energy)`**: it computes ΔR, ln kt, ln z and ln m² between every pair.
-The padding mask is likewise `cpf_4v[:, :, 0] == 0`.
 
 But the class declared **no `cpf_candidates` attribute**, so `_subselect_features`
 took its `else` branch and passed all 23 on-disk columns through **in file order**:
@@ -36,13 +35,54 @@ took its `else` branch and passed all 23 on-disk columns through **in file order
 | 16–22 | logpt, loge, logpt_rel, loge_rel, deltaR, tanhd0val, tanhdzval |
 
 So `[-4:]` was `[part_loge_rel, part_deltaR, part_tanhd0val, part_tanhdzval]`.
-The pair-attention bias was computed from tanh'd impact parameters, and the padding
-mask from `loge_rel == 0`. Verified directly, not inferred:
+
+### Verified on real data against pristine upstream code
+
+Extracted `git archive HEAD` to a clean tree (no local patches on `sys.path`) and ran
+one real `JetClass_val_mod` file through `get_inpt`:
 
 ```
-has cpf_candidates attr: False
-last 4 (model treats as cpf_4v): ['part_loge_rel','part_deltaR','part_tanhd0val','part_tanhdzval']
+model's cpf_4v columns: ['part_loge_rel','part_deltaR','part_tanhd0val','part_tanhdzval']
+for kept real particles:  true pt mean 18.47 / max 577.74
+                         wrong pt mean  4.40 / max   7.42
 ```
+
+The pair features `PairEmbed` actually consumes, averaged over 64 jets:
+
+| | model (wrong) | correct |
+|---|---|---|
+| ln kt | 2.2283 | 0.7701 |
+| ln z | 0.3297 | 0.2195 |
+| ln dR | 1.5984 | 0.1836 |
+| **ln m2** | **0.0000** | 1.7865 |
+
+`ln kt` correlates only **0.10** with the correct value, and **`ln m2` is identically
+zero** — the clamp floors it, because those four columns do not form a timelike
+four-vector. That channel of the attention bias carries no information at all.
+
+### Scope — narrower than it first looks
+
+Two things that are **NOT** broken, checked explicitly:
+
+- **The padding mask is correct.** It is `cpf_4v[:, :, 0] == 0`, i.e. `part_loge_rel`,
+  which is zero on exactly the padded slots. On a real file: 48150 padded by the
+  model vs 48150 correct, **0 real particles wrongly masked, 0 padding wrongly kept**.
+  (An earlier synthetic test suggested otherwise; it used non-zero filler in those
+  columns and could not resolve this. Real data settles it.)
+- **Token features are intact** — `cpf_features[:, :, :-4]` still contains the real
+  momenta at indices 12–15, so per-particle inputs are unaffected.
+
+The defect is confined to the **pair-attention bias**.
+
+**Does it matter?** A judgment call. `PairEmbed` is a learned MLP over 4 numbers and
+`part_deltaR` is a genuine geometric quantity, so the model trains and gives a
+plausible ROC. But the entire point of ParT is the physics-motivated pair bias — three
+of its four channels are computed from the wrong inputs and the fourth is dead. If the
+target is the ParT paper number, this is not that architecture.
+
+Worth checking: whether the `_orig` variant named in the reference command
+(`ParticleTransformer2_JetClass_orig`, absent from this repo) declares the list — that
+would suggest this class is a stripped copy.
 
 **Every other model in the repo declares an explicit `cpf_candidates` list with the
 kinematic 4-vector last** (e.g. `deepjettransformer.py:393` ends
@@ -58,7 +98,8 @@ baseline  on-disk=23  model cpf width=23  InputProcess dim=19
 ```
 
 > Anyone who ran the JetClass ParT training on this repo trained with a scrambled
-> pair-attention bias. Worth telling Alex/Sitian before comparing any numbers.
+> pair-attention bias (though intact token features and a correct padding mask).
+> Worth raising with Alex/Sitian before comparing any numbers.
 
 ## The features (ascending scan only)
 
