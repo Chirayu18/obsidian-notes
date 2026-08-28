@@ -340,6 +340,29 @@ condor_rm NNNNNNN
 
 - **9246292** — 16 CPUs, H100-only. Idle 2 h, never started (6 eligible slots). Removed.
 - **9246305** — 4 CPUs, A100/H100/H200. 21 eligible slots; started within minutes.
-  Submitted 2026-08-28 15:39.
+  Submitted 2026-08-28 15:39, running on `slot1_1@b9g57n0001`.
+  First checkpoint (`model_20000.pt`) written 17:21 — **~4130 s per 20k iterations**,
+  so the full 1M-iteration schedule is roughly **2.4 days** of wall time.
+  Metrics at iteration 20000: train loss 0.898 / acc 0.671, val loss 0.676 / acc 0.754.
+
+### Checking progress on a running job
+
+`.out` / `.err` do **not** appear in `~/flashjet_condor/output/` while the job runs.
+With `should_transfer_files = YES` + `when_to_transfer_output = ON_EXIT`, stdout stays
+on the worker node and is only transferred back when the job exits — an empty/absent
+log is normal mid-run, not a stall. Check the checkpoints instead:
+
+```bash
+D=/eos/user/c/cgupta/flashjet/b-hive/output/TrainingTask/jet_class/JetClass_train_100_mod_fine/v_fg_1/ParticleTransformer2_JetClass/epochs_0/nominal
+ls -la $D                       # model_<iter>.pt appears every 20k iterations
+python3 -c "
+import numpy as np
+for f in ('training_metrics','validation_metrics'):
+    d = np.load('$D/%s.npz' % f)
+    print(f, {k: d[k] for k in d if k != 'allow_pickle'})
+"
+```
+
+`condor_q 9246305 -af JobStatus RemoteHost` — JobStatus `2` is running, `1` is idle.
 
 Related: [[2026-08-28-bhive-jetclass-part-setup]], [[2026-08-28-bhive-maintainer-message]], [[flashjet-workflow]]
