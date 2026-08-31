@@ -205,6 +205,65 @@ blocks on the device and per-jet cost is launch-dominated, not work-dominated �
 same code, different regime. Anyone comparing the two numbers cold will think
 something is broken. Re-measure on A100/H100 at batch 512 before the talk.
 
+## First training result (superseded — pair bias was broken in both arms)
+
+H100 NVL, batch 512, 20k iters each (~2.4 epochs), cluster 9246381:
+
+| | baseline | + C/A |
+|---|---|---|
+| val accuracy (best) | **80.23%** | 77.86% |
+| val loss (best) | **0.5527** | 0.6218 |
+
+C/A **lost by ~2.4 points**, and was behind at every checkpoint. Overhead 7.4%.
+
+Both arms ran with the 4-vector ordering defect (see above), so neither is a real
+ParT baseline. Rerun with the fix applied: cluster 9251422
+(`train_v4fix_baseline` / `train_v4fix_ca`).
+
+## Why C/A lost — two hypotheses tested, both REJECTED
+
+**1. Feature scale / normalisation — rejected by measurement.** The idea was that
+unnormalised C/A columns (ln kt, ln z tails reach ~[-18,+5]) would swamp the O(1)
+inputs through `InputConv`'s `RMSNorm` (which normalises across the feature
+dimension *jointly*, so it cannot rescale columns individually). Measured RMS on a
+real batch:
+
+| column | RMS | | column | RMS |
+|---|---|---|---|---|
+| `part_d0val` | **10.66** | | `ca_lnz` | 3.88 |
+| `part_dzval` | 4.62 | | `ca_lnkt` | 3.63 |
+| `part_logpt_rel` | 4.58 | | `ca_lndR` | 3.39 |
+
+The C/A columns are **smaller** than features the baseline already carries, and
+adding them attenuates the original 19 by only **×0.889**. Nowhere near enough to
+cost 2.4 points. The "[-18,+5]" framing was tail extremes, not typical scale.
+
+**2. The features are uninformative — rejected by a standalone BDT.** Per-jet
+aggregation (mean/max/min/std) of the 5 per-particle columns, 6000 jets sampled
+across all 50 files, `HistGradientBoostingClassifier`:
+
+| features | accuracy | macro-AUC (ovr) |
+|---|---|---|
+| **C/A only** (20 aggregated) | **40.89%** | **0.7950** |
+| kinematics only (16 aggregated) | 40.06% | 0.7779 |
+| **kinematics + C/A** | **49.83%** | **0.8394** |
+
+C/A alone **beats** the kinematic reference, and the two are **complementary** —
+combining adds +9.8 accuracy points. Per-class AUC from C/A alone follows the
+predicted decay-structure pattern exactly:
+
+`Tbqq 0.905 > H4q 0.859 > Hcc 0.817 > Hgg 0.801 > Zqq 0.811 ≈ Wqq 0.810 >
+Hqql 0.754 > QCD 0.727 > Hbb 0.669`
+
+Strongest on multi-prong decays, weakest on Hbb/QCD — exactly the AK4 expectation.
+(Caveats: 6000 jets, class `Tbl` absent from the sample, and per-jet aggregation is
+a cruder use than ParT makes of per-particle inputs.)
+
+**What remains.** The features carry signal and are not mis-scaled, so the
+regression is architecture-level: either ParT's pair bias already supplies this
+information *once fed correctly* (which run 9251422 tests, since the old run had it
+broken), or an optimisation effect from 24 vs 19 input columns at identical LR.
+
 ## Running it
 
 ```bash
