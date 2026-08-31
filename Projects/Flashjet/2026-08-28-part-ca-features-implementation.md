@@ -205,7 +205,7 @@ blocks on the device and per-jet cost is launch-dominated, not work-dominated �
 same code, different regime. Anyone comparing the two numbers cold will think
 something is broken. Re-measure on A100/H100 at batch 512 before the talk.
 
-## First training result (superseded — pair bias was broken in both arms)
+## First training result (SUPERSEDED by 9251422 above — pair bias was broken in both arms)
 
 H100 NVL, batch 512, 20k iters each (~2.4 epochs), cluster 9246381:
 
@@ -284,6 +284,40 @@ which would make the first two rows directly comparable.
 regression is architecture-level: either ParT's pair bias already supplies this
 information *once fed correctly* (which run 9251422 tests, since the old run had it
 broken), or an optimisation effect from 24 vs 19 input columns at identical LR.
+
+## RESULT: with the 4-vector fix, C/A features HELP (+1.3 points)
+
+Cluster 9251422, H100 NVL, batch 512, 20k iters each (~2.4 epochs), identical seed.
+**This is the run to quote** — both arms have a correct pair bias.
+
+| checkpoint | baseline | + C/A | delta |
+|---|---|---|---|
+| 1 | 74.62% | **78.59%** | +3.97 |
+| 2 | 76.09% | **81.09%** | +5.01 |
+| 3 | **81.18%** | **82.49%** | +1.31 |
+| 4 | 80.82% | 82.32% | +1.50 |
+
+- **Best val accuracy 81.18% -> 82.49% (+1.31)**; best val loss 0.5265 -> **0.4924**.
+- C/A leads at **every** checkpoint and converges faster — it reaches 81.1% by
+  checkpoint 2, which the baseline needs until checkpoint 3 to match.
+- **Clustering overhead 8.0%** (10.87 ms/batch vs 135.51 ms/batch full step),
+  consistent with the 7.4% measured on the previous H100 run.
+
+### The earlier regression was an artifact of the ordering defect
+
+| run | pair bias | baseline | + C/A | delta |
+|---|---|---|---|---|
+| 9246381 | broken (`[loge_rel, deltaR, tanhd0val, tanhdzval]`) | 80.23% | 77.86% | **-2.37** |
+| 9251422 | **correct** (`px, py, pz, energy`) | 81.18% | **82.49%** | **+1.31** |
+
+The fix also lifted the baseline on its own (80.23 -> 81.18, +0.95), as expected once
+`ln m2` stopped being identically zero. So the -2.4 point regression was never a
+property of the C/A features: with a scrambled pair bias the extra node features hurt,
+with a correct one they help. **Do not quote the 9246381 numbers.**
+
+This is consistent with the standalone BDT below: the features carry real
+decay-structure information, and ParT can exploit it — but only when its pair-attention
+bias is not simultaneously broken.
 
 ## Running it
 
