@@ -1,0 +1,123 @@
+processes:
+- "TTBarLep"
+- "TTBar"
+- "HToWW2Q1L"
+- "HToWW4Q"
+- "HToBB"
+- "HToCC"
+- "HToGG"
+- "ZJetsToNuNu"
+- "ZToQQ"
+- "WToQQ"
+
+bins_pt:
+- 500
+- 521
+- 542
+- 565
+- 589
+- 613
+- 639
+- 665
+- 693
+- 722
+- 752
+- 783
+- 816
+- 850
+- 885
+- 922
+- 960
+- 1000
+
+bins_eta:
+- -2.5
+- -2.0
+- -1.5
+- -1.0
+- -0.5
+- 0.0
+- 0.5
+- 1
+- 1.5
+- 2.0
+- 2.51
+
+TTBar:
+ pt_min: 30
+ pt_max: 250 
+ eta_min: -2.5
+ eta_max: 2.5
+
+treename:
+  "tree"
+
+global_features:
+- "jet_pt"
+- "jet_eta"
+- "jet_phi"
+- "jet_energy"
+- "jet_nparticles"
+- "jet_sdmass"
+- "jet_tau1"
+- "jet_tau2"
+- "jet_tau3"
+- "jet_tau4"
+- "aux_genpart_eta"
+- "aux_genpart_phi"
+- "aux_genpart_pid"
+- "aux_genpart_pt"
+- "aux_truth_match"
+
+cpf_candidates:
+- "part_deta"
+- "part_dphi"
+- "part_d0val"
+- "part_d0err"
+- "part_dzval"
+- "part_dzerr"
+- "part_charge"
+- "part_isChargedHadron"
+- "part_isNeutralHadron"
+- "part_isPhoton"
+- "part_isElectron"
+- "part_isMuon"
+- "part_px"
+- "part_py"
+- "part_pz"
+- "part_energy"
+
+cpf_custom_features:
+- part_logpt:     "np.log(np.sqrt(part_px**2 + part_py**2))"
+- part_loge:      "np.log(part_energy)"
+- part_logpt_rel: "np.log(np.sqrt(part_px**2 + part_py**2)/jet_pt)"
+- part_loge_rel:  "np.log(part_energy/jet_energy)"
+- part_deltaR:    "np.sqrt(part_deta**2 + part_dphi**2)"
+- part_tanhd0val: "np.tanh(part_d0val)"
+- part_tanhdzval: "np.tanh(part_dzval)"
+
+n_cpf_candidates: 128
+
+truths:
+- "label_QCD"
+- "label_Hbb"
+- "label_Hcc"
+- "label_Hgg"
+- "label_H4q"
+- "label_Hqql"
+- "label_Zqq"
+- "label_Wqq"
+- "label_Tbqq"
+- "label_Tbl"
+
+reference_flavour:
+  "label_Hbb"
+# --- flashjet Cambridge/Aachen merge-history features -------------------------
+# Computed live on each training batch (utils/flashjet_ca_features.py) and
+# appended to cpf AFTER the reshape, so they are deliberately NOT listed in
+# cpf_custom_features: input_dims drives how the on-disk 23-feature array is
+# reshaped, and adding names there would corrupt that read.
+# Per particle, from the first ascending node where its branch is the softer
+# child: part_ca_lnkt, part_ca_lnz, part_ca_lndR, part_ca_depth, part_ca_has_bp
+ca_features: true
+ca_R: 0.8

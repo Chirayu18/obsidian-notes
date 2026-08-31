@@ -319,6 +319,11 @@ This is consistent with the standalone BDT below: the features carry real
 decay-structure information, and ParT can exploit it — but only when its pair-attention
 bias is not simultaneously broken.
 
+> **To reproduce the 5-feature +1.31 result** (the state BEFORE soft-drop was
+> added), see [[2026-08-31-reproduce-ca-plus1.3-result]] — frozen copies of every
+> changed file are committed under
+> `Projects/Flashjet/code-snapshots/pre-sd-5features/`.
+
 ## Feature 6: `part_ca_survives_sd` (added 2026-08-31)
 
 Binary per-particle flag: is this constituent inside the soft-drop groomed jet?
