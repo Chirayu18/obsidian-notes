@@ -242,22 +242,43 @@ cost 2.4 points. The "[-18,+5]" framing was tail extremes, not typical scale.
 aggregation (mean/max/min/std) of the 5 per-particle columns, 6000 jets sampled
 across all 50 files, `HistGradientBoostingClassifier`:
 
+Script: `~/cawork/bdt_check.py` (lxplus). 120 jets read from **each of the 50
+files** — each `.lz4` holds ONE class, so taking the first N files samples only N
+classes; sampling every file is what gets all 10. Runs on the login node in ~12 min.
+
 | features | accuracy | macro-AUC (ovr) |
 |---|---|---|
-| **C/A only** (20 aggregated) | **40.89%** | **0.7950** |
-| kinematics only (16 aggregated) | 40.06% | 0.7779 |
-| **kinematics + C/A** | **49.83%** | **0.8394** |
+| **C/A only** (5 cols → 20 aggregated) | **40.89%** | **0.7950** |
+| a 4-column kinematic subset (→16) | 40.06% | 0.7779 |
+| **that subset + C/A** | **49.83%** | **0.8394** |
 
-C/A alone **beats** the kinematic reference, and the two are **complementary** —
-combining adds +9.8 accuracy points. Per-class AUC from C/A alone follows the
-predicted decay-structure pattern exactly:
+Per-class AUC from C/A alone follows the predicted decay-structure pattern exactly:
 
-`Tbqq 0.905 > H4q 0.859 > Hcc 0.817 > Hgg 0.801 > Zqq 0.811 ≈ Wqq 0.810 >
+`Tbqq 0.905 > H4q 0.859 > Hcc 0.817 > Zqq 0.811 ≈ Wqq 0.810 > Hgg 0.801 >
 Hqql 0.754 > QCD 0.727 > Hbb 0.669`
 
-Strongest on multi-prong decays, weakest on Hbb/QCD — exactly the AK4 expectation.
-(Caveats: 6000 jets, class `Tbl` absent from the sample, and per-jet aggregation is
-a cruder use than ParT makes of per-particle inputs.)
+Strongest on multi-prong decays, weakest on Hbb/QCD — exactly the AK4 expectation,
+and the strongest single piece of evidence that the walk is computing real physics.
+
+**Read these two rows with care.** The reference row is **not** the ParT baseline: it
+is a 4-column subset chosen for the test — per-particle `pT`, `part_deta`,
+`part_dphi`, `part_deltaR` — each aggregated 4 ways. ParT's actual token block is
+**19** columns, additionally carrying `d0val/d0err/dzval/dzerr`, `charge`, five
+particle-ID flags, the four log-kinematics and two tanh'd impact parameters. In
+particular the subset has **no impact-parameter or particle-ID information**, which
+is exactly what separates Hbb/Hcc. So "C/A beats kinematics" is true of *that
+subset*, NOT of what ParT sees, and must not be quoted as the latter.
+
+The **complementarity** result (+9.8 points) is the robust one: it only requires that
+C/A adds information to a kinematic description, which does not depend on the
+reference being complete.
+
+Other caveats: 6000 jets; class `Tbl` absent from the sample (the per-class print
+loop must index the classifier's own column order, not 0-9, or it raises IndexError);
+per-jet aggregation is a cruder use than ParT makes of per-particle inputs.
+
+**Not yet done:** rerunning the reference against the full 19-column token block,
+which would make the first two rows directly comparable.
 
 **What remains.** The features carry signal and are not mis-scaled, so the
 regression is architecture-level: either ParT's pair bias already supplies this
