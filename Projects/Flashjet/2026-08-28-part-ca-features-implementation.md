@@ -319,6 +319,56 @@ This is consistent with the standalone BDT below: the features carry real
 decay-structure information, and ParT can exploit it — but only when its pair-attention
 bias is not simultaneously broken.
 
+## Feature 6: `part_ca_survives_sd` (added 2026-08-31)
+
+Binary per-particle flag: is this constituent inside the soft-drop groomed jet?
+mMDT defaults `z_cut = 0.1`, `beta = 0.0` (`SD_Z_CUT` / `SD_BETA` in the module).
+
+**Why this one and not `z_at_SD`.** `z_at_SD` is largely redundant — it is the `z`
+of the first splitting passing the SD condition, and `part_ca_lnz` already records
+`z` at each particle's own branch point. SD contributes a *grooming criterion*, not
+new kinematics. `survives_SD` is the genuinely new bit: closer to a pileup/UE tag
+than a decay-structure variable.
+
+**Implementation.** flashjet's `groom_from_history` already performs exactly the SD
+descent, but returns per-JET quantities (`groomed_p4`, `tagged`, `z`, `dR`,
+`n_drop`) — it cannot say which *constituents* survived. `_survives_sd` re-runs the
+same descent from the root down the harder branch, records every DROPPED node, then
+propagates those marks down to the leaves. A leaf survives iff it is a descendant of
+the node that passed.
+
+**Validation — against flashjet's own grooming, comparing LEAF SETS.**
+
+```
+jets checked      : 372
+particles checked : 12587
+LEAF MISMATCHES   : 0
+survivors in untagged jets: 0
+PASS
+```
+
+Ground truth is built by walking each leaf up the recorded tree and asking whether it
+passes through the groomed node `groom_from_history` identified.
+
+Two traps worth recording:
+
+1. **Do not validate by summing the surviving 4-vectors.** The first attempt compared
+   `sum(p4 * survives)` against `groomed_p4` and "failed" on 223/370 jets at
+   `rel > 1e-3` — but inspection showed a jet with `n_drop = 0` where all 37 leaves
+   survived and all 37 were marked. The residual is pure float32 accumulation
+   (summing 37 leaves flat vs flashjet's pairwise tree accumulation): ~1.3 GeV on a
+   641 GeV jet. **Compare leaf sets, not float sums.**
+2. **Untagged jets need explicit voiding.** A jet that declusters to a single particle
+   without ever passing SD has no survivors. Marking the bottomed-out leaf as
+   `dropped` does NOT work: that node IS the leaf, and the downward propagation only
+   pushes a parent's flag onto its children. Fixed by resolving each leaf to its root
+   and clearing leaves whose root never tagged. This was a real bug (2 stray
+   survivors), caught only because the check tested it separately.
+
+Measured `survives_SD` fraction: **0.845** of real particles.
+
+Training: cluster 9252644 (`train_sd_baseline` / `train_sd_ca`), cpf width 23 -> 29.
+
 ## Running it
 
 ```bash
