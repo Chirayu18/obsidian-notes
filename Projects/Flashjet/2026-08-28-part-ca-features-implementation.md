@@ -397,3 +397,8 @@ Expect gains on **top/W/Z/H** and little on **q/g, b/c**. Saying this before the
 makes the result credible either way.
 
 Related: [[2026-08-28-bhive-jetclass-part-setup]], [[flashjet-workflow]]
+
+> **[2026-09-01] Update:** the +1.31 result is not reproducible — same-config
+> reruns differ by 1.26 points (unseeded dataloader RNG), and the controlled
+> comparison shows the C/A delta decaying to ~0 by 20k. `survives_SD` did not
+> help. See [[2026-09-01-sd-run-and-convergence]].

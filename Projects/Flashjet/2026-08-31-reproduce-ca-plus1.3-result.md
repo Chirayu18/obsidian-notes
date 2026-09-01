@@ -1,11 +1,20 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-09-01-sd-run-and-convergence]]"
 date: 2026-08-31
 source: lxplus
 ---
 
 # Reproducing the +1.31 C/A result (5 features, pre-soft-drop)
+
+> **[2026-09-01] The +1.31 number does not survive a controlled rerun.** A second
+> run of the *same* baseline config landed 1.26 points higher (82.08 vs 80.82),
+> because the dataloader RNG is unseeded — so run-to-run spread is the same size
+> as the claimed effect. In the properly controlled same-job comparison the C/A
+> delta decays +2.09 → +0.88 → +0.16 → −0.09 across checkpoints. See
+> [[2026-09-01-sd-run-and-convergence]]. The restore instructions below remain
+> correct and useful; the *number* should not be quoted.
 
 Exact state that produced the headline number: **ParT on JetClass gains +1.31
 accuracy points from 5 per-particle C/A features**, once the 4-vector ordering
