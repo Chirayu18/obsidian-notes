@@ -169,7 +169,33 @@ rows within), massless to 3.4e-4.
 - samples: `atlastop-top` (boosted top), `atlastop-qcd` (light quark/gluon)
 - baselines: FastJet **classic** (per-jet) and **awkward** (vectorised, the fair one)
 
-### TIMING — first GPU results (Tesla V100S-PCIE-32GB, job 9263203)
+### TIMING — COMPLETE sweep (Tesla V100S-PCIE-32GB, job 9263203)
+
+**150 flashjet + 150 FastJet points**, 20 000 jets per bin, both samples.
+`results_v100/`, plots `atlas_{radius_scan,multiplicity}_atlastop-{top,qcd}.png`,
+tables `atlas_table_atlastop-{top,qcd}.md`.
+
+| | |
+|---|---|
+| paired points | **150 / 150** |
+| speedup range | **39x - 99x** (median **64x**) |
+| n_jets agreement | **100.000 %** at *every* point |
+| leading-pT within 1e-4 | 1.0000 at 148/150 (see the one outlier jet below) |
+| vectorised-baseline failures | **0** |
+
+Best: $k_t$ R=0.8 `mid` (top) **99x**; anti-$k_t$ R=0.4 `mid` (qcd) **99x**.
+Worst: anti-$k_t$ R=0.4 `lo` (top) 39x — the lowest-multiplicity bin, as expected.
+
+**The one outlier (honest reporting).** Two of the 150 rows report
+`frac_within_1e-4 = 0.9999`, both anti-$k_t$ R=0.4 on the qcd sample, in the
+overlapping `all` and `hi` bins — i.e. **the same single jet**, with identical
+`max_rel = 0.032964`. Jet *counts* still match 100 %, and the median relative
+difference is 6.2e-08. Consistent with a near-degenerate $d_{ij}$ where a
+float32-vs-float64 tie breaks the other way, reassigning one soft constituent
+between two jets. Not a systematic disagreement — but it should be *stated*, not
+rounded to "100 %".
+
+### First-look numbers (same job)
 
 **flashjet cost is independent of R** — anti-$k_t$, bin `all`, 59.3 const/jet:
 
@@ -236,6 +262,12 @@ multiplicity bins x 2 samples**. Results: `correctness_atlastop-{top,qcd}.json`.
 
 Agreement holds to **122.5 constituents/jet**, well past every CMS point. The
 residual ~7e-7 is float32 precision, not an algorithmic difference.
+
+**Caveat on "zero disagreements":** this matrix uses **150 jets per bin**. The
+full GPU sweep at **20 000 jets per bin** does find exactly **one** jet
+(anti-$k_t$, R=0.4, qcd) where the leading-jet pT differs by 3.3 % — see the
+timing section. So read this table as "no disagreement at the 150-jet sampling",
+not as a proof of exact agreement on every jet in the dataset.
 
 Per [[2026-08-16-validation-inventory]] C6, **$k_t$ and C/A had never been checked
 against FastJet on real data** — only unit-tested against NumPy tree-walks. This
