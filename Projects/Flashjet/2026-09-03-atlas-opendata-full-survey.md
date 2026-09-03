@@ -169,6 +169,46 @@ rows within), massless to 3.4e-4.
 - samples: `atlastop-top` (boosted top), `atlastop-qcd` (light quark/gluon)
 - baselines: FastJet **classic** (per-jet) and **awkward** (vectorised, the fair one)
 
+### TIMING — first GPU results (Tesla V100S-PCIE-32GB, job 9263203)
+
+**flashjet cost is independent of R** — anti-$k_t$, bin `all`, 59.3 const/jet:
+
+| R | 0.4 | 0.6 | 0.8 | 1.0 | 1.2 |
+|---|---|---|---|---|---|
+| us/jet | 1.3831 | 1.3797 | 1.3802 | 1.3815 | 1.3845 |
+| Mpart/s | 42.9 | 43.0 | 42.9 | 42.9 | 42.8 |
+
+0.3 % spread across a 3x range in R. R changes *which* pairs merge, not how many
+distances are computed. **Closes the "no R-scan" item in C6.**
+
+**All three algorithms cost the same** (R=1.0, us/jet):
+
+| alg | lo (24) | mid (45) | hi (75) | vhi (123) |
+|---|---|---|---|---|
+| anti-$k_t$ | 0.420 | 0.464 | 0.977 | 2.451 |
+| $k_t$ | 0.407 | 0.459 | 0.981 | 2.490 |
+| C/A | 0.413 | 0.474 | 1.000 | 2.565 |
+
+Within ~4 % everywhere — they share the kernel and differ only in the exponent.
+**$k_t$ / C-A timing is free**, which C6 listed as untested.
+
+**Speedups vs vectorised FastJet — 100 % n_jets agreement at every point:**
+
+| alg | R | bin | ⟨n⟩ | flashjet us/jet | FJ vec | FJ per-jet | speedup |
+|---|---|---|---|---|---|---|---|
+| anti-$k_t$ | 0.4 | lo | 24.1 | 0.4266 | 16.48 | 119.88 | **39x** |
+| anti-$k_t$ | 0.4 | mid | 44.8 | 0.5757 | 46.14 | 216.56 | **80x** |
+| anti-$k_t$ | 1.0 | mid | 44.8 | 0.4638 | 43.01 | 214.85 | **93x** |
+| $k_t$ | 1.2 | lo | 24.1 | 0.4068 | 17.51 | 112.07 | **43x** |
+| C/A | 0.4 | lo | 24.1 | 0.4154 | 17.51 | 112.61 | **42x** |
+
+**39-93x on a V100S**, and the speedup grows with multiplicity, as on CMS.
+
+**Hardware caveat — do not compare to the 65-97x headline.** That is H100 NVL.
+This is a **V100S**, roughly a generation and a half older. The GPU-model
+constraint had to be dropped to get a match (see below), so these are a *lower
+bound*; an H100 rerun should land well above.
+
 ### Agreement is checked two ways
 
 The existing CMS benchmark compares **jet counts** only. That is weak for
@@ -230,11 +270,22 @@ b_hive : /eos/home-c/cgupta/EPR_task/b-hive/micromamba/envs/b_hive/bin/python
 fjbench: /eos/home-c/cgupta/EPR_task/b-hive/micromamba/envs/fjbench/bin/python
 ```
 
-### Condor note
-Standard schedds reject `/eos` paths in the submit file. Keep the **submit file,
-executable and logs on AFS** (`~/atlas_sweep/`) and do the EOS work inside the
-script. Also: the H100/A100 requirement queues behind everything; the free GPUs on
-this pool are **V100s**, hence the second job.
+### Condor traps (both cost hours)
+
+1. **Standard schedds reject `/eos` paths in the submit file.** Keep the submit
+   file, executable and logs on **AFS** (`~/atlas_sweep/`) and do the EOS work
+   inside the script.
+2. **GPU slots offer only 4 CPUs / 12 GB each.** `paper.sub` asks for
+   `request_CPUs = 16, request_memory = 32 GB`, which **no GPU slot can satisfy** —
+   the job sits Idle forever and looks like queue contention. `condor_q
+   -better-analyze <id>` says it plainly: *"0 slots match and are willing to run
+   your job"*. Use **`request_CPUs = 4`, `request_memory = 11 GB`**.
+
+   Diagnose an idle job with `-better-analyze` immediately; do not assume
+   contention. Two jobs (9262951, 9262953) sat unmatchable for ~3 h before this
+   was checked.
+3. Requiring a specific `GPUs_DeviceName` narrows the pool a lot. Dropping it got
+   a match in under a minute — onto a **V100S**, hence the hardware caveat above.
 
 ## Caveats to state on a slide
 
