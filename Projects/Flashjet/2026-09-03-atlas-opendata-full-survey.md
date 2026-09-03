@@ -161,7 +161,34 @@ The existing CMS benchmark compares **jet counts** only. That is weak for
 $k_t$ / C-A, where counts can coincide while the jets differ. The sweep adds a
 **leading-jet pT match** (relative, 1e-4 and 1e-2 thresholds).
 
-### Early result (CPU smoke test, 400 top jets, bin `mid`) — NEW PHYSICS
+### CORRECTNESS MATRIX — complete, CPU (no GPU needed) — **NEW PHYSICS**
+
+`correctness_matrix.py`, 150 jets per bin, **3 algorithms x 5 radii x 4
+multiplicity bins x 2 samples**. Results: `correctness_atlastop-{top,qcd}.json`.
+
+| sample | points | njet agreement | leading-pT within 1e-4 | worst rel. diff |
+|---|---|---|---|---|
+| `atlastop-top` | **60/60** | **100.000 %** | **1.0000** | 7.06e-07 |
+| `atlastop-qcd` | 49+ | **100.000 %** | **1.0000** | 7.82e-07 |
+
+**Zero disagreements at any point.** Broken out by multiplicity (top sample):
+
+| bin | ⟨n_const⟩ | points | njet % | lead-pT 1e-4 |
+|---|---|---|---|---|
+| `lo` | 24.6 | 15 | 100.0 | 1.000 |
+| `mid` | 45.4 | 15 | 100.0 | 1.000 |
+| `hi` | 73.6 | 15 | 100.0 | 1.000 |
+| `vhi` | **122.5** | 15 | 100.0 | 1.000 |
+
+Agreement holds to **122.5 constituents/jet**, well past every CMS point. The
+residual ~7e-7 is float32 precision, not an algorithmic difference.
+
+Per [[2026-08-16-validation-inventory]] C6, **$k_t$ and C/A had never been checked
+against FastJet on real data** — only unit-tested against NumPy tree-walks. This
+closes that gap across the whole radius x multiplicity grid, on ATLAS detector
+data. *This result needs no GPU and is independent of the timing sweep.*
+
+### Earlier smoke test (400 top jets, bin `mid`)
 
 All three algorithms, R = 0.4 and 1.0, vs FastJet on real ATLAS detector data:
 
