@@ -190,10 +190,25 @@ Worst: anti-$k_t$ R=0.4 `lo` (top) 39x — the lowest-multiplicity bin, as expec
 `frac_within_1e-4 = 0.9999`, both anti-$k_t$ R=0.4 on the qcd sample, in the
 overlapping `all` and `hi` bins — i.e. **the same single jet**, with identical
 `max_rel = 0.032964`. Jet *counts* still match 100 %, and the median relative
-difference is 6.2e-08. Consistent with a near-degenerate $d_{ij}$ where a
-float32-vs-float64 tie breaks the other way, reassigning one soft constituent
-between two jets. Not a systematic disagreement — but it should be *stated*, not
-rounded to "100 %".
+difference is 6.2e-08.
+
+**Traced to the individual jet** (`find_outlier.py`) — jet **4411**, 97
+constituents, **6 jets found by both**:
+
+| | jet 1 | jet 2 | jet 3 | jet 4 |
+|---|---|---|---|---|
+| FastJet | 840.11 | 49.80 | **44.37** | 2.18 |
+| flashjet | **867.80** | 49.80 | **14.75** | 2.18 |
+
+867.80 − 840.11 = **27.69**; 44.37 − 14.75 = **29.62**. One cluster of ~29 GeV
+that FastJet puts in jet 3, flashjet puts in jet 1. Jets 2 and 4 are identical,
+and the jet-1/jet-2 gap is 790 GeV so the *leading* jet is never in doubt.
+
+So this is a **boundary assignment of a single constituent near the R=0.4 edge**
+between two jets — not a merge-ordering tie, and not a float32 rounding artefact
+in the distance measure (my first guess, which the numbers rule out). Same class
+as the CMS $m_{SD}$ outlier anatomy in [[2026-07-17-msd-outlier-anatomy]]: real,
+explainable, sub-permille, and worth stating rather than rounding to "100 %".
 
 ### First-look numbers (same job)
 
