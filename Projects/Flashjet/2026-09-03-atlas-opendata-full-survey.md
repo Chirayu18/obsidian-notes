@@ -106,6 +106,20 @@ clusters reproduces **ATLAS's official reconstructed jets exactly**. Worth a sli
 on its own — it closes the algorithm against the experiment's own output, not
 against another implementation of the same algorithm.
 
+**Confirmed with flashjet itself in the loop** (`event_matrix.py`, 50 events,
+**599.3 clusters/event**, anti-$k_t$ R=0.4):
+
+| comparison | result |
+|---|---|
+| flashjet vs FastJet, n_jets | **100.0 %** |
+| flashjet vs FastJet, leading pT within 1e-4 | **1.0000** (median rel. 4.5e-08) |
+| flashjet vs **ATLAS `RecoJets_R4`**, n_jets (pT>20 GeV) | **100.0 %** (10.96 vs 10.96 per event) |
+
+So flashjet reproduces **ATLAS's own published jets** while clustering ~600 real
+calorimeter clusters per event. Note the CPU torch backend is O(N^3) here and
+warns at N=1384 (2.9 GB of (B,N,N) buffers) — the full event-regime grid belongs
+on the GPU's triton-large backend.
+
 ### 3. OmniFold charged particles — particle level
 
 `recid atlas-160005`, STDM-2024-02. Parquet, 1 035 835 events.
