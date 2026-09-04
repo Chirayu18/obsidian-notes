@@ -74,68 +74,81 @@
 % ============================================================
 \section{Jet clustering, and flashjet}
 
-\begin{frame}{What jet clustering is, and why it is everywhere}
+\begin{frame}{Jet clustering: the workhorse, and its cost}
 \begin{columns}[T]
-\begin{column}{0.58\textwidth}
-A quark or gluon produced in a collision is never seen directly: it radiates and
-hadronises into a \textbf{spray of order 10--100 particles}. A \emph{jet
-algorithm} groups those particles back together so the spray can be treated as
-one object with a momentum and a mass.
+\begin{column}{0.53\textwidth}
+Sequential recombination --- \akt, $k_t$, Cambridge--Aachen, as implemented in
+\textbf{FastJet} --- is the LHC's standard jet definition. It is
+\textbf{infrared and collinear safe}, which is why it survived, and it is
+\textbf{$O(N\log N)$ but strictly sequential}: each merge depends on the one
+before it.
 \medskip
 
-The LHC standard is the \textbf{generalised-$k_t$} family --- \akt, $k_t$,
-Cambridge--Aachen --- implemented in \textbf{FastJet}. It is
-\textbf{sequential recombination}: repeatedly merge the closest pair under a
-distance measure, until nothing is left.
+That sequential structure is exactly what has kept it on the \textbf{CPU} while
+the rest of the pipeline moved to accelerators.
 \medskip
 
-\smallnote{Essentially every LHC measurement that involves hadrons runs this
-step, often several times per event, and again for every systematic variation.}
+\smallnote{And it is rarely run once. The same event is clustered again for every
+jet definition, every radius, every systematic variation --- and, in a training
+loop, once per epoch.}
 \end{column}
-\begin{column}{0.42\textwidth}
-\begin{block}{Where the cost shows up}
-\begin{itemize}
-  \item \textbf{reconstruction} --- every event, every reprocessing
-  \item \textbf{analysis} --- reclustering under many variations
-  \item \textbf{substructure} --- a second pass to groom or find subjets
-  \item \textbf{ML pipelines} --- jets rebuilt on every pass over the data
-\end{itemize}
+\begin{column}{0.47\textwidth}
+\begin{block}{How often clustering is re-run}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+context & per event\\
+\midrule
+reconstruction & a few\\
+\smallnote{small-$R$, large-$R$, trimmed} & \\
+JES/JER systematics & $\mathcal{O}(10\text{--}100)$\\
+substructure (2nd pass) & $\times 2$\\
+$R$- / grooming scan & $\mathcal{O}(10)$\\
+\textbf{ML training} & \textbf{1 / epoch}\\
+\bottomrule
+\end{tabular}
 \end{block}
-\smallnote{The algorithms are inherently sequential and have always run on the
-\textbf{CPU}.}
+\smallnote{Each row multiplies the one above it. The cost is not one clustering
+--- it is the same event clustered many times over.}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{The opportunity: the data is already on the GPU}
+\begin{frame}{flashjet}
 \begin{columns}[T]
-\begin{column}{0.56\textwidth}
-Clustering is a \textbf{CPU step}, and increasingly it is the \emph{only} CPU
-step in a workflow that otherwise lives on an accelerator. Four-momenta are
-copied to the host, clustered, and copied back.
+\begin{column}{0.54\textwidth}
+\textbf{What it is.} A GPU-native implementation of the generalised-$k_t$ family
+--- \akt{} ($p\!=\!-1$), $k_t$ ($p\!=\!+1$), Cambridge--Aachen ($p\!=\!0$) ---
+written in \textbf{Triton/PyTorch}.
 \medskip
 
-That round trip is paid over and over when
+\textbf{How it works.} A batch of jets or events is clustered
+\textbf{in device memory}, and the data never returns to the host during
+clustering. The merge history is recorded \textbf{in-kernel}, so the full
+clustering tree comes back with the jets.
+\medskip
+
+\textbf{Backends}, dispatched automatically by problem size:
 \begin{itemize}
-  \item jets are \textbf{reclustered} under many systematic variations,
-  \item the same events are revisited \textbf{many times} --- as in training a
-        network,
-  \item clustering must sit \textbf{inside} a differentiable pipeline.
+  \item a fused register kernel for small $N$
+  \item a scratch nearest-neighbour Triton kernel for large $N$
+  \item a pure-torch fallback --- so the same call runs on CPU
 \end{itemize}
-\medskip
-
-\smallnote{It is also simply a large fraction of reconstruction time, entirely
-independent of any machine learning.}
 \end{column}
-\begin{column}{0.44\textwidth}
-\begin{block}{flashjet}
-Implements \akt, $k_t$ and Cambridge--Aachen \textbf{natively on the GPU}.
-\smallskip
-
-A batch of jets or events is clustered in device memory, and the data never
-leaves it.
+\begin{column}{0.46\textwidth}
+\begin{block}{Design choices}
+\begin{itemize}
+  \item \textbf{batched}: many jets at once, ragged input via a mask
+  \item \textbf{history kept}: substructure becomes an array read, not a second
+        clustering pass
+  \item \textbf{one entry point}: identical call on CPU and GPU
+\end{itemize}
 \end{block}
-\smallnote{Triton/PyTorch. One entry point; runs unchanged on CPU and GPU.}
+\smallskip
+\begin{block}{Status}
+\small A \textcolor{fjorange}{\textbf{prototype}} --- validated, but a
+Python/Triton library, not integrated into experiment software.
+\end{block}
 \end{column}
 \end{columns}
 \end{frame}
@@ -192,56 +205,66 @@ three cost the same.}
 \end{frame}
 
 \begin{frame}{It returns the tree, not just the jets}
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-Clusters a \textbf{batch of jets or events at once}, and returns \textbf{two}
-things:
-\begin{enumerate}
-  \item the particle $\rightarrow$ jet assignment;
-  \item the \textbf{complete merge history} --- which pair merged, into what, at
-        what distance.
-\end{enumerate}
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{block}{Why the history matters}
-Groomed mass, $z_g$, $R_g$, Lund coordinates, exclusive subjets become
-\textbf{reads of that tree}.
-\smallskip
+Clustering a batch returns \textbf{two} things --- the jets, and the record of how
+they were built.
+\medskip
 
-No second clustering pass.
-\end{block}
-\end{column}
-\end{columns}
-\vspace{1em}
 \begin{center}
 \small
-\begin{tabular}{@{}ll@{}}
+\begin{tabular}{@{}lll@{}}
 \toprule
-\texttt{jet\_idx}, \texttt{n\_jets} & particle-to-jet assignment\\
-\texttt{hist\_p1}, \texttt{hist\_p2}, \texttt{hist\_child} & which pair merged into what\\
-\texttt{hist\_d} & the $d_{ij}$ at each merge step\\
+\textbf{field} & \textbf{shape} & \textbf{what it holds}\\
+\midrule
+\texttt{jet\_idx} & $(B,N)$ & which jet each particle ended up in\\
+\texttt{n\_jets} & $(B,)$ & how many jets were found\\
+\addlinespace
+\texttt{hist\_p1}, \texttt{hist\_p2} & $(B,N)$ & \textbf{which pair merged}, at each step\\
+\texttt{hist\_child} & $(B,N)$ & what they merged \emph{into}\\
+\texttt{hist\_d} & $(B,N)$ & the distance $d_{ij}$ at that step\\
 \bottomrule
 \end{tabular}
 \end{center}
+\medskip
+
+\begin{block}{Why the second half matters}
+\small The bottom three rows are the \textbf{complete binary merge tree}. Groomed
+mass, $z_g$, $R_g$, Lund coordinates and exclusive subjets are all
+\textbf{coordinates on that tree} --- so they become array reads, with
+\textbf{no second clustering pass}.
+\end{block}
 \end{frame}
 
-\begin{frame}[fragile]{One entry point}
-\begin{Verbatim}[fontsize=\small,frame=single,rulecolor=\color{fjgray}]
-out = flashjet.cluster(p4, mask, R=1.0, algorithm="antikt")
-#   p4        (B, N, 4) torch tensor   |  mask  (B, N) bool
-#   algorithm "antikt" | "kt" | "cambridge"
+\begin{frame}[fragile]{Using it}
+\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
+import flashjet
 
-out.n_jets                                      # jets found
-out.jets_p4(p4)                                 # jet four-momenta
-out.exclusive_jets(n_jets=3)                    # F1
-out.groomed_jets(p4, R, z_cut=0.1, beta=0.0)    # F2  soft drop / mMDT
-out.lund_coordinates(p4, R)                     # F3  primary Lund plane
+out = flashjet.cluster(p4, mask, R=1.0, algorithm="antikt")
 \end{Verbatim}
+\vspace{-0.3em}
+{\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{argument} & \textbf{type} & \\
+\midrule
+\texttt{p4} & $(B,N,4)$ tensor & $(p_x,p_y,p_z,E)$; CPU or CUDA\\
+\texttt{mask} & $(B,N)$ bool & marks real constituents in a padded batch\\
+\texttt{R} & float & jet radius\\
+\texttt{algorithm} & str & \texttt{"antikt"} $\vert$ \texttt{"kt"} $\vert$ \texttt{"cambridge"}\\
+\texttt{p} & float & generalised-$k_t$ exponent (overrides \texttt{algorithm})\\
+\bottomrule
+\end{tabular}}
 \medskip
-\begin{block}{}
-\small Same call on CPU and GPU. \texttt{jets\_p4} is a \texttt{scatter\_add} of
-constituents, so \textbf{gradients flow through the clustering}.
-\end{block}
+
+\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
+out.n_jets                                    # (B,)     jets found
+out.jets_p4(p4)                               # (B,J,4)  jet four-momenta
+out.splitting_scales()                        #          sqrt(d12), sqrt(d23), ...
+out.exclusive_jets(n_jets=3)                  # F1       exclusive kt subjets
+out.groomed_jets(p4, R, z_cut=0.1, beta=0.0)  # F2       soft drop / mMDT
+out.lund_coordinates(p4, R)                   # F3       primary Lund plane
+\end{Verbatim}
+\smallnote{The same call runs unchanged on CPU and GPU --- the backend is chosen
+from the problem size, not by the caller.}
 \end{frame}
 
 \begin{frame}{What is implemented}
@@ -269,10 +292,10 @@ identical, negligible cost.}
 \end{column}
 \end{columns}
 \vspace{0.8em}
-\begin{block}{Status}
-\small A \textcolor{fjorange}{\textbf{prototype}} --- the physics is validated and
-the speedups are real, but it is a Python/Triton library, \textbf{not} integrated
-into any experiment's reconstruction framework.
+\begin{block}{It is differentiable}
+\small \texttt{jets\_p4} is a \texttt{scatter\_add} of the constituents onto their
+jets, so \textbf{gradients flow through the clustering} --- the jet four-momenta
+can sit inside a loss without a custom backward pass.
 \end{block}
 \end{frame}
 
@@ -329,36 +352,45 @@ constituents again, so grooming is essentially free once clustered.}
 \includegraphics[width=0.97\linewidth]{fig/tree_gallery.png}
 \end{center}
 \vspace{-0.5em}
-\smallnote{Three jets from ATLAS Open Data, clustered with C/A and groomed with
-soft drop ($z_{cut}=0.1$, $\beta=0$). \textbf{Left:} a light-quark/gluon jet is a
-long \emph{staircase} --- there is no balanced split to stop on, so prong after
-prong is stripped and the mass collapses to nothing. \textbf{Centre and right:}
-boosted top jets stop \emph{immediately}, because the very first split is already
-hard and balanced. \textbf{The number of drops is itself a discriminant} --- and
-it is read straight off the stored tree, at no extra cost.}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\smallnote{\textbf{A jet without a decay has nothing to stop on.} The
+light-quark/gluon jet is a long \emph{staircase}: soft prong after soft prong is
+stripped, and its mass collapses to nothing.}
+\end{column}
+\begin{column}{0.5\textwidth}
+\smallnote{\textbf{A real decay stops at once.} Both top jets halt on their very
+first split, because it is already hard and balanced --- so the mass survives.}
+\end{column}
+\end{columns}
+\smallskip
+\smallnote{ATLAS Open Data, C/A with soft drop ($z_{cut}\!=\!0.1$, $\beta\!=\!0$).
+\textbf{The number of drops is itself a discriminant} --- and it is read straight
+off the stored tree, at no extra cost.}
 \end{frame}
 
 \begin{frame}{F3 --- primary Lund coordinates from the C/A history}
+\begin{center}
+\includegraphics[width=0.80\linewidth]{fig/lund_plane.png}
+\end{center}
+\vspace{-0.6em}
 \begin{columns}[T]
-\begin{column}{0.40\textwidth}
-\textbf{What it does.} For every primary splitting, emit
-$(z,\ \Delta R,\ k_t,\ \ln 1/\Delta R,\ \ln k_t,\ d)$.
-\smallskip
-
-\textbf{How.} One pass down the primary branch of the C/A tree; each node is one
-point in the plane.
-\smallskip
-
-\textbf{Consistency.} The $d$-channel ties \emph{exactly} to the splitting
-scales computed independently --- the same number reached two ways.
+\begin{column}{0.34\textwidth}
+\smallnote{\textbf{What.} Every primary splitting emits
+$(z,\Delta R,k_t,\ln 1/\Delta R,\ln k_t,d)$.}
 \end{column}
-\begin{column}{0.60\textwidth}
-\includegraphics[width=\linewidth]{fig/lund_plane.png}\\
-\smallnote{QCD fills the soft-collinear region smoothly; the W-like sample adds a
-\textbf{localised hard splitting} exactly where the two-prong decay is predicted
-to sit (star).}
+\begin{column}{0.32\textwidth}
+\smallnote{\textbf{How.} One pass down the primary branch --- each node is one
+point in the plane.}
+\end{column}
+\begin{column}{0.34\textwidth}
+\smallnote{\textbf{Check.} The $d$-channel ties \emph{exactly} to the splitting
+scales computed independently.}
 \end{column}
 \end{columns}
+\smallnote{QCD fills the soft-collinear region smoothly; the W-like sample adds a
+\textbf{localised hard splitting} exactly where the decay is predicted to sit
+(star).}
 \end{frame}
 
 % ============================================================
@@ -478,7 +510,9 @@ QCD (light $q/g$) & 30\,000 & 52.4\\
 \end{tabular}
 \smallskip
 
-\smallnote{Large-$R$ jets with calorimeter-cluster constituents.}
+\smallnote{Large-$R$ jets with calorimeter-cluster constituents. The grid is
+\textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins}, 20\,000 jets
+per bin.}
 \end{column}
 \begin{column}{0.5\textwidth}
 \textbf{Method}
@@ -489,8 +523,10 @@ QCD (light $q/g$) & 30\,000 & 52.4\\
   \item \textbf{check they agree} --- else the timing is meaningless.
 \end{enumerate}
 \smallskip
-\smallnote{Both clusterers read the same saved file. Speedups are quoted against
-the \textbf{vectorised} FastJet interface --- the faster, fairer baseline.}
+\begin{block}{}
+\small Both clusterers read the \textbf{same saved file}. Speedups are quoted
+against the \textbf{vectorised} FastJet interface --- the faster, fairer baseline.
+\end{block}
 \end{column}
 \end{columns}
 \end{frame}
@@ -499,17 +535,21 @@ the \textbf{vectorised} FastJet interface --- the faster, fairer baseline.}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_abs_timing.png}
 \end{center}
-\smallnote{\textbf{Log scale.} flashjet stays nearly flat while both FastJet
-interfaces climb steeply with multiplicity.}
+\smallnote{\textbf{Log scale} --- each gridline is $10\times$. flashjet stays
+nearly flat while both FastJet interfaces climb steeply with multiplicity:
+\textbf{0.35--2.7\,$\mu$s per jet} against \textbf{17--155\,$\mu$s} for vectorised
+FastJet, and \textbf{110--620\,$\mu$s} per jet one at a time. Benchmarked on an
+NVIDIA \textbf{V100-class} GPU.}
 \end{frame}
 
 \begin{frame}{The advantage grows with jet complexity}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_speedup_algs.png}
 \end{center}
-\smallnote{All three algorithms, both samples. Every point has \textbf{100\,\%}
-$n_{\rm jets}$ agreement. Busier jets $\rightarrow$ bigger win --- the regime that
-matters for boosted-object physics.}
+\smallnote{All three algorithms, both samples, $R=1.0$. \textbf{39--99$\times$}
+over vectorised FastJet across the grid (median \textbf{64$\times$}), and every
+point has \textbf{100\,\%} $n_{\rm jets}$ agreement. Busier jets $\rightarrow$
+bigger win --- the regime that matters for boosted-object physics.}
 \end{frame}
 
 \begin{frame}{Cost is independent of $R$ --- and of the algorithm}
@@ -534,37 +574,6 @@ multiplicity.
 \end{block}
 \end{column}
 \end{columns}
-\end{frame}
-
-\begin{frame}{The numbers}
-\begin{center}
-\small
-\begin{tabular}{@{}llrrrr@{}}
-\toprule
-sample & alg & $\langle n\rangle$ & flashjet & FastJet vec. & speedup\\
- & & & [$\mu$s/jet] & [$\mu$s/jet] & \\
-\midrule
-top & \akt & 24.1 & 0.427 & 16.5 & $39\times$\\
-top & \akt & 44.8 & 0.464 & 43.0 & $\mathbf{93\times}$\\
-top & C/A  & 74.7 & 1.000 & 84.8 & $85\times$\\
-top & C/A  & 123.1 & 2.565 & 165.1 & $64\times$\\
-\midrule
-qcd & \akt & 22.2 & 0.346 & 17.5 & $51\times$\\
-qcd & \akt & 43.6 & 0.463 & 45.7 & $\mathbf{99\times}$\\
-qcd & \akt & 74.7 & 1.215 & 89.8 & $74\times$\\
-qcd & \akt & 120.2 & 2.673 & 154.9 & $58\times$\\
-\bottomrule
-\end{tabular}
-\end{center}
-\medskip
-\begin{block}{}
-\small \textbf{39--99$\times$} over vectorised FastJet (median $64\times$), with
-100\,\% jet-count agreement everywhere. Benchmarked on an \textbf{NVIDIA
-V100-class} GPU.
-\end{block}
-\smallskip
-\smallnote{$R=1.0$ rows shown. Against the per-jet FastJet interface the gap is
-roughly \emph{two orders of magnitude}.}
 \end{frame}
 
 % ============================================================
@@ -635,6 +644,37 @@ Physics closures: analytic predictions on toy showers.}
 \smallnote{QCD (light $q/g$)}
 \end{column}
 \end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- the numbers}
+\begin{center}
+\small
+\begin{tabular}{@{}llrrrr@{}}
+\toprule
+sample & alg & $\langle n\rangle$ & flashjet & FastJet vec. & speedup\\
+ & & & [$\mu$s/jet] & [$\mu$s/jet] & \\
+\midrule
+top & \akt & 24.1 & 0.427 & 16.5 & $39\times$\\
+top & \akt & 44.8 & 0.464 & 43.0 & $\mathbf{93\times}$\\
+top & C/A  & 74.7 & 1.000 & 84.8 & $85\times$\\
+top & C/A  & 123.1 & 2.565 & 165.1 & $64\times$\\
+\midrule
+qcd & \akt & 22.2 & 0.346 & 17.5 & $51\times$\\
+qcd & \akt & 43.6 & 0.463 & 45.7 & $\mathbf{99\times}$\\
+qcd & \akt & 74.7 & 1.215 & 89.8 & $74\times$\\
+qcd & \akt & 120.2 & 2.673 & 154.9 & $58\times$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+\begin{block}{}
+\small \textbf{39--99$\times$} over vectorised FastJet (median $64\times$), with
+100\,\% jet-count agreement everywhere. Benchmarked on an \textbf{NVIDIA
+V100-class} GPU.
+\end{block}
+\smallskip
+\smallnote{$R=1.0$ rows shown. Against the per-jet FastJet interface the gap is
+roughly \emph{two orders of magnitude}.}
 \end{frame}
 
 \begin{frame}{Backup --- the datasets}

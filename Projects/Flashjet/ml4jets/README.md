@@ -64,13 +64,14 @@ then **lead section dividers**, one claim per slide. Theme is **Madrid**
 | § | slides | content |
 |---|---|---|
 | title + **outline** | 1–2 | `\tableofcontents` |
-| **Jet clustering, and flashjet** | 3–14 | **what jet clustering is** (general intro — ML is one application among reconstruction/analysis/substructure, not the headline); the GPU opportunity; **how sequential recombination works** (3-panel figure); **one exponent → three algorithms**; returns the tree; the API; what's implemented + prototype status; **F1**, **F2**, **F3** one slide each, plus a **real-jet C/A tree gallery** |
+| **Jet clustering, and flashjet** | 3–15 | **jet clustering: the workhorse and its cost** (IRC safety, sequential dependency, and a table of how often clustering is re-run — ML is one row, not the headline); **flashjet** (what it is, how it is implemented, backends, prototype status); **how sequential recombination works** (3-panel figure); **one exponent → three algorithms**; returns the tree; the API; what's implemented + prototype status; **F1**, **F2**, **F3** one slide each, plus a **real-jet C/A tree gallery** |
 | **Correctness** | 13–17 | analytic closures; clustering geometry; 150/150 vs FastJet; closure vs the experiment's own jets |
-| **Speed** | 18–23 | benchmark method; time/jet; speedup vs multiplicity; R-independence; the numbers |
+| **Speed** | 19–23 | benchmark method; time/jet; speedup vs multiplicity; R-independence — **headline numbers now sit in the plot captions**, not a separate table |
 | **Conclusions** | 24–26 | summary, thank-you |
-| **Backup** | 27–30 | per-sample scans, datasets |
+| **Backup** | 27–32 | per-sample scans, **the numbers table**, datasets |
 
-30 slides. **Removed** on request: the old *Summary*, *Caveats* and *What is next*
+32 slides. **Removed** on request: the *opportunity: data is already on the GPU*
+slide (folded into the two opening slides), and earlier the old *Summary*, *Caveats* and *What is next*
 slides. The caveats they carried (Python FastJet baseline, large-$R$ jets, batch
 regime) now live only in this README — **decide whether to reinstate any verbally**.
 
@@ -181,3 +182,31 @@ python make_atlas_plots.py        # -> atlas_radius_scan_* / atlas_multiplicity_
 
 Source scripts live in `/eos/home-c/cgupta/flashjet/bench_atlas/`.
 Copy the PNGs into `fig/` and rebuild.
+
+---
+
+## Review pass (2026-09-04)
+
+Changes made after a read-through:
+
+- **Opening rewritten for an expert audience.** The old "a quark hadronises into a
+  spray" framing was too general; it now leads with IRC safety and the sequential
+  dependency that keeps clustering on the CPU. The vague "essentially every LHC
+  measurement runs this step" claim is replaced by a **table of how often
+  clustering is re-run** (reconstruction, JES/JER systematics, substructure,
+  scans, ML training).
+  - *A CMS-approved plot was requested here. Not usable — the deck is
+    ATLAS-only, and an approved plot cannot be fabricated. The table is the
+    stated alternative.*
+- **"The opportunity" slide removed**, replaced by a **flashjet** slide (what it
+  is, how it is implemented, the three backends, prototype status).
+- **API slide reworked into documentation style**: the call, an argument table
+  (type + meaning), then the returns.
+- **Differentiability note moved** out of the API slide to after *What is
+  implemented*, where it now has its own block.
+- **Plots enlarged** on the F3 slide; text moved to a three-column strip below.
+- **`The numbers` table moved to backup.** The headline figures (0.35–2.7 µs/jet,
+  39–99×, median 64×) now appear as **captions under the plots** instead.
+- **Hardware name removed from two plot titles** — `atlas_abs_timing.png` and
+  `atlas_speedup_algs.png` had "Tesla V100S" baked into the image. Regenerated
+  via `make_speed_plots.py`. The deck says "V100-class" once, in a caption.
