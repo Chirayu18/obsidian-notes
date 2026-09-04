@@ -67,41 +67,8 @@
 \end{frame}
 
 % ============================================================
-\begin{frame}{Summary --- what this talk shows}
-\textbf{A GPU implementation of the generalised-$k_t$ algorithms} (\akt, $k_t$,
-Cambridge--Aachen) that clusters batches directly in device memory and keeps the
-\textbf{complete merge history} --- so substructure follows as cheap array reads,
-not a second clustering pass.
-\medskip
-
-\textbf{Validation ladder}, each rung closed against an independent reference:
-
-\begin{center}
-\small
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{rung} & \textbf{reference} & \textbf{headline}\\
-\midrule
-unit tests & independent NumPy tree-walks & 129 passed, incl.\ GPU paths\\
-analytic closures & leading-log predictions, toy shower & $z_g$ on the $1/z$ curve;
-areas; $\beta$-ordering\\
-\textbf{vs FastJet} & same events, same job & \textbf{150/150} points,
-\textbf{100\,\%} $n_{\rm jets}$ agreement\\
-\textbf{vs the experiment} & ATLAS's own reconstructed jets & \textbf{100\,\%}
-match, $\sim$600 clusters/event\\
-speed & vectorised FastJet, identical input & \textbf{39--99$\times$}, growing
-with multiplicity\\
-\bottomrule
-\end{tabular}
-\end{center}
-\medskip
-
-\begin{block}{}
-\small \textbf{flashjet reproduces FastJet --- and the experiment's own jets ---
-while running roughly two orders of magnitude faster than per-jet CPU
-clustering.} It is a \textcolor{fjorange}{\textbf{prototype}}: validated, but not
-yet inside any experiment's software.
-\end{block}
+\begin{frame}{Outline}
+\tableofcontents
 \end{frame}
 
 % ============================================================
@@ -132,6 +99,57 @@ Implements \akt, $k_t$ and C/A \textbf{natively on the GPU}.
 Data never leaves device memory during clustering.
 \end{block}
 \smallnote{Triton/PyTorch. One entry point; runs unchanged on CPU and GPU.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{How sequential recombination works}
+\begin{center}
+\includegraphics[width=0.94\linewidth]{fig/clustering_steps.png}
+\end{center}
+\vspace{-0.4em}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\smallnote{Repeat until nothing is left: if the smallest distance is a
+$d_{ij}$, merge that pair; if it is a $d_{iB}$, call that a jet and remove it.}
+\end{column}
+\begin{column}{0.44\textwidth}
+\smallnote{One exponent $p$ selects the algorithm --- the \emph{same} kernel
+serves all three.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{One exponent, three algorithms}
+\begin{center}
+\begin{tabular}{@{}llll@{}}
+\toprule
+$p$ & algorithm & merges first & gives\\
+\midrule
+$-1$ & \akt & around the \textbf{hardest} particles & rigid, circular jets\\
+$0$ & Cambridge--Aachen & the \textbf{closest} pair & angular-ordered tree\\
+$+1$ & $k_t$ & the \textbf{softest} pair & $k_t$-ordered tree\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{0.3em}
+\begin{columns}[T]
+\begin{column}{0.46\textwidth}
+\includegraphics[width=0.98\linewidth]{fig/jet_areas.png}
+\end{column}
+\begin{column}{0.54\textwidth}
+\textbf{The ordering is not a detail --- it is what the substructure reads.}
+\smallskip
+\begin{itemize}
+  \item \akt{} gives the \emph{jets}: catchment areas $\to \pi R^2$ --- the
+        defining rigid-cone result, from flashjet's own clustering.
+  \item \textbf{C/A} orders by angle $\Rightarrow$ the natural tree for
+        \textbf{grooming} and the \textbf{Lund plane}.
+  \item \textbf{$k_t$} orders by relative transverse momentum $\Rightarrow$ the
+        natural tree for \textbf{exclusive subjets}.
+\end{itemize}
+\smallnote{So flashjet keeps whichever history the observable needs --- and all
+three cost the same.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -219,6 +237,77 @@ identical, negligible cost.}
 the speedups are real, but it is a Python/Triton library, \textbf{not} integrated
 into any experiment's reconstruction framework.
 \end{block}
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}{F1 --- exclusive subjets from the $k_t$ history}
+\begin{columns}[T]
+\begin{column}{0.42\textwidth}
+\textbf{What it does.} Undo the last merges of the sequence to expose exactly
+$n$ subjets --- or stop at a $d_{cut}$.
+\smallskip
+
+\textbf{How.} The history is already a binary tree. Walk back up it $n-1$ steps;
+no reclustering.
+\smallskip
+
+\textbf{Why $k_t$.} $k_t$ merges the softest pair first, so the \emph{last}
+merges are the hard prongs --- exactly what a 2-prong decay leaves behind.
+\smallskip
+
+\smallnote{The splitting scales $\sqrt{d_{12}}, \sqrt{d_{23}},\dots$ fall out of
+the same array.}
+\end{column}
+\begin{column}{0.58\textwidth}
+\includegraphics[width=\linewidth]{fig/kt_observables.png}\\
+\smallnote{Toy W-like (2-prong) vs QCD-like fat jets. \textbf{Left:} the $k_t$
+splitting scale $\sqrt{d_{12}}$ separates cleanly. \textbf{Right:} the momentum
+balance $z$ of the two exclusive subjets --- the W sits near $z\!\sim\!0.4$,
+QCD spreads to small $z$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}{F2 --- soft drop / mMDT grooming from the C/A history}
+\begin{center}
+\includegraphics[width=0.95\linewidth]{fig/softdrop_walk.png}
+\end{center}
+\vspace{-0.3em}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\smallnote{Walk down the C/A tree along the harder branch, discarding the softer
+prong until the momentum-sharing condition is met. $\beta=0$ recovers mMDT.}
+\end{column}
+\begin{column}{0.5\textwidth}
+\smallnote{The walk is $O(\log_2 n)$ on the stored tree --- it never touches the
+constituents again, so grooming is essentially free once clustered.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ------------------------------------------------------------
+\begin{frame}{F3 --- primary Lund coordinates from the C/A history}
+\begin{columns}[T]
+\begin{column}{0.40\textwidth}
+\textbf{What it does.} For every primary splitting, emit
+$(z,\ \Delta R,\ k_t,\ \ln 1/\Delta R,\ \ln k_t,\ d)$.
+\smallskip
+
+\textbf{How.} One pass down the primary branch of the C/A tree; each node is one
+point in the plane.
+\smallskip
+
+\textbf{Consistency.} The $d$-channel ties \emph{exactly} to the splitting
+scales computed independently --- the same number reached two ways.
+\end{column}
+\begin{column}{0.60\textwidth}
+\includegraphics[width=\linewidth]{fig/lund_plane.png}\\
+\smallnote{QCD fills the soft-collinear region smoothly; the W-like sample adds a
+\textbf{localised hard splitting} exactly where the two-prong decay is predicted
+to sit (star).}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ============================================================
@@ -427,25 +516,6 @@ V100-class} GPU.
 roughly \emph{two orders of magnitude}.}
 \end{frame}
 
-\begin{frame}{Caveats}
-\begin{itemize}
-  \item \textbf{The CPU baseline is FastJet's Python binding.} The production tool
-  is C++. Until that is measured, the honest caveat is \emph{``some of this could
-  be Python overhead''} --- \textcolor{fjred}{the single most valuable missing
-  test}.
-  \medskip
-  \item \textbf{Large-$R$ jets.} Boosted fat jets, $\sim$50--120 constituents ---
-  not small-$R$ jets.
-  \medskip
-  \item \textbf{Batch regime.} The advantage comes from clustering \emph{many}
-  jets at once. A per-event framework may not exploit that --- it needs
-  measuring, not assuming.
-  \medskip
-  \item \textbf{Hardware.} A single GPU generation was benchmarked; these are not
-  the best numbers the library can produce.
-\end{itemize}
-\end{frame}
-
 % ============================================================
 \section{Conclusions}
 
@@ -468,29 +538,6 @@ roughly \emph{two orders of magnitude}.}
   \item Still a \textcolor{fjorange}{\textbf{prototype}}, with meaningful headroom
   left.
 \end{enumerate}
-\end{frame}
-
-\begin{frame}{What is next}
-\begin{center}
-\begin{tabular}{@{}clp{0.50\textwidth}@{}}
-\toprule
-& \textbf{item} & \textbf{why}\\
-\midrule
-\textbf{1} & C++ FastJet baseline & every number here uses the Python binding;
-the production tool is C++\\
-\textbf{2} & Tuning & the library has not been optimised for current hardware\\
-\textbf{3} & Pile-up, grooming timing & untested axes a realistic workload will
-hit\\
-\textbf{4} & Use inside experiment software & the real production test\\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{1em}
-\begin{block}{}
-\small \textbf{Bottom line:} as an accelerator-resident substitute for CPU
-clustering inside a learning workflow, flashjet is \textbf{correct} and roughly
-\textbf{two orders of magnitude faster} than per-jet CPU clustering.
-\end{block}
 \end{frame}
 
 \begin{frame}[plain,noframenumbering]

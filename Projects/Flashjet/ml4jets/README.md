@@ -8,7 +8,7 @@ source: lxplus
 # ML4Jets 2026 deck — flashjet
 
 LaTeX/beamer deck for **ML4Jets 2026** (Vienna, 14–18 Sep 2026).
-Source: `flashjet-ml4jets.tex` → `flashjet-ml4jets.pdf` (**27 slides**, 16:9, Madrid theme).
+Source: `flashjet-ml4jets.tex` → `flashjet-ml4jets.pdf` (**30 slides**, 16:9, Madrid theme).
 
 ```bash
 cd Projects/Flashjet/ml4jets
@@ -63,14 +63,35 @@ then **lead section dividers**, one claim per slide. Theme is **Madrid**
 
 | § | slides | content |
 |---|---|---|
-| title + summary | 1–2 | validation ladder: unit tests → analytic closures → vs FastJet → vs the experiment → speed |
-| **What flashjet is** | 3–7 | the CPU-in-a-GPU-pipeline problem; returns the tree not just jets; the API; what's implemented; **prototype status** |
-| **Correctness** | 8–12 | analytic closures; clustering geometry; 150/150 vs FastJet; closure vs the experiment's own jets |
-| **Speed** | 13–19 | benchmark method; time/jet; speedup vs multiplicity; R-independence; the numbers; caveats |
-| **Conclusions** | 20–23 | summary, what's next, thank-you |
-| **Backup** | 24–27 | per-sample scans, datasets |
+| title + **outline** | 1–2 | `\tableofcontents` |
+| **What flashjet is** | 3–12 | the CPU-in-a-GPU-pipeline problem; **how sequential recombination works** (3-panel figure); **one exponent → three algorithms**; returns the tree; the API; what's implemented + prototype status; **F1**, **F2**, **F3** one slide each |
+| **Correctness** | 13–17 | analytic closures; clustering geometry; 150/150 vs FastJet; closure vs the experiment's own jets |
+| **Speed** | 18–23 | benchmark method; time/jet; speedup vs multiplicity; R-independence; the numbers |
+| **Conclusions** | 24–26 | summary, thank-you |
+| **Backup** | 27–30 | per-sample scans, datasets |
 
-27 slides, zero overfull boxes.
+30 slides. **Removed** on request: the old *Summary*, *Caveats* and *What is next*
+slides. The caveats they carried (Python FastJet baseline, large-$R$ jets, batch
+regime) now live only in this README — **decide whether to reinstate any verbally**.
+
+### Feature slides (F1/F2/F3)
+
+Each follows the same shape: **What it does / How / Why this tree** on the left,
+an illustrative plot on the right.
+
+| slide | figure | shows |
+|---|---|---|
+| F1 exclusive subjets | `kt_observables.png` | $\sqrt{d_{12}}$ and subjet $z$ separating toy W-like from QCD-like |
+| F2 soft drop | `softdrop_walk.png` | **generated for this deck** — ungroomed vs groomed mass, plus the declustering walk on the C/A tree |
+| F3 Lund coordinates | `lund_plane.png` | QCD soft-collinear fill vs the localised W hard splitting (star = prediction) |
+
+Two figures were **generated for this deck** by `make_illustrations.py` (pure
+toy/analytic, no experiment data):
+
+- `clustering_steps.png` — constituents → smallest $d_{ij}$ → merge/record/repeat
+- `softdrop_walk.png` — the F2 mass effect and the tree walk
+
+Rerun with `python3 make_illustrations.py`.
 
 ### Two policies enforced in the source
 
