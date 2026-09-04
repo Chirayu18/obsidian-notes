@@ -542,3 +542,63 @@ moved to CPU), 9265167 (rule-C smoke). ~37 GPU-hours saved.
 Slice `arr[:, 15:15+128*23]`. Slicing from 0 silently yields garbage — it cost
 several wrong conclusions tonight. Authoritative source:
 `model.create_feature_shapes()` → `feature_edges [15, 2959, ...]`.
+
+## 2026-09-04 08:40 — subjet smoke test: verified, and a timing correction
+
+The condor smoke test (9265169) never ran — the pool was saturated and it was
+killed. Ran it instead on the lxplus **login node, CPU only**, which is legitimate
+here: 20 iterations at batch 512 with no `--use-torch-compile` needs no GPU.
+
+**The login-node run hit its 3000 s timeout after ONE iteration** (`Global number
+= 1.0`, RC=124). I initially read the process telemetry (worker PID recycling,
+RSS dropping 19 GB → 2.3 GB) as "training loop finished, now validating" and
+reported the forward path proven. **That was wrong** — it was still on iteration 1
+the whole time. The 1M job had already been submitted on that false premise.
+
+Isolated the cost properly instead of inferring it from `ps`:
+
+| what | batch 512, 16 CPU threads |
+|---|---|
+| `subjet_features_from_cpf` alone | **2.1 s** (4.1 ms/jet) |
+| `jet_class` full step (get_inpt + fwd + bwd) | **18.3 s** |
+| `jet_class_subjet` full step | **20.2 s** (get_inpt 3.24 s) |
+
+So a full training step is **~20 s on CPU**, not 50 min. The smoke test was slow
+because of dataloader startup over the 100M-jet EOS dataset plus contention on a
+shared login node — **not** the model and **not** the features. The tell I
+misread: workers at 0.5–3% CPU while `law` held 1400% is I/O starvation, not
+compute.
+
+**Feature overhead: ~3.2 s/batch = 6.3 ms/jet on CPU, ~11% of the step.** Worth
+quoting as the CPU figure; the GPU number will be much smaller.
+
+**Verdict: forward path verified for both configs.** The positional contract holds
+— `base_model.get_inpt` concatenates as `cpf[..., :-4] + _sj + cpf[..., -4:]`, and
+`particletransformer_paper.forward` splits at exactly `[:, :, :-4]` / `[:, :, -4:]`.
+`cpf_dim` 21 → 24, params 2,143,486 → 2,143,882 (+396).
+
+### Gotchas found while timing (for whoever writes the next probe)
+- On-disk row width is **2971** = 15 global + 2944 cpf + 12 trailing (10 one-hot
+  labels + 2). `get_inpt` wants `x[:, :2959]`.
+- `get_inpt` returns **`(tensors_tuple, truth)`** — `inpt[1]` is truth, not cpf.
+- `forward` takes the tuple, indexing `inpt[0]`/`inpt[1]` as glob/cpf.
+
+### Job status
+- **9265170** — subjet 1M, submitted 07:45, idle. Args diffed against
+  `run_paper_baseline.sh`: identical except `--config` / `--training-version`.
+- **9259275** — CA5 at 640k, val 85.67%, best 85.71% @ 600k. Curve flat across the
+  last 60k (85.67–85.71); train has edged above val. ETA ~14:20.
+- **9265169** — condor smoke, removed as redundant.
+
+### Queue: the wait is priority, not hardware
+Five H100 NVL slots FIT the request and sit **Unclaimed**, yet `condor_q -analyze`
+reports "0 slots match". Cause: **effective priority 3,863,990** (real 38.64 ×
+factor 100,000), 3,524 weighted GPU-hours used, 34 CPUs currently held by CA5.
+Fair-share throttling, not saturation — I had misread this as a busy pool.
+
+`RequestCpus` is **34**, not the 16 in the submit file; the site expands it. Both
+arms are affected identically, so it is left alone.
+
+**Do not shrink `request_memory`.** CA5 reports `MemoryUsage = 146485` MB against
+its 102000 MB request — it is 44 GB over and surviving only because the node does
+not enforce. Dropping to 80 GB to widen the pool would risk a mid-run kill.
