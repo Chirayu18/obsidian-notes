@@ -602,3 +602,94 @@ arms are affected identically, so it is left alone.
 **Do not shrink `request_memory`.** CA5 reports `MemoryUsage = 146485` MB against
 its 102000 MB request — it is 44 GB over and surviving only because the node does
 not enforce. Dropping to 80 GB to widen the pool would risk a mid-run kill.
+
+## 2026-09-04 10:00 — root-termination bug, and two retractions
+
+Alex asked whether I had *visualised* the features for a few individual jets. I had
+not — everything to that point was aggregate statistics. Dumping six jets found a
+bug immediately.
+
+### The bug
+The C/A root is its own sibling (`sib[root] = root`), so `dR = 0` and therefore
+`ktn = 0` **at the root** — which passes *any* `kt_cut`. The `~at_root` guard tested
+`parent == cur`, true only once already *at* the root, so a particle took the final
+step *into* the root before the guard fired. Every particle whose path held no hard
+splitting climbed to the top and reported **the whole jet** as its subjet.
+
+Symptom in the per-jet dump: "subjets" with 1–3 constituents carrying 99.8% of the
+jet pT at masses of 127–153 GeV. A single particle is massless; that is the jet.
+
+**Fix** (`utils/flashjet_subjet_features.py`, backup `.bak_rootbug`): also stop when
+the *parent* is the root, so the top-level splitting always separates subjets.
+
+```python
+grandparent = torch.gather(par, 1, parent.clamp(0, M - 1))
+parent_is_root = grandparent == parent
+step = alive & ~at_root & ~parent_is_root & (kt_par <= kt_cut)
+```
+
+| | before | after |
+|---|---|---|
+| constituents whose subjet is the whole jet | **18.5%** | **0.0%** |
+| mass of a 1-constituent subjet | 130–150 GeV | 0.099 GeV (max 0.94) |
+| mean group size | 1.00 (rule A) | **7.63** |
+| subjets per jet | — | 6.21 |
+
+Residual, and **not** a bug: 8.2% of constituents sit in a subjet carrying >90% of the
+jet pT. Median pT-fraction sum per jet is 1.010 (a correct partition); the mean of
+1.329 comes from nested subjets in soft cascades, inherent to "climb until hard
+splitting".
+
+### Retraction 1 — the W-mass claim
+**"Tbqq's leading subjet at 85–96 GeV = the W mass" was an artifact of the bug.**
+Corrected leading-subjet mass, median [mean]:
+
+| Hcc | Hgg | Tbqq | Zqq | Hqql | QCD | Hbb | Wqq |
+|---|---|---|---|---|---|---|---|
+| 34.0 | 33.6 | **31.4** | 24.2 | 21.3 | 18.7 | 17.2 | **15.7** |
+
+Wqq — where a W peak should be clearest — is *lower* than Tbqq. Tbqq keeps a genuine
+high-mass shoulder out to ~150 GeV that QCD lacks, but it is broad and it is not a W
+peak. Subjet multiplicity also fails to separate in the expected direction
+(Tbqq 4.86 vs QCD 5.18, Wqq 7.00). **Do not use the W-mass line.**
+
+### Retraction 2 — the probe got worse, not better
+I speculated the corrected R² might come out *lower* (whole-jet mass being easier to
+recover). Backwards. Re-run on corrected subjets, 1,536 jets:
+
+| model | buggy | **corrected** |
+|---|---|---|
+| per-particle MLP | 0.052 | **0.171** |
+| DeepSets (pooled ctx) | — | **0.227** |
+| DeepSets (+relative) | 0.108 | **0.232** |
+| control (a literal ParT input column) | 0.95 | 0.95 |
+
+A set model with full access to all 128 constituents recovers **~a quarter** of the
+variance in subjet mass. Still far from the 0.95 control, so not redundant — but a
+materially weaker claim than 0.11.
+
+### Seed noise — premise corrected by the user
+I had been citing ~1.3 points of run-to-run spread and arguing sub-1-point results
+were unresolvable. **The user's position: the seed does not much affect the converged
+endpoint.** Taken as a premise. That figure came from *matched-checkpoint* deltas
+mid-training (path transients), not from two identical runs to 1M, which I never
+measured. Consequence: **judge the arms at 1M on the converged value; ignore
+intermediate checkpoint deltas.** The 3-seeds-at-400k recommendation is withdrawn.
+
+### Status
+- **9265170** subjet 1M — held during the fix, **released 09:55**, idle. Runs from the
+  working copy, so it picks up the fix; the run script's `N_SUBJET_FEATURES == 3` and
+  `KT_CUT == 20.0` guards confirm at start.
+- **9259275** CA5 — 640k, val 85.67, best 85.71 @ 600k. ETA ~14:20.
+- **Baseline (complete)**: final **85.95**, best **86.23 @ 980k**. This is the number
+  to beat at 1M.
+- `utils/flashjet_subjet_features.py` is still **untracked** in b-hive.
+
+### Visualisations
+- Subjet walk diagnostics — https://claude.ai/code/artifact/ce277802-f20c-4494-abcf-6007936c8b09
+- C/A tree, old vs new node choice — https://claude.ai/code/artifact/e0d41b9c-a997-40f5-b484-154711ae005e
+
+### Method note
+Aggregate statistics hid this for weeks; six individual jets exposed it in one look.
+Every correction today came from inspecting something concrete rather than reasoning
+about it. Dump individual examples *before* trusting a distribution.
