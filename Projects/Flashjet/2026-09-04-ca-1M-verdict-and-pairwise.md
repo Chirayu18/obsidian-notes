@@ -70,11 +70,27 @@ only the code path had been checked). `~/cawork/validate_ca_values.py`.
    columns are exactly 0.0 — numerically identical to the padding filling the
    other ~66% of slots. Of 128 slots: ~85 padding zeros, ~10 "real but zero",
    only ~33 carrying information.
-2. **Average group size is ~1.3 particles per branch point.** 33.5 particles
-   with a branch point spread over 25.4 *distinct* branch points. The whole
-   premise was "particles from the same prong share a branch point, giving
-   attention a grouping signal" — in practice it is close to a unique
-   per-particle label, the degenerate case.
+2. **Group size is exactly 1.00 — there is NO grouping at all.** (An earlier
+   pass reported ~1.3; that was an artifact of comparing rounded float triples,
+   which collide by chance. Direct measurement of `bp_node` gives
+   `n_unique_bp == n_with_bp` in every jet.)
+
+   **Mechanism, traced leaf by leaf:** nearly every constituent is the *softer
+   child at its very first merge* —
+   ```
+   leaf 3 : 3->54S    leaf 4 : 4->40S
+   leaf 5 : 5->55S    leaf 7 : 7->43S
+   ```
+   In a C/A tree a single particle almost always merges into something larger
+   than itself, so "am I the softer child?" is true immediately. The walk
+   terminates at that particle's *own* first merge node, which is unique to it
+   by construction. Two particles can never share one. Recording the parent
+   (merge node) instead of the child does **not** help — still 1.00.
+
+   The design assumed the walk would climb several levels and land on a shared
+   prong-level node. **It never climbs at all.** The feature therefore never
+   encoded "these were emitted together" — in either the per-particle or the
+   pairwise formulation.
 
 The ascending walk terminates at the *first* soft-side node, which is usually
 specific to that one particle rather than shared across a prong. That is the
@@ -119,9 +135,19 @@ is **added to the attention logits of every block**.
 (ln kt, ln z, ln Δ, ln m²) to 6:
 
 - **`share_bp`** — 1.0 if i and j merge into the harder core at the same C/A
-  branch point. Exact.
-- **`lnkt_pair`** — ln k_T at the node where the two separate. Continuous "how
-  late did these split" scalar; degrades gracefully where `share_bp` is sparse.
+  branch point. **MEASURED IDENTICALLY ZERO** (see the group-size finding
+  above): with group size 1.00 no pair ever shares a branch point, so this
+  channel is a constant-zero input. Dead as designed.
+- **`lnkt_pair`** — ln k_T at the node where the two separate. **This one is
+  fine.** Correlation against the paper's existing pairwise features is modest,
+  so it is not redundant:
+
+  | vs | r |
+  |---|---|
+  | `paper_lnkt` | +0.29 |
+  | `paper_lndelta` | +0.28 |
+  | `paper_lnm2` | −0.21 |
+  | `paper_lnz` | −0.18 |
 
 `utils/models/particletransformer_ca_pair.py` —
 `ParticleTransformer_CAPair_JetClass`, subclasses the paper model.
@@ -132,6 +158,23 @@ Only +132 params (the two extra channels into `pair_embed`'s BatchNorm and first
 Conv1d). C/A enters *only* through the attention bias.
 
 Smoke test passed on real data (20 iters, `Normal termination`, luigi clean).
+
+**The 1M CAPair run (cluster 9265165) was submitted and then KILLED while still
+idle**, on discovering `share_bp` is constant zero — half its new signal was
+dead, so it was not worth 37 GPU-hours. No GPU time was spent.
+
+## The real fix (not yet implemented)
+
+Stop terminating the ascending walk at the first soft-side node. Climb until
+reaching a node with actual substructure — e.g. the first ancestor whose
+**softer child contains ≥2 constituents**, or a k_T / mass threshold. That
+yields genuine prong-level nodes shared by multiple particles, which is what
+both formulations assumed all along.
+
+Testable in minutes on CPU: `flashjet.cluster(..., backend="auto")` falls
+through to the pure-torch backend with no CUDA, so the whole measurement runs
+on an lxplus login node — no GPU, no queue. Harness:
+`~/cawork/measure_pair_sparsity.py`.
 
 ## Two bugs caught before they cost anything
 
