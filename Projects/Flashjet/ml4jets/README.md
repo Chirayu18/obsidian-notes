@@ -304,3 +304,45 @@ claims were removed) with why the *grid* matters and the two independent
 references.
 
 40 slides, zero overfull boxes.
+
+---
+
+## Fifth pass — the jet-by-jet closure, on ATLAS (2026-09-04)
+
+**Yes, the CMS-style jet-by-jet closure is reproducible on ATLAS data.** The
+earlier note that it was not has been superseded.
+
+Two closures, `make_jetbyjet.py` (4000 jets):
+
+| closure | reference | result |
+|---|---|---|
+| reclustered \(p_T\) | stored `fjet_pt` | median **0.8711**, IQR **0.0133** |
+| \(k_t\) splitting scale \(\sqrt{d_{12}}\) | stored `fjet_Split12` | median **1.0000**, IQR **0.0000**, **99.9 %** within 1 % |
+
+The second is the strong one and the direct analogue of the CMS `msoftdrop`
+closure: **ATLAS computed `Split12` with FastJet and stored it**, and we recover
+it by reading the merge history — no reclustering, no second pass. The perfect
+delta at 1.0000 is what a closure should look like.
+
+The \(p_T\) ratio is deliberately **not** claimed as agreement: 0.87 is the
+stored jet's calibration, applied after clustering. The tight 0.013 spread is the
+real content — the *shape* closes even though the scale is offset.
+
+**On the groomed mass.** The top-tagging file has no groomed mass, so a direct
+`m_SD` analogue is not available there. The 2020 Jet Reconstruction dataset does
+ship `RecoJets_R10_Trimmed_m` (ATLAS trimming, not soft drop), which would give a
+groomed-mass closure against a *different* grooming algorithm — worth doing if a
+groomed-mass slide is wanted, but it is not the same observable.
+
+### Slide moved to backup
+
+**Clustering geometry** (Lund triangle + β-family) → `Backup --- more toy
+closures`. With the jet-by-jet ATLAS closure now in the main line, two toy-only
+slides in a row was one too many.
+
+### Placeholders
+
+Two blank **ParT training** placeholders added before the Summary, under their
+own section divider — `[ to be filled in ]`, nothing else.
+
+44 slides, zero overfull boxes.

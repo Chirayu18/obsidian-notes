@@ -473,22 +473,24 @@ mass peak moves up.}
 test the decoders, not an event generator.}
 \end{frame}
 
-\begin{frame}{Clustering geometry \hfill \toyB}
+\begin{frame}{Jet by jet, against ATLAS's own stored values \hfill \realC}
+\begin{center}
+\includegraphics[width=0.92\linewidth]{fig/atlas_jetbyjet.png}
+\end{center}
+\vspace{-0.4em}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\includegraphics[width=0.95\linewidth]{fig/lund_triangle.png}\\
-\smallnote{The Lund plane is populated \textbf{uniformly inside the kinematic
-triangle} --- the leading-log expectation.}
+\smallnote{\textbf{Left.} Reclustering the stored constituents recovers the
+stored jet with a \textbf{0.013 spread}. The 0.87 offset is the stored jet's
+\textbf{calibration}, applied after clustering --- it is present before we touch
+anything.}
 \end{column}
 \begin{column}{0.5\textwidth}
-\includegraphics[width=0.95\linewidth]{fig/qcd_beta_family.png}\\
-\smallnote{The soft-drop $\beta$-family orders as predicted: larger $\beta$
-grooms less.}
+\smallnote{\textbf{Right.} The $k_t$ splitting scale $\sqrt{d_{12}}$ against the
+value \textbf{ATLAS computed with FastJet} and stored: median \textbf{1.0000},
+\textbf{99.9\,\%} within 1\,\%. We read ours straight off the merge history.}
 \end{column}
 \end{columns}
-\smallskip
-\smallnote{Independent NumPy tree-walks pin every decoder, and the $d$-channel of
-the Lund output ties \emph{exactly} to the splitting scales computed separately.}
 \end{frame}
 
 \begin{frame}{Same jets as FastJet --- the whole grid \hfill \realC}
@@ -640,6 +642,31 @@ multiplicity.
 \end{block}
 \end{column}
 \end{columns}
+\end{frame}
+
+% ============================================================
+\section{Downstream: the clustering tree as tagger input}
+
+\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} ParT training --- setup}
+\vfill
+\begin{center}
+{\Large\color{fjorange}\textbf{[ to be filled in ]}}
+\medskip
+
+{\color{fjgray}ParT training setup}
+\end{center}
+\vfill
+\end{frame}
+
+\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} ParT training --- result}
+\vfill
+\begin{center}
+{\Large\color{fjorange}\textbf{[ to be filled in ]}}
+\medskip
+
+{\color{fjgray}ParT training result}
+\end{center}
+\vfill
 \end{frame}
 
 % ============================================================
@@ -851,6 +878,24 @@ and register budget --- \textbf{not} from the algorithm.
 GPU even once, while DRAM throughput is 0.02\,\% --- this is parallelism
 starvation, not a bandwidth problem. Both are configuration inherited from
 smaller GPUs, not properties of the algorithm.}
+\end{frame}
+
+\begin{frame}{Backup --- more toy closures \hfill \toyB}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/lund_triangle.png}\\
+\smallnote{The Lund plane is populated \textbf{uniformly inside the kinematic
+triangle} --- the leading-log expectation.}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/qcd_beta_family.png}\\
+\smallnote{The soft-drop $\beta$-family orders as predicted: larger $\beta$
+grooms less.}
+\end{column}
+\end{columns}
+\smallskip
+\smallnote{Independent NumPy tree-walks pin every decoder, and the $d$-channel of
+the Lund output ties \emph{exactly} to the splitting scales computed separately.}
 \end{frame}
 
 \begin{frame}[fragile]{Backup --- Input A: the toy fat jets}
