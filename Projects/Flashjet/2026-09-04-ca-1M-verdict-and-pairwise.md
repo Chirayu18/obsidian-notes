@@ -355,3 +355,83 @@ test, arXiv:2202.03772) on a genuine like-for-like basis.
 From 480k → 1M the baseline gained only **+0.0005 mean AUC** — per-class
 discrimination is near-saturated by 480k, so matched comparisons there are
 already meaningful.
+
+
+## Direction 2: SUBJET-level features — the one encoding that passes
+
+Reasoning after the three failures: every encoding so far reduced the tree to
+something evaluated on ONE pair or ONE particle, and a pair-local summary is
+measurably a near-function of that pair's own kinematics. A **subjet invariant
+mass is a sum over a SET the model must first identify** — a different kind of
+object, not obviously a function of any pair's Lund variables.
+
+Construction: decluster with a hard k_T cut; each constituent's subjet is the
+node it reaches before the next merge would exceed the cut. Per-particle
+targets are then broadcast (`sj_lnm`, `sj_lnptfrac`, `sj_nconst`).
+
+### Redundancy probe — predict the target from ParT's own per-particle inputs
+
+Inputs: the particle's 19 token features + pooled n_const + ln jet p_T.
+A **control** (the particle's own ln p_T fraction, a literal input column)
+calibrates what "redundant" looks like on this data.
+
+| target | linear R² | MLP R² |
+|---|---|---|
+| **CONTROL** own ln p_T frac | 1.0000 | **0.9461** |
+| **subjet ln mass** | 0.0443 | **0.0519** |
+| subjet ln p_T frac | 0.1924 | 0.1904 |
+| subjet n_const | 0.0498 | 0.0642 |
+
+Subjet mass at R² = 0.05 against a control of 0.95: essentially unrecoverable.
+Contrast `share_bp` at AUC 0.87.
+
+### k_T-cut scan — the result is robust, not tuned
+
+| k_T cut | subjets/jet | subjet ln m (MLP R²) | corr(lead m, n_const) |
+|---|---|---|---|
+| 5 GeV | 8.17 | 0.0507 | +0.14 |
+| 10 GeV | 6.24 | 0.0519 | +0.19 |
+| **20 GeV** | **5.06** | **0.0509** | **+0.23** |
+| 40 GeV | 3.73 | 0.0391 | +0.27 |
+
+R² sits at 0.04–0.05 at *every* cut. Multiplicity correlation rises with the
+cut but stays far below the +0.92 that killed `groups/jet`.
+
+### Class separation survives the multiplicity control
+
+Lead-subjet mass at fixed n_const, k_T = 20 GeV:
+
+| n_const bin | spread | high | low |
+|---|---|---|---|
+| [0,25) | 44.6 GeV | Tbqq 85.5 | Hbb 40.9 |
+| [25,35) | 37.7 GeV | Tbqq 91.6 | QCD 53.9 |
+| [35,45) | 42.7 GeV | Tbqq 96.2 | Hbb 53.5 |
+| [45,200) | 43.8 GeV | Hgg 101.9 | Tbqq 58.1 |
+
+**Tbqq tops three of four bins**, at 85–96 GeV — a hadronic top's leading
+subjet carrying the W mass is exactly the expected physics, and it sharpens as
+the cut hardens (85–112 GeV at 40 GeV). Unexplained: the highest-multiplicity
+bin inverts at every cut (Hgg/QCD above Tbqq).
+
+### Scorecard vs the killed encodings
+
+| criterion | share_bp (killed) | subjet mass |
+|---|---|---|
+| recoverable by MLP? | AUC 0.87 | **R² 0.05** |
+| multiplicity proxy? | corr +0.92 | **corr +0.19** |
+| robust to threshold? | n/a | **yes, 4 cuts** |
+
+### Caveats before spending compute
+
+- The probe is **per-particle**. A set model — which ParT's attention
+  effectively is — could recover subjet mass better than a per-particle MLP.
+  This is the honest limit of what has been tested, and it is the same class of
+  argument that was wrong twice tonight.
+- The measured form is the **per-particle broadcast** (3 columns). The
+  subjet-*token* architecture sketched earlier is a different, unvalidated
+  configuration.
+- One seed per arm still cannot resolve a sub-1-point effect. 3 seeds at 400k
+  is the right configuration, not 1 seed at 1M.
+
+Scripts: `/tmp/check_subjet.py` (probe + scan), `~/cawork/` for the earlier
+harnesses.
