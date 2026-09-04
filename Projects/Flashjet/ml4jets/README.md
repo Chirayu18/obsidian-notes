@@ -8,7 +8,7 @@ source: lxplus
 # ML4Jets 2026 deck — flashjet
 
 LaTeX/beamer deck for **ML4Jets 2026** (Vienna, 14–18 Sep 2026).
-Source: `flashjet-ml4jets.tex` → `flashjet-ml4jets.pdf` (**30 slides**, 16:9, Madrid theme).
+Source: `flashjet-ml4jets.tex` → `flashjet-ml4jets.pdf` (**32 slides**, 16:9, Madrid theme).
 
 ```bash
 cd Projects/Flashjet/ml4jets
@@ -64,7 +64,7 @@ then **lead section dividers**, one claim per slide. Theme is **Madrid**
 | § | slides | content |
 |---|---|---|
 | title + **outline** | 1–2 | `\tableofcontents` |
-| **What flashjet is** | 3–12 | the CPU-in-a-GPU-pipeline problem; **how sequential recombination works** (3-panel figure); **one exponent → three algorithms**; returns the tree; the API; what's implemented + prototype status; **F1**, **F2**, **F3** one slide each |
+| **Jet clustering, and flashjet** | 3–14 | **what jet clustering is** (general intro — ML is one application among reconstruction/analysis/substructure, not the headline); the GPU opportunity; **how sequential recombination works** (3-panel figure); **one exponent → three algorithms**; returns the tree; the API; what's implemented + prototype status; **F1**, **F2**, **F3** one slide each, plus a **real-jet C/A tree gallery** |
 | **Correctness** | 13–17 | analytic closures; clustering geometry; 150/150 vs FastJet; closure vs the experiment's own jets |
 | **Speed** | 18–23 | benchmark method; time/jet; speedup vs multiplicity; R-independence; the numbers |
 | **Conclusions** | 24–26 | summary, thank-you |
@@ -84,6 +84,23 @@ an illustrative plot on the right.
 | F1 exclusive subjets | `kt_observables.png` | $\sqrt{d_{12}}$ and subjet $z$ separating toy W-like from QCD-like |
 | F2 soft drop | `softdrop_walk.png` | **generated for this deck** — ungroomed vs groomed mass, plus the declustering walk on the C/A tree |
 | F3 Lund coordinates | `lund_plane.png` | QCD soft-collinear fill vs the localised W hard splitting (star = prediction) |
+| tree gallery | `tree_gallery.png` | **real ATLAS jets** — QCD staircase (n_drop 8, mass 80→1 GeV) vs two boosted tops that stop immediately (n_drop 0, at 80 and 170 GeV) |
+
+### The tree gallery
+
+Drawn in the style of the C/A-tree artifact: **root at top, constituents at the
+bottom**, thin uniform grey edges, small filled leaf dots, and hollow rings
+marking the soft-drop spine / dropped prongs / stopping node.
+
+Built by `make_tree_gallery.py`, which runs **on lxplus** (it reads the ATLAS
+Top Tagging HDF5 at `/tmp/cgupta_toptag_test.h5`), clusters real jets with C/A
+and runs the soft-drop walk on the resulting tree.
+
+The old deck's tree gallery could **not** be reused: those jets are CMS
+`GenPart`-verified. A toy version was tried first and rejected — the toy did not
+reproduce the staircase-vs-short-spine contrast (it gave n_drop 0 for both the W
+and top cases), so the captions would have overclaimed. The real jets show it
+cleanly.
 
 Two figures were **generated for this deck** by `make_illustrations.py` (pure
 toy/analytic, no experiment data):

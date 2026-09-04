@@ -72,31 +72,68 @@
 \end{frame}
 
 % ============================================================
-\section{What flashjet is}
+\section{Jet clustering, and flashjet}
 
-\begin{frame}{Clustering is the CPU step in a GPU pipeline}
+\begin{frame}{What jet clustering is, and why it is everywhere}
+\begin{columns}[T]
+\begin{column}{0.58\textwidth}
+A quark or gluon produced in a collision is never seen directly: it radiates and
+hadronises into a \textbf{spray of order 10--100 particles}. A \emph{jet
+algorithm} groups those particles back together so the spray can be treated as
+one object with a momentum and a mass.
+\medskip
+
+The LHC standard is the \textbf{generalised-$k_t$} family --- \akt, $k_t$,
+Cambridge--Aachen --- implemented in \textbf{FastJet}. It is
+\textbf{sequential recombination}: repeatedly merge the closest pair under a
+distance measure, until nothing is left.
+\medskip
+
+\smallnote{Essentially every LHC measurement that involves hadrons runs this
+step, often several times per event, and again for every systematic variation.}
+\end{column}
+\begin{column}{0.42\textwidth}
+\begin{block}{Where the cost shows up}
+\begin{itemize}
+  \item \textbf{reconstruction} --- every event, every reprocessing
+  \item \textbf{analysis} --- reclustering under many variations
+  \item \textbf{substructure} --- a second pass to groom or find subjets
+  \item \textbf{ML pipelines} --- jets rebuilt on every pass over the data
+\end{itemize}
+\end{block}
+\smallnote{The algorithms are inherently sequential and have always run on the
+\textbf{CPU}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The opportunity: the data is already on the GPU}
 \begin{columns}[T]
 \begin{column}{0.56\textwidth}
-Jet clustering sits on the critical path of nearly every jet-level ML pipeline
---- and is almost always done \textbf{off the accelerator}.
+Clustering is a \textbf{CPU step}, and increasingly it is the \emph{only} CPU
+step in a workflow that otherwise lives on an accelerator. Four-momenta are
+copied to the host, clustered, and copied back.
 \medskip
 
-Four-momenta are copied to the host, clustered, copied back.
-\medskip
-
-That round trip dominates when
+That round trip is paid over and over when
 \begin{itemize}
-  \item training revisits the same events for \textbf{many epochs},
-  \item jets are \textbf{reclustered} under many variations,
+  \item jets are \textbf{reclustered} under many systematic variations,
+  \item the same events are revisited \textbf{many times} --- as in training a
+        network,
   \item clustering must sit \textbf{inside} a differentiable pipeline.
 \end{itemize}
+\medskip
+
+\smallnote{It is also simply a large fraction of reconstruction time, entirely
+independent of any machine learning.}
 \end{column}
 \begin{column}{0.44\textwidth}
 \begin{block}{flashjet}
-Implements \akt, $k_t$ and C/A \textbf{natively on the GPU}.
+Implements \akt, $k_t$ and Cambridge--Aachen \textbf{natively on the GPU}.
 \smallskip
 
-Data never leaves device memory during clustering.
+A batch of jets or events is clustered in device memory, and the data never
+leaves it.
 \end{block}
 \smallnote{Triton/PyTorch. One entry point; runs unchanged on CPU and GPU.}
 \end{column}
@@ -287,6 +324,20 @@ constituents again, so grooming is essentially free once clustered.}
 \end{frame}
 
 % ------------------------------------------------------------
+\begin{frame}{What the tree looks like on real jets}
+\begin{center}
+\includegraphics[width=0.97\linewidth]{fig/tree_gallery.png}
+\end{center}
+\vspace{-0.5em}
+\smallnote{Three jets from ATLAS Open Data, clustered with C/A and groomed with
+soft drop ($z_{cut}=0.1$, $\beta=0$). \textbf{Left:} a light-quark/gluon jet is a
+long \emph{staircase} --- there is no balanced split to stop on, so prong after
+prong is stripped and the mass collapses to nothing. \textbf{Centre and right:}
+boosted top jets stop \emph{immediately}, because the very first split is already
+hard and balanced. \textbf{The number of drops is itself a discriminant} --- and
+it is read straight off the stored tree, at no extra cost.}
+\end{frame}
+
 \begin{frame}{F3 --- primary Lund coordinates from the C/A history}
 \begin{columns}[T]
 \begin{column}{0.40\textwidth}

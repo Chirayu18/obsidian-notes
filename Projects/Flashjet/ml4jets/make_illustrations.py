@@ -93,24 +93,40 @@ ax.set_xlabel("jet mass [GeV]"); ax.set_ylabel("normalized"); ax.set_xlim(0,260)
 ax.set_title("F2: grooming removes soft wide-angle radiation",fontsize=11.5,weight="bold")
 ax.legend(fontsize=9,loc="upper right"); ax.grid(alpha=.25)
 
-ax=axes[1]; ax.axis("off"); ax.set_xlim(0,10); ax.set_ylim(0,10); ax.set_aspect("equal")
-ax.text(5,9.5,"the soft-drop walk on the C/A tree",ha="center",fontsize=12,weight="bold")
-nodes={"j":(5,8.2),"a":(3.2,6.4),"b":(7.4,6.4),"c":(1.8,4.6),"d":(4.4,4.6),
-       "e":(3.4,2.8),"f":(5.6,2.8)}
-for u,v in [("j","a"),("j","b"),("a","c"),("a","d"),("d","e"),("d","f")]:
-    ax.plot([nodes[u][0],nodes[v][0]],[nodes[u][1],nodes[v][1]],"-",color="0.55",lw=1.7,zorder=1)
-drop={"b","c"}
-for k,(x,yy) in nodes.items():
-    ax.add_patch(Circle((x,yy),.36,fc=("#d62728" if k in drop else "#2ca02c"),
-                        ec="k",lw=.9,zorder=3))
-ax.annotate("",xy=nodes["d"],xytext=nodes["j"],
-            arrowprops=dict(arrowstyle="-|>",lw=2.4,color="#1f77b4",shrinkA=13,shrinkB=13))
-ax.text(5.7,7.0,"follow the\nharder prong",fontsize=9.5,color="#1f77b4")
-ax.plot([],[],"o",color="#2ca02c",ms=8,label="kept")
-ax.plot([],[],"o",color="#d62728",ms=8,label=r"dropped (fails $z>z_{cut}$)")
-ax.legend(loc="upper left",bbox_to_anchor=(-0.04,0.22),fontsize=9,frameon=True)
-ax.text(5.0,0.55,r"stop when $z=\dfrac{\min(p_{T1},p_{T2})}{p_{T1}+p_{T2}}"
+ax=axes[1]; ax.axis("off"); ax.set_xlim(0,10); ax.set_ylim(0,10)
+ax.text(5,9.6,"the soft-drop walk on the C/A tree",ha="center",fontsize=11.5,weight="bold",
+        color="#1a1f27")
+TREE="#9aa3b0"; KEPT="#3f7d54"; DROP="#b04434"; STOP="#b8791c"
+# root at top, leaves at bottom - same convention as the real-jet gallery
+nodes={"root":(5.0,8.3),"s1":(3.6,6.6),"d1":(8.0,6.6),"s2":(2.6,4.9),"d2":(5.0,4.9),
+       "s3":(1.6,3.2),"l1":(3.6,3.2),"l2":(4.2,3.2),"l3":(5.8,3.2),
+       "l4":(0.9,1.5),"l5":(2.3,1.5)}
+edges=[("root","s1"),("root","d1"),("s1","s2"),("s1","d2"),("s2","s3"),("s2","l1"),
+       ("d2","l2"),("d2","l3"),("s3","l4"),("s3","l5")]
+for u,v in edges:
+    ax.plot([nodes[u][0],nodes[v][0]],[nodes[u][1],nodes[v][1]],"-",
+            color=TREE,lw=1.1,alpha=.8,zorder=1)
+leaf={"l1","l2","l3","l4","l5"}
+for k in leaf:
+    ax.plot(*nodes[k],"o",ms=4.2,mfc=TREE,mec="none",zorder=2)
+for k in ("root","s1","s2","s3"):
+    ax.plot(*nodes[k],"o",ms=8.5,mfc="none",mec=KEPT,mew=2.1,zorder=4)
+for k in ("d1","d2"):
+    ax.plot(*nodes[k],"o",ms=7.2,mfc="none",mec=DROP,mew=1.9,zorder=4)
+ax.plot(*nodes["s3"],"o",ms=13,mfc="none",mec=STOP,mew=2.7,zorder=5)
+ax.annotate("",xy=(nodes["s2"][0]+.25,nodes["s2"][1]+.25),
+            xytext=(nodes["root"][0]-.15,nodes["root"][1]-.25),
+            arrowprops=dict(arrowstyle="-|>",lw=2.0,color="#4f7fa8",
+                            shrinkA=8,shrinkB=8,connectionstyle="arc3,rad=0.18"))
+ax.text(6.15,7.4,"follow the\nharder prong",fontsize=9,color="#4f7fa8")
+from matplotlib.lines import Line2D
+h=[Line2D([],[],marker="o",ls="",mfc="none",mec=KEPT,mew=2.0,ms=8.5,label="kept (spine)"),
+   Line2D([],[],marker="o",ls="",mfc="none",mec=DROP,mew=1.8,ms=7.5,
+          label=r"dropped ($z<z_{cut}$)"),
+   Line2D([],[],marker="o",ls="",mfc="none",mec=STOP,mew=2.5,ms=11,label="stops here")]
+ax.legend(handles=h,loc="upper right",bbox_to_anchor=(1.02,0.30),fontsize=8.8,frameon=False)
+ax.text(5.0,0.35,r"stop when $z=\dfrac{\min(p_{T1},p_{T2})}{p_{T1}+p_{T2}}"
                  r">z_{cut}\left(\dfrac{\Delta R}{R}\right)^{\beta}$",
-        fontsize=10.5,ha="center",bbox=dict(fc="w",ec="0.7"))
+        fontsize=10,ha="center",bbox=dict(fc="w",ec="0.75"))
 fig.tight_layout()
 fig.savefig(f"{OUT}/softdrop_walk.png",dpi=160); print("softdrop_walk ok")
