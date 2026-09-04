@@ -27,6 +27,8 @@
 \definecolor{fjred}{HTML}{B00020}
 \definecolor{fjgray}{HTML}{555555}
 \definecolor{fjorange}{HTML}{EA580C}
+\definecolor{fjblue}{HTML}{1D4ED8}
+\definecolor{fjgreen}{HTML}{16A34A}
 
 % Madrid, recoloured to the flashjet red
 \setbeamercolor{structure}{fg=fjred}
@@ -44,6 +46,19 @@
 \renewcommand{\arraystretch}{1.2}
 \newcommand{\smallnote}[1]{{\footnotesize\color{fjgray} #1}}
 \newcommand{\akt}{anti-$k_t$}
+% input provenance tags (following the substructure deck's A/B/C convention)
+\newcommand{\inputtag}[2]{{\footnotesize\textbf{\textcolor{#1}{#2}}}}
+% in-body tags (dark on white)
+\newcommand{\toyAbody}{\inputtag{fjblue}{Input A --- toy fat jets}}
+\newcommand{\toyBbody}{\inputtag{fjblue}{Input B --- toy parton shower}}
+\newcommand{\realCbody}{\inputtag{fjgreen}{Input C --- ATLAS Open Data}}
+% title-bar tags: white-on-red, so they must be light
+\newcommand{\toyA}{{\footnotesize\normalfont\textcolor{white}{[toy A]}}}
+\newcommand{\toyB}{{\footnotesize\normalfont\textcolor{white}{[toy B]}}}
+\newcommand{\realC}{{\footnotesize\normalfont\textcolor{white}{[ATLAS Open Data]}}}
+\newcommand{\toyAtxt}{\textcolor{fjblue}{toy A}}
+\newcommand{\toyBtxt}{\textcolor{fjblue}{toy B}}
+\newcommand{\realCtxt}{\textcolor{fjgreen}{real C}}
 
 % section divider slides
 \AtBeginSection[]{%
@@ -313,7 +328,7 @@ identical, negligible cost.}
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{F1 --- exclusive subjets from the $k_t$ history}
+\begin{frame}{F1 --- exclusive subjets from the $k_t$ history \hfill \toyA}
 \begin{columns}[T]
 \begin{column}{0.42\textwidth}
 \textbf{What it does.} Undo the last merges of the sequence to expose exactly
@@ -361,7 +376,7 @@ constituents again, so grooming is essentially free once clustered.}
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{What the tree looks like on real jets}
+\begin{frame}{What the tree looks like on real jets \hfill \realC}
 \begin{center}
 \includegraphics[width=0.97\linewidth]{fig/tree_gallery.png}
 \end{center}
@@ -383,7 +398,7 @@ first split, because it is already hard and balanced --- so the mass survives.}
 off the stored tree, at no extra cost.}
 \end{frame}
 
-\begin{frame}{F3 --- primary Lund coordinates from the C/A history}
+\begin{frame}{F3 --- primary Lund coordinates \hfill \toyA}
 \begin{center}
 \includegraphics[width=0.80\linewidth]{fig/lund_plane.png}
 \end{center}
@@ -411,7 +426,36 @@ scales computed independently.}
 % ============================================================
 \section{Correctness}
 
-\begin{frame}{The history is right: closures against analytic predictions}
+\begin{frame}{Two kinds of validation}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{block}{First: toys, where truth is known}
+\small On generated inputs the \emph{answer} is known analytically --- so any
+observable landing off the predicted curve is a real bug, with nothing to hide
+behind.
+\end{block}
+\smallskip
+\toyAbody{} --- QCD-like and W-like fat jets\\
+\toyBbody{} --- leading-log parton shower
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Then: real data, against FastJet}
+\small On detector-level jets there is no analytic answer --- so the reference is
+\textbf{FastJet on the same events}, and the experiment's own reconstructed jets.
+\end{block}
+\smallskip
+\realCbody{} --- large-$R$ jets and full events
+\end{column}
+\end{columns}
+\vspace{0.8em}
+\begin{block}{}
+\small The order matters: \textbf{toys first} pins the algorithm against a known
+answer; \textbf{real data second} shows it survives detector-level input. A
+failure at either stage means something different.
+\end{block}
+\end{frame}
+
+\begin{frame}{Closures against analytic predictions \hfill \toyB}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=0.93\linewidth]{fig/zg_distribution.png}\\
@@ -429,7 +473,7 @@ mass peak moves up.}
 test the decoders, not an event generator.}
 \end{frame}
 
-\begin{frame}{Clustering geometry}
+\begin{frame}{Clustering geometry \hfill \toyB}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=0.95\linewidth]{fig/lund_triangle.png}\\
@@ -447,7 +491,7 @@ grooms less.}
 the Lund output ties \emph{exactly} to the splitting scales computed separately.}
 \end{frame}
 
-\begin{frame}{Same jets as FastJet --- across the whole grid}
+\begin{frame}{Same jets as FastJet --- the whole grid \hfill \realC}
 \textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins $\times$ 2
 samples}, 20\,000 jets per bin, on ATLAS Open Data.
 
@@ -458,15 +502,33 @@ samples}, 20\,000 jets per bin, on ATLAS Open Data.
 \midrule
 number of jets found & \textbf{100.000\,\%} at every one of 150 points\\
 leading-jet $p_T$ within $10^{-4}$ & 1.0000 at 148/150 points\\
-median relative difference & $\sim 7\times 10^{-8}$\\
+median relative difference & $\sim 7\times 10^{-8}$ \smallnote{(float32 precision)}\\
 \bottomrule
 \end{tabular}
 \end{center}
+\vspace{0.8em}
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{block}{The grid is the point}
+\small A single working point proves little. Agreement holds across
+\textbf{all three algorithms}, \textbf{every radius} from 0.4 to 1.2, and
+\textbf{24 to 123} constituents per jet.
+\end{block}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Two independent references}
+\small The same events are clustered by \textbf{FastJet} for the jets, and every
+substructure decoder is separately pinned against an \textbf{independent NumPy
+tree-walk}.
+\end{block}
+\end{column}
+\end{columns}
 \medskip
 
 \end{frame}
 
-\begin{frame}{Same jets as the experiment}
+\begin{frame}{Same jets as the experiment \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.55\textwidth}
 A stronger test than agreeing with FastJet.
@@ -789,6 +851,96 @@ and register budget --- \textbf{not} from the algorithm.
 GPU even once, while DRAM throughput is 0.02\,\% --- this is parallelism
 starvation, not a bandwidth problem. Both are configuration inherited from
 smaller GPUs, not properties of the algorithm.}
+\end{frame}
+
+\begin{frame}[fragile]{Backup --- Input A: the toy fat jets}
+\textbf{Purpose.} QCD vs W is a \emph{known} truth, so any observable that fails
+to separate them --- or lands off the analytic curve --- is a real bug.
+\medskip
+
+Two single-fat-jet samples at $p_T\!\approx\!500$\,GeV, $R=0.8$:
+\begin{itemize}
+  \item \textbf{QCD-like}: one hard collinear core (92\,\% of $p_T$,
+        $\sigma_{y,\phi}\!=\!0.06$) $+$ soft wide-angle radiation
+        (8\,\%, $\sigma\!=\!0.30$)
+  \item \textbf{W-like}: two hard prongs with pair mass
+        $m=\sqrt{z(1-z)}\,p_T\,\Delta R = 80.4$\,GeV, $z\in[0.30,0.45]$, random
+        orientation, $+$ 6\,\% soft contamination
+\end{itemize}
+\smallskip
+
+Each ``spray'' is $n$ massive pions with exponential $p_T$ fractions:
+\begin{Verbatim}[fontsize=\scriptsize,frame=single,rulecolor=\color{fjgray}]
+frac = rng.exponential(1., n); frac /= frac.sum()
+pt   = pt_total * frac
+y, phi = rng.normal(y0, sigma, n), rng.normal(phi0, sigma, n)
+mt   = np.sqrt(M_PI**2 + pt**2)
+\end{Verbatim}
+\smallnote{1500 events per sample. flashjet has \textbf{no event generator} --- it
+clusters four-vectors; these toys live in the plot scripts, outside the library.}
+\end{frame}
+
+\begin{frame}{Backup --- Input B: the toy parton shower}
+A \textbf{primary, fixed-coupling, leading-log} shower: emissions sampled
+\textbf{uniformly in the Lund triangle} with density $\bar\alpha$ per unit
+$(\ln 1/\theta,\ \ln k_t)$ area, off a hard spine.
+\medskip
+
+\begin{center}
+$\theta = e^{-u}, \qquad k_t = e^{v}, \qquad z = \dfrac{k_t}{p_{T0}\,\theta}$
+\smallskip
+
+keep $v \le \ln(p_{T0}/2) - u$ \ \ (i.e.\ $z\le\tfrac12$), \ \ $k_t > k_t^{\min}$
+\end{center}
+\medskip
+
+\begin{block}{Why this is the right test}
+\small The generator's density is \emph{uniform in the triangle by construction},
+so the leading-log predictions --- the $1/z$ form of $z_g$, the $\beta$-ordering
+of the groomed mass --- are unambiguous. Landing on them tests the
+\textbf{decoders}, not the shower.
+\end{block}
+\medskip
+
+\textbf{Jet areas} use the anti-$k_t$-paper construction: one hard event plus a
+dense grid of \textbf{infinitely soft ghosts} ($p_T=10^{-8}$); the ghosts each
+algorithm sweeps up trace its catchment area.
+\smallskip
+
+\smallnote{$\bar\alpha = 0.25$, $p_{T0} = 1$\,TeV, $R = 0.4$, 20\,000 showers;
+fixed seed, fully re-runnable.}
+\end{frame}
+
+\begin{frame}{Backup --- the validation ladder}
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{rung} & \textbf{input} & \textbf{reference} & \textbf{result}\\
+\midrule
+unit tests & --- & independent NumPy tree-walks & 129 pass, incl.\ GPU paths\\
+\addlinespace
+\akt{} jet areas & \toyBtxt & the \akt{} paper's own construction & rigid cones,
+$\to\pi R^2$\\
+$k_t$ substructure & \toyAtxt & known 2-prong vs QCD truth & clean separation\\
+soft-drop $z_g$ & \toyBtxt & leading-log $1/z$ prediction & on the curve\\
+groomed mass vs $\beta$ & \toyBtxt & Soft Drop Figs.~3--4 & ordering reproduced\\
+Lund plane & \toyAtxt & primary-Lund construction & hard split where predicted\\
+\addlinespace
+jet-by-jet kinematics & \realCtxt & FastJet, same events & 150/150 points,
+100\,\% $n_{\rm jets}$\\
+full-event clustering & \realCtxt & the experiment's own jets & 100\,\% match,
+$\sim$600 clusters/ev\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\begin{block}{}
+\small \textbf{Each rung is closed against something independent} --- an
+analytic prediction, a separate NumPy implementation, or FastJet itself. No rung
+is validated against another part of flashjet.
+\end{block}
 \end{frame}
 
 \begin{frame}{Backup --- the datasets}

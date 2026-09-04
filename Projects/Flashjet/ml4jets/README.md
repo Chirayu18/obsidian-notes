@@ -269,3 +269,38 @@ labelled **H100**.
 slides.** The policy comment at the top of the `.tex` says the same.
 
 36 slides, zero overfull boxes.
+
+---
+
+## Fourth pass — aligned with the substructure deck (2026-09-04)
+
+Read the substructure deck's results section and adopted its conventions.
+
+**What that deck does that this one did not:**
+
+1. **Every correctness slide is labelled with its input.** That deck uses an
+   A/B/C taxonomy (toy fat jets / toy shower / real data) and tags each slide.
+   This deck now carries the same tags in the frame titles — `[toy A]`,
+   `[toy B]`, `[ATLAS Open Data]` — so an audience always knows whether a plot
+   is generated or measured.
+2. **Toys come first, real data second.** That ordering is deliberate: on toys
+   the answer is known analytically, so a miss is unambiguously a bug; on real
+   data the reference is FastJet. Added a **"Two kinds of validation"** slide
+   that states this explicitly before the closures.
+3. **The toys are documented.** That deck devotes slides to how each input was
+   generated. Added two backups with the actual specs:
+   - **Input A** — QCD-like (92 % collinear core, σ=0.06 + 8 % soft at σ=0.30)
+     and W-like (two prongs, m = √(z(1−z))·p_T·ΔR = 80.4 GeV, z ∈ [0.30,0.45]),
+     with the spray code
+   - **Input B** — primary fixed-coupling leading-log shower, uniform in the
+     Lund triangle, with the sampling relations and the ghost construction used
+     for jet areas (ᾱ = 0.25, p_T0 = 1 TeV, 20 000 showers)
+4. **A validation ladder backup**, matching that deck's summary table: each rung
+   with its input and its independent reference, making explicit that **no rung
+   is validated against another part of flashjet**.
+
+Also filled the whitespace left on the FastJet-agreement slide (after the two
+claims were removed) with why the *grid* matters and the two independent
+references.
+
+40 slides, zero overfull boxes.
