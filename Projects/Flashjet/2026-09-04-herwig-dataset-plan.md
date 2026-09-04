@@ -62,59 +62,95 @@ same convention as the Pythia set. The existing Pythia `JetClass_test_mod` is
 - `n_cpf_candidates: 128`
 - bins_pt: 18 edges 500..1000 ; bins_eta: 11 edges -2.5..2.51
 
-**TRAP — pt/eta reweighting.** `merge_datasets` reweights to `reference_flavour`
-using `histograms` computed *from the input files*. The Herwig set will get its OWN
-histogram, so the reweighting differs from Pythia's. For a transfer test this is
-probably what you want (each set internally balanced), but it means **the two test
-sets are not jet-for-jet matched**. State this, or investigate passing the Pythia
-histogram. Check `weights.json` in both after building.
+**~~TRAP~~ — pt/eta reweighting: RESOLVED, it does not matter.** Read
+`utils/dataset/merging.py` and `tasks/inference.py` to settle this:
+- `merge_datasets` only *writes a `weight` column* (`merged['weight'] = w`). It does
+  **not** drop or resample jets — every jet is kept.
+- `tasks/inference.py:143` opens `weights.json` **only to read `chunk_size`**, to compute
+  the expected batch count for the progress bar. The per-jet weight is never applied to
+  predictions, loss, or any reported metric.
 
-## Build command (NOT yet run — needs `--filelist` written first)
+So the Herwig set having its own pt/eta histogram has **no effect** on the comparison.
+Both test sets are evaluated jet-for-jet unweighted. No need to force the Pythia
+histogram through.
+
+## Build — DONE, via `~/flashjet_condor/run_herwig_dataset.sh`
+
+Wrapped in a script rather than run by hand, because of two gotchas:
+
+1. **No `set -e`.** Sourcing `.bashrc` in a non-interactive shell returns nonzero,
+   which aborts the script before it starts — the symptom is a **completely empty
+   log** and no process, which looks like the job never launched.
+2. **Must run under `tmux`.** `nohup` is not enough; the process is killed when the
+   ssh session closes. (Same finding as [[lxplus-proxy-and-tmux]].)
 
 ```bash
-# 1. write the filelist
-ls /eos/cms/store/user/hqu/datasets/JetClass/Herwig/test_20M/*.root \
-  > ~/flashjet_condor/herwig_test.txt     # 200 lines
-
-# 2. construct (CPU/IO bound, no GPU — safe to run alongside the trainings)
-cd /eos/user/c/cgupta/flashjet/b-hive
-source /afs/cern.ch/user/c/cgupta/.bashrc && micromamba activate b_hive
-source setup.sh && law index
-law run DatasetConstructorTask \
-    --config jet_class \
-    --dataset-version JetClass_herwig_test_mod \
-    --filelist ~/flashjet_condor/herwig_test.txt \
-    --coffea-worker 8 \
-    --chunk-size 100000
+tmux new-session -d -s herwig "cd ~/flashjet_condor && bash ./run_herwig_dataset.sh > herwig_full.log 2>&1"
 ```
-Add `--debug` first for a 1-file-per-process smoke test.
+tmux is **node-local** — this ran on `lxplus962.cern.ch`, so reattach there.
 
-**Note:** build with `--config jet_class` (no C/A or subjet columns). Those features
-are computed at TRAIN time in `get_inpt`, not baked into the dataset — so ONE Herwig
-dataset serves all three arms.
+`--debug` first (1 file/process): completed in ~4 min, 1M jets, 10 classes balanced.
 
-## Then: inference + comparison
+### Pre-flight checks that passed
+- **Substring matching is safe.** `TTBarLep` precedes `TTBar` in `config["processes"]`,
+  so the first-match-wins loop assigns correctly. Simulated the parse over all 200
+  lines: 20 files per process, **0 unmatched**.
+- **Herwig ROOT schema matches Pythia.** treename `tree`, 41 branches, 100k
+  entries/file, all 10 `label_*` and every `part_*`/`jet_*` branch the config needs.
+- **Space:** 2.1 PB free on `/eos/home-c`. Not a constraint.
 
-Pattern from `~/flashjet_condor/run_roc480_{baseline,ca}.sh`:
-copy `model_<N>.pt` -> `best_model.pt` in a `<version>_at<N>k` dir, set
-`--TrainingTask-total-iterations <N>` so luigi skips training, run ROCCurveTask with
-`--test-dataset-version JetClass_herwig_test_mod`.
+### Verified output (debug build, `~/flashjet_condor/check_herwig.py`)
+The lz4 files are **not** numpy — raw float32 buffer, `s[2:].reshape(-1, int(s[1]))`,
+with trailing columns `[process, labels(10), weight]`. Read them the way
+`utils/torch/LZ4Dataset.py` does.
+- 2971 columns = **2959 features** (128 cand x 23 + 15 global) + 10 labels + 2 — matches Pythia.
+- process -> label mapping correct; `TTBar` splits into `Tbqq`/`Tbl`, `ZJetsToNuNu` -> `label_QCD`.
+- **0 NaNs, 0 multi-label rows, 0 unlabeled rows.**
 
-Then `~/flashjet_condor/perclass.py` (already written) reads `prediction.npy` /
-`truth.npy` and gives per-class acc / rejection / AUC. **Extend it to take a
-dataset-version argument** so it can diff Pythia vs Herwig.
+## Then: inference + comparison — scripts written, ready to run
 
-**Metric that matters: Δ(degradation), not absolute Herwig accuracy.**
-baseline drops X, CA5 drops Y; the question is Y < X. Quote it as a
-**rejection ratio** (1/eps_B), not accuracy — that's what an analysis cares about
-and where a tail effect appears first.
+### 1. Symlink the dataset into the other config dirs
+`~/flashjet_condor/link_herwig.sh`. b-hive resolves datasets at
+`DatasetConstructorTask/<config>/<version>/`, and **every existing JetClass set here is
+a symlink** into the shared `phys_btag` area (built by pkashko) — this Herwig set is the
+first dataset actually built in my own tree. Each arm's config needs its own link.
 
-**Pick the checkpoint in advance.** 480k has existing Pythia inference for both arms
-(cheap, immediate). 1M is the endpoint but needs CA5 to finish. Testing several and
-reporting the best is a look-elsewhere problem.
+### 2. Run inference
+`~/flashjet_condor/run_herwig_roc.sh <baseline|ca|subjet> <iters>`
 
-## Existing scripts on AFS (~/flashjet_condor/)
+Same as `run_roc480_*.sh` with **only** `--test-dataset-version JetClass_herwig_test_mod`
+changed. Guards before launching: N_CA_FEATURES==5 for the ca arm, the Herwig set exists
+for that config, and `best_model.pt` is staged.
+
+Checkpoints live at `.../<version>/ParticleTransformer_Paper_JetClass/epochs_0/nominal/`
+(**two levels deeper** than the training-version dir). Verified staged and identical in
+size to `model_480000.pt` for baseline and ca. The subjet training version is
+`b_hive_paper_subjet_1`, **not** `b_hive_paper_compile_4_subjet`.
+
+### 3. Compare
+`perclass.py [test_dataset_version] [iters_k]` — now takes the test set as an argument
+and dumps `~/flashjet_condor/perclass_results/<gen>_<K>k.json`. Re-ran on Pythia after
+patching and it reproduces exactly (85.625 vs 85.523, Tbqq ratio 0.636), so the load
+path is intact. Pythia 480k JSON is already saved.
+
+`gen_robustness.py [iters_k]` — the actual answer. Reports per class
+
+    deg_arm = rej_pythia / rej_herwig        (>1 = degraded under Herwig)
+    d_deg   = deg_CA - deg_baseline          (<0 = C/A more robust)
+
+**Metric is Δ(degradation), not absolute Herwig accuracy**, quoted on 1/eps_B.
+
+**Checkpoint picked in advance: 480k** — both arms already have Pythia inference there,
+so it is the cheap matched point. Testing several and reporting the best would be a
+look-elsewhere problem.
+
+## Scripts on AFS (~/flashjet_condor/)
+- `run_herwig_dataset.sh` — build the Herwig test set (`--debug` for a smoke test)
+- `check_herwig.py` — validate a built set: columns, label mapping, NaNs
+- `link_herwig.sh` — symlink it into the ca / subjet / capair config dirs
+- `run_herwig_roc.sh <arm> <iters>` — inference on Herwig
+- `gen_robustness.py [K]` — the Pythia->Herwig degradation diff
+- `perclass.py [test_ds] [K]` — per-class acc/rejection/AUC, now saves JSON
 - `compare_arms.py` — 3-arm val/train table, `--last N`, `--loss`, `--csv`
-- `perclass.py` — per-class acc/rejection/AUC from saved predictions (480k pair)
-- `prong.py` — subjet features vs prong count (val only); ran, results below
+- `prong.py` — subjet features vs prong count (val only)
 - `prong2.py` — set-model version; **killed before producing results**
