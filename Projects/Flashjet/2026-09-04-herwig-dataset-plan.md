@@ -99,13 +99,33 @@ tmux is **node-local** — this ran on `lxplus962.cern.ch`, so reattach there.
   entries/file, all 10 `label_*` and every `part_*`/`jet_*` branch the config needs.
 - **Space:** 2.1 PB free on `/eos/home-c`. Not a constraint.
 
-### Verified output (debug build, `~/flashjet_condor/check_herwig.py`)
+### BUILD COMPLETE (rc=0, ~33 min: 16:26 -> 16:59)
+**200 lz4 files, 49 GB**, at
+`output/DatasetConstructorTask/jet_class/JetClass_herwig_test_mod/`.
+Intermediates (peaked ~101 GB) cleaned up automatically. `processed_files.txt` has
+199 lines for 200 files (trailing newline) — **the Pythia set has the same quirk**
+and `tasks/inference.py` guards for it with `if not os.path.exists(files[-1])`.
+
+Symlinked into `jet_class_ca`, `jet_class_subjet`, `jet_class_capair` via
+`link_herwig.sh`; all three resolve.
+
+### Verified output (`~/flashjet_condor/check_herwig.py`, full set, 20 files / 2M jets)
 The lz4 files are **not** numpy — raw float32 buffer, `s[2:].reshape(-1, int(s[1]))`,
 with trailing columns `[process, labels(10), weight]`. Read them the way
 `utils/torch/LZ4Dataset.py` does.
 - 2971 columns = **2959 features** (128 cand x 23 + 15 global) + 10 labels + 2 — matches Pythia.
 - process -> label mapping correct; `TTBar` splits into `Tbqq`/`Tbl`, `ZJetsToNuNu` -> `label_QCD`.
-- **0 NaNs, 0 multi-label rows, 0 unlabeled rows.**
+- **0 NaNs, 0 multi-label rows, 0 unlabeled rows.** All 10 classes populated.
+- Loads through the **real inference path** (`DatasetLoader` -> `LZ4Dataset`):
+  batch shapes `[(512, 2959), (512,), (512,), (512,)]`, labels resolve.
+  (`check_load_path.py`)
+
+**One difference from the Pythia set, and it does not matter.** In the Herwig build the
+*process* column is genuinely populated (TTBar -> Tbqq/Tbl, ZJetsToNuNu -> QCD, etc.);
+in pkashko's Pythia set that column is `0` for every jet, so it carries no information.
+Irrelevant here: the process column is only read by `LZ4Dataset` under
+`weighted_sampling`, which defaults to `False` and is **not** passed by
+`tasks/inference.py`. Inference uses the **truth labels**, which are correct in both.
 
 ## Then: inference + comparison — scripts written, ready to run
 
