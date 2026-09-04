@@ -4,8 +4,12 @@
 % DATA POLICY: ATLAS Open Data + toy/analytic closures ONLY. No CMS data.
 %   (The opening slide CITES CMS's public HLT GPU deployment as context. That is
 %    a published fact, not CMS data - no CMS event or plot is used anywhere.)
-% DISCLOSURE POLICY: no profiler internals, no occupancy/register/SM counts,
-%   no headroom estimates. Hardware stated only as "V100-class".
+% DISCLOSURE POLICY: the MAIN slides state hardware only as "V100-class" and
+%   carry no profiler internals. The BACKUP section (added back on request,
+%   2026-09-04) does carry the full nsys/ncu detail - occupancy, registers,
+%   SM counts and the ~1.7-1.8x headroom estimate - and its figures are
+%   labelled H100. Drop those four backup slides if the audience should not
+%   see them.
 \documentclass[aspectratio=169,10pt]{beamer}
 
 \usetheme{Madrid}
@@ -78,36 +82,38 @@
 
 \begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
 \begin{columns}[T]
-\begin{column}{0.54\textwidth}
-Reconstruction is steadily becoming \textbf{heterogeneous}: as much of the event
-as possible is expected to run on the accelerator.
-\medskip
-
-CMS has run GPUs in the High-Level Trigger since the start of Run~3 ---
-\textbf{$\sim$30\,\% of HLT reconstruction} is offloaded (pixel local
-reconstruction, pixel-only tracks and vertices, calorimeter local
-reconstruction), for a \textbf{$\sim$25\,\% reduction} in total HLT time.
-\medskip
-
-\smallnote{Tracking, vertexing and calorimetry have all been ported.
-\textbf{Jet clustering has not} --- it is one of the few steps still bound to the
-CPU. \tiny{[CMS HLT, Run~3]}}
-\end{column}
-\begin{column}{0.46\textwidth}
-\begin{block}{Why it is still on the CPU}
-Sequential recombination is \textbf{IRC safe} --- which is why it survived --- but
-each merge \textbf{depends on the one before it}. That data dependence is exactly
-what does not map onto a GPU in the obvious way.
-\end{block}
-\medskip
-\begin{block}{Where it hurts today}
-\small
+\begin{column}{0.52\textwidth}
+\textbf{Reconstruction is going heterogeneous}
 \begin{itemize}
-  \item reclustering jets \textbf{inside a training loop}
-  \item scanning the \textbf{jet radius}
-  \item accessing \textbf{substructure} dynamically
+  \item CMS runs GPUs in the HLT since Run~3
+  \item \textbf{$\sim$30\,\%} of HLT reconstruction offloaded
+  \item $\rightarrow$ \textbf{$\sim$25\,\%} less total HLT time
 \end{itemize}
-Each pays a \textbf{host\,$\leftrightarrow$\,device transfer}, over and over.
+\smallnote{pixel local reco $\cdot$ pixel tracks + vertices $\cdot$ calorimeter
+local reco}
+\vspace{0.9em}
+
+\textbf{Ported so far}
+\begin{itemize}
+  \item tracking \quad$\cdot$\quad vertexing \quad$\cdot$\quad calorimetry
+  \item[] \textcolor{fjred}{\textbf{not jet clustering}}
+\end{itemize}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Why it is still on the CPU}
+\begin{itemize}
+  \item sequential recombination is \textbf{IRC safe} --- why it survived
+  \item but each merge \textbf{depends on the previous one}
+  \item that data dependence does not map onto a GPU in the obvious way
+\end{itemize}
+\end{block}
+\begin{block}{Where it hurts}
+\begin{itemize}
+  \item reclustering \textbf{inside a training loop}
+  \item scanning the \textbf{jet radius}
+  \item \textbf{substructure} on demand
+\end{itemize}
+\smallnote{each one pays a host\,$\leftrightarrow$\,device transfer, over and over}
 \end{block}
 \end{column}
 \end{columns}
@@ -115,41 +121,47 @@ Each pays a \textbf{host\,$\leftrightarrow$\,device transfer}, over and over.
 
 \begin{frame}{flashjet}
 \begin{columns}[T]
-\begin{column}{0.53\textwidth}
-An \textbf{open-source} library bringing $k_t$, Cambridge--Aachen and \akt{}
-natively to the GPU through custom \textbf{Triton} kernels.
-\medskip
+\begin{column}{0.5\textwidth}
+\textbf{An open-source GPU jet clusterer}
+\begin{itemize}
+  \item $k_t$, Cambridge--Aachen, \akt
+  \item custom \textbf{Triton} kernels
+\end{itemize}
+\vspace{0.7em}
 
-\textbf{Why Triton.} It is the GPU language of the PyTorch ecosystem, so the
-kernel \textbf{compiles and autotunes for the hardware at hand} and drops into
-tensor pipelines directly --- with \textbf{no separate CUDA build} and no
-hand-written device code to maintain.
-\medskip
+\textbf{Why Triton}
+\begin{itemize}
+  \item the GPU language of the PyTorch ecosystem
+  \item \textbf{compiles and autotunes} for the hardware at hand
+  \item \textbf{no separate CUDA build}, no device code to maintain
+\end{itemize}
+\vspace{0.7em}
 
-\textbf{Execution model.} One kernel program clusters \textbf{one event entirely
-on chip}; the whole batch goes out in a \textbf{single fused launch}. Nothing
-returns to the host.
-\medskip
-
-\smallnote{Jets, clustering histories and derived substructure all come back as
-\textbf{tensors}.}
+\textbf{Execution}
+\begin{itemize}
+  \item one program clusters \textbf{one event on chip}
+  \item the batch goes out in \textbf{one fused launch}
+  \item jets, histories, substructure $\rightarrow$ \textbf{tensors}
+\end{itemize}
 \end{column}
-\begin{column}{0.47\textwidth}
+\begin{column}{0.5\textwidth}
 \begin{block}{What makes it tractable}
-\small The Cacciari--Salam nearest-neighbour lemma: the global $d_{ij}$ minimum
-is always realised at some particle's \textbf{geometric} nearest neighbour. Each
-slot carries its own NN, so a merge invalidates only $O(1)$ rows on average ---
-\textbf{$O(N^2)$ per event instead of $O(N^3)$}.
+\small Cacciari--Salam NN lemma: the global $d_{ij}$ minimum sits at some
+particle's \textbf{geometric} nearest neighbour.
+\begin{itemize}
+  \item each slot carries its own NN
+  \item a merge invalidates only $O(1)$ rows
+  \item $\Rightarrow$ \textbf{$O(N^2)$, not $O(N^3)$}
+\end{itemize}
 \end{block}
-\smallskip
 \begin{block}{Engineering}
 \small
 \begin{itemize}\setlength{\itemsep}{1pt}
-  \item bandwidth-bound: the NN update and the \textbf{next argmin} are fused
+  \item bandwidth-bound $\rightarrow$ NN update and \textbf{next argmin} fused
         into one sweep
-  \item \textbf{branchless} pair-vs-beam, via masked stores
-  \item launch config autotuned \textbf{once per GPU model} and cached, so runs
-        stay \textbf{reproducible}
+  \item \textbf{branchless} pair-vs-beam (masked stores)
+  \item autotuned \textbf{once per GPU model}, cached $\rightarrow$
+        \textbf{reproducible}
 \end{itemize}
 \end{block}
 \end{column}
@@ -167,48 +179,48 @@ $p$ selects the algorithm --- the \emph{same} kernel serves all three.}
 \end{frame}
 
 \begin{frame}{One exponent, three algorithms}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
+\begin{center}
 The generalised-$k_t$ distance measure:
 \begin{align*}
 d_{ij} &= \min\!\left(p_{Ti}^{2p},\, p_{Tj}^{2p}\right)
           \frac{\Delta R_{ij}^{2}}{R^{2}},
-&\Delta R_{ij}^{2} &= (y_i-y_j)^2+(\phi_i-\phi_j)^2\\[2pt]
+\qquad &\Delta R_{ij}^{2} &= (y_i-y_j)^2+(\phi_i-\phi_j)^2\\[3pt]
 d_{iB} &= p_{Ti}^{2p}
 \end{align*}
-\vspace{-0.6em}
+\end{center}
+\smallnote{Merge the pair with the smallest $d_{ij}$; if the smallest distance is
+a $d_{iB}$, call $i$ a jet and remove it.}
+\vspace{0.5em}
 
-Merge the pair with the smallest $d_{ij}$; if the smallest distance is a
-$d_{iB}$, call $i$ a jet. \textbf{Only $p$ changes:}
-
-\smallskip
-\small
-\begin{tabular}{@{}cll@{}}
+\textbf{Only the exponent $p$ changes:}
+\begin{center}
+\begin{tabular}{@{}clll@{}}
 \toprule
-$p$ & algorithm & merges first\\
+$p$ & algorithm & merges first & the tree is ordered by\\
 \midrule
-$-1$ & \akt & around the \textbf{hardest} particles\\
-$0$ & Cambridge--Aachen & the \textbf{closest} pair\\
-$+1$ & $k_t$ & the \textbf{softest} pair\\
+$-1$ & \akt & around the \textbf{hardest} particles & --- \smallnote{(gives the jets)}\\
+$0$ & Cambridge--Aachen & the \textbf{closest} pair & \textbf{angle}\\
+$+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$}\\
 \bottomrule
 \end{tabular}
-\end{column}
-\begin{column}{0.45\textwidth}
-\includegraphics[width=0.97\linewidth]{fig/jet_areas.png}\\
-\smallnote{\akt{} catchment areas $\to \pi R^2$ --- the defining rigid-cone
-result, here from flashjet's own clustering.}
-\medskip
+\end{center}
+\vspace{0.3em}
+\begin{block}{}
+\small The ordering is \textbf{what the substructure reads}: C/A is the tree for
+\textbf{grooming} and the \textbf{Lund plane}, $k_t$ for \textbf{exclusive
+subjets}.
+\end{block}
+\end{frame}
 
-\textbf{\small The ordering is what the substructure reads:}
-\smallskip
-{\small
-\begin{itemize}\setlength{\itemsep}{1pt}
-  \item \textbf{C/A} by \emph{angle} $\rightarrow$ \textbf{grooming}, \textbf{Lund}
-  \item \textbf{$k_t$} by \emph{relative $p_T$} $\rightarrow$ \textbf{exclusive
-        subjets}
-\end{itemize}}
-\end{column}
-\end{columns}
+\begin{frame}{\akt{} gives rigid, circular jets}
+\begin{center}
+\includegraphics[width=0.72\linewidth]{fig/jet_areas.png}
+\end{center}
+\vspace{-0.3em}
+\smallnote{Jet catchment areas for the three algorithms, from flashjet's own
+clustering. $k_t$ and C/A give ragged, fluctuating boundaries; \textbf{\akt{}
+gives circles of area $\pi R^2$} around each hard particle --- the defining
+result of the algorithm, recovered here without reference to FastJet.}
 \end{frame}
 
 \begin{frame}{It returns the tree, not just the jets}
@@ -419,22 +431,20 @@ test the decoders, not an event generator.}
 
 \begin{frame}{Clustering geometry}
 \begin{columns}[T]
-\begin{column}{0.33\textwidth}
-\includegraphics[width=\linewidth]{fig/jet_areas.png}\\
-\smallnote{\akt{} jet areas $\to \pi R^2$.}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/lund_triangle.png}\\
+\smallnote{The Lund plane is populated \textbf{uniformly inside the kinematic
+triangle} --- the leading-log expectation.}
 \end{column}
-\begin{column}{0.33\textwidth}
-\includegraphics[width=\linewidth]{fig/lund_triangle.png}\\
-\smallnote{Lund plane uniform inside the kinematic triangle.}
-\end{column}
-\begin{column}{0.33\textwidth}
-\includegraphics[width=\linewidth]{fig/qcd_beta_family.png}\\
-\smallnote{$\beta$-family ordering.}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/qcd_beta_family.png}\\
+\smallnote{The soft-drop $\beta$-family orders as predicted: larger $\beta$
+grooms less.}
 \end{column}
 \end{columns}
 \smallskip
-\smallnote{Independent NumPy tree-walks pin every decoder; the $d$-channel of the
-Lund output ties exactly to the splitting scales.}
+\smallnote{Independent NumPy tree-walks pin every decoder, and the $d$-channel of
+the Lund output ties \emph{exactly} to the splitting scales computed separately.}
 \end{frame}
 
 \begin{frame}{Same jets as FastJet --- across the whole grid}
@@ -454,15 +464,6 @@ median relative difference & $\sim 7\times 10^{-8}$\\
 \end{center}
 \medskip
 
-\begin{block}{}
-\small \textbf{$k_t$ and C/A had never been checked against FastJet on real
-detector data} --- only against NumPy tree-walks. They now agree across the full
-radius $\times$ multiplicity grid.
-\end{block}
-\smallskip
-\smallnote{The two exceptions are the \emph{same single jet}: one constituent
-assigned across an $R$ boundary. Jet counts still match and the leading jet is
-never ambiguous.}
 \end{frame}
 
 \begin{frame}{Same jets as the experiment}
@@ -580,8 +581,7 @@ multiplicity.
 \end{frame}
 
 % ============================================================
-\section{Conclusions}
-
+% (no \section here: Conclusions divider removed on request)
 \begin{frame}{Summary}
 \begin{enumerate}
   \item \textbf{Clusters on the GPU and keeps the full merge history}, so
@@ -678,6 +678,117 @@ V100-class} GPU.
 \smallskip
 \smallnote{$R=1.0$ rows shown. Against the per-jet FastJet interface the gap is
 roughly \emph{two orders of magnitude}.}
+\end{frame}
+
+\begin{frame}{Backup --- where the time goes}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Nsight Systems} --- share of GPU time
+\smallskip
+
+\begin{tabular}{@{}lrr@{}}
+\toprule
+kernel & \% GPU & avg/call\\
+\midrule
+\texttt{\_cluster\_large\_kernel} & \textbf{97.6} & 5.47\,ms\\
+\texttt{\_decode\_kernel} & 1.5 & 82\,$\mu$s\\
+torch glue & $<1$ & ---\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\begin{block}{}
+\small \textbf{No hidden overhead} --- essentially all the time is real
+clustering work, and the memory row of the timeline is empty.
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Nsight Compute} --- hardware counters
+\smallskip
+
+\begin{tabular}{@{}lr@{}}
+\toprule
+metric & value\\
+\midrule
+DRAM throughput & \textbf{0.02\,\%}\\
+Compute (SM) throughput & 15.4\,\%\\
+Registers / thread & 168\\
+Theoretical occupancy & 18.75\,\%\\
+Achieved occupancy & \textbf{6.25\,\%}\\
+Waves per SM & \textbf{0.32}\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\begin{block}{}
+\small Not memory- or compute-bound --- the GPU is simply \textbf{not filled}.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- the GPU timeline}
+\begin{center}
+\includegraphics[width=0.80\linewidth]{fig/nsys_timeline_H100.png}
+\end{center}
+\smallnote{Nsight Systems, three consecutive iterations. Each block is one
+clustering call; the tool labels the rows \textbf{``$>$99.9\,\% Kernels''} and
+\textbf{``$<$0.1\,\% Memory''}. The kernels run back to back with nothing in
+between and the memory row is empty --- no host/device shuffling while
+clustering runs. That is what makes the speedup real rather than an artefact of
+where the timer was started.}
+\end{frame}
+
+\begin{frame}{Backup --- the profiler names the bottleneck}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/ncu_workload_imbalance_H100.png}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{The tool's own speedup estimates:}
+\smallskip
+
+\begin{tabular}{@{}lr@{}}
+\toprule
+finding & est.\ speedup\\
+\midrule
+Theoretical occupancy (registers) & \textbf{81\,\%}\\
+Achieved occupancy & 67\,\%\\
+SM workload imbalance & 19\,\%\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{\emph{``This kernel grid is too small to fill the available resources
+on this device, resulting in only 0.32 full waves across all SMs.''}}
+\smallskip
+
+\smallnote{Grid size \textbf{128 blocks} on a \textbf{132-SM} device --- fewer
+blocks than the GPU has processors.}
+\medskip
+
+\begin{block}{}
+\small $\sim$\textbf{1.7--1.8$\times$} more available from launch configuration
+and register budget --- \textbf{not} from the algorithm.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- occupancy detail}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/ncu_occupancy_H100.png}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/ncu_details_sol_launch_H100.png}
+\end{column}
+\end{columns}
+\smallnote{Register pressure (168/thread) caps theoretical occupancy at
+18.75\,\%; achieved is 6.25\,\%. With 0.32 waves/SM the kernel does not fill the
+GPU even once, while DRAM throughput is 0.02\,\% --- this is parallelism
+starvation, not a bandwidth problem. Both are configuration inherited from
+smaller GPUs, not properties of the algorithm.}
 \end{frame}
 
 \begin{frame}{Backup --- the datasets}

@@ -238,3 +238,34 @@ Reframed around the ML4Jets abstract.
 - **Layout:** the clustering-steps figure enlarged; the algorithms slide rebuilt
   (table + formulas left, plot right) instead of the cramped stacked version.
 - **Zero overfull boxes** for the first time.
+
+---
+
+## Third review pass (2026-09-04)
+
+- **Slides 2 and 3 converted to bullets.** Both were paragraph-heavy; they now
+  read as scannable points, with "not jet clustering" called out in red as the
+  punchline of the opening.
+- **Algorithms slide split in two**: the distance measure + the \(p\)-table on
+  one, and the jet-areas figure alone on the next at ~3× the size.
+  - This left `jet_areas.png` appearing **twice**, so it was dropped from
+    *Clustering geometry*; the remaining two figures there are now larger.
+- **Removed** the "kt and C/A had never been checked against FastJet on real
+  data" claim and the single-outlier-jet footnote from the correctness slide.
+- **Conclusions section divider removed** (the Summary slide remains).
+- **Profiling restored to backup** — four slides: nsys kernel share + ncu
+  counters, the GPU timeline, the "small grid" bottleneck with NVIDIA's
+  ~1.7–1.8× estimate, and occupancy detail.
+
+### Disclosure status changed
+
+This **reverses** the earlier removal. The main slides are still clean —
+hardware appears once as "V100-class", no counters. But the **backup section now
+carries the full profiler detail** (occupancy 6.25 %, 168 registers/thread, 0.32
+waves/SM, the 132-SM grid finding, the headroom estimate) and its figures are
+labelled **H100**.
+
+**If the audience should not see that, delete the four `Backup ---` profiling
+slides.** The policy comment at the top of the `.tex` says the same.
+
+36 slides, zero overfull boxes.
