@@ -435,3 +435,110 @@ bin inverts at every cut (Hgg/QCD above Tbqq).
 
 Scripts: `/tmp/check_subjet.py` (probe + scan), `~/cawork/` for the earlier
 harnesses.
+
+
+## SET-MODEL PROBE — the outstanding objection, finally tested
+
+Every redundancy probe up to here fed a SINGLE particle's features to an MLP.
+But ParT's attention **pools over all 128 constituents**, so "a per-particle MLP
+can't predict it" was the wrong bar — and that exact gap is what made the
+`share_bp` verdict wrong twice.
+
+Fair test: a DeepSets-style permutation-invariant model with access to the whole
+constituent set. A lower bound on what attention could learn, from the same
+information ParT has.
+
+| model | test R² |
+|---|---|
+| per-particle MLP | 0.0719 |
+| **DeepSets (pooled context)** | **0.1079** |
+| DeepSets (+ relative to pooled mean) | 0.1067 |
+| *CONTROL: own ln p_T frac, a literal input column* | *0.95* |
+
+Full-set access raises recovery from 0.07 to **0.11**. Pooling barely helps.
+Subjet mass is genuinely not computable from what ParT sees.
+
+### Final scorecard
+
+| criterion | share_bp (killed) | subjet mass |
+|---|---|---|
+| per-particle recovery | AUC 0.87 | R² 0.07 |
+| **set-model recovery** | *never tested* | **R² 0.11** |
+| multiplicity proxy | corr +0.92 | corr +0.19 |
+| threshold-robust | n/a | yes, 4 cuts |
+
+## IMPLEMENTATION (built, verified, smoke-testing)
+
+`utils/flashjet_subjet_features.py` — `N_SUBJET_FEATURES = 3`, `KT_CUT = 20.0`:
+
+| column | meaning |
+|---|---|
+| `part_sj_lnm` | ln mass of my subjet |
+| `part_sj_lnptfrac` | ln (my subjet p_T / jet p_T) |
+| `part_sj_nconst` | constituents sharing my subjet |
+
+Subjet = the node a constituent reaches before the next merge would exceed
+`KT_CUT`. **No missing-value category** — every real constituent belongs to
+exactly one subjet, so unlike the branch-point features there is no "real but
+zero" colliding with padding.
+
+`utils/models/base_model.py` — `ca_feature_length()` and `get_inpt` now handle
+`subjet_features` alongside `ca_features` (both gated on config, concatenated
+before the trailing 4-vector so the ParT positional contract holds).
+
+`config/jet_class_subjet.yml` — `ca_features: false`, `subjet_features: true`,
+`subjet_kt_cut: 20.0`. Dataset symlinks created under
+`output/DatasetConstructorTask/jet_class_subjet/`.
+
+Verified:
+
+```
+jet_class          cpf_dim=21  embed_in=17  params=2,143,486
+jet_class_subjet   cpf_dim=24  embed_in=20  params=2,143,882   (+396)
+NaN 0  Inf 0  padded-slot nonzeros 0  median subjet mass 12.9 GeV
+```
+
+Exactly +3 columns; token inputs differ from baseline by precisely these three.
+
+## STATUS AT COMPACTION (Fri 2026-09-04 07:24)
+
+| cluster | job | state |
+|---|---|---|
+| 9259275 | CA5 per-particle 1M | **R** — 620k/1M, 85.68%, best 85.71% @ 600k, ETA ~14:00 |
+| 9265169 | subjet smoke test (`smoke_subjet_kt20`) | **I** — queued 07:17 |
+
+Killed while idle, no GPU time spent: 9265165 (CAPair 1M), 9265166 (sparsity,
+moved to CPU), 9265167 (rule-C smoke). ~37 GPU-hours saved.
+
+### Next steps
+
+1. Wait for smoke 9265169 to pass — do **not** launch 1M before it does.
+2. Then submit the 1M subjet run: copy `paper_capair.sub` pattern, config
+   `jet_class_subjet`, model `ParticleTransformer_Paper_JetClass`,
+   training-version e.g. `b_hive_paper_subjet_1`, H100-pinned, 16 threads,
+   100 GB, `nextweek`.
+3. Estimate for it helping: **50-55%**. Necessary-but-not-sufficient: the
+   information is unavailable to the model, but a feature can be novel and
+   still irrelevant. Physics case is strong — Tbqq's leading subjet sits at
+   85-96 GeV, the W mass, exactly the top-tagger discriminant.
+4. **Seed caveat unchanged**: one seed per arm cannot resolve a sub-1-point
+   effect (~1.3-point spread from the unseeded dataloader RNG). 3 seeds at 400k
+   remains the right configuration over 1 seed at 1M.
+
+### Scripts (all CPU, minutes to run — use these before spending GPU time)
+
+| path | what |
+|---|---|
+| `/tmp/check_subjet.py` | subjet redundancy probe + k_T scan |
+| `/tmp/check_setmodel.py` | DeepSets set-model probe |
+| `/tmp/check_hard.py` | nonlinear redundancy + multiplicity control |
+| `/tmp/check_ruleC.py` | the three rule-C checks |
+| `/tmp/twv.py` | walk-termination variant comparison |
+| `~/cawork/validate_ca_values.py` | per-particle C/A value assertions |
+| `~/cawork/jetclass_roc.py` | per-class JetClass ROC from `prediction.npy` |
+| `/eos/user/c/cgupta/flashjet/full_cmp.py` | matched training-curve comparison |
+
+**Offline-analysis gotcha**: the lz4 layout is `[15 global | 128x23 cpf | ...]`.
+Slice `arr[:, 15:15+128*23]`. Slicing from 0 silently yields garbage — it cost
+several wrong conclusions tonight. Authoritative source:
+`model.create_feature_shapes()` → `feature_edges [15, 2959, ...]`.
