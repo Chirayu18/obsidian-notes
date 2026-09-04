@@ -183,7 +183,7 @@ particle's \textbf{geometric} nearest neighbour.
 \end{columns}
 \end{frame}
 
-\begin{frame}{How sequential recombination works}
+\begin{frame}{How sequential recombination works \hfill \toyA}
 \begin{center}
 \includegraphics[width=0.93\linewidth]{fig/clustering_steps.png}
 \end{center}
@@ -227,7 +227,7 @@ subjets}.
 \end{block}
 \end{frame}
 
-\begin{frame}{\akt{} gives rigid, circular jets}
+\begin{frame}{\akt{} gives rigid, circular jets \hfill \toyB}
 \begin{center}
 \includegraphics[width=0.72\linewidth]{fig/jet_areas.png}
 \end{center}
@@ -358,7 +358,7 @@ QCD spreads to small $z$.}
 \end{frame}
 
 % ------------------------------------------------------------
-\begin{frame}{F2 --- soft drop / mMDT grooming from the C/A history}
+\begin{frame}{F2 --- soft drop / mMDT grooming \hfill \toyA}
 \begin{center}
 \includegraphics[width=0.95\linewidth]{fig/softdrop_walk.png}
 \end{center}
@@ -562,7 +562,7 @@ output} --- not against another implementation of the same algorithm.
 % ============================================================
 \section{Speed}
 
-\begin{frame}{The benchmark}
+\begin{frame}{The benchmark \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \textbf{Data} --- ATLAS Open Data, freely presentable
@@ -599,7 +599,7 @@ against the \textbf{vectorised} FastJet interface --- the faster, fairer baselin
 \end{columns}
 \end{frame}
 
-\begin{frame}{Time per jet}
+\begin{frame}{Time per jet \hfill \realC}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_abs_timing.png}
 \end{center}
@@ -610,7 +610,7 @@ FastJet, and \textbf{110--620\,$\mu$s} per jet one at a time. Benchmarked on an
 NVIDIA \textbf{V100-class} GPU.}
 \end{frame}
 
-\begin{frame}{The advantage grows with jet complexity}
+\begin{frame}{The advantage grows with jet complexity \hfill \realC}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_speedup_algs.png}
 \end{center}
@@ -620,7 +620,7 @@ point has \textbf{100\,\%} $n_{\rm jets}$ agreement. Busier jets $\rightarrow$
 bigger win --- the regime that matters for boosted-object physics.}
 \end{frame}
 
-\begin{frame}{Cost is independent of $R$ --- and of the algorithm}
+\begin{frame}{Cost is independent of $R$ --- and of the algorithm \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.56\textwidth}
 \includegraphics[width=\linewidth]{fig/atlas_R_independence.png}
@@ -711,7 +711,7 @@ Physics closures: analytic predictions on toy showers.}
 \appendix
 \section{Backup}
 
-\begin{frame}{Backup --- speedup vs $R$, per algorithm}
+\begin{frame}{Backup --- speedup vs $R$, per algorithm \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=\linewidth]{fig/atlas_radius_scan_atlastop-top.png}\\
@@ -725,7 +725,7 @@ Physics closures: analytic predictions on toy showers.}
 \smallnote{Flat in $R$ for all three algorithms; ordering is by multiplicity bin.}
 \end{frame}
 
-\begin{frame}{Backup --- speedup vs multiplicity}
+\begin{frame}{Backup --- speedup vs multiplicity \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=\linewidth]{fig/atlas_multiplicity_atlastop-top.png}\\
