@@ -15,8 +15,11 @@ Implementation background: [[2026-08-28-part-ca-features-implementation]].
 Per-particle C/A features give **no gain** on JetClass with paper ParT. The
 earlier +1.3 and the 20k-iteration "all nine classes improve" result were both
 transients, not durable effects. Feature *values* are provably correct — the
-problem is that they carry almost no prong-grouping information. A pairwise
-redesign that feeds C/A to the attention bias instead is now running.
+problem is that they carry **zero** prong-grouping information: measured group
+size is exactly 1.00, because the ascending walk terminates at each particle's
+own first merge. A pairwise redesign was built and then cancelled unrun, since
+the same defect makes its `share_bp` channel a constant zero. The fix is
+identified but not yet implemented.
 
 ## The matched test-set comparison (the decisive number)
 
@@ -92,14 +95,6 @@ only the code path had been checked). `~/cawork/validate_ca_values.py`.
    encoded "these were emitted together" — in either the per-particle or the
    pairwise formulation.
 
-The ascending walk terminates at the *first* soft-side node, which is usually
-specific to that one particle rather than shared across a prong. That is the
-root cause.
-
-Possible fix for the per-particle version (not tried): walk to a **fixed
-depth**, or take the **hardest** branch point on the path rather than the first
-soft-side one. Either would produce genuinely shared labels.
-
 ## Training-curve evidence, for the record
 
 Matched validation accuracy, C/A − baseline, over 29 checkpoints:
@@ -124,7 +119,7 @@ residual std 0.456 vs 0.258; 2 of 8 checkpoint-to-checkpoint drops vs 0 of 8).
 Consistent with the zero-spike: the fraction of `has_bp=0` particles varies
 batch to batch, moving the BatchNorm statistics.
 
-## The pairwise redesign (running now)
+## The pairwise redesign (built, cancelled unrun)
 
 Prong membership is not a per-particle quantity — "was this constituent emitted
 in the same subjet as that one" is a statement about a **pair**. ParT already
