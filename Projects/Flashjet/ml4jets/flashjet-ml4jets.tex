@@ -2,6 +2,8 @@
 % Build: latexmk -pdf flashjet-ml4jets.tex
 %
 % DATA POLICY: ATLAS Open Data + toy/analytic closures ONLY. No CMS data.
+%   (The opening slide CITES CMS's public HLT GPU deployment as context. That is
+%    a published fact, not CMS data - no CMS event or plot is used anywhere.)
 % DISCLOSURE POLICY: no profiler internals, no occupancy/register/SM counts,
 %   no headroom estimates. Hardware stated only as "V100-class".
 \documentclass[aspectratio=169,10pt]{beamer}
@@ -74,80 +76,81 @@
 % ============================================================
 \section{Jet clustering, and flashjet}
 
-\begin{frame}{Jet clustering: the workhorse, and its cost}
+\begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
 \begin{columns}[T]
-\begin{column}{0.53\textwidth}
-Sequential recombination --- \akt, $k_t$, Cambridge--Aachen, as implemented in
-\textbf{FastJet} --- is the LHC's standard jet definition. It is
-\textbf{infrared and collinear safe}, which is why it survived, and it is
-\textbf{$O(N\log N)$ but strictly sequential}: each merge depends on the one
-before it.
+\begin{column}{0.54\textwidth}
+Reconstruction is steadily becoming \textbf{heterogeneous}: as much of the event
+as possible is expected to run on the accelerator.
 \medskip
 
-That sequential structure is exactly what has kept it on the \textbf{CPU} while
-the rest of the pipeline moved to accelerators.
+CMS has run GPUs in the High-Level Trigger since the start of Run~3 ---
+\textbf{$\sim$30\,\% of HLT reconstruction} is offloaded (pixel local
+reconstruction, pixel-only tracks and vertices, calorimeter local
+reconstruction), for a \textbf{$\sim$25\,\% reduction} in total HLT time.
 \medskip
 
-\smallnote{And it is rarely run once. The same event is clustered again for every
-jet definition, every radius, every systematic variation --- and, in a training
-loop, once per epoch.}
+\smallnote{Tracking, vertexing and calorimetry have all been ported.
+\textbf{Jet clustering has not} --- it is one of the few steps still bound to the
+CPU. \tiny{[CMS HLT, Run~3]}}
 \end{column}
-\begin{column}{0.47\textwidth}
-\begin{block}{How often clustering is re-run}
-\small
-\begin{tabular}{@{}lr@{}}
-\toprule
-context & per event\\
-\midrule
-reconstruction & a few\\
-\smallnote{small-$R$, large-$R$, trimmed} & \\
-JES/JER systematics & $\mathcal{O}(10\text{--}100)$\\
-substructure (2nd pass) & $\times 2$\\
-$R$- / grooming scan & $\mathcal{O}(10)$\\
-\textbf{ML training} & \textbf{1 / epoch}\\
-\bottomrule
-\end{tabular}
+\begin{column}{0.46\textwidth}
+\begin{block}{Why it is still on the CPU}
+Sequential recombination is \textbf{IRC safe} --- which is why it survived --- but
+each merge \textbf{depends on the one before it}. That data dependence is exactly
+what does not map onto a GPU in the obvious way.
 \end{block}
-\smallnote{Each row multiplies the one above it. The cost is not one clustering
---- it is the same event clustered many times over.}
+\medskip
+\begin{block}{Where it hurts today}
+\small
+\begin{itemize}
+  \item reclustering jets \textbf{inside a training loop}
+  \item scanning the \textbf{jet radius}
+  \item accessing \textbf{substructure} dynamically
+\end{itemize}
+Each pays a \textbf{host\,$\leftrightarrow$\,device transfer}, over and over.
+\end{block}
 \end{column}
 \end{columns}
 \end{frame}
 
 \begin{frame}{flashjet}
 \begin{columns}[T]
-\begin{column}{0.54\textwidth}
-\textbf{What it is.} A GPU-native implementation of the generalised-$k_t$ family
---- \akt{} ($p\!=\!-1$), $k_t$ ($p\!=\!+1$), Cambridge--Aachen ($p\!=\!0$) ---
-written in \textbf{Triton/PyTorch}.
+\begin{column}{0.53\textwidth}
+An \textbf{open-source} library bringing $k_t$, Cambridge--Aachen and \akt{}
+natively to the GPU through custom \textbf{Triton} kernels.
 \medskip
 
-\textbf{How it works.} A batch of jets or events is clustered
-\textbf{in device memory}, and the data never returns to the host during
-clustering. The merge history is recorded \textbf{in-kernel}, so the full
-clustering tree comes back with the jets.
+\textbf{Why Triton.} It is the GPU language of the PyTorch ecosystem, so the
+kernel \textbf{compiles and autotunes for the hardware at hand} and drops into
+tensor pipelines directly --- with \textbf{no separate CUDA build} and no
+hand-written device code to maintain.
 \medskip
 
-\textbf{Backends}, dispatched automatically by problem size:
-\begin{itemize}
-  \item a fused register kernel for small $N$
-  \item a scratch nearest-neighbour Triton kernel for large $N$
-  \item a pure-torch fallback --- so the same call runs on CPU
-\end{itemize}
+\textbf{Execution model.} One kernel program clusters \textbf{one event entirely
+on chip}; the whole batch goes out in a \textbf{single fused launch}. Nothing
+returns to the host.
+\medskip
+
+\smallnote{Jets, clustering histories and derived substructure all come back as
+\textbf{tensors}.}
 \end{column}
-\begin{column}{0.46\textwidth}
-\begin{block}{Design choices}
-\begin{itemize}
-  \item \textbf{batched}: many jets at once, ragged input via a mask
-  \item \textbf{history kept}: substructure becomes an array read, not a second
-        clustering pass
-  \item \textbf{one entry point}: identical call on CPU and GPU
-\end{itemize}
+\begin{column}{0.47\textwidth}
+\begin{block}{What makes it tractable}
+\small The Cacciari--Salam nearest-neighbour lemma: the global $d_{ij}$ minimum
+is always realised at some particle's \textbf{geometric} nearest neighbour. Each
+slot carries its own NN, so a merge invalidates only $O(1)$ rows on average ---
+\textbf{$O(N^2)$ per event instead of $O(N^3)$}.
 \end{block}
 \smallskip
-\begin{block}{Status}
-\small A \textcolor{fjorange}{\textbf{prototype}} --- validated, but a
-Python/Triton library, not integrated into experiment software.
+\begin{block}{Engineering}
+\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item bandwidth-bound: the NN update and the \textbf{next argmin} are fused
+        into one sweep
+  \item \textbf{branchless} pair-vs-beam, via masked stores
+  \item launch config autotuned \textbf{once per GPU model} and cached, so runs
+        stay \textbf{reproducible}
+\end{itemize}
 \end{block}
 \end{column}
 \end{columns}
@@ -155,51 +158,55 @@ Python/Triton library, not integrated into experiment software.
 
 \begin{frame}{How sequential recombination works}
 \begin{center}
-\includegraphics[width=0.94\linewidth]{fig/clustering_steps.png}
+\includegraphics[width=0.93\linewidth]{fig/clustering_steps.png}
 \end{center}
-\vspace{-0.4em}
-\begin{columns}[T]
-\begin{column}{0.56\textwidth}
-\smallnote{Repeat until nothing is left: if the smallest distance is a
-$d_{ij}$, merge that pair; if it is a $d_{iB}$, call that a jet and remove it.}
-\end{column}
-\begin{column}{0.44\textwidth}
-\smallnote{One exponent $p$ selects the algorithm --- the \emph{same} kernel
-serves all three.}
-\end{column}
-\end{columns}
+\vspace{-0.7em}
+\smallnote{Repeat until nothing is left: if the smallest distance is a $d_{ij}$,
+merge that pair; if it is a $d_{iB}$, call that a jet and remove it. One exponent
+$p$ selects the algorithm --- the \emph{same} kernel serves all three.}
 \end{frame}
 
 \begin{frame}{One exponent, three algorithms}
-\begin{center}
-\begin{tabular}{@{}llll@{}}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+The generalised-$k_t$ distance measure:
+\begin{align*}
+d_{ij} &= \min\!\left(p_{Ti}^{2p},\, p_{Tj}^{2p}\right)
+          \frac{\Delta R_{ij}^{2}}{R^{2}},
+&\Delta R_{ij}^{2} &= (y_i-y_j)^2+(\phi_i-\phi_j)^2\\[2pt]
+d_{iB} &= p_{Ti}^{2p}
+\end{align*}
+\vspace{-0.6em}
+
+Merge the pair with the smallest $d_{ij}$; if the smallest distance is a
+$d_{iB}$, call $i$ a jet. \textbf{Only $p$ changes:}
+
+\smallskip
+\small
+\begin{tabular}{@{}cll@{}}
 \toprule
-$p$ & algorithm & merges first & gives\\
+$p$ & algorithm & merges first\\
 \midrule
-$-1$ & \akt & around the \textbf{hardest} particles & rigid, circular jets\\
-$0$ & Cambridge--Aachen & the \textbf{closest} pair & angular-ordered tree\\
-$+1$ & $k_t$ & the \textbf{softest} pair & $k_t$-ordered tree\\
+$-1$ & \akt & around the \textbf{hardest} particles\\
+$0$ & Cambridge--Aachen & the \textbf{closest} pair\\
+$+1$ & $k_t$ & the \textbf{softest} pair\\
 \bottomrule
 \end{tabular}
-\end{center}
-\vspace{0.3em}
-\begin{columns}[T]
-\begin{column}{0.46\textwidth}
-\includegraphics[width=0.98\linewidth]{fig/jet_areas.png}
 \end{column}
-\begin{column}{0.54\textwidth}
-\textbf{The ordering is not a detail --- it is what the substructure reads.}
+\begin{column}{0.45\textwidth}
+\includegraphics[width=0.97\linewidth]{fig/jet_areas.png}\\
+\smallnote{\akt{} catchment areas $\to \pi R^2$ --- the defining rigid-cone
+result, here from flashjet's own clustering.}
+\medskip
+
+\textbf{\small The ordering is what the substructure reads:}
 \smallskip
-\begin{itemize}
-  \item \akt{} gives the \emph{jets}: catchment areas $\to \pi R^2$ --- the
-        defining rigid-cone result, from flashjet's own clustering.
-  \item \textbf{C/A} orders by angle $\Rightarrow$ the natural tree for
-        \textbf{grooming} and the \textbf{Lund plane}.
-  \item \textbf{$k_t$} orders by relative transverse momentum $\Rightarrow$ the
-        natural tree for \textbf{exclusive subjets}.
-\end{itemize}
-\smallnote{So flashjet keeps whichever history the observable needs --- and all
-three cost the same.}
+{\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textbf{C/A} by \emph{angle} $\rightarrow$ \textbf{grooming}, \textbf{Lund}
+  \item \textbf{$k_t$} by \emph{relative $p_T$} $\rightarrow$ \textbf{exclusive
+        subjets}
+\end{itemize}}
 \end{column}
 \end{columns}
 \end{frame}
@@ -291,12 +298,6 @@ from the problem size, not by the caller.}
 identical, negligible cost.}
 \end{column}
 \end{columns}
-\vspace{0.8em}
-\begin{block}{It is differentiable}
-\small \texttt{jets\_p4} is a \texttt{scatter\_add} of the constituents onto their
-jets, so \textbf{gradients flow through the clustering} --- the jet four-momenta
-can sit inside a loss without a custom backward pass.
-\end{block}
 \end{frame}
 
 % ------------------------------------------------------------
@@ -315,8 +316,9 @@ no reclustering.
 merges are the hard prongs --- exactly what a 2-prong decay leaves behind.
 \smallskip
 
-\smallnote{The splitting scales $\sqrt{d_{12}}, \sqrt{d_{23}},\dots$ fall out of
-the same array.}
+The splitting scales come straight from \texttt{hist\_d}:
+\[\sqrt{d_{12}},\ \sqrt{d_{23}},\ \dots\ \ \text{with}\ \
+d_{ij}=\min(p_{Ti}^{2},p_{Tj}^{2})\,\Delta R_{ij}^2/R^2\]
 \end{column}
 \begin{column}{0.58\textwidth}
 \includegraphics[width=\linewidth]{fig/kt_observables.png}\\
@@ -377,7 +379,8 @@ off the stored tree, at no extra cost.}
 \begin{columns}[T]
 \begin{column}{0.34\textwidth}
 \smallnote{\textbf{What.} Every primary splitting emits
-$(z,\Delta R,k_t,\ln 1/\Delta R,\ln k_t,d)$.}
+$z=\tfrac{p_{T2}}{p_{T1}+p_{T2}}$, $\Delta R$, $k_t=p_{T2}\Delta R$, and the
+plane coordinates $\big(\ln\tfrac{1}{\Delta R},\ \ln k_t\big)$.}
 \end{column}
 \begin{column}{0.32\textwidth}
 \smallnote{\textbf{How.} One pass down the primary branch --- each node is one

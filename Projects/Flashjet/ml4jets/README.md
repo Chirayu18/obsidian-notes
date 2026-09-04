@@ -210,3 +210,31 @@ Changes made after a read-through:
 - **Hardware name removed from two plot titles** — `atlas_abs_timing.png` and
   `atlas_speedup_algs.png` had "Tesla V100S" baked into the image. Regenerated
   via `make_speed_plots.py`. The deck says "V100-class" once, in a caption.
+
+---
+
+## Second review pass (2026-09-04)
+
+Reframed around the ML4Jets abstract.
+
+- **Opening replaced.** The "what jet clustering is" framing is gone. It now
+  opens on **heterogeneous reconstruction**, anchored in a citable public fact:
+  CMS has run GPUs in the Run 3 HLT since the start, offloading **~30 % of HLT
+  reconstruction** for a **~25 % timing reduction** — tracking, vertexing and
+  calorimetry are all ported, and **jet clustering is not**. That is the gap the
+  talk addresses.
+  - *This cites CMS as published context, not CMS data. No CMS event or plot
+    appears anywhere — the data policy is intact.*
+- **flashjet slide rewritten.** The three-backend list was dropped (only
+  `triton_large` is used in practice, so it was misleading). It now says what is
+  actually interesting about the code: the **Cacciari–Salam nearest-neighbour
+  lemma** giving O(N²) per event instead of O(N³), the bandwidth-bound fused
+  sweep, branchless pair-vs-beam via masked stores, and autotuning cached **once
+  per GPU model** so runs stay reproducible.
+- **Formulas added.** The generalised-\(k_t\) distance measure (\(d_{ij}\),
+  \(d_{iB}\), \(\Delta R_{ij}\)) is now displayed on the algorithms slide with
+  the \(p\)-table under it; splitting scales on F1; Lund coordinates on F3.
+- **"It is differentiable" removed.**
+- **Layout:** the clustering-steps figure enlarged; the algorithms slide rebuilt
+  (table + formulas left, plot right) instead of the cramped stacked version.
+- **Zero overfull boxes** for the first time.
