@@ -204,11 +204,12 @@ nodes; QCD is a diffuse soft cascade that fragments into many small clumps.
 **Fewer, cleaner groups = real decay structure.** (Wqq at +1.58 breaks the
 pattern and is unexplained.)
 
-**3 REDUNDANCY** — `share_bp` density **9.6%** (was 0.000%), and linear
-R^2 predicting it from all four of ParT's existing pairwise features is
-**0.158**: not recoverable from what the model already sees. Per-class density
-tracks the physics — H4q 13.50%, Tbqq 13.40% highest; Hcc 6.51%, Tbl 7.17%
-lowest, QCD 7.87%.
+**3 REDUNDANCY** — `share_bp` density **9.6%** (was 0.000%). I first reported
+linear R^2 = 0.158 as "not recoverable from what the model already sees".
+**That was wrong, and the error was mine**: `share_bp` is a binary at ~8%
+prevalence, where R^2 is close to meaningless — a predictor can rank almost
+perfectly while explaining little variance. Measured properly (AUC), see the
+kill-check below.
 
 Live-module verification after patching: group size 4.77, share_bp 8.79%,
 0 NaN / 0 Inf.
@@ -216,6 +217,73 @@ Live-module verification after patching: group size 4.77, share_bp 8.79%,
 Also fixed a latent bug in the same loop: `alive = step & ~at_root` should be
 `step & ~found`, so particles never actually stopped once found. Present in the
 original per-particle module too.
+
+## The two kill-checks — RULE C DOES NOT SURVIVE THEM
+
+Run before spending GPU-hours, precisely because "it passes the pre-flight
+checks" had already been wrong twice. 1536 jets, 1.37M pairs.
+
+### A. Nonlinear redundancy — can ParT already compute share_bp?
+
+| predictor (from the 4 paper pairwise features) | AUC |
+|---|---|
+| linear | **0.8659** |
+| 2x64 MLP | **0.8664** |
+
+`share_bp` is recovered at **AUC 0.87 from what the model already sees**. The
+MLP adds nothing over linear (+0.0005), so the relationship is essentially
+linear in those features — the information is present, not hidden behind a
+nonlinearity attention would have to discover.
+
+This also retro-invalidates the "check 3 passes" verdict above: R^2 = 0.158 and
+AUC = 0.866 are the *same fit*, and only the second one answers the question.
+
+### B. Multiplicity control — is the class separation just n_const?
+
+```
+corr(groups/jet, n_const) = +0.9227
+```
+
+The headline separation (Tbqq 3.97 .. Hcc 10.12, raw spread 6.15) is **92%
+correlated with constituent count**, which ParT observes directly. At fixed
+n_const the spread collapses:
+
+| n_const bin | njets | groups/jet spread | share_bp density spread |
+|---|---|---|---|
+| [0,25) | 249 | 1.22 | 9.93 pp |
+| [25,35) | 377 | 1.39 | 5.36 pp |
+| [35,45) | 361 | 0.86 | 2.23 pp |
+| [45,200) | 549 | 2.51 | 1.66 pp |
+
+The pairwise density holds up better (corr with n_const only −0.37) and keeps
+real spread in LOW-multiplicity jets, but fades to ~1.7 pp by the highest bin.
+One stable non-multiplicity effect: **Tbl is the lowest-density class in every
+bin** — though Tbl already sits at AUC 0.99997 and needs no help.
+
+### Verdict
+
+Estimate for rule C helping at 1M: **10-15%** (down from ~30% before these
+checks). The smoke test (cluster 9265167) was killed while still idle.
+
+**Mechanism for the whole three-attempt null result:** the C/A tree, summarised
+either per-particle or per-pair, is largely reconstructible from the pairwise
+kinematics ParT's attention already computes. That is *why* every encoding has
+landed at parity — not a bug in any of them.
+
+## The defensible result for the talk
+
+The negative is quantified and genuinely interesting, which the raw
+"no improvement" was not:
+
+> C/A merge-history features do not improve ParT on JetClass. The attention
+> mechanism already reconstructs equivalent information from raw pairwise
+> kinematics — a 4-input MLP recovers the C/A same-prong flag at AUC 0.87 — and
+> the apparent class discrimination of tree-derived features is ~92% explained
+> by constituent multiplicity, which the model observes directly.
+
+Supporting evidence: matched 480k test-set comparison (all nine classes within
+±0.0004 AUC), 1M training curves at parity-minus-0.14, and the measured
+group-size failure of the original encoding.
 
 ### Superseded reasoning
 
