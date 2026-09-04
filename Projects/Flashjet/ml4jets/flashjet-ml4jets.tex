@@ -1,0 +1,793 @@
+% flashjet -- ML4Jets 2026 (Vienna, 14-18 Sep 2026)
+% Build: latexmk -pdf flashjet-ml4jets.tex
+%
+% DATA POLICY: this deck uses ATLAS Open Data and toy/analytic closures ONLY.
+% No CMS data appears anywhere.
+\documentclass[aspectratio=169,11pt]{beamer}
+
+\usetheme{default}
+\usecolortheme{default}
+\usefonttheme{professionalfonts}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage{fancyvrb}
+
+\definecolor{fjred}{HTML}{B00020}
+\definecolor{fjblue}{HTML}{1D4ED8}
+\definecolor{fjgreen}{HTML}{16A34A}
+\definecolor{fjorange}{HTML}{EA580C}
+\definecolor{fjgray}{HTML}{555555}
+\definecolor{boxbg}{HTML}{F6F7F9}
+
+\setbeamercolor{frametitle}{fg=fjred}
+\setbeamercolor{title}{fg=fjred}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{%
+  \hfill\tiny\color{fjgray} C.~Gupta --- ML4Jets 2026 \quad
+  \insertframenumber/\inserttotalframenumber \hspace{2ex}\vspace{1ex}}
+\setbeamertemplate{itemize item}{\color{fjred}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{fjgray}--}
+
+% tighter tables
+\renewcommand{\arraystretch}{1.15}
+
+% callout box
+\newcommand{\keybox}[1]{%
+  \begin{beamercolorbox}[wd=\textwidth,sep=6pt,rounded=false]{postit}%
+  \setbeamercolor{postit}{bg=boxbg,fg=black}%
+  \color{black}\small #1
+  \end{beamercolorbox}}
+
+\newcommand{\smallnote}[1]{{\footnotesize\color{fjgray} #1}}
+\newcommand{\akt}{anti-$k_t$}
+\newcommand{\prototype}{\textcolor{fjorange}{\textbf{prototype}}}
+
+\title{\textbf{flashjet}}
+\subtitle{GPU-native jet clustering with the full merge history}
+\author{Chirayu Gupta}
+\date{ML4Jets 2026 \quad$\cdot$\quad Vienna \quad$\cdot$\quad September 2026}
+
+\begin{document}
+
+{\setbeamertemplate{footline}{}
+\begin{frame}
+  \titlepage
+  \begin{center}
+  \smallnote{Benchmarks in this talk use \textbf{ATLAS Open Data} (CC0) and
+  analytic/toy closures --- freely presentable, no approval required.}
+  \end{center}
+\end{frame}}
+
+% ============================================================
+\section{What flashjet is}
+
+\begin{frame}{The problem: clustering is the CPU step in a GPU pipeline}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+Jet clustering sits on the critical path of nearly every jet-level ML pipeline ---
+and is almost always done \textbf{on the CPU, off the accelerator}.
+\medskip
+
+Four-momenta are copied to the host, clustered, copied back.
+\medskip
+
+That round trip dominates when:
+\begin{itemize}
+  \item training loops revisit the same events for \textbf{many epochs};
+  \item jets are \textbf{reclustered} under many systematic or hyper-parameter
+        variations;
+  \item the clustering itself must sit \textbf{inside} a differentiable pipeline.
+\end{itemize}
+\end{column}
+\begin{column}{0.45\textwidth}
+\keybox{\textbf{flashjet} implements the generalised-$k_t$ family
+(\akt, $k_t$, Cambridge--Aachen) \textbf{natively on the GPU}.
+
+\smallskip
+Data never leaves device memory during clustering.}
+\medskip
+
+\smallnote{Written in Triton/PyTorch. One entry point, runs unchanged on CPU and GPU.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{What it does}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{Clusters a batch of jets or events at once}, directly in GPU memory.
+\medskip
+
+Returns \textbf{two} things:
+\begin{enumerate}
+  \item the particle $\rightarrow$ jet assignment;
+  \item the \textbf{complete merge history} --- the full binary tree of which pair
+        merged, and at what distance.
+\end{enumerate}
+\end{column}
+\begin{column}{0.48\textwidth}
+\keybox{\textbf{Why the history matters.}
+Substructure observables --- groomed mass, $z_g$, $R_g$, Lund coordinates,
+exclusive subjets --- become \textbf{cheap reads of that tree}.
+
+\smallskip
+No second clustering pass.}
+\end{column}
+\end{columns}
+
+\vspace{1em}
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Returned} & \textbf{Meaning}\\
+\midrule
+\texttt{jet\_idx}, \texttt{n\_jets} & particle-to-jet assignment\\
+\texttt{hist\_p1}, \texttt{hist\_p2}, \texttt{hist\_child} & which pair merged into what\\
+\texttt{hist\_d} & the $d_{ij}$ at each merge step\\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{The interface}
+One function. The algorithm is an argument; the backend is chosen automatically.
+\medskip
+
+\begin{Verbatim}[fontsize=\small,frame=single,rulecolor=\color{fjgray}]
+out = flashjet.cluster(p4, mask, R=1.0, algorithm="antikt")
+#   p4   : (B, N, 4) torch tensor  (px, py, pz, E)
+#   mask : (B, N) bool             (ragged -> padded batch)
+#   algorithm : "antikt" | "kt" | "cambridge"   (or p=... for generalised-kt)
+
+out.n_jets            # (B,)      jets found per entry
+out.jets_p4(p4)       # (B, J, 4) jet four-momenta  (differentiable)
+out.splitting_scales()# sqrt(d12), sqrt(d23), ...
+out.exclusive_jets(n_jets=3)          # F1
+out.groomed_jets(p4, R, z_cut=0.1, beta=0.0)   # F2  soft drop / mMDT
+out.lund_coordinates(p4, R)                     # F3  primary Lund plane
+\end{Verbatim}
+
+\keybox{Same call on CPU and GPU. \texttt{jets\_p4} is a \texttt{scatter\_add} of
+constituents, so gradients flow through the clustering.}
+\end{frame}
+
+\begin{frame}{What is implemented}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{Clustering (kernels)}
+\begin{itemize}
+  \item generalised-$k_t$: \akt{} ($p=-1$), $k_t$ ($p=+1$), C/A ($p=0$)
+  \item batched, padded/ragged input via a mask
+  \item three backends, auto-dispatched:\\
+        \smallnote{fused register kernel ($N\!\le\!16$) $\rightarrow$
+        scratch NN-array Triton kernel ($N\!\le\!16384$) $\rightarrow$ torch}
+  \item full merge history recorded in-kernel
+  \item jet-regime (batch of jets) \emph{and} event-regime (whole events)
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Substructure --- reads of the history}
+\begin{itemize}
+  \item \textbf{F1} exclusive $k_t$ subjets \\
+        \smallnote{\texttt{exclusive\_jets\_from\_history} --- undo the last merges to
+        expose $n$ subjets, or cut at $d_{\rm cut}$}
+  \item \textbf{F2} soft drop / mMDT / mass-drop \\
+        \smallnote{\texttt{groom\_from\_history} --- walk the harder branch until
+        $z > z_{\rm cut}(\Delta R/R)^\beta$}
+  \item \textbf{F3} primary Lund coordinates \\
+        \smallnote{\texttt{lund\_coordinates\_from\_history} --- $(z,\Delta R,k_t,
+        \ln 1/\Delta R, \ln k_t, d)$ per split}
+\end{itemize}
+\smallskip
+\smallnote{All three are \textbf{pure-torch post-reads}: no kernel changes,
+CPU/GPU identical, negligible cost.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Status: a working prototype}
+\keybox{\textbf{flashjet is a \prototype.} The physics is validated and the speedups
+are real, but it is \textbf{not} production software: it is a Python/Triton library,
+not integrated into any experiment's reconstruction framework.}
+\medskip
+
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{What is solid}
+\begin{itemize}
+  \item[\textcolor{fjgreen}{\checkmark}] 129 unit tests, incl.\ GPU-only paths
+  \item[\textcolor{fjgreen}{\checkmark}] agrees with FastJet jet-by-jet
+  \item[\textcolor{fjgreen}{\checkmark}] reproduces analytic predictions
+  \item[\textcolor{fjgreen}{\checkmark}] reproduces a published experiment's own
+        reconstructed jets
+  \item[\textcolor{fjgreen}{\checkmark}] all three algorithms, R-scan, multiplicity scan
+\end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{What it is not (yet)}
+\begin{itemize}
+  \item[\textcolor{fjred}{$\times$}] not inside experiment software
+        \smallnote{(needs a C++/CUDA rewrite)}
+  \item[\textcolor{fjred}{$\times$}] CPU baseline is the \textbf{Python} FastJet
+        binding, not C++ FastJet
+  \item[\textcolor{fjorange}{$\sim$}] GPU is \textbf{largely idle} --- launch
+        configuration tuned on older cards
+  \item[\textcolor{fjred}{$\times$}] no pile-up study; grooming not yet timed
+\end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Physics validation}
+
+\begin{frame}{The history is right: closures against analytic predictions}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.92\linewidth]{fig/zg_distribution.png}\\
+\smallnote{Soft-drop $z_g$ follows the $1/z$ DGLAP form --- predicted at
+leading-log, recovered from the C/A history.}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.92\linewidth]{fig/softdrop_rho.png}\\
+\smallnote{Groomed-mass ordering in $\beta$: larger $\beta$ grooms less, so the
+mass peak moves up --- reproduces Soft Drop Figs.~3--4.}
+\end{column}
+\end{columns}
+\keybox{Toy-shower input, so the \emph{prediction} is unambiguous. These test the
+substructure decoders, not the event generator.}
+\end{frame}
+
+\begin{frame}{Clustering geometry and the Lund plane}
+\begin{columns}[T]
+\begin{column}{0.33\textwidth}
+\includegraphics[width=\linewidth]{fig/jet_areas.png}\\
+\smallnote{\akt{} jet areas $\to \pi R^2$: the known "rigid cone" property.}
+\end{column}
+\begin{column}{0.33\textwidth}
+\includegraphics[width=\linewidth]{fig/lund_triangle.png}\\
+\smallnote{Lund plane populated uniformly inside the kinematic triangle.}
+\end{column}
+\begin{column}{0.33\textwidth}
+\includegraphics[width=\linewidth]{fig/qcd_beta_family.png}\\
+\smallnote{$\beta$-family ordering on a toy shower.}
+\end{column}
+\end{columns}
+\keybox{Independent \textbf{NumPy tree-walks} pin every decoder; the $d$-channel of the
+Lund output ties \emph{exactly} to \texttt{splitting\_scales}.}
+\end{frame}
+
+% ============================================================
+\section{Benchmark}
+
+\begin{frame}{The benchmark: what, on what, how}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{Data --- ATLAS Open Data} (CC0, no approval needed)
+\smallskip
+
+\emph{ATLAS Top Tagging Open Data} (ATL-PHYS-PUB-2022-039):
+2.48\,M large-$R$ jets, \textbf{calorimeter-cluster constituents} stored per jet.
+\smallskip
+
+\begin{tabular}{@{}lrr@{}}
+\toprule
+sample & jets & $\langle n_{\rm const}\rangle$\\
+\midrule
+boosted top & 30\,000 & 59.2\\
+QCD (light $q/g$) & 30\,000 & 52.4\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{Multiplicity here is \emph{higher} than typical small-$R$ jet samples ---
+these are boosted fat jets.}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Compared against}
+\begin{itemize}
+  \item \textbf{FastJet vectorised} (awkward interface) --- the \emph{fair} CPU baseline
+  \item \textbf{FastJet per-jet} (classic loop) --- shown for reference
+\end{itemize}
+\medskip
+\textbf{Discipline}
+\begin{enumerate}
+  \item extract constituents once, save;
+  \item cluster on GPU, time it, save the \emph{same} events;
+  \item cluster those saved events with FastJet;
+  \item \textbf{check they agree} --- else the timing is meaningless.
+\end{enumerate}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Correctness first: 150/150 points agree}
+The full grid: \textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins
+$\times$ 2 samples}, 20\,000 jets per bin.
+\medskip
+
+\begin{center}
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Check} & \textbf{Result}\\
+\midrule
+number of jets found, vs FastJet & \textbf{100.000\,\%} at every one of 150 points\\
+leading-jet $p_T$ within $10^{-4}$ rel. & 1.0000 at 148/150 points\\
+median relative difference & $\sim 7\times10^{-8}$ \smallnote{(float32 precision)}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\keybox{\textbf{$k_t$ and C/A had never before been checked against FastJet on real
+detector data} --- only against NumPy tree-walks in unit tests. They now agree across
+the whole radius $\times$ multiplicity grid.}
+\medskip
+
+\smallnote{\textbf{The two exceptions, stated honestly:} both are the \emph{same single jet}
+(97 constituents, 6 jets found by both). One $\sim$29\,GeV cluster is assigned to a
+different jet --- a \textbf{boundary assignment at the $R$ edge}, not a merge-ordering
+error. Jet counts still match; the leading jet is never ambiguous (790\,GeV gap).}
+\end{frame}
+
+\begin{frame}{It also reproduces ATLAS's own reconstructed jets}
+\begin{columns}[T]
+\begin{column}{0.55\textwidth}
+A stronger test than agreeing with FastJet: the \emph{2020 ATLAS Jet Reconstruction}
+open dataset ships both \textbf{calorimeter clusters} and ATLAS's own
+\texttt{RecoJets\_R4}.
+\medskip
+
+Cluster the $\sim$600 clusters per event ourselves, compare to what ATLAS
+reconstructed:
+\medskip
+
+\begin{tabular}{@{}lc@{}}
+\toprule
+\textbf{Comparison} & \textbf{Result}\\
+\midrule
+$n_{\rm jets}$ vs \texttt{RecoJets\_R4} & \textbf{100.0\,\%} match\\
+mean jets/event & 10.96 vs 10.96\\
+leading $p_T$ vs FastJet & within $10^{-4}$\\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.45\textwidth}
+\keybox{This closes the algorithm against \textbf{the experiment's own published
+output}, not against another implementation of the same algorithm.
+
+\smallskip
+\textbf{599.3 clusters/event} --- the event regime, where the problem is $O(N^2)$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Time per jet}
+\begin{center}
+\includegraphics[width=0.92\linewidth]{fig/atlas_abs_timing.png}
+\end{center}
+\vspace{-0.3em}
+\smallnote{\textbf{Log scale} --- each gridline is $10\times$. flashjet stays close to
+flat while both FastJet interfaces climb steeply with multiplicity. The gap is
+\textbf{two orders of magnitude} against the per-jet interface, and about
+$40$--$100\times$ against the vectorised one.}
+\end{frame}
+
+\begin{frame}{Speedup grows with jet complexity}
+\begin{center}
+\includegraphics[width=0.92\linewidth]{fig/atlas_speedup_algs.png}
+\end{center}
+\vspace{-0.3em}
+\smallnote{All three algorithms, both samples, $R=1.0$. Every point has
+\textbf{100\,\% $n_{\rm jets}$ agreement}. The busier the jet, the bigger the win ---
+which is the regime that matters for boosted-object physics.}
+\end{frame}
+
+\begin{frame}{Cost is independent of $R$ --- and of the algorithm}
+\begin{columns}[T]
+\begin{column}{0.58\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_R_independence.png}
+\end{column}
+\begin{column}{0.42\textwidth}
+\textbf{Across $R = 0.4 \to 1.2$:} 1.3797--1.3845\,$\mu$s/jet.
+A \textbf{0.3\,\% spread} over a $3\times$ range in $R$.
+\smallskip
+
+$R$ changes \emph{which} pairs merge, not \emph{how many} distances are computed.
+\medskip
+
+\textbf{Across algorithms:} \akt{} / $k_t$ / C/A agree to within $\sim$4\,\% at every
+multiplicity --- they share the kernel and differ only in the exponent.
+\medskip
+
+\keybox{$k_t$ and C/A timing is \textbf{free}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The numbers}
+\begin{center}
+\small
+\begin{tabular}{@{}llrrrrr@{}}
+\toprule
+sample & alg & $\langle n\rangle$ & flashjet & FJ vec. & FJ per-jet & speedup\\
+ & & & [$\mu$s/jet] & [$\mu$s/jet] & [$\mu$s/jet] & \\
+\midrule
+top & \akt   & 24.1 & 0.427 & 16.5 & 119.9 & $39\times$\\
+top & \akt   & 44.8 & 0.464 & 43.0 & 214.9 & $\mathbf{93\times}$\\
+top & C/A    & 74.7 & 1.000 & 84.8 & 361.9 & $85\times$\\
+top & C/A    & 123.1 & 2.565 & 165.1 & 621.9 & $64\times$\\
+\midrule
+qcd & \akt   & 22.2 & 0.346 & 17.5 & 110.1 & $51\times$\\
+qcd & \akt   & 43.6 & 0.463 & 45.7 & 220.0 & $\mathbf{99\times}$\\
+qcd & \akt   & 74.7 & 1.215 & 89.8 & 376.3 & $74\times$\\
+qcd & \akt   & 120.2 & 2.673 & 154.9 & 618.2 & $58\times$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+\keybox{\textbf{39--99$\times$} over vectorised FastJet (median $64\times$),
+100\,\% jet-count agreement everywhere --- on a \textbf{Tesla V100S}.}
+\medskip
+\smallnote{$R=1.0$ rows shown; the full $150$-point grid is in the backup.}
+\end{frame}
+
+\begin{frame}{Caveats --- read the speedups with these}
+\begin{enumerate}
+  \item \textbf{Hardware.} These are \textbf{V100S} numbers. A current-generation card
+  (H100) is roughly a further $2\times$ on identical input, so treat these as a
+  \emph{lower bound} --- not as this library's ceiling.
+  \medskip
+  \item \textbf{The CPU baseline is Python.} Every number compares against FastJet's
+  \emph{Python} binding. The production tool is C++. Until that is measured, the honest
+  caveat is \emph{``some of this could be Python overhead''}. \textcolor{fjred}{This is
+  the single most valuable missing test.}
+  \medskip
+  \item \textbf{Large-$R$ jets.} These are boosted fat jets ($R\!=\!1.0$-scale,
+  $\sim$50--120 constituents), not small-$R$ jets.
+  \medskip
+  \item \textbf{Batch regime.} The advantage comes from clustering \emph{many} jets at
+  once. A per-event framework may not be able to exploit that --- it needs measuring,
+  not assuming.
+\end{enumerate}
+\end{frame}
+
+% ============================================================
+\section{Downstream: does the history help tagging?}
+
+\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} ParT + C/A features --- current status}
+\keybox{\textbf{Slide to be finalised.} Numbers below are the current measured
+state as of 4 Sep 2026; the follow-up run is still in progress.}
+\medskip
+
+\textbf{The idea.} If flashjet hands back the merge tree for free, feed it to the
+tagger: add per-particle Cambridge/Aachen branch-point features to Particle
+Transformer on JetClass.
+\medskip
+
+\textbf{The result: no gain.} Matched 480k checkpoint, 20.05\,M-jet test set:
+
+\begin{center}
+\small
+\begin{tabular}{@{}lccc@{}}
+\toprule
+metric & baseline & {} + C/A (5 per-particle) & $\Delta$\\
+\midrule
+test accuracy & \textbf{85.625\,\%} & 85.524\,\% & $-0.102$\\
+mean 1-vs-QCD AUC & \textbf{0.98981} & 0.98970 & $-0.00011$\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\smallnote{All nine classes marginally worse. Magnitudes sit inside the
+$\sim$1.3-point seed spread, so the honest statement is
+\textbf{``indistinguishable from baseline, with a consistent negative sign''} ---
+not ``C/A hurts''. An earlier $+1.3$ at 20k iterations was a \textbf{training
+transient}, not a durable effect.}
+\end{frame}
+
+\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} Why it failed --- and the fix}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{Diagnosed, not just observed.}
+\smallskip
+
+The feature values are provably correct (0 soft-side violations in 274\,192
+entries). The problem is structural:
+\medskip
+
+\keybox{\textbf{Measured group size is exactly 1.00} --- the features carry
+\emph{zero} prong-grouping information.}
+\medskip
+
+{\small In a C/A tree a particle almost always merges into something larger, so
+``am I the softer child?'' is true at its \emph{own first merge} --- the walk never
+climbs, and the node it lands on is unique to that particle.}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Consequence.} Prong membership is a property of a \emph{pair}, not of a
+particle. The pairwise redesign was built and then \textbf{cancelled unrun}: its
+\texttt{share\_bp} channel is identically zero for the same reason.
+\medskip
+
+\textbf{Current attempt --- subjet-level features} ($k_t$ cut 20\,GeV):
+\smallskip
+
+{\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \texttt{part\_sj\_lnm} --- ln mass of my subjet
+  \item \texttt{part\_sj\_lnptfrac} --- subjet $p_T$ fraction
+  \item \texttt{part\_sj\_nconst} --- constituents sharing it
+\end{itemize}}
+\smallnote{Passes the set-model probe that killed the earlier variants.
+\textbf{Training result pending.}}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Profiling}
+
+\begin{frame}{Where the time goes --- and what limits it}
+\begin{columns}[T]
+\begin{column}{0.48\textwidth}
+\textbf{Nsight Systems} --- share of GPU time
+\smallskip
+
+\begin{tabular}{@{}lrr@{}}
+\toprule
+kernel & \% GPU & avg/call\\
+\midrule
+\texttt{\_cluster\_large\_kernel} & \textbf{97.6} & 5.47\,ms\\
+\texttt{\_decode\_kernel} & 1.5 & 82\,$\mu$s\\
+torch glue & $<1$ & ---\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{Host$\leftrightarrow$device transfer negligible once running: the memory row
+of the timeline is \textbf{empty}.}
+\medskip
+
+\keybox{\textbf{No hidden overhead} --- essentially all the time is real clustering
+work.}
+\end{column}
+\begin{column}{0.48\textwidth}
+\textbf{Nsight Compute} --- hardware counters (H100)
+\smallskip
+
+\begin{tabular}{@{}lr@{}}
+\toprule
+metric & value\\
+\midrule
+DRAM throughput & \textbf{0.02\,\%}\\
+Compute (SM) throughput & 15.4\,\%\\
+Registers / thread & 168\\
+Theoretical occupancy & 18.75\,\%\\
+Achieved occupancy & \textbf{6.25\,\%}\\
+Waves per SM & \textbf{0.32}\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\keybox{Not memory- or compute-bound --- the GPU is simply \textbf{not filled}.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{The profiler names the bottleneck --- and prices the fix}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/ncu_workload_imbalance_H100.png}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{NVIDIA's own estimates:}
+\smallskip
+
+\begin{tabular}{@{}lr@{}}
+\toprule
+finding & est.\ speedup\\
+\midrule
+Theoretical occupancy (registers) & \textbf{81\,\%}\\
+Achieved occupancy & 67\,\%\\
+SM workload imbalance & 19\,\%\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{\emph{``This kernel grid is too small to fill the available resources on
+this device, resulting in only 0.32 full waves across all SMs.''}}
+\smallskip
+
+\smallnote{Grid size \textbf{128 blocks} on a \textbf{132-SM} device --- fewer blocks
+than the GPU has processors.}
+\medskip
+
+\keybox{$\sim$\textbf{1.7--1.8$\times$} more available from launch configuration and
+register budget --- \textbf{not} from the algorithm.}
+\end{column}
+\end{columns}
+\end{frame}
+
+% ============================================================
+\section{Conclusions}
+
+\begin{frame}{Summary}
+\begin{enumerate}
+  \item \textbf{flashjet clusters on the GPU and keeps the full merge history}, so
+  substructure --- exclusive subjets, soft drop, Lund coordinates --- comes free as
+  array reads rather than a second clustering pass.
+  \medskip
+  \item \textbf{It gives the same jets as FastJet.} 150/150 grid points at
+  100\,\% $n_{\rm jets}$ agreement, across \akt{}/$k_t$/C-A, $R=0.4$--$1.2$, and
+  24--123 constituents per jet. $k_t$ and C/A validated on real data for the first time.
+  \medskip
+  \item \textbf{It reproduces ATLAS's own reconstructed jets} exactly, clustering
+  $\sim$600 calorimeter clusters per event.
+  \medskip
+  \item \textbf{39--99$\times$ faster} than vectorised FastJet on a V100S, and the
+  advantage \emph{grows} with jet complexity. Cost is independent of $R$ and of the
+  algorithm choice.
+  \medskip
+  \item \textbf{Still a \prototype{}}, with meaningful headroom: the profiler says the
+  GPU is largely idle and attributes $\sim$1.7--1.8$\times$ to register pressure alone.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{What is next}
+\begin{center}
+\begin{tabular}{@{}clp{0.52\textwidth}@{}}
+\toprule
+& \textbf{Item} & \textbf{Why}\\
+\midrule
+\textbf{1} & \textcolor{fjred}{C++ FastJet baseline} & every number here uses the
+Python binding; the production tool is C++\\
+\textbf{2} & \textcolor{fjorange}{Improve GPU utilisation} & the profile says most of
+the GPU is idle; retuning launch geometry is free speed\\
+\textbf{3} & \textcolor{fjorange}{Pile-up and grooming timing} & untested axes that a
+realistic workload will hit\\
+\textbf{4} & \textcolor{fjred}{Use it inside experiment software} & the real production
+test --- needs a C++/CUDA rewrite\\
+\bottomrule
+\end{tabular}
+\end{center}
+\vspace{1em}
+\keybox{\textbf{Bottom line:} as an accelerator-resident substitute for CPU clustering
+inside a learning workflow, flashjet is \textbf{correct}, roughly \textbf{two orders of
+magnitude faster} than per-jet FastJet, and still leaving most of the GPU idle.}
+\end{frame}
+
+{\setbeamertemplate{footline}{}
+\begin{frame}
+\begin{center}
+{\Huge\color{fjred}\textbf{Thank you}}
+\medskip
+
+{\large Questions?}
+\vspace{2em}
+
+\smallnote{All benchmarks: ATLAS Open Data (CC0) --- ATL-PHYS-PUB-2022-039 and the
+2020 ATLAS Jet Reconstruction dataset.\\
+Physics closures: analytic predictions on toy showers.\\
+Code: \texttt{flashjet}, branch \texttt{benchmarking}.}
+\end{center}
+\end{frame}}
+
+% ============================================================
+\appendix
+\section{Backup}
+
+\begin{frame}[fragile]{Backup --- reproducing this}
+\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
+# 1. ATLAS Open Data -> per-jet constituent lists (npz)
+python dump_atlas_toptag.py {top|qcd} 30000
+
+# 2. full sweep on a GPU: 3 algorithms x 5 radii x 5 bins
+python sweep_flashjet.py atlastop-top 20000   # flashjet side
+python sweep_fastjet.py  atlastop-top         # FastJet side + agreement
+
+# 3. plots
+python make_atlas_plots.py
+\end{Verbatim}
+\smallskip
+\begin{tabular}{@{}ll@{}}
+\toprule
+Dataset & Source\\
+\midrule
+Top Tagging Open Data & \texttt{opendata.cern.ch/record/15013} (and 80030)\\
+2020 Jet Reconstruction & \texttt{opendata.cern.ch/record/15010}\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{Both read directly over the open \texttt{eospublic} redirector --- no grid
+certificate required. Constituents are calorimeter clusters, stored in MeV, massless.}
+\end{frame}
+
+\begin{frame}{Backup --- speedup vs $R$, per algorithm}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_radius_scan_atlastop-top.png}\\
+\smallnote{boosted top}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_radius_scan_atlastop-qcd.png}\\
+\smallnote{QCD (light $q/g$)}
+\end{column}
+\end{columns}
+\smallnote{Flat in $R$ for all three algorithms; the ordering is by multiplicity bin.}
+\end{frame}
+
+\begin{frame}{Backup --- speedup vs multiplicity}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_multiplicity_atlastop-top.png}\\
+\smallnote{boosted top}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_multiplicity_atlastop-qcd.png}\\
+\smallnote{QCD (light $q/g$)}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- the GPU timeline}
+\begin{center}
+\includegraphics[width=0.85\linewidth]{fig/nsys_timeline_H100.png}
+\end{center}
+\smallnote{Nsight Systems, three consecutive iterations. Each block is one clustering
+call; the tool labels the rows \textbf{``$>$99.9\,\% Kernels''} and
+\textbf{``$<$0.1\,\% Memory''}. The kernels run back to back with nothing in between,
+and the memory row is empty --- no host/device shuffling while clustering runs. That is
+what makes the speedup real rather than an artefact of where the timer started.}
+\end{frame}
+
+\begin{frame}{Backup --- occupancy detail}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/ncu_occupancy_H100.png}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=0.95\linewidth]{fig/ncu_details_sol_launch_H100.png}
+\end{column}
+\end{columns}
+\smallnote{Register pressure (168/thread) caps theoretical occupancy at 18.75\,\%;
+achieved is 6.25\,\%. With 0.32 waves/SM the kernel does not fill the GPU even once.
+DRAM throughput 0.02\,\% --- this is parallelism starvation, not a bandwidth problem.}
+\end{frame}
+
+\begin{frame}{Backup --- why not PHYSLITE?}
+ATLAS's main research open-data format, \textbf{DAOD\_PHYSLITE}, cannot be used for this
+benchmark: it stores calibrated \emph{objects}, not jet-finding \emph{inputs}.
+\medskip
+
+\begin{center}
+\begin{tabular}{@{}lc@{}}
+\toprule
+looked for & found\\
+\midrule
+\texttt{CaloCalTopoClusters} & 0 branches\\
+Flow-element / PFO containers & 0 branches\\
+general \texttt{TruthParticles} & absent\\
+\texttt{constituentLinks} on jets & present but \textbf{dangling}\\
+\texttt{InDetTrackParticles} & thinned to $\sim$4 tracks/event\\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+\smallnote{The links carry a \emph{non-zero} container key with 22.5 constituents/jet
+recorded --- the structure is described, but the four-vectors are not shipped. ATLAS
+confirm this is deliberate: \emph{``we don't store jet constituents in PHYSLITE.''}
+Hence the datasets used here, which do ship constituents.}
+\end{frame}
+
+\end{document}
