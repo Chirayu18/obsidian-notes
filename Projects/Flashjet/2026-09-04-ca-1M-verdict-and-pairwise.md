@@ -68,15 +68,21 @@ only the code path had been checked). `~/cawork/validate_ca_values.py`.
 
 **But two structural problems:**
 
-1. **22% of real particles have no branch point at all.** ~9.6 per jet, where
-   the design predicted ~1 ("only the always-harder leaf"). For those, all five
-   columns are exactly 0.0 — numerically identical to the padding filling the
-   other ~66% of slots. Of 128 slots: ~85 padding zeros, ~10 "real but zero",
-   only ~33 carrying information.
-2. **Group size is exactly 1.00 — there is NO grouping at all.** (An earlier
-   pass reported ~1.3; that was an artifact of comparing rounded float triples,
-   which collide by chance. Direct measurement of `bp_node` gives
-   `n_unique_bp == n_with_bp` in every jet.)
+1. ~~22% of real particles have no branch point~~ — **WITHDRAWN.** That figure
+   came from an offline script that sliced the lz4 file from column 0. The
+   b-hive layout is `[15 global | 128x23 cpf | ...]` (authoritative:
+   `model.create_feature_shapes()` gives `input_dims [(1,15),(128,23),...]`,
+   `feature_edges [15, 2959, ...]`), so every offline diagnostic was misaligned
+   by 15 columns and was clustering garbage. With the correct offset the inputs
+   are clean: m^2 ~ +0.048 with 99.4% non-negative, constituents at dR mean
+   0.198 / p95 0.580 from the jet axis, jet pt ~607 GeV, and **R=0.8 gives ONE
+   C/A tree for 88-89% of jets**. The **training code was never affected** —
+   `get_inpt` uses `x.split(self.feature_lengths)`, which strips the globals
+   correctly, so the 1M results stand exactly as measured.
+2. **Group size is exactly 1.00 — there is NO grouping at all.** This one
+   survives the offset fix: re-measured on correctly-sliced data, rule A still
+   gives group size 1.00 (32.9 groups for 32.9 particles). It was the right
+   diagnosis, reached partly via wrong intermediate numbers.
 
    **Mechanism, traced leaf by leaf:** nearly every constituent is the *softer
    child at its very first merge* —
@@ -158,12 +164,67 @@ Smoke test passed on real data (20 iters, `Normal termination`, luigi clean).
 idle**, on discovering `share_bp` is constant zero — half its new signal was
 dead, so it was not worth 37 GPU-hours. No GPU time was spent.
 
-## The real fix (not yet implemented)
+## The fix: RULE C (implemented, measured, smoke-testing)
 
-Stop terminating the ascending walk at the first soft-side node. Climb until
-reaching a node with actual substructure — e.g. the first ancestor whose
-**softer child contains ≥2 constituents**, or a k_T / mass threshold. That
-yields genuine prong-level nodes shared by multiple particles, which is what
+Stop terminating at the first soft-side node. Climb until the soft branch holds
+**>= 3 constituents** (`MIN_GROUP` in `utils/flashjet_ca_pair_features.py`), and
+record the **parent** merge node so every constituent of that branch shares it.
+
+Termination rules compared on 512 correctly-sliced jets:
+
+| rule | %with bp | groups/jet | **mean group size** | max |
+|---|---|---|---|---|
+| A first soft (shipped) | 96.5% | 32.9 | **1.00** | 1 |
+| B soft-child>=2 | 78.8% | 10.3 | 2.70 | 11 |
+| **C soft-child>=3** | **65.4%** | **5.0** | **4.88** | **18** |
+| D both-children>=2 | 77.5% | 9.3 | 2.96 | 11 |
+| E kt>1GeV | 72.2% | 7.3 | 3.49 | 19 |
+| F fixed depth 3 | 90.1% | 11.6 | 2.67 | 11 |
+
+### The three pre-flight checks, rule C
+
+**1 SPREAD** — group size 4.82, 6.5 groups/jet, 73.6% coverage,
+**0 / 26279** violations of ln z <= ln 0.5.
+
+**2 DISCRIMINATION** — passes, but *inverted* from the naive prediction. I
+expected multi-prong classes to show MORE groups; they show **fewer**:
+
+| class | grp/jet | vs QCD | mean lnkt |
+|---|---|---|---|
+| Tbqq | 3.97 | −2.92 | −2.99 |
+| H4q | 4.47 | −2.42 | −2.09 |
+| Zqq | 4.85 | −2.04 | −2.72 |
+| **QCD** | **6.89** | — | −2.35 |
+| Wqq | 8.47 | +1.58 | −1.46 |
+| Hcc | 10.12 | +3.23 | −0.78 |
+
+On reflection this is the right physics: a genuine 3-prong top has three
+**coherent, massive** subjets, so the >=3 condition is met early at a few big
+nodes; QCD is a diffuse soft cascade that fragments into many small clumps.
+**Fewer, cleaner groups = real decay structure.** (Wqq at +1.58 breaks the
+pattern and is unexplained.)
+
+**3 REDUNDANCY** — `share_bp` density **9.6%** (was 0.000%), and linear
+R^2 predicting it from all four of ParT's existing pairwise features is
+**0.158**: not recoverable from what the model already sees. Per-class density
+tracks the physics — H4q 13.50%, Tbqq 13.40% highest; Hcc 6.51%, Tbl 7.17%
+lowest, QCD 7.87%.
+
+Live-module verification after patching: group size 4.77, share_bp 8.79%,
+0 NaN / 0 Inf.
+
+Also fixed a latent bug in the same loop: `alive = step & ~at_root` should be
+`step & ~found`, so particles never actually stopped once found. Present in the
+original per-particle module too.
+
+### Superseded reasoning
+
+The earlier plan here — climb to a node with >=2 constituents "or a kt/mass
+threshold" — is what became rule C, with >=3 chosen on the measurements above.
+The LCA-matrix idea (ln kt at the lowest common ancestor, an ultrametric that
+determines the tree exactly) was built and abandoned: its apparent failure
+(76% of pairs "unjoined", 12/400 ultrametric violations) was **entirely the
+column-offset bug**, so it is worth revisiting if rule C underdelivers. Code:
 both formulations assumed all along.
 
 Testable in minutes on CPU: `flashjet.cluster(..., backend="auto")` falls
