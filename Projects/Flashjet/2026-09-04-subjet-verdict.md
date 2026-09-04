@@ -35,11 +35,35 @@ Val loss agrees independently (+0.0009, t = +0.56, same 5/10).
 | **CA5** | −0.124 full run; **+0.006** at 700k+ | 43 | slower convergence, ends at parity |
 | **subjet** | −0.035 | 10 | parity |
 
-CA5's full-range deficit is **significant** (t = −3.12; val loss agrees, t = +2.98,
-both 9/43). It shrinks monotonically — last-20 −0.024 (t = −1.41), 700k+ **+0.006**
-(t = +0.20) — so the honest statement is *C/A converges more slowly and ends level*,
-**not** that it hurts at convergence. Report both ranges; quoting only the endgame
-would be cherry-picking.
+CA5's full-range deficit is **significant** (n=49, mean −0.114, t = −3.25; val loss
+agrees, t = +3.10, both 9/49).
+
+**CORRECTION made when the run finished (23:20).** All day I said *"C/A ends at
+parity"*, on a 700k+ window reading +0.006 (t = +0.20). **That was wrong.** With the
+full run in, the converged region is a small but highly significant deficit:
+
+| range | n | mean Δ | t | CA5 ahead |
+|---|---|---|---|---|
+| all matched | 49 | −0.114 | −3.25 | 9/49 |
+| 700k+ | 15 | −0.014 | −0.75 | 3/15 |
+| **800k+** | 10 | **−0.041** | **−4.65** | 1/10 |
+| **900k+** | 5 | **−0.045** | **−3.13** | 0/5 |
+
+Designated 960–980k window, every point behind and val loss agreeing at every one:
+940k −0.031, 960k −0.040, 980k −0.036 (Δvloss +0.0006/+0.0008/+0.0008).
+Best-ever: baseline **86.230**, CA5 **86.194**.
+
+Why the earlier reading failed: the 700k+ window straddles the region where CA5 was
+still catching up *and* includes the 840k dip common to both arms. Once training truly
+converges (800k+), the gap is consistent — and the **endgame noise floor is only
+0.088**, so −0.041 is ~0.5σ and resolvable, where at the ±0.377 early-training noise
+it was not.
+
+**Corrected statement: C/A converges more slowly AND ends marginally but reliably
+behind (~0.04 points, ~0.5σ).** This is a *stronger* talk result than parity —
+"redundant features cost you consistently even at convergence" beats "redundant
+features are free", and the arity argument predicts exactly it: attention capacity
+spent recomputing what `PairEmbed` already supplies.
 
 **Subjet's null is the cleaner one**: it does not pay the early-convergence cost.
 Over the same ≤200k range CA5 is **−0.330** while subjet is −0.035. That gap is the
