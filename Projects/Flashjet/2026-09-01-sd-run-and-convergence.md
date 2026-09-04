@@ -1,9 +1,16 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-09-04-ca-1M-verdict-and-pairwise]]"
 date: 2026-09-01
 source: lxplus
 ---
+
+> [!warning] Superseded — the 20k per-class ROC result did not hold
+> The "all nine classes improve, Tbqq rejection 1.75x" result below was measured
+> at **20k iterations** and is a transient of early training. At a matched
+> **480k** checkpoint on the same 20M-jet test set, all nine classes are
+> marginally **worse** for C/A. See [[2026-09-04-ca-1M-verdict-and-pairwise]].
 
 # Second training (survives_SD) — and why +1.31 does not survive a controlled rerun
 
