@@ -44,3 +44,11 @@ Broader review (all of the above, with context): Marzani-Soyez-Spannowsky,
 - `src/flashjet/reference.py` — the readable single-event NumPy clustering (the
   bridge from the papers to the vectorized code; same algorithm, no batching).
 - Cross-check tests: `tests/test_substructure.py`.
+
+## Related work on the ML question (added 2026-09-07)
+
+| Paper | arXiv | Why it matters here |
+|---|---|---|
+| Gouskos & Maier — *Particle-Lund Multimodality in Jet Taggers* (PLuM) | [2605.26821](https://arxiv.org/abs/2605.26821) | **The closest published work to our C/A-features study.** Adds Lund splittings to ParT as separate *tokens*. Reports gains on H→bb and top, **explicitly no gain from C/A-ordered splittings**. See [[2026-09-07-plum-paper-vs-our-result]]. PDF: [[2605.26821-PLuM-particle-lund-multimodality.pdf]] |
+| Lim & Nojiri — *Interpretable deep learning ... jet spectra* | [1807.03312](https://arxiv.org/abs/1807.03312) | S2 sufficiency: functional Taylor expansion ⇒ leading nontrivial term is the **2-body** energy-correlation spectrum. The theory backing our arity argument. |
+| Chakraborty, Lim, Nojiri | [1904.02092](https://arxiv.org/abs/1904.02092) | Follow-up; slide 22 of the AEI talk is the PY8/HW7 transfer precedent that motivated our Herwig test. |
