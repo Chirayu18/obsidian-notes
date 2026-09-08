@@ -170,6 +170,48 @@ training: compiled vs eager match to **7.153e-07**, top-48 kT multiset matches
 the per-jet decode **200/200 jets**, **zero** jets with no splittings,
 no sentinels or NaN, ln z <= ln 0.5 everywhere, params **2,193,930**.
 
+## Running: cluster 9283169, timing measured
+
+Started 14:16:54 on b9pgpun015, compiled (`use_torch_compile=True`, no fallback).
+
+| checkpoint | wall time | val acc |
+|---|---|---|
+| model_20000 | 15:31:54 (75 min, incl. startup+compile) | 81.736 |
+| model_40000 | 16:41:24 (69.5 min) | 83.493 |
+
+**Steady state ~70 min per 20k = ~210 ms/step.** This supersedes every earlier
+overhead figure I quoted (+272%, 6x) -- those were measured at B=16 on a
+contended shared T4 and on the pre-rewrite code path.
+
+| arm | per 20k | per step | vs baseline |
+|---|---|---|---|
+| baseline | 44 min | 132 ms | — |
+| CA5 | 57 min | 170 ms | +29% |
+| subjet | 62 min | 187 ms | +42% |
+| **PLuM** | **~70 min** | **~210 ms** | **+59%** |
+
+Consistent with the mechanism: 48 extra tokens make attention (176/128)^2 ~ 1.9x
+costlier, partly offset by compile. **Projection ~2.4 days to 1M iterations**,
+comparable to the other arms.
+
+**Memory sits at 122 GB against the 100 GB request** — over, but flat and
+tolerated by condor's headroom (the same behaviour that let the 32 GB job run to
+73 GB). Each of the 16 dataloader workers holds ~5.2 GB, up from ~3.0 GB
+uncompiled: `reduce-overhead` CUDA graphs cost ~2 GB per worker on the host
+while *reducing* device memory (31 GB -> 18 GB). If a future submission is held,
+the lever is `--n-threads 8`, which halves worker memory and does not change the
+learned function.
+
+**First comparison at the matched 20k point** (nothing readable yet -- the gap
+is ~1/10 of the 0.377-point noise floor at this stage):
+
+| arm | acc@20k | loss@20k |
+|---|---|---|
+| subjet | 81.989 | 0.5063 |
+| **PLuM** | **81.736** | **0.5088** |
+| baseline | 81.765 | 0.5109 |
+| CA5 | 80.463 | 0.5430 |
+
 ## Guards in the script (all passed at submit)
 
 `N_LUND_FEATURES=3`, `M_SPLITS_DEFAULT=48`, `lund_algorithm=kt`,
