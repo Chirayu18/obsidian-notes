@@ -34,44 +34,61 @@ are the ones that are not that.
 
 ---
 
-## 1. Subjet-level DISPLACEMENT aggregates (the highest-upside new arm)
+## 1. ~~Subjet-level DISPLACEMENT aggregates~~ — PROBED 2026-09-08, DON'T BUILD
 
-**The idea:** keep the subjet grouping that `utils/flashjet_subjet_features.py`
-already computes (C/A tree declustered at a kT cut, each particle assigned to a
-subjet). Change only *what is summed over the group*.
+**The idea:** keep a subjet grouping, but aggregate *displacement* over it
+(sum/mean IP significance, counts of tracks above 2σ/3σ) instead of mass.
+Motivation was that every previous arm added quantities derivable from the
+constituent **four-vectors**, whereas displacement lives in different columns
+(`part_d0val/d0err/dzval/dzerr`) that ParT sees per particle but cannot pool
+into "these tracks share a displaced origin". It is also the mechanism
+Gouskos & Maier credit for their only real gain (b vs c decay length), obtained
+in Delphes **without** secondary-vertex features.
 
-- **now:** mass, pT fraction, constituent count — all built from the 4-vectors
-- **instead:** Σ IP significance from `d0val/d0err`; count of tracks with
-  |d0|/σ > 2 and > 3; a vertex-mass proxy built from the displaced tracks only
+**Probe: `~/flashjet_condor/ip_probe2.py`.** Subjets from flashjet's own
+`exclusive_jets_from_history` (`history.py:201` — the standard FastJet
+`ClusterSequence::exclusive_jets` definition, cross-checked against FastJet in
+`tests/`) with **`algorithm="kt"`**, n_jets=3 → 12.5 constituents/subjet.
+Control = the particle's own 19 inputs (including all four IP columns) plus
+jet-level 2-body moments. 20,000 particles, all 10 classes, zero NaN.
 
-**Why this is different in kind from all four nulls.** Every previous arm added a
-quantity *derivable from the constituent four-vectors ParT already sees*. Displacement
-lives in different input columns — `part_d0val`, `part_d0err`, `part_dzval`,
-`part_dzerr` — and ParT sees those **per particle** but has no mechanism to form
-"the collective displacement of a coherent group". That is a genuine n-body operation
-over a set the model must first identify.
+| target | linear R² | MLP R² | verdict |
+|---|---|---|---|
+| subjet sum IPsig | 0.346 | 0.421 | partly |
+| subjet mean IPsig | 0.249 | 0.382 | partly |
+| **subjet n(IPsig>2)** | 0.443 | **0.599** | **RECOVERABLE** |
+| **subjet n(IPsig>3)** | 0.401 | **0.594** | **RECOVERABLE** |
+| *[ref] subjet ln mass* | *0.044* | *0.052* | *unrecoverable — and STILL trained to parity* |
 
-It is also the mechanism the PLuM authors themselves name for their **only** real
-gain: b vs c decay length ("charm hadrons exhibit decay lengths roughly a factor of
-two to three shorter than those of B hadrons"), obtained in a Delphes setup **with no
-secondary-vertex inputs**.
+**Verdict: do not build this arm. Prior drops ~30–35% → ~12–15%.**
 
-**Honest prior: ~30–35%.** Higher than the previous arms, still not high. ParT does
-see per-track IP, and 8 attention layers over 128 tokens is a lot of capacity for
-learning "several tracks share a displaced origin" — so this could fail exactly the
-way subjet mass did: real information, already reachable.
+The aggregates are ~60% recoverable from what ParT already sees per particle —
+a strictly **weaker** starting position than subjet mass, which was genuinely
+unrecoverable (R²=0.05) and still gave +0.007 (t=+0.34, n=50). Counting tracks
+above a significance threshold is nearly a sum over per-particle features the
+model already has, and attention pools sums well.
 
-**Design notes if built:**
-- cut on **displacement significance**, not raw d0
-- denominator should be the subjet's **track** multiplicity, not all constituents —
-  neutrals carry no IP and dilute the aggregate
-- run the **probe first** (variant of `prong.py`, reuses the subjet assignment, no
-  new clustering): can an MLP recover `subjet_ip_sum` from that particle's own inputs
-  plus the 2-body control? **A good probe is NOT sufficient** — subjet mass had
-  R² = 0.05 and trained to nothing — but a *bad* probe kills the idea for one day's
-  work instead of a training slot.
+**The tension worth stating in the talk.** The physics *is* there — this is a
+strongly discriminating variable in absolute terms:
 
----
+| | QCD | Hbb | Hcc | Tbqq |
+|---|---|---|---|---|
+| n(IPsig>3), jet-level | 0.549 | **3.315** | 1.376 | 2.144 |
+
+Single-variable **Hbb vs QCD AUC = 0.953**, with the Hbb > Hcc > QCD ordering
+reproducing the b-vs-c lifetime hierarchy the PLuM authors invoke. It is simply
+**not new to ParT** — the same trap as all four arms: real information, already
+reachable.
+
+**Asymmetry fixed in advance:** a *low* R² would NOT have blessed the idea
+(subjet mass proves that). A *high* R² does count against it, because it names a
+concrete reason the model would not need the feature. The probe could only kill
+the idea cheaply, and it did — one day instead of a training slot.
+
+**If displacement is still wanted:** the version with a real chance is a
+**learned vertex fit** — actual displaced-vertex reconstruction (position, mass,
+flight significance), not aggregates of per-track IP. That is genuinely not a
+sum over particle features. Substantially more work; wait for the PLuM arm.
 
 ## 2. Ablate `pair_embed` on the baseline (cheapest, most certain to yield a slide)
 
@@ -102,11 +119,15 @@ crossover."* Same experiments already done, much stronger claim.
 
 ---
 
-## Ranking
+## Ranking (updated 2026-09-08 after the displacement probe)
 
-1. **(2)** — cheapest, guaranteed slide either way
-2. **(3)** — turns the existing negative results into a positive story
-3. **(1)** — highest upside, genuinely new information channel
+1. **(2)** ablate `pair_embed` — cheapest, guaranteed slide either way
+2. **(3)** data-scaling scan — turns the existing negative results into a positive story
+3. ~~(1) displacement aggregates~~ — **probed and rejected**, see above
+
+With (1) out, the honest position is that **no remaining feature-engineering
+idea has a good prior**. (2) and (3) are both *measurements about* the null
+rather than attempts to overturn it, which is where the value now is.
 
 ## The constraint that matters more than the idea
 
