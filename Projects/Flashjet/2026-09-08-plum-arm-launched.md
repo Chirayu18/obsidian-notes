@@ -5,7 +5,7 @@ date: 2026-09-08
 source: lxplus
 ---
 
-# PLuM arm launched (4th arm) — condor 9280189
+# PLuM arm launched (4th arm) — condor 9281282
 
 Implements [[2026-09-07-plum-reproduction-plan]] Phase 3, as a **full 10-class**
 training rather than the paper's binary mode.
@@ -101,6 +101,37 @@ they specify exactly, the [64, 256, 128] MLP from 3 inputs, is 49,792 params
 and ours adds 50,411. The 619 difference is the LayerNorm/BatchNorm in b-hive's
 `Embed` wrapper; the MLP dimensions themselves match exactly. Whether their
 splitting embedding is normalised is not stated in the paper.
+
+## Memory: this arm needs the 100 GB request, like the other trainings
+
+Three submissions before one stuck:
+
+| cluster | request | outcome |
+|---|---|---|
+| 9277912 | 32 GB | removed — I misread queue contention as an AFS-requirements bug |
+| 9278718 | 32 GB | **HELD** at 73 GB (cgroup limit 48 GB) |
+| 9280189 | 32 GB | removed at 73 GB before it could be held; rewritten module |
+| **9281282** | **100 GB** | current |
+
+**The token module was not the main cost.** The `(B, J, S, 6)` allocation was a
+real bug and the top-k rewrite (`ca783af`) genuinely fixed correctness, but both
+the old and the new module climb to ~73 GB. The dominant consumer is the **16
+dataloader workers** (`--n-threads 16`), whose working set *grows through the
+epoch* — 41.5 GB at 15 min, 73.2 GB at 45 min, verified live on the worker
+(67.8 GB summed RSS), not a stale condor attribute.
+
+**The request was mis-sized from the start.** `run_paper_plum.sub` was built by
+copying an *inference* submit file's resource block (32 GB / 4 CPUs) while
+taking the 16-CPU pattern from the run script. The established full-training
+files here — `smoke.sub`, `smoke_ca.sub`, the only two with
+`request_CPUs = 16` — both ask for **100 GB**. Use
+`~/flashjet_condor/run_paper_plum_100g.sub` for this arm.
+
+Note condor grants headroom above the request (the 32 GB job was enforced at
+48 GB, and Herwig inference 9274984 requested 33 GB and used 44 GB), so a job
+can exceed its request for a long time before dying. **Do not read a few equal
+`MemoryUsage` samples as a plateau** — I called it "flat" twice from readings
+taken inside an early plateau, and it then doubled.
 
 ## Guards in the script (all passed at submit)
 
