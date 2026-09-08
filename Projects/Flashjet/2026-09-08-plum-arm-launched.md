@@ -5,7 +5,7 @@ date: 2026-09-08
 source: lxplus
 ---
 
-# PLuM arm launched (4th arm) — condor 9281282
+# PLuM arm launched (4th arm) — condor 9283169
 
 Implements [[2026-09-07-plum-reproduction-plan]] Phase 3, as a **full 10-class**
 training rather than the paper's binary mode.
@@ -132,6 +132,43 @@ Note condor grants headroom above the request (the 32 GB job was enforced at
 can exceed its request for a long time before dying. **Do not read a few equal
 `MemoryUsage` samples as a plateau** — I called it "flat" twice from readings
 taken inside an early plateau, and it then doubled.
+
+## Validation: the tokens are physically correct
+
+Run 2026-09-08 on 20,000 real JetClass jets (`~/flashjet_condor/test_lund_physics.py`).
+This is the check that catches a wrong tree walk, which none of the plumbing
+tests would.
+
+**Hard kinematic prediction — dR of the hardest splitting vs 2m/pT.** For a
+boosted two-body decay the opening angle is dR ~ 2m/pT. Nothing about a buggy
+walk reproduces this by accident:
+
+| class | jet mass | dR measured | 2m/pT | ratio |
+|---|---|---|---|---|
+| Wqq | 88.8 GeV | 0.309 | 0.294 | **0.97** |
+| Hbb | 122.2 GeV | 0.427 | 0.404 | **0.99** |
+| Tbqq | 172.2 GeV | 0.494 | 0.570 | 0.85 |
+
+The recovered jet masses (W 88.8 vs PDG 80.4, H 122.2 vs 125, top 172.2 vs
+172.7) confirm the momenta are read from the right columns and the walk finds
+the actual decay. Tbqq's 0.85 is expected: a top is three-body, so 2m/pT
+overestimates the hardest sub-splitting's angle. QCD's 0.83 is meaningless --
+QCD has no decay scale.
+
+**Ordering test — PASS.** Hardest-splitting ln kT relative to QCD:
+Tbqq **+1.51**, Hbb +1.15, Wqq +0.75. Symmetric-splitting fraction rises with
+prong count: QCD 0.355 -> Wqq 0.447 -> Tbqq 0.545.
+
+**One prediction of mine was wrong, and it was the prediction not the code.**
+I expected Tbl (leptonic top) to look most QCD-like as "1-prong"; it came out
+at +1.22, above Hbb. A leptonic top still has a real b quark and a W decaying
+to lepton+neutrino, so the jet has genuine hard structure. The "1-prong" label
+was my oversimplification.
+
+Together with the other checks the arm is validated as far as possible without
+training: compiled vs eager match to **7.153e-07**, top-48 kT multiset matches
+the per-jet decode **200/200 jets**, **zero** jets with no splittings,
+no sentinels or NaN, ln z <= ln 0.5 everywhere, params **2,193,930**.
 
 ## Guards in the script (all passed at submit)
 
