@@ -212,6 +212,61 @@ is ~1/10 of the 0.377-point noise floor at this stage):
 | baseline | 81.765 | 0.5109 |
 | CA5 | 80.463 | 0.5430 |
 
+## Interim result at 260k (26% of 1M) — null on level, weak hint on SPEED
+
+**Accuracy vs baseline, 13 matched checkpoints:**
+
+| metric | mean Δ | ahead | noise floor | S/N |
+|---|---|---|---|---|
+| validation acc | **+0.023** | 8/13 | 0.364 | 0.06 |
+| training acc | **+0.086** | 9/13 | 0.787 | 0.11 |
+| validation loss | −0.0012 | 8/11 | 0.0100 | 0.12 |
+| training loss | −0.0025 | 7/11 | 0.0228 | 0.11 |
+
+All four favour PLuM slightly; all four sit at S/N ~0.06–0.12. Paired t on loss:
+train t=−1.95 (p=0.080), val t=−1.01 (p=0.337) — neither significant, and
+consecutive checkpoints are correlated so the effective n is below 11.
+
+**The mean is DECAYING as points accumulate** — validation +0.095 (6 pts) →
++0.040 (12) → +0.023 (13). A real effect holds its size as n grows; this is
+what a null looks like. The early +0.301 at 60k was an excursion.
+
+**Pre-registered 200k test: FAILED** (−0.067). This is the same iteration where
+subjet's apparent +0.125 at 140k collapsed to −0.364.
+
+### The one statistic that favours PLuM: threshold-crossing speed
+
+The user asked whether the arm at least *converges faster*. Tested horizontally
+(iterations to first reach a given accuracy) rather than vertically, over 66
+thresholds in 82.0–85.35:
+
+**PLuM earlier at 16, later at 2, same checkpoint at 48.**
+84.80 at 120k vs baseline 140k; 85.00 at 160k vs 180k — both 20k earlier.
+
+Three caveats, all material:
+- **Granularity is 20k**, so "earlier" means one checkpoint. Only 18 of the 66
+  thresholds are informative, not 66.
+- **It inverts at the top.** 85.10 is reached 40k *later*; at 85.30 baseline has
+  arrived and PLuM has not. The advantage lives in the 84.8–85.0 band, below
+  where the arms now train.
+- **CA5 shows the same pattern and is a known deficit** (−0.041 at 800k+,
+  t=−4.65). Early threshold order does not predict the final verdict.
+
+"Same endpoint, fewer iterations" would be a legitimate and useful result if it
+survived — but it needs the late window and ideally a second seed, and the
+top-of-range behaviour currently points the other way. Re-run
+`~/flashjet_condor/conv.py` at 800k+.
+
+### Also checked: are PLuM's losses just baseline spiking?
+
+Tested (`~/flashjet_condor/spike.py`): **no.** corr(Δ, baseline excursion) =
+**+0.128** — near zero and the wrong sign; if baseline spikes drove the losses
+it would be strongly negative. corr(Δ, PLuM excursion) = **+0.423**, three times
+larger, so the deltas track PLuM's own wobbles more. At 140k (the biggest loss)
+baseline sat at +0.003 of its local trend while PLuM fell −0.443.
+Control: the same test on CA5 gives corr=+0.645, *higher* than PLuM, so this
+metric does not separate real effects from noise either way.
+
 ## Guards in the script (all passed at submit)
 
 `N_LUND_FEATURES=3`, `M_SPLITS_DEFAULT=48`, `lund_algorithm=kt`,
