@@ -252,3 +252,78 @@ seeds would also address D, at linear cost.
 
 **None of B-D is established.** One seed per arm. The defensible statement is that our
 setup does not reproduce their result, not that their result does not exist.
+
+
+## IMPORTANT (2026-09-11, post-hoc audit): we likely built the WRONG SPLITTING SET
+
+Triggered by re-reading the paper for results I had missed. **Our per-splitting
+coordinates and plumbing are correct, but the SELECTION of which splittings become
+tokens probably is not.**
+
+### The evidence
+
+Paper, sec. V (H->4q discussion): "**about 17% of signal jets exceed the 48-splitting
+input cap, compared to about 9% in H -> bb**".
+
+Our implementation (`utils/flashjet_lund_tokens.py`) takes the **top 48 by kT out of the
+full clustering tree**. Clustering N particles gives N-1 pairwise merges, and a JetClass
+jet has ~50-130 constituents -> ~50-130 splittings. Measured with our own code path:
+**100% of jets exceed 48**, at every multiplicity tested (nconst 60/90/120 -> mean
+58/88/118 splittings).
+
+**9% cannot be reconciled with a full-tree count.** For only 9% of jets to have >48
+splittings, the splitting set must be ~10-20 per jet -- which is the size of the
+**primary Lund plane**: iteratively decluster following the HARDER branch only, recording
+one emission per step. That is the standard Lund-plane construction (Dreyer/Salam/Soyez).
+
+### What the paper actually says
+
+Only "Up to 48 splittings are considered per jet" (sec. IV) and that nodes are
+"individual branchings" with edges following "the clustering history" (sec. II). **It
+never states which 48.** The 9%/17% truncation statistic is the only discriminating
+evidence, and it points to primary-branch, not full-tree.
+
+### Why this plausibly matters for the null
+
+Our top-48-by-kT from the full tree is dominated by soft wide-angle merges deep in the
+tree, many between already-merged pseudojets that are not resolvable emissions off the
+hard core. The primary Lund plane instead traces the hard branch's emission history --
+the object that encodes two-prong H->bb structure and the b-hadron decay pattern their
+own mechanism argument (sec. V) depends on.
+
+**Status: strong inference, not certainty.** We infer their construction from a
+truncation statistic, not a stated definition.
+
+### What else the paper reports (I had missed these)
+
+- **FIG. 2**: per-epoch ACCURACY curves for four binary channels (top, Hbb, Hcc, H4q),
+  max over 10 trainings with bands to the mean. Directly analogous to our validation
+  tracking. Numbers are in the plot, not the text.
+- **HH(4b), the abstract's headline**: "at a 25% di-Higgs efficiency working point, PLuM
+  achieves **25% higher background rejection**". This is an EVENT-level di-Higgs result,
+  not in Table I.
+- **FIG. 4**: mean score difference vs ParT score.
+- **NO AUC anywhere in the paper** (verified exhaustively). Table I is rejection-only.
+
+### Baseline strength -- ours is ~2x theirs on the same dataset
+
+| | their ParT | our baseline | ratio |
+|---|---|---|---|
+| Hbb @50% | 5,864 | **11,523** | **1.96x** |
+| Hbb @90% | 386 | 606 | 1.57x |
+| Tbqq @50% | 13,422 | **28,642** | **2.13x** |
+| Tbqq @90% | 331 | 533 | 1.61x |
+
+**Our plain ParT baseline already beats their PLuM on all four numbers.** Their +12%
+takes ParT 5,864 -> 6,567, still only 57% of our baseline without any Lund tokens.
+Caveats: 10-class per-class discriminant vs their binary tagger is not perfectly
+apples-to-apples; and their 50 epochs x 16M at batch 256 is ~3.1M steps, MORE than our
+1M at batch 512, so "under-trained" is not obviously the explanation.
+
+### Revised next step
+
+**Do NOT launch the binary run yet.** Fix the splitting selection first -- a binary run
+on the wrong token set answers nothing. Order:
+1. Implement primary-Lund-plane declustering (follow harder branch, one emission/step).
+2. Verify the truncation fraction reproduces ~9% (Hbb) / ~17% (H4q).
+3. THEN decide binary vs 10-class.
