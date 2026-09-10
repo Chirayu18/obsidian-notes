@@ -271,10 +271,26 @@ jet has ~50-130 constituents -> ~50-130 splittings. Measured with our own code p
 **100% of jets exceed 48**, at every multiplicity tested (nconst 60/90/120 -> mean
 58/88/118 splittings).
 
-**9% cannot be reconciled with a full-tree count.** For only 9% of jets to have >48
-splittings, the splitting set must be ~10-20 per jet -- which is the size of the
-**primary Lund plane**: iteratively decluster following the HARDER branch only, recording
-one emission per step. That is the standard Lund-plane construction (Dreyer/Salam/Soyez).
+**9% cannot be reconciled with a full-tree count.** But -- CORRECTION to my first read --
+it cannot be reconciled with the PRIMARY LUND PLANE either. Measured with our own code:
+
+| construction | mean splits/jet | % over 48 |
+|---|---|---|
+| full tree (what we built) | 39-127 | **100%** |
+| primary Lund plane (follow harder branch) | **6.9-9.1** | **0%** |
+| **what the paper needs** | **~30-40** | **9% (Hbb), 17% (H4q)** |
+
+The primary plane undershoots as badly as the full tree overshoots. Their set is an
+INTERMEDIATE ~30-40 resolvable emissions per jet, with a tail crossing 48 in 9-17% of
+jets. That also explains why 48 is a sensible cap: it covers ~85-90% of jets fully.
+A 48-cap on a construction yielding ~8 would be pointless; on one yielding ~80 it
+would discard most of the jet.
+
+Candidates consistent with ~30-40 (the paper specifies NONE of them):
+- full tree filtered by a kT threshold -- measured: a ~0.3-0.5 GeV cut at 700 GeV jet pT
+  gives mean ~36
+- the full Lund TREE (primary + secondary planes), Dreyer/Salam/Soyez
+- declustering with a soft-drop-style condition
 
 ### What the paper actually says
 
