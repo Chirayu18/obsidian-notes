@@ -1,6 +1,7 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-09-11-plum-final-verdict]]"
 date: 2026-09-08
 source: lxplus
 ---
