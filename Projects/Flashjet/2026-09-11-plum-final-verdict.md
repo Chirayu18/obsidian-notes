@@ -180,3 +180,60 @@ The arity argument explains 1 and 3 and predicted them in advance.
 - Per-class JSON: `~/flashjet_condor/perclass_results/pythia_480k_narm.json`
   (**filename says 480k but contains the FINAL 1M results** -- `K` only feeds the
   filename in `perclass_best.py`, the paths use the plain best_model dirs)
+
+
+## Why the paper sees a gain and we do not -- candidate explanations
+
+**Verified fact, from the paper's own conclusions (p.~end, near FIG. 4):**
+
+> "Future studies should assess whether the observed gains persist in experimental
+> settings including realistic secondary-vertex information and detector effects.
+> **This was not checked because of the absence of reliable secondary vertex features
+> in the fast simulation framework used in this study.**"
+
+**Verified fact, our config** (`b-hive/config/jet_class.yml`, `cpf_candidates`):
+`part_d0val`, `part_d0err`, `part_dzval`, `part_dzerr` are present.
+
+**Careful with the wording:** neither setup has true reconstructed secondary vertices --
+JetClass has no SV block either. The asymmetry is that **we have per-track impact
+parameters (d0, dz) and they have no displacement information at all.**
+
+### Hypothesis A -- displacement headroom (best fit to the Hbb pattern, UNTESTED)
+
+Their baseline cannot see displacement, so it must infer b-content from kinematics and
+substructure alone. Lund tokens encode the soft/wide-angle radiation that displaced
+heavy-hadron decay produces -- the paper argues exactly this mechanism itself. That
+leaves real headroom. Our baseline already sees d0/dz per track, so that information is
+already present and more directly. Predicts our worst result on the class where our
+displacement advantage is largest -- and **Hbb (0.983) is our worst result**.
+
+### Hypothesis B -- redundancy with PairEmbed (the arity argument)
+
+Lund coordinates (ln z, ln kT, ln dR) are **2-body**. ParT's `PairEmbed` already
+computes ln dR, ln kT, ln z, ln m^2 for all 128x128 pairs at full resolution. PLuM's 48
+tokens are a coarser, pre-selected subset of information the model already has -- they
+can act as a prior on which pairs matter, not as new information. Predicts a small
+effect, which is what we measure (+0.044 val). Predicted CA5's outcome in advance
+(CA5 came out significantly WORSE, p=0.0008).
+
+### Hypothesis C -- binary vs 10-class capacity
+
+Not dilution (dilution affects aggregate accuracy ~5x, but Hbb rejection is measured
+per class and is NOT diluted). Rather: a dedicated binary Hbb-vs-QCD network allocates
+all capacity to one boundary; ours serves ten.
+
+### Hypothesis D -- seed selection in the paper
+
+They report **top-5 of 10 seeds averaged**. That is a selection procedure that inflates
+effect sizes. Our own data bounds how large that inflation can be: CA5's Tbqq rejection
+wandered 1.068 -> 1.321 between two checkpoints of an arm that was doing nothing. Their
+Tbqq +7.2% sits inside that wander. Their Hbb +12% is larger and harder to dismiss so.
+
+### The experiment that would discriminate
+
+Binary Hbb-vs-QCD ParT, with and without PLuM tokens, on a baseline with **d0/dz
+stripped**. Matches their configuration on all three axes at once. One training pair,
+binary task -- much cheaper than the 4-arm 10-class study just completed.
+
+**None of A-D is established.** We have one seed per arm. The defensible statement is
+that our setup does not reproduce their result, not that their result does not exist.
