@@ -184,56 +184,71 @@ The arity argument explains 1 and 3 and predicted them in advance.
 
 ## Why the paper sees a gain and we do not -- candidate explanations
 
-**Verified fact, from the paper's own conclusions (p.~end, near FIG. 4):**
+### CORRECTION (2026-09-11): the "they lack displacement inputs" claim was WRONG
 
-> "Future studies should assess whether the observed gains persist in experimental
-> settings including realistic secondary-vertex information and detector effects.
-> **This was not checked because of the absence of reliable secondary vertex features
-> in the fast simulation framework used in this study.**"
+I earlier asserted the paper's baseline had no displacement information and built a
+"displacement headroom" hypothesis on it. **That was not supported.** Checking the PDF:
 
-**Verified fact, our config** (`b-hive/config/jet_class.yml`, `cpf_candidates`):
-`part_d0val`, `part_d0err`, `part_dzval`, `part_dzerr` are present.
+- **They train on JetClass** (paper, sec. III: "trained for 50 epochs in binary
+  classification mode on the JetClass [2] dataset"). Same dataset we use.
+- They call their baseline "**the default ParT configuration**" -- default ParT on
+  JetClass uses the full standard feature set, which INCLUDES `part_d0val`,
+  `part_d0err`, `part_dzval`, `part_dzerr`.
+- The paper **never lists its input features and never mentions dropping any**.
 
-**Careful with the wording:** neither setup has true reconstructed secondary vertices --
-JetClass has no SV block either. The asymmetry is that **we have per-track impact
-parameters (d0, dz) and they have no displacement information at all.**
+The quote I relied on is narrower than I made it:
 
-### Hypothesis A -- displacement headroom (best fit to the Hbb pattern, UNTESTED)
+> "...whether the observed gains persist in experimental settings including realistic
+> **secondary-vertex information** and detector effects. This was not checked because of
+> the absence of reliable **secondary vertex** features in the fast simulation framework."
 
-Their baseline cannot see displacement, so it must infer b-content from kinematics and
-substructure alone. Lund tokens encode the soft/wide-angle radiation that displaced
-heavy-hadron decay produces -- the paper argues exactly this mechanism itself. That
-leaves real headroom. Our baseline already sees d0/dz per track, so that information is
-already present and more directly. Predicts our worst result on the class where our
-displacement advantage is largest -- and **Hbb (0.983) is our worst result**.
+That is about **reconstructed secondary vertices**, which Delphes does not provide well
+and which JetClass also lacks. **Neither setup has SV. Both very likely have the same
+track impact parameters.** SV != displacement; I conflated them.
+
+**Consequence: our setup is CLOSER to theirs than I claimed, which makes the
+discrepancy harder to explain, not easier.**
+
+### Remaining real differences
+
+| axis | paper | ours |
+|---|---|---|
+| task | **binary** (signal vs QCD) | 10-class |
+| seeds | **10 trained, max & mean reported** | 1 |
+| schedule | 50 epochs x 16M jets, batch 256 | 1M iters, batch 512 |
+| dataset | JetClass | JetClass -- **same** |
+| inputs | JetClass standard -- **likely same** | JetClass standard |
 
 ### Hypothesis B -- redundancy with PairEmbed (the arity argument)
 
 Lund coordinates (ln z, ln kT, ln dR) are **2-body**. ParT's `PairEmbed` already
 computes ln dR, ln kT, ln z, ln m^2 for all 128x128 pairs at full resolution. PLuM's 48
-tokens are a coarser, pre-selected subset of information the model already has -- they
-can act as a prior on which pairs matter, not as new information. Predicts a small
-effect, which is what we measure (+0.044 val). Predicted CA5's outcome in advance
-(CA5 came out significantly WORSE, p=0.0008).
+tokens are a coarser, pre-selected subset of information the model already has. Predicts
+a small effect -- which is what we measure (+0.044 val). Predicted CA5's outcome in
+advance (CA5 came out significantly WORSE, p=0.0008).
+
+Note the paper argues directly against this (sec. VI): it claims Lund information is
+"not uniformly reconstructed from particle-level inputs alone, even in highly expressive
+transformer architectures." Our result is evidence on the other side, in 10-class mode.
 
 ### Hypothesis C -- binary vs 10-class capacity
 
-Not dilution (dilution affects aggregate accuracy ~5x, but Hbb rejection is measured
-per class and is NOT diluted). Rather: a dedicated binary Hbb-vs-QCD network allocates
-all capacity to one boundary; ours serves ten.
+**Now the main remaining axis.** A dedicated binary Hbb-vs-QCD network allocates all
+capacity to one boundary; ours serves ten. NOT dilution -- dilution affects aggregate
+accuracy (~5x) but Hbb rejection is measured per class and is not diluted.
 
-### Hypothesis D -- seed selection in the paper
+### Hypothesis D -- seed variance / selection
 
-They report **top-5 of 10 seeds averaged**. That is a selection procedure that inflates
-effect sizes. Our own data bounds how large that inflation can be: CA5's Tbqq rejection
-wandered 1.068 -> 1.321 between two checkpoints of an arm that was doing nothing. Their
-Tbqq +7.2% sits inside that wander. Their Hbb +12% is larger and harder to dismiss so.
+They train **10 copies** and report max and mean. Our own data bounds how much a max-of-N
+can inflate: CA5's Tbqq rejection wandered 1.068 -> 1.321 between two checkpoints of an
+arm that was doing nothing. We have **1 seed**; we cannot rule out that our PLuM run is a
+below-median draw.
 
 ### The experiment that would discriminate
 
-Binary Hbb-vs-QCD ParT, with and without PLuM tokens, on a baseline with **d0/dz
-stripped**. Matches their configuration on all three axes at once. One training pair,
-binary task -- much cheaper than the 4-arm 10-class study just completed.
+**Binary Hbb-vs-QCD, keeping d0/dz** (do NOT strip them -- they likely match the paper).
+Baseline + PLuM. That isolates the task axis, the main remaining difference. Multiple
+seeds would also address D, at linear cost.
 
-**None of A-D is established.** We have one seed per arm. The defensible statement is
-that our setup does not reproduce their result, not that their result does not exist.
+**None of B-D is established.** One seed per arm. The defensible statement is that our
+setup does not reproduce their result, not that their result does not exist.
