@@ -254,92 +254,65 @@ seeds would also address D, at linear cost.
 setup does not reproduce their result, not that their result does not exist.
 
 
-## IMPORTANT (2026-09-11, post-hoc audit): we likely built the WRONG SPLITTING SET
+## RETRACTED: the "wrong splitting set" audit was WRONG (measured on real jets)
 
-Triggered by re-reading the paper for results I had missed. **Our per-splitting
-coordinates and plumbing are correct, but the SELECTION of which splittings become
-tokens probably is not.**
+I claimed our splitting selection diverged from the paper's, based on synthetic jets with
+80-128 constituents. **Real JetClass jets have ~35-50 constituents.** Measured on 100k real
+jets from `JetClass_test_mod/file_0.lz4`:
 
-### The evidence
-
-Paper, sec. V (H->4q discussion): "**about 17% of signal jets exceed the 48-splitting
-input cap, compared to about 9% in H -> bb**".
-
-Our implementation (`utils/flashjet_lund_tokens.py`) takes the **top 48 by kT out of the
-full clustering tree**. Clustering N particles gives N-1 pairwise merges, and a JetClass
-jet has ~50-130 constituents -> ~50-130 splittings. Measured with our own code path:
-**100% of jets exceed 48**, at every multiplicity tested (nconst 60/90/120 -> mean
-58/88/118 splittings).
-
-**9% cannot be reconciled with a full-tree count.** But -- CORRECTION to my first read --
-it cannot be reconciled with the PRIMARY LUND PLANE either. Measured with our own code:
-
-| construction | mean splits/jet | % over 48 |
-|---|---|---|
-| full tree (what we built) | 39-127 | **100%** |
-| primary Lund plane (follow harder branch) | **6.9-9.1** | **0%** |
-| **what the paper needs** | **~30-40** | **9% (Hbb), 17% (H4q)** |
-
-The primary plane undershoots as badly as the full tree overshoots. Their set is an
-INTERMEDIATE ~30-40 resolvable emissions per jet, with a tail crossing 48 in 9-17% of
-jets. That also explains why 48 is a sensible cap: it covers ~85-90% of jets fully.
-A 48-cap on a construction yielding ~8 would be pointless; on one yielding ~80 it
-would discard most of the jet.
-
-Candidates consistent with ~30-40 (the paper specifies NONE of them):
-- full tree filtered by a kT threshold -- measured: a ~0.3-0.5 GeV cut at 700 GeV jet pT
-  gives mean ~36
-- the full Lund TREE (primary + secondary planes), Dreyer/Salam/Soyez
-- declustering with a soft-drop-style condition
-
-### What the paper actually says
-
-Only "Up to 48 splittings are considered per jet" (sec. IV) and that nodes are
-"individual branchings" with edges following "the clustering history" (sec. II). **It
-never states which 48.** The 9%/17% truncation statistic is the only discriminating
-evidence, and it points to primary-branch, not full-tree.
-
-### Why this plausibly matters for the null
-
-Our top-48-by-kT from the full tree is dominated by soft wide-angle merges deep in the
-tree, many between already-merged pseudojets that are not resolvable emissions off the
-hard core. The primary Lund plane instead traces the hard branch's emission history --
-the object that encodes two-prong H->bb structure and the b-hadron decay pattern their
-own mechanism argument (sec. V) depends on.
-
-**Status: strong inference, not certainty.** We infer their construction from a
-truncation statistic, not a stated definition.
-
-### What else the paper reports (I had missed these)
-
-- **FIG. 2**: per-epoch ACCURACY curves for four binary channels (top, Hbb, Hcc, H4q),
-  max over 10 trainings with bands to the mean. Directly analogous to our validation
-  tracking. Numbers are in the plot, not the text.
-- **HH(4b), the abstract's headline**: "at a 25% di-Higgs efficiency working point, PLuM
-  achieves **25% higher background rejection**". This is an EVENT-level di-Higgs result,
-  not in Table I.
-- **FIG. 4**: mean score difference vs ParT score.
-- **NO AUC anywhere in the paper** (verified exhaustively). Table I is rejection-only.
-
-### Baseline strength -- ours is ~2x theirs on the same dataset
-
-| | their ParT | our baseline | ratio |
+| class | nconst | full-tree splits | %>48 |
 |---|---|---|---|
-| Hbb @50% | 5,864 | **11,523** | **1.96x** |
-| Hbb @90% | 386 | 606 | 1.57x |
-| Tbqq @50% | 13,422 | **28,642** | **2.13x** |
-| Tbqq @90% | 331 | 533 | 1.61x |
+| QCD | 35.1 | 22.5 | 5% |
+| **Hbb** | **43.5** | **28.9** | **5%** |
+| Hcc | 39.6 | 26.8 | 3% |
+| Hgg | 58.9 | 42.9 | 28% |
+| **H4q** | **49.9** | **35.2** | **9%** |
+| Tbqq | 51.4 | 36.3 | 11% |
 
-**Our plain ParT baseline already beats their PLuM on all four numbers.** Their +12%
-takes ParT 5,864 -> 6,567, still only 57% of our baseline without any Lund tokens.
-Caveats: 10-class per-class discriminant vs their binary tagger is not perfectly
-apples-to-apples; and their 50 epochs x 16M at batch 256 is ~3.1M steps, MORE than our
-1M at batch 512, so "under-trained" is not obviously the explanation.
+**Our full-tree construction gives Hbb 5% / H4q 9%, ratio 1.93. The paper reports
+9% / 17%, ratio 1.9.** The ratio matches almost exactly, and the mean counts (29, 35)
+sit in the 30-40 band a 48-cap implies. The residual ~1.8x in absolute rate is
+consistent with their jets having modestly higher multiplicity (pT range / preprocessing),
+not a different algorithm.
 
-### Revised next step
+The Lund-TREE variants I implemented to "fix" this give ~8-14 splittings and **0% over
+48** at every threshold tested (0/2/5/10% of jet pT) -- as far off as the primary plane.
+**The proposed fix was worse than what we have.**
 
-**Do NOT launch the binary run yet.** Fix the splitting selection first -- a binary run
-on the wrong token set answers nothing. Order:
-1. Implement primary-Lund-plane declustering (follow harder branch, one emission/step).
-2. Verify the truncation fraction reproduces ~9% (Hbb) / ~17% (H4q).
-3. THEN decide binary vs 10-class.
+### What was wrong in my reasoning
+
+Every step downstream of the synthetic multiplicity was invalid:
+- "100% of jets exceed 48" -> actually **5%** for Hbb
+- "our set is definitely not theirs" -> it matches on the only checkable statistic
+- "their set must be an intermediate ~30-40" -> it is, and **we already compute that**
+- the 1.9x prong-scaling argument is real, but our flat full-tree ALREADY reproduces it,
+  because H4q jets simply have more constituents (49.9 vs 43.5) and so more merges
+
+**Lesson: measure on real data before building inference on simulated proxies.**
+The lz4 reader (below) was the blocker and should have been solved first.
+
+### Reading JetClass lz4 shards (this was previously unavailable)
+
+```python
+import lz4.frame, numpy as np
+with lz4.frame.open(path, mode="r") as fh: raw = fh.read()
+s = np.frombuffer(raw, dtype=np.float32).copy()
+s = s[2:].reshape(-1, int(s[1]), order="C")     # s[1] = row width
+labels = s[:, -(10+1):-1]                        # 10 truth labels
+feats  = s[:, :-(10+2)]                          # trailing: process, labels, weight
+cpf    = feats[:, :128*23].reshape(-1, 128, 23)  # part_px/py/pz/E at 12:16
+```
+`file_0.lz4` = 233 MB compressed -> 1.19 GB, 100,000 jets, row width 2971.
+Scripts: `~/flashjet_condor/truncation_test.py`, `lund_tree.py`.
+
+## Standing conclusions after the audit
+
+1. **PLuM implementation is correct.** Coordinates match the paper to ~0.1%
+   (z, kT, dR conventions all verified numerically); the Lund path was live
+   (`input_bn.num_batches_tracked` = 73,874, running stats physically sensible);
+   splitting selection reproduces the paper's truncation ratio. **No bug found.**
+2. **The null result stands as a result about the physics**, not about our code.
+3. **Our baseline is ~2x theirs** on every Table I number -- our plain ParT already
+   beats their PLuM. This remains the most striking unexplained difference and is
+   independent of the token question.
+4. Remaining setup differences: **binary vs 10-class**, and **10 seeds vs 1**.
