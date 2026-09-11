@@ -388,3 +388,53 @@ Unexplained differences that remain, in order of likely importance:
 2. **3.1x fewer optimizer steps** than they take
 3. binary vs 10-class
 4. 1 seed vs 10
+
+
+## Hbb vs Tbqq with Poisson errors -- the Tbqq "gain" is NINE JETS
+
+The ratio's uncertainty is set by the surviving-background count. Made explicit
+(discriminant (a), 2,004,925 QCD jets):
+
+### @50% signal efficiency
+
+| class | arm | bkg surviving | rejection | ratio | Poisson err | sigma from 1 |
+|---|---|---|---|---|---|---|
+| Hbb | baseline | 174 | 11522.6 | -- | +-7.6% | |
+| Hbb | PLuM | 177 | 11327.5 | 0.983 | +-0.105 | 0.2 |
+| Hbb | CA5 | 177 | 11327.3 | 0.983 | +-0.105 | 0.2 |
+| Hbb | subjet | 171 | 11725.1 | 1.018 | +-0.110 | 0.2 |
+| **Tbqq** | baseline | **70** | 28641.8 | -- | +-12.0% | |
+| **Tbqq** | **PLuM** | **61** | 32868.2 | **1.148** | **+-0.201** | **0.7** |
+| Tbqq | CA5 | 53 | 37829.0 | 1.321 | +-0.240 | 1.3 |
+| Tbqq | subjet | 70 | 28642.7 | 1.000 | +-0.169 | 0.0 |
+
+**Every @50% ratio is consistent with 1.0.** PLuM's Tbqq 1.148 is 61 vs 70 surviving
+background jets -- a difference of **nine jets** -- with a 1-sigma band of 0.95-1.35.
+
+### @90% signal efficiency (thousands of jets survive; errors ~2%)
+
+| class | arm | bkg surviving | rejection | ratio | Poisson err |
+|---|---|---|---|---|---|
+| Hbb | PLuM | 3366 | 595.7 | **0.983** | +-0.024 |
+| Tbqq | PLuM | 3783 | 530.0 | **0.995** | +-0.023 |
+
+**Both classes flat and both slightly BELOW 1, with 4x smaller errors.** This is the
+statistically meaningful measurement and it shows no gain on either class.
+
+### Why the "gain" shows up on Tbqq and not Hbb
+
+Tbqq's rejection is 2.5x higher than Hbb's (28,642 vs 11,523), so only 70 background
+jets survive vs Hbb's 174 -- making the Tbqq ratio nearly **twice as noisy**. The
+apparent gain appears where the statistics are thinnest, not where the physics differs.
+This is the same mechanism behind CA5's 1.068 -> 1.321 wander between checkpoints.
+
+### Implication for the paper's claims
+
+- Their **Tbqq 1.072**: their rejection 13,422 on 2M -> ~149 surviving jets -> ~+-11%.
+  Their claim is ~0.7 sigma from unity. **Not distinguishable from no effect, or from ours.**
+- Their **Hbb 1.120**: rejection 5,864 -> ~341 surviving jets -> ~+-7.7%, so ~1.6 sigma.
+  The only claim with enough statistics to be meaningful -- and the one we most clearly
+  fail to reproduce (0.983 +- 0.105 @50%, **0.983 +- 0.024 @90%**).
+
+**The @90% numbers are where this study has real power, and they are unambiguous: no
+gain on either class, under either discriminant.**
