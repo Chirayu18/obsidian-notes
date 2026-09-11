@@ -317,3 +317,31 @@ Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_lund.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_lund.png
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_mass.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_mass.png
+
+## PLuM study — ML4Jets slide plots (2026-09-11)
+
+tags: [plot]
+Date: 2026-09-11
+Description: Full plot set for the PLuM (Lund splitting tokens) vs baseline ParT study on
+JetClass. Loss/accuracy curves for all four arms (baseline, PLuM, CA5, subjet) in full /
+zoomed / log-y versions; PLuM−baseline delta curves with the pre-registered 800k+ window
+marked; ROC overlays for Hbb and Tbqq at each checkpoint; and the decay plots showing the
+PLuM/baseline rejection ratio falling from above the paper's claim at 100k to ~1.0 at 1M.
+Path: /eos/user/c/cgupta/flashjet/plots
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots
+
+| plot | what it shows |
+|---|---|
+| `decay_Hbb.png` | **the headline** — PLuM/baseline Hbb rejection vs iteration, 3 working points, paper's 1.120/1.031 as reference lines |
+| `decay_Tbqq.png` | same for Tbqq |
+| `roc_Hbb_100k.png` / `roc_Hbb_1M.png` | ROC overlay, PLuM vs baseline, early vs converged |
+| `roc_Tbqq_100k.png` / `roc_Tbqq_1M.png` | same for Tbqq |
+| `loss_full/zoom/log.png` | validation loss, all 4 arms |
+| `trainloss_full/zoom/log.png` | training loss, all 4 arms |
+| `acc_full/zoom.png` | validation accuracy |
+| `trainacc_full/zoom.png` | training accuracy |
+| `delta_acc.png` | val-accuracy delta vs baseline — shows the noise collapse (±0.5 early → tight after 800k) |
+| `delta_loss.png` | val-loss delta vs baseline |
+
+300k and 500k ROC/decay points pending (condor 9300151) — the decay plots currently have
+two x-points (100k, 1M) and will fill in to four.
