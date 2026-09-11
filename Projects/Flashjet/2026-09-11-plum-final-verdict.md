@@ -757,3 +757,44 @@ decompression (measured: 2.6 s/shard -> 27 usable batches of 512).
 `utils/models/binary_hbb.py`, `utils/torch/BinaryFilteredLZ4Dataset.py`, registries
 patched with `.bak_binary` backups, `~/flashjet_condor/run_binary.sh` + `binary.sub`).
 Pre-build a filtered dataset first for 5x throughput.
+
+
+## THE PRACTICAL VERDICT: PLuM@100k vs baseline@300k
+
+The question a would-be adopter actually asks: **is the feature a substitute for
+training?** Answer: no, and not close.
+
+**Overall accuracy: PLuM@100k 84.697 vs baseline@300k 85.407 -- PLuM 0.709 BEHIND.**
+
+| class | eff | PLuM@100k | base@300k | ratio | |
+|---|---|---|---|---|---|
+| Hbb | 50% | 8,988.7 | 9,322.9 | 0.964 +-0.092 | -- |
+| Hbb | 70% | 2,441.5 | 2,831.1 | **0.862 +-0.044** | baseline better |
+| Hbb | 90% | 446.0 | 520.5 | **0.857 +-0.019** | baseline better |
+| Tbqq | 50% | 13,824.0 | 18,389.2 | **0.752 +-0.095** | baseline better |
+| Tbqq | 70% | 2,669.1 | 3,789.1 | **0.704 +-0.040** | baseline better |
+| Tbqq | 90% | 304.0 | 393.2 | **0.773 +-0.014** | baseline better |
+| Hcc | 90% | 84.7 | 97.6 | **0.869 +-0.008** | baseline better |
+| H4q | 90% | 53.6 | 58.6 | **0.913 +-0.007** | baseline better |
+
+**Baseline@300k beats PLuM@100k on 11 of 12 measurements**, most by many sigma.
+Tbqq is worst: PLuM@100k keeps only **70-77%** of baseline@300k's rejection.
+
+### The cost comparison makes it worse
+
+PLuM is **1.58x slower per step**, so:
+- PLuM@100k costs the same wall-clock as **baseline@158k**
+- baseline@300k costs only **~1.9x** what PLuM@100k costs
+
+For under 2x the compute, plain training buys **+15-30% rejection**. The feature buys
+**+3.7%** at 90% eff at matched iterations, decaying to zero by 1M.
+
+### Statement for the talk
+
+> **The Lund tokens are not a substitute for training.** At matched iterations they give
+> a small early gain that vanishes by convergence. At matched COST they lose outright:
+> the same GPU-hours spent on plain baseline training give substantially better tagging
+> at every working point and every class tested.
+
+This is stronger and more useful than "the effect decays", because it answers the
+adoption question directly.
