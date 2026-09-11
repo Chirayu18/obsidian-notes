@@ -798,3 +798,40 @@ For under 2x the compute, plain training buys **+15-30% rejection**. The feature
 
 This is stronger and more useful than "the effect decays", because it answers the
 adoption question directly.
+
+
+## The decay is FAST: dead by 300k, flat thereafter
+
+PLuM@300k vs baseline@300k, matched checkpoint, 20.05M test jets:
+
+**Overall accuracy: PLuM 85.405 vs baseline 85.407 -- difference 0.002.**
+
+| class | eff | PLuM@300k | base@300k | ratio |
+|---|---|---|---|---|
+| Hbb | 50% | 9411.3 | 9322.9 | 1.009 +-0.098 |
+| Hbb | 70% | 2734.8 | 2831.1 | 0.966 +-0.051 |
+| **Hbb** | **90%** | 512.6 | 520.5 | **0.985 +-0.022** |
+| Tbqq | 90% | 391.2 | 393.2 | 0.995 +-0.020 |
+| Hcc | 90% | 96.5 | 97.6 | 0.989 +-0.010 |
+| H4q | 90% | 59.8 | 58.6 | 1.020 +-0.008 |
+
+### The decay curve (Hbb @90%, the best-measured point)
+
+| stage | ratio |
+|---|---|
+| 100k | **1.032** +0.018/-0.022 |
+| **300k** | **0.985 +-0.022** |
+| 1M | **0.985** +0.020/-0.027 |
+
+**300k is already statistically identical to 1M.** The gain does not decay gradually --
+it is gone within the first few hundred thousand iterations and never returns. "PLuM
+buys convergence speed" is therefore too generous: it buys a head start that the
+baseline erases early, and after that the arms are indistinguishable.
+
+500k inference cancelled (condor 9300151 removed) -- with 300k == 1M there was nothing
+left to map between them. **40k inference submitted instead** (condor 9302099) to test
+whether the gain is LARGER before 100k, which would bound its true size before decay.
+
+**Caveat for the 40k point:** seed spread is largest early. The accidental second seed
+differed from the first by 0.086 in validation accuracy at 40k. A large 40k ratio
+measures one seed's head start, not a guaranteed property of the method.
