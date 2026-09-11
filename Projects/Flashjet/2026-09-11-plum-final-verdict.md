@@ -599,3 +599,69 @@ single-seed binary run can show a LARGE effect (the paper claims +12% rejection,
 which would be unmistakable) but **cannot establish a small one**. If the binary
 result comes back near null, the honest conclusion is "no large effect", not
 "no effect".
+
+
+## MAJOR RESULT (2026-09-11): the gain is REAL EARLY and DECAYS with training
+
+100k-iteration inference on the full 20.05M-jet test set, both arms, matched checkpoint.
+
+| | paper | ours @100k | ours @1M |
+|---|---|---|---|
+| Hbb @50% | **1.120** | **1.193 +-0.108** | 0.983 +-0.105 |
+| **Hbb @90%** | **1.031** | **1.037 +-0.022** | **0.983 +-0.024** |
+| Tbqq @50% | 1.072 | 1.145 +-0.130 | 1.148 +-0.201 |
+| Tbqq @90% | 1.066 | 1.026 +-0.018 | 0.995 +-0.023 |
+
+Overall accuracy: @100k PLuM **+0.065**; @1M PLuM **-0.006**.
+
+**Hbb @90% is the decisive number** -- best statistics (~4,600 surviving background
+jets, +-2%), and at 100k it matches the paper to **0.006** (1.037 vs 1.031). The same
+quantity at 1M is 0.983, i.e. **2.3 sigma below the 100k value**.
+
+### Interpretation
+
+**PLuM buys convergence SPEED, not final performance.** The tokens help while the
+baseline is still learning the pairwise Lund kinematics that `PairEmbed` can derive
+from the four-vectors on its own; once it has, the advantage is gone. This is the
+arity/redundancy argument with a time axis: the information is not new, it is EARLY.
+
+**It also reconciles our result with the paper without either being wrong.** They train
+50 epochs x 16M jets at batch 256 = **3.125M optimizer steps** on BINARY tasks (8M+8M
+per epoch). Where that sits on the convergence curve relative to our 10-class 1M-step
+runs is not determinable from the paper -- but our implementation demonstrably
+reproduces their numbers at some point on that curve.
+
+### Caveats (stated plainly)
+
+- At 100k the two PLuM SEEDS differ by 0.132 in validation accuracy, comparable to the
+  +0.065 accuracy difference here. Hbb@90% at +-0.022 is tighter than that, but we have
+  no second seed's INFERENCE to confirm the ratio.
+- Baseline @100k -> @1M gains **x1.53** on Hbb@50% and **x2.37** on Tbqq@50%. A 1.19
+  ratio sits well inside the movement ordinary convergence produces -- WHICH CHECKPOINT
+  you evaluate matters more than the feature does.
+- 100k is 1/10 of the trained model. Nobody ships a tagger there.
+
+### Revised framing for the talk
+
+NOT "PLuM does not work". Instead:
+
+> **PLuM reproduces Gouskos & Maier's H->bb gain at early training (1.037 +-0.022 vs
+> their 1.031 at 90% efficiency) and that gain decays to nothing by 1M iterations
+> (0.983 +-0.024). The feature buys convergence speed, not final performance --
+> at 1.58x the training cost per step.**
+
+This supersedes the earlier flat-null reading. The 800k+ validation result (+0.044,
+11/11) and the flat 90%-efficiency per-class table remain correct AS STATEMENTS ABOUT
+THE CONVERGED MODEL; they were simply measured where the effect has already decayed.
+
+### Baseline convergence calibration (same batch)
+
+| | 100k | 1M | gain |
+|---|---|---|---|
+| overall acc | 84.632 | 86.212 | +1.579 |
+| Hbb rej @50% | 7,536 | 11,523 | **x1.53** |
+| Tbqq rej @50% | 12,075 | 28,642 | **x2.37** |
+
+10x more training buys +53% Hbb rejection; the paper claims +12% from Lund tokens.
+Independently confirms the magnitude calibration: +1.579 acc -> +53% rejection is
+~34% per accuracy point (earlier estimate from baseline-vs-CA5: ~30% per point).
