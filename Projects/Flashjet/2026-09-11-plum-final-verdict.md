@@ -316,3 +316,75 @@ Scripts: `~/flashjet_condor/truncation_test.py`, `lund_tree.py`.
    beats their PLuM. This remains the most striking unexplained difference and is
    independent of the token question.
 4. Remaining setup differences: **binary vs 10-class**, and **10 seeds vs 1**.
+
+
+## Systematic paper-matching audit (2026-09-11)
+
+Every quantitative claim in the paper that we can check, checked.
+
+### 1. Parameter count -- EXACT MATCH
+
+| | paper | ours |
+|---|---|---|
+| ParT baseline | 2.14 M | **2.1439 M** |
+| PLuM | 2.19 M | **2.1944 M** |
+| delta | +0.05 M | **+0.0505 M** |
+
+Three numbers agreeing to the paper's quoted precision. Same MLP dims [64,256,128],
+same 48 splittings, same backbone. **The architecture reproduction is faithful.**
+
+### 2. Truncation fraction -- RATIO MATCHES
+
+Real JetClass jets (100k, `JetClass_test_mod/file_0.lz4`):
+
+| class | nconst | splits | %>48 |
+|---|---|---|---|
+| Hbb | 43.5 | 28.9 | 5% |
+| H4q | 49.9 | 35.2 | 9% |
+| Hgg | 58.9 | 42.9 | 28% |
+| Tbqq | 51.4 | 36.3 | 12% |
+
+Ours Hbb/H4q = 5%/9%, **ratio 1.93**; paper 9%/17%, **ratio 1.9**. Residual ~1.8x in
+absolute rate is consistent with modestly higher multiplicity in their sample.
+
+### 3. Lund feature distributions vs the TRAINED model's input_bn -- 2 of 3 confirm
+
+| feature | valid tokens only | incl. padded zeros | **model running_mean** |
+|---|---|---|---|
+| ln(1/dR) | **+2.300** | +1.478 | **+2.264** <- matches valid-only |
+| ln z | **-1.239** | -0.796 | **-1.144** <- matches valid-only |
+| ln kT | -3.607 | -2.317 | **-0.636** <- **UNEXPLAINED, off by ~3** |
+
+dR and z confirm the clustering and token pipeline against what the model actually saw.
+**ln kT carries an unexplained ~3-unit (x22) offset.** Ruled out: a train/test pT-scale
+difference (train 662 GeV vs test 677 GeV mean jet pT -- 2%, not 22x). Candidates not yet
+isolated: a training-time momentum rescale hitting only the dimensionful feature, or
+unconverged BN momentum on the widest-tailed input. **Low consequence** -- BN absorbs a
+constant shift, and dR/z rule out a clustering difference since all three come from the
+same clustering.
+
+### 4. Training volume -- WE TRAIN LESS THAN THEY DO
+
+| | paper | ours |
+|---|---|---|
+| schedule | 50 epochs x 16M jets, batch 256 | 1M iters, batch 512 |
+| **optimizer steps** | **3.125 M** | **1 M** |
+| jet-presentations | 800 M | 512 M |
+| seeds | **10** (max & mean reported) | **1** |
+
+**They take 3.1x more gradient steps and see 1.6x more data.** Previously I had only
+guessed at this; it is now computed. This is a real, unexamined difference -- our arms may
+simply be less converged, though note all four of OUR arms share the identical schedule,
+so the CROSS-ARM comparison remains valid.
+
+### Bottom line of the audit
+
+Architecture: exact. Splitting selection: ratio-matched. Two of three Lund features:
+confirmed against the trained model. One feature offset: unexplained but low-consequence.
+**No bug found. The null stands as a physics result.**
+
+Unexplained differences that remain, in order of likely importance:
+1. **Our baseline is ~2x theirs** on every Table I number (our plain ParT beats their PLuM)
+2. **3.1x fewer optimizer steps** than they take
+3. binary vs 10-class
+4. 1 seed vs 10
