@@ -438,3 +438,62 @@ This is the same mechanism behind CA5's 1.068 -> 1.321 wander between checkpoint
 
 **The @90% numbers are where this study has real power, and they are unambiguous: no
 gain on either class, under either discriminant.**
+
+
+## All classes @ 70% -- the decisive flat table
+
+| class | base bkg | base rej | PLuM | CA5 | subjet |
+|---|---|---|---|---|---|
+| **Hbb** | 586 | 3421.4 | **0.933 +-0.054** (1.2s) | 0.953 +-0.055 | 0.967 +-0.056 |
+| Hcc | 2025 | 990.1 | 0.984 +-0.031 | 0.966 +-0.030 | 0.974 +-0.030 |
+| Hgg | **45516** | 44.0 | **1.001 +-0.007** | 0.999 +-0.007 | 0.997 +-0.007 |
+| H4q | 4847 | 413.6 | 1.020 +-0.021 | 0.977 +-0.020 | 0.986 +-0.020 |
+| Zqq | 21194 | 94.6 | 0.996 +-0.010 | 0.994 +-0.010 | 0.992 +-0.010 |
+| Wqq | 16411 | 122.2 | 0.991 +-0.011 | 0.988 +-0.011 | 0.998 +-0.011 |
+| **Tbqq** | 370 | 5418.7 | **1.022 +-0.076** (0.3s) | 0.997 +-0.073 | 0.964 +-0.070 |
+
+(Hqql, Tbl: 0 surviving background -> infinite rejection, excluded)
+
+**Nothing reaches 2 sigma in 21 measurements.** Largest is 1.2 sigma.
+
+**Hgg is the most precise point in the whole study** -- 45,516 surviving background jets,
++-0.7%, and all three arms land at 0.997-1.001. Where the statistics are genuinely good,
+every arm is EXACTLY flat. That is the cleanest single demonstration that these features
+do nothing.
+
+**The paper's two classes are the two noisiest usable ones** (586 and 370 surviving jets,
+the smallest counts outside the saturated Hqql/Tbl). Hbb and Tbqq have the highest
+rejection, so the fewest background jets survive, so their ratios fluctuate most. **The
+paper's claims live exactly where measurement is hardest.**
+
+PLuM is below 1 on five of seven classes; mean ratio ~0.993, consistent with the -0.006
+aggregate accuracy.
+
+### Working-point scan, PLuM (shows the wander)
+
+| eff | Hbb | Tbqq |
+|---|---|---|
+| 50% | 0.983 +-0.105 | 1.148 +-0.201 |
+| 60% | 1.067 +-0.082 | 1.114 +-0.126 |
+| 70% | 0.933 +-0.054 | 1.022 +-0.076 |
+| 80% | 0.980 +-0.039 | 0.985 +-0.043 |
+| 90% | 0.983 +-0.024 | 0.995 +-0.023 |
+
+Non-monotonic, oscillating about 1 with amplitude shrinking as statistics improve --
+the textbook signature of noise, not of an effect.
+
+**Note:** CA5's Hbb @60% is **1.122 +-0.088**, numerically almost exactly the paper's
+claimed 1.120 -- produced by the arm that performs WORST overall. An illustration of how
+readily a 1.12-sized number appears by chance in this regime.
+
+### The sharpest statement for the talk
+
+At 90% efficiency, where both we and the paper have real statistics:
+
+| | paper claims | we measure |
+|---|---|---|
+| Hbb | 1.031 | **0.983 +- 0.024** (~2 sigma below) |
+| Tbqq | 1.066 | **0.995 +- 0.023** (~3 sigma below) |
+
+This disagreement does not depend on discriminant choice, does not rest on tail noise,
+and is the most statistically meaningful comparison available between the two studies.
