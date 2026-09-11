@@ -665,3 +665,59 @@ THE CONVERGED MODEL; they were simply measured where the effect has already deca
 10x more training buys +53% Hbb rejection; the paper claims +12% from Lund tokens.
 Independently confirms the magnitude calibration: +1.579 acc -> +53% rejection is
 ~34% per accuracy point (earlier estimate from baseline-vs-CA5: ~30% per point).
+
+
+## Error model: are Poisson bands right? (checked, 2026-09-11)
+
+**Mostly yes.** Three concerns, in order of size:
+
+1. **Binomial vs Poisson** -- k ~ Binomial(N, eps) with N ~ 2.005M fixed, but
+   eps ~ 1e-4, so the (1-eps) correction is 0.01%. Irrelevant.
+2. **Correlation between arms** -- I expected this to be the flaw (same jets, two
+   models -> correlated fluctuations -> independent formula overstates the ratio
+   error). **It does not apply**: the two arms are evaluated on DIFFERENT jet
+   subsets. Baseline has 2,004,925 QCD jets, PLuM has 2,004,959; only **10.9% of
+   positions agree**. The dataloader shuffles and drops a partial final batch per
+   shard, so each run sees a slightly different draw. A PAIRED bootstrap is
+   therefore impossible. *(Side effect worth knowing: every arm-to-arm comparison
+   in this study carries a small extra sampling variance from this.)*
+3. **Signal-threshold error** -- the working point is a quantile of the SIGNAL
+   sample and has its own finite-sample error. Poisson omits it; a bootstrap
+   includes it.
+
+**Verified by bootstrap** (200 replicas, resampling signal and background, no
+distributional assumption):
+
+| Hbb @100k | ratio | bootstrap 68% | analytic Poisson |
+|---|---|---|---|
+| @50% | 1.195 | +0.101/-0.117 | +-0.108 |
+| @70% | 1.118 | +0.052/-0.060 | +-0.054 |
+| @90% | **1.032** | **+0.022/-0.024** | +-0.021 |
+
+| Tbqq @100k | ratio | bootstrap | Poisson |
+|---|---|---|---|
+| @50% | 1.150 | +0.151/-0.107 | +-0.130 |
+| @90% | 1.026 | +0.016/-0.016 | +-0.017 |
+
+Agreement to ~10%, with mild asymmetry the analytic form cannot represent.
+**Use the bootstrap for plots; Poisson is fine as a quoted formula.**
+
+Note Hbb @90% at 100k: **1.032 +0.022/-0.024** vs the paper's **1.031**.
+
+## Binary run: 80% of I/O is wasted (measured)
+
+`BinaryFilteredLZ4Dataset` reads every shard and keeps only QCD + Hbb. Measured on
+a real shard:
+
+```
+one shard: 2.6 s -> 27 batches of 512 (13,824 jets kept of 100,000)
+-> 10.4 batches/s
+-> 741 shards, ~32 min of pure dataloading, for the FIRST 20k-iteration checkpoint
+```
+
+So a binary job showing no checkpoint after ~50 min is **on schedule, not stuck**.
+The design is correct (merging the other 8 classes into QCD would give a 9x
+contaminated background) but wasteful: the filtering happens after decompression.
+
+**If this is repeated**, pre-build a filtered dataset once rather than filtering at
+load time -- 5x the training throughput for one up-front pass.
