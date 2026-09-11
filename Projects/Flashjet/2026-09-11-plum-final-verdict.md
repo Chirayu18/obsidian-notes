@@ -497,3 +497,59 @@ At 90% efficiency, where both we and the paper have real statistics:
 
 This disagreement does not depend on discriminant choice, does not rest on tail noise,
 and is the most statistically meaningful comparison available between the two studies.
+
+
+## ACCIDENTAL SECOND SEED -- the missing systematic (2026-09-11)
+
+A misconfigured "480k inference" job (9291649) silently ran **training** for 9.5h instead
+of inference: its staging dir lacked `model_480000.pt`, so luigi judged TrainingTask
+incomplete and trained from scratch. Killed at 120k. **It wrote to
+`b_hive_paper_plum_1_at480k`, NOT the real `b_hive_paper_plum_1` -- the 1M run and its
+final inference are intact (all 50 checkpoints, metrics stamped 00:31).**
+
+The accident produced something we never had: **a second PLuM seed**, identical config and
+data, different initialisation.
+
+| iter | seed A (real) | seed B (accidental) | B - A | baseline |
+|---|---|---|---|---|
+| 20k | 81.736 | 81.207 | **-0.529** | 81.765 |
+| 40k | 83.493 | 83.407 | -0.086 | 83.466 |
+| 60k | 84.360 | 84.294 | -0.066 | 84.059 |
+| 80k | 84.462 | 84.517 | +0.056 | 84.372 |
+| 100k | 84.754 | 84.710 | -0.045 | 84.658 |
+| 120k | 84.850 | 84.936 | +0.086 | 84.764 |
+
+**Seed-to-seed spread: mean |diff| 0.145, sd 0.203, max 0.529.**
+**The PLuM-vs-baseline effect we measured: +0.044.**
+
+### What this does and does not show
+
+**Does NOT refute the validation effect.** Our claim comes from the 800k+ window where
+the within-run noise floor is 0.088, and it rests on **11/11 consecutive positive
+checkpoints** (p~1e-4), not on any single point. Seed spread also shrinks with
+convergence: 0.529 at 20k, but 0.045-0.086 by 100-120k (excluding the 20k outlier,
+late-point mean |diff| 0.068, sd 0.075).
+
+**DOES show the single-seed design cannot establish the result robustly.** The paired
+t-test controls for WITHIN-run noise across checkpoints. It does NOT control for a
+BETWEEN-run systematic -- whether PLuM's seed happened to initialise better than
+baseline's. That systematic is plausibly +-0.1 or larger, i.e. **2x+ our effect**, and is
+invisible to our design.
+
+**Limitation:** seed B only reached 120k, so there is no comparison in the 800k+ window
+where the claim lives. Suggestive, not decisive.
+
+**This is precisely why the paper trains ten seeds and reports max AND mean.** Our
+critique of their top-5-of-10 selection stands, but our own single seed is the mirror-image
+weakness. The right framing for the talk: *neither study has the seed statistics to
+resolve an effect of this size; ours at least measures it at a working point (90% eff)
+where the per-class errors are +-2%.*
+
+### Operational lesson (repeat offender)
+
+**Always verify a staged checkpoint dir contains the ITERATION-NAMED file matching
+`--TrainingTask-total-iterations`.** Without it luigi trains instead of inferring, silently,
+for hours. I documented this failure mode earlier in the session and then still failed to
+check for it when the job started running -- I reported "mid-inference, 17 GB resident"
+when the memory growth was training memory. Check `condor_tail` for "Global number = N"
+(training) vs "Start inference on cuda" (inference) before trusting a running job.
