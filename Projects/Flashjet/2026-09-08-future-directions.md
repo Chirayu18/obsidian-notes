@@ -140,3 +140,42 @@ published — do not repeat that; quote the full-sample mean and spread.
 
 [[2026-09-07-plum-reproduction-plan]] · [[2026-09-07-herwig-robustness-result]] ·
 [[2026-09-04-subjet-verdict]] · [[2026-09-06-logit-discriminant-bug]]
+
+
+## Gated DeltaNet (Sitian, 2026-09-11) -- my assessment: sceptical
+
+**What it is:** a linear-attention sequence model (Yang, Kautz, Hatamizadeh, ICLR 2025,
+arXiv:2412.06464), same family as Mamba / RWKV / RetNet. DeltaNet's delta rule does a
+rank-1 *correction* of the recurrent state per token (better associative recall than
+plain linear attention); the gate adds a learned forget factor. Cost is **O(N)** instead
+of attention's O(N^2), with a fixed-size state rather than a growing KV cache.
+
+**Why I doubt it helps tagging here:**
+
+1. **Our sequences are short** -- 128 particle tokens (176 with PLuM splittings). Linear
+   attention pays off at N in the thousands. At N=128 the quadratic term is cheap and
+   full attention is usually *better*.
+2. **It removes the component our study found load-bearing.** The whole result is that
+   `PairEmbed` -- the explicit O(N^2) pairwise bias -- learns the Lund kinematics so well
+   that supplying them as tokens is redundant by 300k. Gated DeltaNet has no natural
+   place for a pairwise interaction bias.
+3. **Every structured input we added died by convergence** (CA5, subjet, PLuM). Expect
+   ParT-with-enough-training to be hard to beat by *removing* structure.
+
+**Where it WOULD be legitimate:** throughput. PLuM cost 1.58x/step; arms ran 36-58 GPU-h.
+If the motivation is "trainings are too slow", a linear-attention backbone is a real
+answer -- but that is an efficiency project, not a performance one.
+
+**The interesting framing:** jets are a SET, not a sequence, so a recurrent model needs
+an ordering -- and kT-ordered declustering supplies a physically motivated one. "Does a
+recurrent model over the kT-ordered emission sequence match full attention?" is a real
+question, but a different paper.
+
+**Cheaper test of the same intuition: the GNN-over-the-Lund-tree** already scoped in
+[[2026-07-18-history-tagger-design]] (LundNet, arXiv:2012.08526). That ADDS structure --
+tree connectivity, which is genuinely NOT 2-body and therefore not redundant with
+`PairEmbed` the way the flat PLuM tokens turned out to be. Today's result is precisely
+the evidence that motivates it.
+
+**Whatever is tried next: pre-register the comparison at 1M iterations.** Judging at 100k
+would reproduce the same illusory early win we just spent a day characterising.
