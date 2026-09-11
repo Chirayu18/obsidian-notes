@@ -890,3 +890,49 @@ complexity story as the explanation; that overstated the evidence.
 Defensible reading: **the tokens supply structure the model can otherwise learn for
 itself, so they help only before it has learned it.** Supported by the timing and the
 breadth; the precise class-ordering mechanism is not established.
+
+
+## 40k added: the effect is GENERIC, and two earlier claims were wrong
+
+Four-stage table, @90% signal efficiency (PLuM/baseline):
+
+| class | **40k** | 100k | 300k | 1M |
+|---|---|---|---|---|
+| Hbb | 1.009 +-0.019 | **1.037 +-0.022** | 0.985 | 0.983 |
+| Hcc | 1.027 +-0.008 | 1.027 +-0.009 | 0.989 | 1.001 |
+| Hgg | 1.009 +-0.003 | **1.022 +-0.003** | 1.016 | 1.000 |
+| H4q | **1.037 +-0.007** | 1.012 +-0.007 | 1.020 | 1.005 |
+| **Tbqq** | **1.095 +-0.016** | 1.026 +-0.018 | 0.995 | 0.995 |
+| Zqq | **1.011 +-0.004** | 1.002 | 0.999 | 1.000 |
+| Wqq | **1.036 +-0.004** | 1.001 | 1.003 | 0.999 |
+
+Overall accuracy delta: **-0.003 (40k) -> +0.065 (100k) -> -0.002 (300k) -> -0.006 (1M)**
+
+### CORRECTION 1: "Zqq and Wqq never gain" was WRONG
+
+I stated this from the 100k/300k/1M table. With 40k included: **Wqq is 1.036 +-0.004
+(9 sigma) and Zqq 1.011 +-0.004 at 40k.** They are flat from 100k onward but they DO
+gain early. I should have hedged a claim about "never" when I had only late stages.
+
+### CORRECTION 2: the mechanism stories are both dead
+
+**Every class gains at 40k.** Not b-jets (kills the paper's displaced-decay mechanism),
+not complex-substructure jets (kills the complexity story I floated -- Wqq has the
+FEWEST splittings, 21.6, and one of the largest 40k gains). The effect is **generic**.
+
+### Tbqq is the largest effect in the study
+
+**1.095 +-0.016 (6 sigma) at 40k**, 1.224 +-0.051 at 70% eff, decaying monotonically
+1.095 -> 1.026 -> 0.995 -> 0.995.
+
+### The accuracy row is the giveaway
+
+At 40k the accuracy delta is **-0.003** despite large per-class rejection gains. PLuM is
+not classifying better overall there; it has shaped the discriminant TAILS differently.
+The accuracy delta peaks at 100k (+0.065) and dies by 300k.
+
+### Revised, simpler reading
+
+**PLuM helps early, on everything, and the help is gone by 300k.** Different classes peak
+at different stages (Tbqq and Wqq at 40k; Hbb and Hgg at 100k), all converging to 1.0.
+No class-specific mechanism is needed or supported by the data.
