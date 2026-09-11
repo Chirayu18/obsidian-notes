@@ -553,3 +553,49 @@ for hours. I documented this failure mode earlier in the session and then still 
 check for it when the job started running -- I reported "mid-inference, 17 GB resident"
 when the memory growth was training memory. Check `condor_tail` for "Global number = N"
 (training) vs "Start inference on cuda" (inference) before trusting a running job.
+
+
+## BINARY Hbb-vs-QCD runs submitted (2026-09-11, condor 9297236)
+
+Reproduces the paper on the **task axis** -- the main remaining configuration
+difference. One seed each of baseline and PLuM, 200k iterations, sequentially in
+one condor job.
+
+### The trap that had to be avoided
+
+`LZ4Dataset` sets `truths = np.zeros(...)` then reassigns only rows whose label is
+in `model_classes`. **A plain 2-class {QCD, Hbb} dict would silently label the other
+EIGHT signal classes as QCD** -- a background ~9x contaminated with Hcc/Hgg/H4q/
+Zqq/Wqq/Tbqq/Tbl, which is not the paper's task and would give a meaningless
+rejection number.
+
+Fix: `utils/torch/BinaryFilteredLZ4Dataset.py` drops out-of-task rows *before* any
+truth assignment. Selected via `dataset: BinaryFilteredLZ4Dataset` in the binary configs.
+
+### What was added
+
+| file | purpose |
+|---|---|
+| `utils/models/binary_hbb.py` | 2-class subclasses of paper-ParT and PLuM |
+| `utils/torch/BinaryFilteredLZ4Dataset.py` | drops the other 8 classes |
+| `config/jet_class_binary.yml` | baseline + dataset override |
+| `config/jet_class_plum_binary.yml` | PLuM (all 6 lund keys) + dataset override |
+| `utils/models/models.py` | registry: enum + match cases (backup `.bak_binary`) |
+| `utils/torch/DatasetLoader.py` | registry (backup `.bak_binary`) |
+| `~/flashjet_condor/run_binary.sh`, `binary.sub` | one job, both arms |
+
+### Smoke test BEFORE submitting (all passed)
+
+- both models instantiate, `classes = ['QCD','Hbb']`, **`fc` out_features = 2**
+- params 2.1425M (baseline) / 2.1929M (PLuM) -- vs 10-class 2.1439/2.1944
+- filtered dataset on a real shard: **only truth values {0,1}**, other 8 classes gone
+- PLuM binary config retains all 6 `lund_*` keys
+
+### Caveat stated up front
+
+**One seed each.** The accidental second seed measured seed-to-seed spread at
+mean |diff| 0.145 / sd 0.203 -- larger than the +0.044 effect we are chasing. A
+single-seed binary run can show a LARGE effect (the paper claims +12% rejection,
+which would be unmistakable) but **cannot establish a small one**. If the binary
+result comes back near null, the honest conclusion is "no large effect", not
+"no effect".
