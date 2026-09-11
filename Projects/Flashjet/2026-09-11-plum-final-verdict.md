@@ -835,3 +835,58 @@ whether the gain is LARGER before 100k, which would bound its true size before d
 **Caveat for the 40k point:** seed spread is largest early. The accidental second seed
 differed from the first by 0.086 in validation accuracy at 40k. A large 40k ratio
 measures one seed's head start, not a guaranteed property of the method.
+
+
+## All classes at 100k / 300k / 1M -- and what explains it
+
+Ratios @90% signal efficiency (best-measured working point):
+
+| class | 100k | 300k | 1M |
+|---|---|---|---|
+| **Hbb** | **1.037 +-0.022** | 0.985 +-0.022 | 0.983 +-0.024 |
+| **Hcc** | **1.027 +-0.009** | 0.989 +-0.010 | 1.001 +-0.011 |
+| **Hgg** | **1.022 +-0.003** | 1.016 +-0.004 | 1.000 +-0.004 |
+| **H4q** | **1.012 +-0.007** | 1.020 +-0.008 | 1.005 +-0.008 |
+| **Tbqq** | **1.026 +-0.018** | 0.995 +-0.020 | 0.995 +-0.023 |
+| Zqq | 1.002 +-0.004 | 0.999 +-0.004 | 1.000 +-0.004 |
+| Wqq | 1.001 +-0.004 | 1.003 +-0.004 | 0.999 +-0.004 |
+
+Overall accuracy delta: **+0.065 (100k) -> -0.002 (300k) -> -0.006 (1M)**.
+
+**Five of seven classes gain at 100k and return to ~1.0 by 300k.** Several are
+individually significant at 100k: Hgg 1.022 +-0.003 (7 sigma), Hcc 1.027 +-0.009,
+Tbqq 1.026 +-0.018. **Zqq and Wqq never gain at any stage** (1.002, 1.001, to +-0.004).
+
+### Explanation -- what is and is NOT established
+
+**Established:** the gain is BROAD, not b-specific. Hgg -- no b-content at all -- has the
+most significant gain in the entire study. That is incompatible with the paper's stated
+mechanism (b-hadron displaced decays producing distinctive soft/wide-angle radiation),
+which predicts gains on Hbb and Tbqq specifically.
+
+**Tested and NOT established -- substructure complexity.** Hypothesis: the gain scales
+with how much clustering structure a jet has. Against measured splittings/jet
+(Hgg 42.9, Tbqq 36.3, H4q 35.2, Hbb 28.9, Hcc 26.8, Zqq 23.4, Wqq 21.6):
+
+- Pearson r = **0.43** on 7 points -- **not significant** (p ~ 0.34)
+- weighted fit predicts the endpoints well (+0.002 at Wqq, +0.022 at Hgg)
+- but **Hbb is a large outlier**: biggest gain (+0.037) with below-median splittings
+
+**The b-content hypothesis is not dead either**: b-jets average +0.0315 vs +0.0128 for
+non-b. Real, in the paper's direction, but resting on 2 classes -- and it cannot explain
+Hgg at 7 sigma.
+
+**With one seed and seven classes these cannot be separated.** I initially presented the
+complexity story as the explanation; that overstated the evidence.
+
+### What survives regardless of mechanism
+
+1. The gain appears at 100k across most classes -- **including ones the paper says
+   should not gain**.
+2. It is **gone by 300k** and identical to 1M thereafter.
+3. **Zqq and Wqq -- the simplest two-prong light-quark topologies -- never gain**, to
+   +-0.004.
+
+Defensible reading: **the tokens supply structure the model can otherwise learn for
+itself, so they help only before it has learned it.** Supported by the timing and the
+breadth; the precise class-ordering mechanism is not established.
