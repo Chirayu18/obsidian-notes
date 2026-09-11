@@ -721,3 +721,39 @@ contaminated background) but wasteful: the filtering happens after decompression
 
 **If this is repeated**, pre-build a filtered dataset once rather than filtering at
 load time -- 5x the training throughput for one up-front pass.
+
+
+## Best single slide: `roccmp_Hbb.png` (100k solid vs 1M dotted)
+
+One frame, four ROC curves + a ratio panel:
+- **100k (solid)**: PLuM clearly above baseline from 0.3 to ~0.95 efficiency -- a broad,
+  coherent effect, not a tail excursion.
+- **1M (dotted)**: the two arms superimposed; ratio hugs 1.0, dipping slightly below
+  between 0.4 and 0.8.
+- Both 1M curves sit above both 100k curves -- that gap is the TRAINING gain, which
+  visibly dwarfs the PLuM gain.
+
+| | ratio @90% (bootstrap 68%) |
+|---|---|
+| 100k | **1.032 +0.017/-0.024** |
+| 1M | **0.985 +0.020/-0.027** |
+
+## Binary run: STOPPED by user request (2026-09-11)
+
+condor 9299319 removed after 1 checkpoint. What it established before stopping:
+
+- **The binary pipeline works end to end** -- models register and instantiate with
+  `fc` out_features=2, `BinaryFilteredLZ4Dataset` drops the other 8 classes (verified:
+  only truth values {0,1}), dataset symlinks resolve, 2,142,454 parameters.
+- **binary baseline @20k: 97.972% val accuracy, loss 0.056** -- sane for a balanced
+  2-class task (50% floor), and far easier than the 10-class problem (81.8% at 20k).
+- **PLuM's binary arm never started**, so there is NO binary comparison.
+
+Cost that made it impractical: ~60 min per 20k checkpoint => ~10 h/arm, ~20 h for the
+pair, because `BinaryFilteredLZ4Dataset` discards 80% of every shard after
+decompression (measured: 2.6 s/shard -> 27 usable batches of 512).
+
+**To resume**: everything is in place (`config/jet_class_{binary,plum_binary}.yml`,
+`utils/models/binary_hbb.py`, `utils/torch/BinaryFilteredLZ4Dataset.py`, registries
+patched with `.bak_binary` backups, `~/flashjet_condor/run_binary.sh` + `binary.sub`).
+Pre-build a filtered dataset first for 5x throughput.

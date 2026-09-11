@@ -345,3 +345,11 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots
 
 300k and 500k ROC/decay points pending (condor 9300151) — the decay plots currently have
 two x-points (100k, 1M) and will fill in to four.
+
+### Added 2026-09-11 (later)
+- `roccmp_Hbb.png`, `roccmp_Tbqq.png` — **100k (solid) vs 1M (dotted)** on one axis,
+  both arms, with a PLuM/baseline ratio panel showing each stage. Best single slide:
+  the 100k ratio runs at 1.1–1.2 while the 1M ratio hugs 1.0.
+- `rocboot_{Hbb,Tbqq}_{100k,1M}.png` — bootstrap 68% bands, ratio sub-panel.
+  (Bands are bootstrap, not paired: the arms are scored on *different* jet subsets
+  because the dataloader shuffles and drops partial batches.)
