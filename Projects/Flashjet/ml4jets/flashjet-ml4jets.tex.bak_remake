@@ -100,80 +100,89 @@
 \section{Jet clustering, and flashjet}
 
 \begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
-\textbf{1.\ Where the field is}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item CMS has run GPUs in the High Level Trigger since Run~3
-  \item $\sim$\textbf{30\,\%} of HLT reconstruction is offloaded $\rightarrow$
-        $\sim$\textbf{25\,\%} less HLT time
-  \item ported: pixel local reco $\cdot$ pixel tracks and vertices $\cdot$
-        calorimeter local reco
-\end{itemize}
-\vspace{0.4em}
-
-\textbf{2.\ What is missing}
-\begin{center}
-\begin{block}{}
-\centering\large Jet clustering is \textcolor{fjred}{\textbf{still on the CPU}}.
-\end{block}
-\end{center}
-\vspace{0.2em}
-
 \begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\textbf{3.\ Why it stayed there}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item sequential recombination is \textbf{IRC safe} --- that is why it won
-  \item but each merge \textbf{depends on the previous one}
-  \item a serial data dependence is the one thing a GPU does badly
+\begin{column}{0.52\textwidth}
+\textbf{Reconstruction is going heterogeneous}
+\begin{itemize}
+  \item CMS runs GPUs in the HLT since Run~3
+  \item \textbf{$\sim$30\,\%} of HLT reconstruction offloaded
+  \item $\rightarrow$ \textbf{$\sim$25\,\%} less total HLT time
+\end{itemize}
+\smallnote{pixel local reco $\cdot$ pixel tracks + vertices $\cdot$ calorimeter
+local reco}
+\vspace{0.9em}
+
+\textbf{Ported so far}
+\begin{itemize}
+  \item tracking \quad$\cdot$\quad vertexing \quad$\cdot$\quad calorimetry
+  \item[] \textcolor{fjred}{\textbf{not jet clustering}}
 \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}
-\textbf{4.\ Why that costs us now}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item reclustering \textbf{inside a training loop}
-  \item scanning the \textbf{jet radius} $R$
-  \item \textbf{substructure} computed on demand
+\begin{column}{0.48\textwidth}
+\begin{block}{Why it is still on the CPU}
+\begin{itemize}
+  \item sequential recombination is \textbf{IRC safe} --- why it survived
+  \item but each merge \textbf{depends on the previous one}
+  \item that data dependence does not map onto a GPU in the obvious way
 \end{itemize}
-\smallnote{every one of these pays a host\,$\leftrightarrow$\,device round trip,
-once per call}
+\end{block}
+\begin{block}{Where it hurts}
+\begin{itemize}
+  \item reclustering \textbf{inside a training loop}
+  \item scanning the \textbf{jet radius}
+  \item \textbf{substructure} on demand
+\end{itemize}
+\smallnote{each one pays a host\,$\leftrightarrow$\,device transfer, over and over}
+\end{block}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{flashjet --- a GPU jet clusterer}
-\textbf{What it does}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item generalised-$k_t$ clustering --- \akt, $k_t$, Cambridge--Aachen
-  \item runs on the GPU, \textbf{many jets or events per launch}
-  \item returns jets, the \textbf{full merge history}, and substructure
-        \textbf{as tensors}
-\end{itemize}
-\vspace{0.3em}
-
-\textbf{Why it can be done at all}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item Cacciari--Salam nearest-neighbour lemma: the smallest $d_{ij}$ in the
-        \emph{whole event} is always some particle's \textbf{geometric} nearest
-        neighbour
-  \item so each particle only needs to track \textbf{its own} NN \ldots
-  \item \ldots and one merge invalidates only $O(1)$ of them
-  \item[$\Rightarrow$] \textbf{$O(N^2)$ instead of $O(N^3)$} --- the serial chain
-        stays, but each step becomes cheap and parallel
-\end{itemize}
-\vspace{0.3em}
-
+\begin{frame}{flashjet}
 \begin{columns}[T]
-\begin{column}{0.56\textwidth}
-\textbf{In the ML ecosystem}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item a \textbf{PyTorch} call --- tensors in, tensors out
-  \item no host\,$\leftrightarrow$\,device copy in a training loop
+\begin{column}{0.5\textwidth}
+\textbf{An open-source GPU jet clusterer}
+\begin{itemize}
+  \item $k_t$, Cambridge--Aachen, \akt
+  \item custom \textbf{Triton} kernels
+\end{itemize}
+\vspace{0.7em}
+
+\textbf{Why Triton}
+\begin{itemize}
+  \item the GPU language of the PyTorch ecosystem
+  \item \textbf{compiles and autotunes} for the hardware at hand
+  \item \textbf{no separate CUDA build}, no device code to maintain
+\end{itemize}
+\vspace{0.7em}
+
+\textbf{Execution}
+\begin{itemize}
+  \item one program clusters \textbf{one event on chip}
+  \item the batch goes out in \textbf{one fused launch}
+  \item jets, histories, substructure $\rightarrow$ \textbf{tensors}
 \end{itemize}
 \end{column}
-\begin{column}{0.44\textwidth}
-\smallnote{Written in \textbf{Triton}: compiles and autotunes for whatever GPU it
-finds, so there is no separate CUDA build to maintain and results are
-reproducible once the tuning is cached.}
+\begin{column}{0.5\textwidth}
+\begin{block}{What makes it tractable}
+\small Cacciari--Salam NN lemma: the global $d_{ij}$ minimum sits at some
+particle's \textbf{geometric} nearest neighbour.
+\begin{itemize}
+  \item each slot carries its own NN
+  \item a merge invalidates only $O(1)$ rows
+  \item $\Rightarrow$ \textbf{$O(N^2)$, not $O(N^3)$}
+\end{itemize}
+\end{block}
+\begin{block}{Engineering}
+\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item bandwidth-bound $\rightarrow$ NN update and \textbf{next argmin} fused
+        into one sweep
+  \item \textbf{branchless} pair-vs-beam (masked stores)
+  \item autotuned \textbf{once per GPU model}, cached $\rightarrow$
+        \textbf{reproducible}
+\end{itemize}
+\end{block}
 \end{column}
 \end{columns}
 \end{frame}
@@ -192,33 +201,29 @@ d_{iB} &= p_{Ti}^{2p}
 a $d_{iB}$, call $i$ a jet and remove it.}
 \vspace{0.5em}
 
-%% \cite{Cacciari:2008gp}  % arXiv:0802.1189 -- uncomment if a citation is wanted
 \textbf{Only the exponent $p$ changes:}
 \begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}c l l l l@{}}
+\begin{tabular}{@{}clll@{}}
 \toprule
-$p$ & algorithm & merges first & tree ordered by & used for\\
+$p$ & algorithm & merges first & the tree is ordered by\\
 \midrule
-$-1$ & \akt & the \textbf{hardest} pairs & --- & \textbf{finding jets}\\
-$0$ & Cambridge--Aachen & the \textbf{closest} pair & \textbf{angle} &
-      grooming, Lund plane\\
-$+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$} &
-      exclusive subjets\\
+$-1$ & \akt & around the \textbf{hardest} particles & --- \smallnote{(gives the jets)}\\
+$0$ & Cambridge--Aachen & the \textbf{closest} pair & \textbf{angle}\\
+$+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$}\\
 \bottomrule
 \end{tabular}
 \end{center}
 \vspace{0.3em}
 \begin{block}{}
-\small \akt{} answers \emph{which particles form a jet}. The other two answer
-\emph{how that jet came apart} --- and the \textbf{ordering is what the
-substructure reads}.
+\small The ordering is \textbf{what the substructure reads}: C/A is the tree for
+\textbf{grooming} and the \textbf{Lund plane}, $k_t$ for \textbf{exclusive
+subjets}.
 \end{block}
 \end{frame}
 
 \begin{frame}{How sequential recombination works \hfill \toyA}
 \begin{center}
-\includegraphics[width=0.95\linewidth]{fig/clustering_steps.png}
+\includegraphics[width=1.0\linewidth]{fig/clustering_steps.png}
 \end{center}
 \vspace{-0.5em}
 \begin{columns}[T]
@@ -240,33 +245,22 @@ substructure reads}.
 \end{enumerate}
 \end{column}
 \end{columns}
-\smallnote{Both distances were defined on the previous slide; the exponent $p$
-there selects which algorithm this loop runs.}
+\vspace{0.2em}
+\begin{block}{}
+\small Both distances are defined on the previous slide. One exponent $p$ selects
+the algorithm --- the \emph{same} kernel serves all three.
+\end{block}
 \end{frame}
 
 \begin{frame}{\akt{} gives rigid, circular jets \hfill \toyB}
 \begin{center}
-\includegraphics[width=0.93\linewidth]{fig/jet_areas.png}
+\includegraphics[width=0.72\linewidth]{fig/jet_areas.png}
 \end{center}
-\vspace{-0.4em}
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\small
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item jet catchment areas, all three algorithms
-  \item clustered by \textbf{flashjet itself}
-\end{itemize}
-\end{column}
-\begin{column}{0.52\textwidth}
-\small
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item $k_t$, C/A: \textbf{ragged}, fluctuating boundaries
-  \item \akt: \textbf{circles of area $\pi R^2$} on each hard particle
-  \item[$\Rightarrow$] the algorithm's defining result, \textbf{reproduced
-        without FastJet}
-\end{itemize}
-\end{column}
-\end{columns}
+\vspace{-0.3em}
+\smallnote{Jet catchment areas for the three algorithms, from flashjet's own
+clustering. $k_t$ and C/A give ragged, fluctuating boundaries; \textbf{\akt{}
+gives circles of area $\pi R^2$} around each hard particle --- the defining
+result of the algorithm, recovered here without reference to FastJet.}
 \end{frame}
 
 \begin{frame}{It returns the tree, not just the jets}
@@ -291,17 +285,45 @@ they were built.
 \end{center}
 \medskip
 
-\begin{block}{The tree is the product, not a by-product}
+\begin{block}{Why the second half matters}
 \small The bottom three rows are the \textbf{complete binary merge tree}. Groomed
-mass, $z_g$, $R_g$, Lund coordinates and exclusive subjets are not separate
-algorithms --- they are \textbf{coordinates on that one tree}. Compute it once,
-read them all off, \textbf{no second clustering pass}.
+mass, $z_g$, $R_g$, Lund coordinates and exclusive subjets are all
+\textbf{coordinates on that tree} --- so they become array reads, with
+\textbf{no second clustering pass}.
 \end{block}
-\vspace{0.2em}
-\begin{center}
-\small\color{fjgray} Three things are read off that tree --- F1, F2, F3 --- and then
-we look at it on a real jet.
-\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Using it}
+\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
+import flashjet
+
+out = flashjet.cluster(p4, mask, R=1.0, algorithm="antikt")
+\end{Verbatim}
+\vspace{-0.3em}
+{\footnotesize
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{argument} & \textbf{type} & \\
+\midrule
+\texttt{p4} & $(B,N,4)$ tensor & $(p_x,p_y,p_z,E)$; CPU or CUDA\\
+\texttt{mask} & $(B,N)$ bool & marks real constituents in a padded batch\\
+\texttt{R} & float & jet radius\\
+\texttt{algorithm} & str & \texttt{"antikt"} $\vert$ \texttt{"kt"} $\vert$ \texttt{"cambridge"}\\
+\texttt{p} & float & generalised-$k_t$ exponent (overrides \texttt{algorithm})\\
+\bottomrule
+\end{tabular}}
+\medskip
+
+\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
+out.n_jets                                    # (B,)     jets found
+out.jets_p4(p4)                               # (B,J,4)  jet four-momenta
+out.splitting_scales()                        #          sqrt(d12), sqrt(d23), ...
+out.exclusive_jets(n_jets=3)                  # F1       exclusive kt subjets
+out.groomed_jets(p4, R, z_cut=0.1, beta=0.0)  # F2       soft drop / mMDT
+out.lund_coordinates(p4, R)                   # F3       primary Lund plane
+\end{Verbatim}
+\smallnote{The same call runs unchanged on CPU and GPU --- the backend is chosen
+from the problem size, not by the caller.}
 \end{frame}
 
 \begin{frame}{What is implemented}
@@ -346,16 +368,15 @@ merges are the hard prongs --- exactly what a 2-prong decay leaves behind.
 \smallskip
 
 The splitting scales come straight from \texttt{hist\_d}:
-\[\sqrt{d_{12}},\ \sqrt{d_{23}},\ \dots\]
-\vspace{-1.0em}
-\[\text{with}\ \ d_{ij}=\min\!\left(p_{Ti}^{2},p_{Tj}^{2}\right)\frac{\Delta R_{ij}^2}{R^2}\]
+\[\sqrt{d_{12}},\ \sqrt{d_{23}},\ \dots\ \ \text{with}\ \
+d_{ij}=\min(p_{Ti}^{2},p_{Tj}^{2})\,\Delta R_{ij}^2/R^2\]
 \end{column}
 \begin{column}{0.58\textwidth}
 \includegraphics[width=\linewidth]{fig/kt_observables.png}\\
-\smallnote{Toy W-like (2-prong) vs QCD-like fat jets.
-\textbf{Left:} the $k_t$ splitting scale $\sqrt{d_{12}}$ separates cleanly.
-\textbf{Right:} the momentum balance $z$ of the two exclusive subjets ---
-the W sits near $z \sim 0.4$, QCD spreads to small~$z$.}
+\smallnote{Toy W-like (2-prong) vs QCD-like fat jets. \textbf{Left:} the $k_t$
+splitting scale $\sqrt{d_{12}}$ separates cleanly. \textbf{Right:} the momentum
+balance $z$ of the two exclusive subjets --- the W sits near $z\!\sim\!0.4$,
+QCD spreads to small $z$.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -654,39 +675,6 @@ multiplicity.
 \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{Using it}
-\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
-import flashjet
-
-out = flashjet.cluster(p4, mask, R=1.0, algorithm="antikt")
-\end{Verbatim}
-\vspace{-0.3em}
-{\footnotesize
-\begin{tabular}{@{}lll@{}}
-\toprule
-\textbf{argument} & \textbf{type} & \\
-\midrule
-\texttt{p4} & $(B,N,4)$ tensor & $(p_x,p_y,p_z,E)$; CPU or CUDA\\
-\texttt{mask} & $(B,N)$ bool & marks real constituents in a padded batch\\
-\texttt{R} & float & jet radius\\
-\texttt{algorithm} & str & \texttt{"antikt"} $\vert$ \texttt{"kt"} $\vert$ \texttt{"cambridge"}\\
-\texttt{p} & float & generalised-$k_t$ exponent (overrides \texttt{algorithm})\\
-\bottomrule
-\end{tabular}}
-\medskip
-
-\begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
-out.n_jets                                    # (B,)     jets found
-out.jets_p4(p4)                               # (B,J,4)  jet four-momenta
-out.splitting_scales()                        #          sqrt(d12), sqrt(d23), ...
-out.exclusive_jets(n_jets=3)                  # F1       exclusive kt subjets
-out.groomed_jets(p4, R, z_cut=0.1, beta=0.0)  # F2       soft drop / mMDT
-out.lund_coordinates(p4, R)                   # F3       primary Lund plane
-\end{Verbatim}
-\smallnote{The same call runs unchanged on CPU and GPU --- the backend is chosen
-from the problem size, not by the caller.}
-\end{frame}
-
 % ============================================================
 \section{Downstream: the clustering tree as tagger input}
 
@@ -739,11 +727,7 @@ CA5 & 1.22$\times$\\
 
 \begin{frame}{Does the tree help a tagger? --- result}
 \begin{columns}[T]
-\begin{column}{0.62\textwidth}
-\includegraphics[width=\linewidth,trim=0 25 0 0,clip]{fig/part_ratio_allclasses.png}\\[-0.2em]
-\smallnote{PLuM/baseline rejection ratio; unpaired-bootstrap bands.}
-\end{column}
-\begin{column}{0.38\textwidth}
+\begin{column}{0.5\textwidth}
 \textbf{Aggregate test accuracy} ($\sim$20.05\,M jets)
 \smallskip
 
@@ -759,18 +743,44 @@ $\Delta$ & $-0.003$ & $+0.065$ & $-0.006$\\
 \end{tabular}
 \smallskip
 
+\smallnote{AUC agrees to $\sim10^{-4}$ at every stage.}
+\smallskip
+
+\textbf{Rejection ratio @90\,\% eff.} (PLuM/baseline)
+\smallskip
+
+\scriptsize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & 40k & 100k & 1M\\
+\midrule
+Hbb & 1.009 & \textbf{1.037} & 0.983\\
+Hcc & 1.027 & 1.027 & 1.001\\
+Hgg & 1.009 & 1.022 & 1.000\\
+H4q & 1.037 & 1.012 & 1.005\\
+Zqq & 1.011 & 1.002 & 1.000\\
+Wqq & \textbf{1.036} & 1.001 & 0.999\\
+Tbqq & \textbf{1.095} & 1.026 & 0.995\\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.5\textwidth}
 \begin{block}{What we see}
-\scriptsize An \textbf{early gain in every class}, \textbf{gone by 1\,M}. Wqq has
-the \emph{fewest} splittings (21.6/jet) yet gains at $\sim$9$\sigma$:
+\small An \textbf{early gain in every class} --- Tbqq 1.095$\pm$0.016, Wqq
+1.036$\pm$0.004 --- that \textbf{decays to nothing by 1\,M}. Wqq has the
+\emph{fewest} splittings (21.6/jet) yet still gains at $\sim$9$\sigma$:
 \textbf{not confined to complex or $b$-containing jets}. At convergence all three
 arms are \textbf{null-or-worse}.
 \end{block}
 \begin{block}{What we do \emph{not} claim}
-\scriptsize
-\begin{itemize}\setlength{\itemsep}{0pt}
-  \item \textbf{No mechanism} --- $b$-specificity excluded.
-  \item \textbf{One seed per arm} --- a second seed's spread exceeded the effect.
-  \item Their Hbb reproduced at 100k, \textbf{not} at convergence.
+\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textbf{No mechanism.} $b$-specificity is excluded by the data; a
+        substructure-complexity correlation was tested, not established.
+  \item \textbf{One seed per arm.} A second PLuM seed gave a spread
+        \emph{larger} than the effect --- the main weakness.
+  \item We reproduce their Hbb \textbf{at 100k} (1.037), \textbf{not at
+        convergence} (0.983).
 \end{itemize}
 \end{block}
 \end{column}
