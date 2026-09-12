@@ -102,11 +102,10 @@
 \begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
 \textbf{1.\ Where the field is}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item CMS has run GPUs in the High Level Trigger since Run~3
-  \item $\sim$\textbf{30\,\%} of HLT reconstruction is offloaded $\rightarrow$
+  \item GPUs in the CMS High Level Trigger since Run~3
+  \item $\sim$\textbf{30\,\%} of HLT reco offloaded $\rightarrow$
         $\sim$\textbf{25\,\%} less HLT time
-  \item ported: pixel local reco $\cdot$ pixel tracks and vertices $\cdot$
-        calorimeter local reco
+  \item pixel local reco $\cdot$ tracks $\cdot$ vertices $\cdot$ calo local reco
 \end{itemize}
 \vspace{0.4em}
 
@@ -124,16 +123,15 @@
 \begin{itemize}\setlength\itemsep{0.1em}
   \item sequential recombination is \textbf{IRC safe} --- that is why it won
   \item but each merge \textbf{depends on the previous one}
-  \item a serial data dependence is the one thing a GPU does badly
+  \item serial dependence is what a GPU does worst
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
 \textbf{4.\ Why that costs us now}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item \textbf{reclustering inside a training loop}, so the merge history
-        feeds \textbf{substructure} to a tagger
+  \item \textbf{reclustering inside a training loop}
   \item scanning the \textbf{jet radius} $R$
-  \item \textbf{substructure} computed on demand
+  \item \textbf{substructure} on demand
 \end{itemize}
 \smallnote{The tensors are already on the GPU --- each of these sends them back
 to the host and returns, once per call.}
@@ -144,25 +142,24 @@ to the host and returns, once per call.}
 \begin{frame}{flashjet --- a GPU jet clusterer}
 \textbf{What it does}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item generalised-$k_t$ clustering --- \akt, $k_t$, Cambridge--Aachen ---
-        \textbf{transcribed from FastJet and validated against it}
-  \item runs on the GPU, \textbf{many jets or events per launch}
+  \item generalised-$k_t$ --- \akt, $k_t$, C/A --- \textbf{transcribed from
+        FastJet and validated against it}
+  \item \textbf{many jets or events per launch}
   \item returns jets, the \textbf{full merge history}, and substructure
         \textbf{as tensors}
-  \item[$\Rightarrow$] designed for \textbf{reclustering inside training loops},
-        on padded $(B,N,4)$ tensors that \textbf{stay on the GPU}
+  \item[$\Rightarrow$] built for \textbf{reclustering inside training loops}, on
+        padded $(B,N,4)$ tensors that \textbf{stay on the GPU}
 \end{itemize}
 \vspace{-0.1em}
 
 \textbf{Why it can be done at all}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item Cacciari--Salam nearest-neighbour lemma: the smallest $d_{ij}$ in the
-        \emph{whole event} is always some particle's \textbf{geometric} nearest
-        neighbour
+  \item Cacciari--Salam lemma: the smallest $d_{ij}$ in the whole event is
+        always some particle's \textbf{geometric} nearest neighbour
   \item so each particle tracks only \textbf{its own} NN, and one merge
         invalidates $O(1)$ of them
-  \item[$\Rightarrow$] \textbf{$O(N^2)$ instead of $O(N^3)$} --- the serial chain
-        stays, but each step becomes cheap and parallel
+  \item[$\Rightarrow$] \textbf{$O(N^2)$, not $O(N^3)$} --- the serial chain
+        stays, but each step is cheap and parallel
 \end{itemize}
 \vspace{-0.1em}
 
@@ -443,35 +440,6 @@ scales computed independently.}
 % ============================================================
 \section{Correctness}
 
-\begin{frame}{Two kinds of validation}
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\begin{block}{First: toys, where truth is known}
-\small On generated inputs the \emph{answer} is known analytically --- so any
-observable landing off the predicted curve is a real bug, with nothing to hide
-behind.
-\end{block}
-\smallskip
-\toyAbody{} --- QCD-like and W-like fat jets\\
-\toyBbody{} --- leading-log parton shower
-\end{column}
-\begin{column}{0.5\textwidth}
-\begin{block}{Then: real data, against FastJet}
-\small On detector-level jets there is no analytic answer --- so the reference is
-\textbf{FastJet on the same events}, and the experiment's own reconstructed jets.
-\end{block}
-\smallskip
-\realCbody{} --- large-$R$ jets and full events
-\end{column}
-\end{columns}
-\vspace{0.8em}
-\begin{block}{}
-\small The order matters: \textbf{toys first} pins the algorithm against a known
-answer; \textbf{real data second} shows it survives detector-level input. A
-failure at either stage means something different.
-\end{block}
-\end{frame}
-
 \begin{frame}{Closures against analytic predictions \hfill \toyB}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
@@ -486,8 +454,9 @@ mass peak moves up.}
 \end{column}
 \end{columns}
 \smallskip
-\smallnote{Toy-shower input, so the \emph{prediction} is unambiguous --- these
-test the decoders, not an event generator.}
+\smallnote{\textbf{Toys first:} on generated input the answer is known
+analytically, so anything off the curve is a real bug. Real-data checks follow.
+Toy-shower input tests the decoders, not an event generator.}
 \end{frame}
 
 \begin{frame}{Jet by jet, against ATLAS's own stored values \hfill \realC}
@@ -510,70 +479,39 @@ value \textbf{ATLAS computed with FastJet} and stored: median \textbf{1.0000},
 \end{columns}
 \end{frame}
 
-\begin{frame}{Same jets as FastJet --- the whole grid \hfill \realC}
-\textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins $\times$ 2
-samples}, 20\,000 jets per bin, on ATLAS Open Data.
-
-\begin{center}
-\begin{tabular}{@{}lc@{}}
-\toprule
-\textbf{check} & \textbf{result}\\
-\midrule
-number of jets found & \textbf{100.000\,\%} at every one of 150 points\\
-leading-jet $p_T$ within $10^{-4}$ & 1.0000 at 148/150 points\\
-median relative difference & $\sim 7\times 10^{-8}$ \smallnote{(float32 precision)}\\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{0.8em}
-
+\begin{frame}{It gives the same jets --- everywhere we looked \hfill \realC}
 \begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\begin{block}{The grid is the point}
-\small A single working point proves little. Agreement holds across
-\textbf{all three algorithms}, \textbf{every radius} from 0.4 to 1.2, and
-\textbf{24 to 123} constituents per jet.
+\begin{column}{0.52\textwidth}
+\begin{block}{vs FastJet --- a 150-point grid}
+\small 3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins $\times$ 2
+samples, 20\,000 jets each.
+\smallskip
+
+\textbf{100.000\,\%} jet-count agreement at \textbf{every} point.
 \end{block}
+\smallnote{Leading-jet $p_T$ within $10^{-4}$ at 148/150; median difference
+$\sim7\times10^{-8}$ --- float32 precision.}
 \end{column}
-\begin{column}{0.5\textwidth}
-\begin{block}{Two independent references}
-\small The same events are clustered by \textbf{FastJet} for the jets, and every
-substructure decoder is separately pinned against an \textbf{independent NumPy
-tree-walk}.
+\begin{column}{0.48\textwidth}
+\begin{block}{vs ATLAS's own reconstructed jets}
+\small Cluster the $\sim$600 stored calorimeter clusters ourselves; compare to
+the jets ATLAS reconstructed and published.
+\smallskip
+
+\textbf{100.0\,\%} $n_{\rm jets}$ match, \textbf{10.96 vs 10.96} jets/event.
 \end{block}
+\smallnote{The event regime, where the problem is $O(N^2)$.}
 \end{column}
 \end{columns}
-\medskip
+\vspace{0.3em}
 
-\end{frame}
-
-\begin{frame}{Same jets as the experiment \hfill \realC}
-\begin{columns}[T]
-\begin{column}{0.55\textwidth}
-A stronger test than agreeing with FastJet.
-\medskip
-
-ATLAS publishes an open dataset carrying both the \textbf{calorimeter clusters}
-and \textbf{its own reconstructed jets}. Cluster the $\sim$600 clusters per event
-ourselves, and compare:
-
-\begin{center}
-\begin{tabular}{@{}lc@{}}
-\toprule
-$n_{\rm jets}$ vs ATLAS & \textbf{100.0\,\%} match\\
-mean jets/event & 10.96 vs 10.96\\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{column}
-\begin{column}{0.45\textwidth}
 \begin{block}{}
-\small This closes the algorithm against \textbf{the experiment's own published
-output} --- not against another implementation of the same algorithm.
+\small Two \emph{independent} references: FastJet for the jets, a separate
+\textbf{NumPy tree-walk} for every substructure decoder. The second test closes
+the algorithm against \textbf{the experiment's published output} --- not against
+another implementation of the same algorithm.
 \end{block}
-\smallnote{599.3 clusters/event: the event regime, where the problem is $O(N^2)$.}
-\end{column}
-\end{columns}
+\smallnote{Per-point tables and the $R$/multiplicity scans are in backup.}
 \end{frame}
 
 % ============================================================
@@ -640,30 +578,6 @@ point has \textbf{100\,\%} $n_{\rm jets}$ agreement. Busier jets $\rightarrow$
 bigger win --- the regime that matters for boosted-object physics.}
 \end{frame}
 
-\begin{frame}{Cost is independent of $R$ --- and of the algorithm \hfill \realC}
-\begin{columns}[T]
-\begin{column}{0.56\textwidth}
-\includegraphics[width=\linewidth]{fig/atlas_R_independence.png}
-\end{column}
-\begin{column}{0.44\textwidth}
-Across $R = 0.4 \rightarrow 1.2$: a \textbf{0.3\,\% spread} over a $3\times$
-range in $R$.
-\smallskip
-
-$R$ changes \emph{which} pairs merge, not \emph{how many} distances are computed.
-\medskip
-
-Across algorithms: \akt, $k_t$ and C/A agree to within $\sim$4\,\% at every
-multiplicity.
-\medskip
-
-\begin{block}{}
-\small $k_t$ and C/A \textbf{cost the same as \akt}.
-\end{block}
-\end{column}
-\end{columns}
-\end{frame}
-
 \begin{frame}[fragile]{Using it}
 \begin{Verbatim}[fontsize=\footnotesize,frame=single,rulecolor=\color{fjgray}]
 import flashjet
@@ -702,52 +616,117 @@ from the problem size, not by the caller.}
 
 \begin{frame}{Does the tree help a tagger? --- setup}
 \begin{columns}[T]
-\begin{column}{0.52\textwidth}
+\begin{column}{0.54\textwidth}
 \textbf{The question.} Gouskos \& Maier [PLuM, 2605.26821] report that explicit
 Lund-plane splittings help a transformer tagger. We test that on a
 \textbf{full 10-class} training.
-\smallskip
+\medskip
 
-\textbf{Model.} Particle Transformer [2202.03772] --- 8 encoder $+$ 2 class-attention
-blocks, 8 heads, embed 128. \textbf{2.144\,M} params baseline,
-\textbf{2.194\,M} with the feature block \smallnote{($+0.051$\,M)}.
-\smallskip
+\textbf{Model.} Particle Transformer [2202.03772] --- 8 encoder $+$ 2
+class-attention blocks, 8 heads, embed 128; \textbf{2.144\,M} parameters.
+\medskip
 
-\textbf{Data.} JetClass, 10 classes, $\sim$\textbf{20.05\,M} test jets
-($\sim$2.0\,M/class), 128 particles/jet. All arms read \textbf{identical} shards;
-features computed live.
-\smallskip
+\textbf{Data.} JetClass, 10 classes, 100\,M training jets,
+$\sim$\textbf{20.05\,M} test jets, 128 particles/jet.
+\medskip
 
-\smallnote{Ranger, lr $10^{-3}$, batch 512, $10^{6}$ iterations, checkpoint every
-20k. Uncertainties: bootstrap of the test set, 16--84th percentile.}
+\textbf{Training.} Ranger, lr $10^{-3}$, batch 512, \textbf{$10^{6}$ iterations}
+to convergence. All arms read \textbf{identical shards} in the same order;
+features are computed \textbf{live} by flashjet inside the loop.
 \end{column}
-\begin{column}{0.48\textwidth}
-\begin{block}{The feature arms}
+\begin{column}{0.46\textwidth}
+\begin{block}{Our baseline reproduces the paper}
 \small
-\begin{itemize}\setlength{\itemsep}{2pt}
-  \item \textbf{PLuM} --- 48 $k_t$-ordered Lund splittings, $[\ln k_t,
-        \ln 1/\Delta R, \ln z]$, embedded and \textbf{concatenated} as extra
-        tokens (176 vs 128)
-  \item \textbf{subjet} --- $n$-body subjet mass, $p_T$ fraction, $n_{\rm const}$
-  \item \textbf{CA5} --- per-particle C/A branch-point features
-\end{itemize}
-\end{block}
-\begin{block}{Cost (wall clock per step)}
-\small
-\begin{tabular}{@{}lr@{}}
+\begin{tabular}{@{}lrr@{}}
 \toprule
-PLuM & \textbf{1.59$\times$}\\
-subjet & 1.42$\times$\\
-CA5 & 1.22$\times$\\
+& ours & published\\
+\midrule
+test accuracy & \textbf{86.21\,\%} & $\sim$86.1\,\%\\
+parameters & 2{,}193{,}930 & 2.19\,M\\
 \bottomrule
 \end{tabular}
+\smallskip
+
+\small Like-for-like --- so a difference between arms is the \emph{feature},
+not a broken baseline.
 \end{block}
-\smallnote{\textbf{One seed per arm} --- see the caveat on the next slide.}
+\smallskip
+
+\smallnote{\textbf{Shown here: PLuM} --- 48 $k_t$-ordered Lund splittings
+$[\ln k_t, \ln 1/\Delta R, \ln z]$, concatenated as extra tokens (176 vs 128).
+Two other encodings were tried --- \textbf{subjet} ($n$-body mass, $p_T$
+fraction, $n_{\rm const}$) and \textbf{CA5} (per-particle C/A branch points);
+both null-or-worse (backup). Bootstrap errors, 16--84th pct.
+\textbf{One seed per arm.}}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Does the tree help a tagger? --- result}
+\begin{frame}{Both arms train identically}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/part_loss_full.png}
+\end{column}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{fig/part_acc_full.png}
+\end{column}
+\end{columns}
+\vspace{-0.2em}
+\smallnote{Validation loss and accuracy over the full $10^{6}$ iterations. The
+curves are \textbf{on top of each other} --- the feature block does not
+destabilise training, and it does not accelerate it either. Both converge to
+\textbf{$\sim$86.2\,\%}.}
+\end{frame}
+
+\begin{frame}{Top tagging: the gain closes with training \hfill}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\includegraphics[width=\linewidth,trim=0 18 0 22,clip]{fig/part_rocratio_Tbqq.png}
+\end{column}
+\begin{column}{0.44\textwidth}
+\textbf{$t\rightarrow bqq$ vs QCD.}
+\smallskip
+
+Top panel: full ROC at three training stages. Bottom: \textbf{PLuM / baseline}
+rejection ratio.
+\medskip
+
+\begin{block}{}
+\small At \textbf{40k} the ratio sits \textbf{10--25\,\% above 1}. By
+\textbf{1M} it has collapsed onto the line.
+\end{block}
+\smallskip
+
+\smallnote{Bands: unpaired bootstrap of the test set, 16--84th percentile. The
+low-efficiency end is noisy because rejection there is $\sim10^{5}$.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{$H\rightarrow b\bar b$: the paper's best channel \hfill}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\includegraphics[width=\linewidth,trim=0 18 0 22,clip]{fig/part_rocratio_Hbb.png}
+\end{column}
+\begin{column}{0.44\textwidth}
+\textbf{$H\rightarrow b\bar b$ vs QCD} --- where PLuM report their largest gain.
+\smallskip
+
+\begin{block}{}
+\small We \textbf{reproduce it early}: $+20\,\%$ at 100k. At \textbf{1M} the
+ratio is \textbf{at or below 1}.
+\end{block}
+\medskip
+
+\smallnote{Their result is obtained in \emph{binary} mode on a fast simulation
+\textbf{without secondary-vertex inputs}; ours is a 10-class training. The
+early-training agreement is real --- the disagreement is about what survives to
+convergence.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{All seven signal classes --- the same story}
 \begin{columns}[T]
 \begin{column}{0.68\textwidth}
 \includegraphics[width=\linewidth,trim=0 55 0 18,clip]{fig/part_ratio_allclasses.png}\\[-0.4em]
@@ -768,9 +747,10 @@ $\Delta$ & $-0.003$ & $+0.065$ & $-0.006$\\
 \end{tabular}
 \smallskip
 \begin{block}{What we see}
-\scriptsize An \textbf{early gain in every class}, \textbf{gone by 1\,M}. Wqq has
-the \emph{fewest} splittings (21.6/jet) yet gains at $\sim$9$\sigma$: \textbf{not
-confined to complex or $b$-jets}. At convergence: \textbf{null-or-worse}.
+\scriptsize An \textbf{early gain in every class}, \textbf{gone by 1\,M}. Even
+Wqq --- the \emph{fewest} splittings --- gains at $\sim$9$\sigma$ early:
+\textbf{not confined to complex or $b$-jets}. At convergence:
+\textbf{null-or-worse}.
 \end{block}
 \begin{block}{What we do \emph{not} claim}
 \scriptsize
@@ -827,6 +807,30 @@ Physics closures: analytic predictions on toy showers.}
 % ============================================================
 \appendix
 \section{Backup}
+
+\begin{frame}{Backup --- cost is independent of $R$ and of the algorithm \hfill \realC}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\includegraphics[width=\linewidth]{fig/atlas_R_independence.png}
+\end{column}
+\begin{column}{0.44\textwidth}
+Across $R = 0.4 \rightarrow 1.2$: a \textbf{0.3\,\% spread} over a $3\times$
+range in $R$.
+\smallskip
+
+$R$ changes \emph{which} pairs merge, not \emph{how many} distances are computed.
+\medskip
+
+Across algorithms: \akt, $k_t$ and C/A agree to within $\sim$4\,\% at every
+multiplicity.
+\medskip
+
+\begin{block}{}
+\small $k_t$ and C/A \textbf{cost the same as \akt}.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
 
 \begin{frame}{Backup --- speedup vs $R$, per algorithm (jet regime) \hfill \realC}
 \begin{columns}[T]
@@ -1071,6 +1075,88 @@ algorithm sweeps up trace its catchment area.
 
 \smallnote{$\bar\alpha = 0.25$, $p_{T0} = 1$\,TeV, $R = 0.4$, 20\,000 showers;
 fixed seed, fully re-runnable.}
+\end{frame}
+
+\begin{frame}{Backup --- cost of each feature arm}
+\begin{columns}[T]
+\begin{column}{0.42\textwidth}
+\textbf{Wall clock per training step}, relative to the baseline:
+\smallskip
+
+\begin{tabular}{@{}lr@{}}
+\toprule
+arm & cost\\
+\midrule
+PLuM & \textbf{1.59$\times$}\\
+subjet & 1.42$\times$\\
+CA5 & 1.22$\times$\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{Features computed live by flashjet inside the loop, on the batch
+already resident on the GPU. Parameters: 2.144\,M baseline $\rightarrow$
+2.194\,M with the PLuM feature block ($+0.051$\,M).}
+\end{column}
+\begin{column}{0.58\textwidth}
+\begin{block}{}
+\small Measured before the GPU-side collation change; the clustering itself is
+a small fraction of a step, so these are upper bounds on the true feature cost.
+\end{block}
+\smallskip
+
+\smallnote{The cost is the reason a null result still matters: if a feature is
+free, a null is merely uninteresting --- at \textbf{1.59$\times$} it is a
+reason not to use it.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- $W\rightarrow qq$, the fewest-splitting channel}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\includegraphics[width=\linewidth,trim=0 18 0 22,clip]{fig/part_rocratio_Wqq.png}
+\end{column}
+\begin{column}{0.44\textwidth}
+\textbf{$W\rightarrow qq$} has the \textbf{fewest} Lund splittings of any
+signal class (21.6/jet), yet shows the same early gain.
+\smallskip
+
+\begin{block}{}
+\small The effect is \textbf{not} confined to complex or $b$-containing jets ---
+which is what a decay-structure explanation would predict.
+\end{block}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- two kinds of validation}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\begin{block}{First: toys, where truth is known}
+\small On generated inputs the \emph{answer} is known analytically --- so any
+observable landing off the predicted curve is a real bug, with nothing to hide
+behind.
+\end{block}
+\smallskip
+\toyAbody{} --- QCD-like and W-like fat jets\\
+\toyBbody{} --- leading-log parton shower
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{Then: real data, against FastJet}
+\small On detector-level jets there is no analytic answer --- so the reference is
+\textbf{FastJet on the same events}, and the experiment's own reconstructed jets.
+\end{block}
+\smallskip
+\realCbody{} --- large-$R$ jets and full events
+\end{column}
+\end{columns}
+\vspace{0.8em}
+\begin{block}{}
+\small The order matters: \textbf{toys first} pins the algorithm against a known
+answer; \textbf{real data second} shows it survives detector-level input. A
+failure at either stage means something different.
+\end{block}
 \end{frame}
 
 \begin{frame}{Backup --- the validation ladder}
