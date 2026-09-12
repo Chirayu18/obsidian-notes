@@ -577,9 +577,9 @@ output} --- not against another implementation of the same algorithm.
 \end{frame}
 
 % ============================================================
-\section{Speed}
+\section{Speed --- the jet regime}
 
-\begin{frame}{The benchmark \hfill \realC}
+\begin{frame}{The benchmark --- jet regime \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \textbf{Data} --- ATLAS Open Data, freely presentable
@@ -612,11 +612,13 @@ per bin.}
 \small Both clusterers read the \textbf{same saved file}. Speedups are quoted
 against the \textbf{vectorised} FastJet interface --- the faster, fairer baseline.
 \end{block}
+\smallnote{\textbf{One timed unit = one large-$R$ jet} (24--123 constituents),
+batched. Event-regime timing is not in this talk.}
 \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Time per jet \hfill \realC}
+\begin{frame}{Time per jet --- jet regime \hfill \realC}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_abs_timing.png}
 \end{center}
@@ -624,10 +626,11 @@ against the \textbf{vectorised} FastJet interface --- the faster, fairer baselin
 nearly flat while both FastJet interfaces climb steeply with multiplicity:
 \textbf{0.35--2.7\,$\mu$s per jet} against \textbf{17--155\,$\mu$s} for vectorised
 FastJet, and \textbf{110--620\,$\mu$s} per jet one at a time. Benchmarked on an
-NVIDIA \textbf{V100-class} GPU.}
+NVIDIA \textbf{V100-class} GPU. \textbf{Per jet, batched} --- the GPU clusters the
+whole batch at once, so this is amortised cost, not single-jet latency.}
 \end{frame}
 
-\begin{frame}{The advantage grows with jet complexity \hfill \realC}
+\begin{frame}{The advantage grows with jet complexity --- jet regime \hfill \realC}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_speedup_algs.png}
 \end{center}
@@ -797,7 +800,8 @@ confined to complex or $b$-jets}. At convergence: \textbf{null-or-worse}.
   \item \textbf{Reproduces the experiment's own reconstructed jets} exactly, at
   $\sim$600 clusters per event.
   \medskip
-  \item \textbf{39--99$\times$ faster} than vectorised FastJet, and the advantage
+  \item \textbf{39--99$\times$ faster} than vectorised FastJet \textbf{in the jet
+  regime} (one large-$R$ jet per timed unit, batched), and the advantage
   \emph{grows} with jet complexity. Cost is independent of $R$ and of algorithm.
   \medskip
   \item Still a \textcolor{fjorange}{\textbf{prototype}}, with meaningful headroom
@@ -824,7 +828,7 @@ Physics closures: analytic predictions on toy showers.}
 \appendix
 \section{Backup}
 
-\begin{frame}{Backup --- speedup vs $R$, per algorithm \hfill \realC}
+\begin{frame}{Backup --- speedup vs $R$, per algorithm (jet regime) \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=\linewidth]{fig/atlas_radius_scan_atlastop-top.png}\\
@@ -838,7 +842,7 @@ Physics closures: analytic predictions on toy showers.}
 \smallnote{Flat in $R$ for all three algorithms; ordering is by multiplicity bin.}
 \end{frame}
 
-\begin{frame}{Backup --- speedup vs multiplicity \hfill \realC}
+\begin{frame}{Backup --- speedup vs multiplicity (jet regime) \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \includegraphics[width=\linewidth]{fig/atlas_multiplicity_atlastop-top.png}\\
@@ -851,7 +855,7 @@ Physics closures: analytic predictions on toy showers.}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Backup --- the numbers}
+\begin{frame}{Backup --- the numbers (jet regime)}
 \begin{center}
 \small
 \begin{tabular}{@{}llrrrr@{}}
@@ -874,8 +878,8 @@ qcd & \akt & 120.2 & 2.673 & 154.9 & $58\times$\\
 \medskip
 \begin{block}{}
 \small \textbf{39--99$\times$} over vectorised FastJet (median $64\times$), with
-100\,\% jet-count agreement everywhere. Benchmarked on an \textbf{NVIDIA
-V100-class} GPU.
+100\,\% jet-count agreement everywhere. \textbf{One timed unit = one jet},
+batched. Benchmarked on an \textbf{NVIDIA V100-class} GPU.
 \end{block}
 \smallskip
 \smallnote{$R=1.0$ rows shown. Against the per-jet FastJet interface the gap is
