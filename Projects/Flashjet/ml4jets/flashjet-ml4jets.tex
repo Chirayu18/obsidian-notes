@@ -651,26 +651,116 @@ multiplicity.
 % ============================================================
 \section{Downstream: the clustering tree as tagger input}
 
-\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} ParT training --- setup}
-\vfill
-\begin{center}
-{\Large\color{fjorange}\textbf{[ to be filled in ]}}
-\medskip
+\begin{frame}{Does the tree help a tagger? --- setup}
+\begin{columns}[T]
+\begin{column}{0.52\textwidth}
+\textbf{The question.} Gouskos \& Maier [PLuM, 2605.26821] report that explicit
+Lund-plane splittings help a transformer tagger. We test that on a
+\textbf{full 10-class} training.
+\smallskip
 
-{\color{fjgray}ParT training setup}
-\end{center}
-\vfill
+\textbf{Model.} Particle Transformer [2202.03772] --- 8 encoder $+$ 2 class-attention
+blocks, 8 heads, embed 128. \textbf{2.143\,M} params baseline,
+\textbf{2.193\,M} with the feature block.
+\smallskip
+
+\textbf{Data.} JetClass, 10 classes, \textbf{20.05\,M} test jets
+($\sim$2.0\,M/class), 128 particles/jet. All arms read \textbf{identical} shards;
+features computed live.
+\smallskip
+
+\smallnote{Ranger, lr $10^{-3}$, batch 512, $10^{6}$ iterations, checkpoint every
+20k. Uncertainties: bootstrap of the test set, 16--84th percentile.}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{The feature arms}
+\small
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item \textbf{PLuM} --- 48 $k_t$-ordered Lund splittings, $[\ln k_t,
+        \ln 1/\Delta R, \ln z]$, embedded and \textbf{concatenated} as extra
+        tokens (176 vs 128)
+  \item \textbf{subjet} --- $n$-body subjet mass, $p_T$ fraction, $n_{\rm const}$
+  \item \textbf{CA5} --- per-particle C/A branch-point features
+\end{itemize}
+\end{block}
+\begin{block}{Cost (wall clock per step)}
+\small
+\begin{tabular}{@{}lr@{}}
+\toprule
+PLuM & \textbf{1.59$\times$}\\
+subjet & 1.42$\times$\\
+CA5 & 1.22$\times$\\
+\bottomrule
+\end{tabular}
+\end{block}
+\smallnote{\textbf{One seed per arm} --- see the caveat on the next slide.}
+\end{column}
+\end{columns}
 \end{frame}
 
-\begin{frame}{\textcolor{fjorange}{[PLACEHOLDER]} ParT training --- result}
-\vfill
-\begin{center}
-{\Large\color{fjorange}\textbf{[ to be filled in ]}}
-\medskip
+\begin{frame}{Does the tree help a tagger? --- result}
+\begin{columns}[T]
+\begin{column}{0.5\textwidth}
+\textbf{Aggregate test accuracy} (20.05\,M jets)
+\smallskip
 
-{\color{fjgray}ParT training result}
-\end{center}
-\vfill
+\scriptsize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & 40k & 100k & 1M\\
+\midrule
+baseline & 83.431 & 84.632 & \textbf{86.212}\\
+PLuM & 83.428 & 84.697 & 86.206\\
+$\Delta$ & $-0.003$ & $+0.065$ & $-0.006$\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{AUC agrees to $\sim10^{-4}$ at every stage.}
+\smallskip
+
+\textbf{Rejection ratio @90\,\% eff.} (PLuM/baseline)
+\smallskip
+
+\scriptsize
+\begin{tabular}{@{}lccc@{}}
+\toprule
+ & 40k & 100k & 1M\\
+\midrule
+Hbb & 1.009 & \textbf{1.037} & 0.983\\
+Hcc & 1.027 & 1.027 & 1.001\\
+Hgg & 1.009 & 1.022 & 1.000\\
+H4q & 1.037 & 1.012 & 1.005\\
+Zqq & 1.011 & 1.002 & 1.000\\
+Wqq & \textbf{1.036} & 1.001 & 0.999\\
+Tbqq & \textbf{1.095} & 1.026 & 0.995\\
+\bottomrule
+\end{tabular}
+\end{column}
+\begin{column}{0.5\textwidth}
+\begin{block}{What we see}
+\small An \textbf{early gain in every class} --- Tbqq 1.095$\pm$0.016
+($\sim$6$\sigma$), Wqq 1.036$\pm$0.004 ($\sim$9$\sigma$) --- that \textbf{decays
+to nothing by 1\,M}. Wqq has the \emph{fewest} splittings yet gains as much as
+anything: the effect is \textbf{not $b$-specific}.
+\smallskip
+
+At convergence \textbf{all three arms are null-or-worse}: plain training wins per
+GPU-hour.
+\end{block}
+\begin{block}{What we do \emph{not} claim}
+\small
+\begin{itemize}\setlength{\itemsep}{1pt}
+  \item \textbf{No mechanism.} $b$-specificity is excluded by the data; a
+        substructure-complexity correlation was tested, not established.
+  \item \textbf{One seed per arm.} A second PLuM seed gave a spread
+        \emph{larger} than the effect --- the main weakness.
+  \item We reproduce their Hbb \textbf{at 100k} (1.037), \textbf{not at
+        convergence} (0.983).
+\end{itemize}
+\end{block}
+\end{column}
+\end{columns}
 \end{frame}
 
 % ============================================================
@@ -990,6 +1080,34 @@ $\sim$600 clusters/ev\\
 analytic prediction, a separate NumPy implementation, or FastJet itself. No rung
 is validated against another part of flashjet.
 \end{block}
+\end{frame}
+
+\begin{frame}{Backup --- references}
+\small
+\begin{itemize}\setlength{\itemsep}{3pt}
+  \item H.~Qu, C.~Li, S.~Qian, \emph{Particle Transformer for Jet Tagging},
+        arXiv:\textbf{2202.03772}. \smallnote{(also the JetClass dataset;
+        Zenodo 10.5281/zenodo.6619768)}
+  \item L.~Gouskos, B.~Maier, \emph{Particle-Lund Multimodality in Jet Taggers},
+        arXiv:\textbf{2605.26821}.
+  \item H.~Qu, L.~Gouskos, \emph{ParticleNet: Jet Tagging via Particle Clouds},
+        Phys.~Rev.~D \textbf{101} (2020) 056019, arXiv:1902.08570.
+  \item F.~A.~Dreyer, G.~P.~Salam, G.~Soyez, \emph{The Lund Jet Plane},
+        JHEP \textbf{12} (2018) 064, arXiv:1807.04758.
+  \item F.~A.~Dreyer, H.~Qu, \emph{Jet tagging in the Lund plane with graph
+        networks}, JHEP \textbf{03} (2021) 052, arXiv:2012.08526.
+  \item A.~J.~Larkoski, S.~Marzani, G.~Soyez, J.~Thaler, \emph{Soft Drop},
+        JHEP \textbf{05} (2014) 146, arXiv:1402.2657.
+  \item M.~Cacciari, G.~P.~Salam, G.~Soyez, \emph{The anti-$k_t$ jet clustering
+        algorithm}, JHEP \textbf{04} (2008) 063, arXiv:0802.1189; \emph{FastJet
+        user manual}, Eur.~Phys.~J.~C \textbf{72} (2012) 1896, arXiv:1111.6097.
+  \item S.~Catani, Yu.~L.~Dokshitzer, M.~H.~Seymour, B.~R.~Webber,
+        Nucl.~Phys.~B \textbf{406} (1993) 187 \smallnote{($k_t$)};
+        Yu.~L.~Dokshitzer \emph{et al.}, hep-ph/9707323 and M.~Wobisch,
+        T.~Wengler, hep-ph/9907280 \smallnote{(Cambridge/Aachen)}.
+  \item J.~de Favereau \emph{et al.}, \emph{DELPHES 3}, JHEP \textbf{02} (2014)
+        057, arXiv:1307.6346.
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Backup --- the datasets}
