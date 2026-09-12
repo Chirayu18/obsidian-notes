@@ -660,11 +660,11 @@ Lund-plane splittings help a transformer tagger. We test that on a
 \smallskip
 
 \textbf{Model.} Particle Transformer [2202.03772] --- 8 encoder $+$ 2 class-attention
-blocks, 8 heads, embed 128. \textbf{2.143\,M} params baseline,
-\textbf{2.193\,M} with the feature block.
+blocks, 8 heads, embed 128. \textbf{2.144\,M} params baseline,
+\textbf{2.194\,M} with the feature block \smallnote{($+0.051$\,M)}.
 \smallskip
 
-\textbf{Data.} JetClass, 10 classes, \textbf{20.05\,M} test jets
+\textbf{Data.} JetClass, 10 classes, $\sim$\textbf{20.05\,M} test jets
 ($\sim$2.0\,M/class), 128 particles/jet. All arms read \textbf{identical} shards;
 features computed live.
 \smallskip
@@ -701,7 +701,7 @@ CA5 & 1.22$\times$\\
 \begin{frame}{Does the tree help a tagger? --- result}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\textbf{Aggregate test accuracy} (20.05\,M jets)
+\textbf{Aggregate test accuracy} ($\sim$20.05\,M jets)
 \smallskip
 
 \scriptsize
@@ -739,14 +739,11 @@ Tbqq & \textbf{1.095} & 1.026 & 0.995\\
 \end{column}
 \begin{column}{0.5\textwidth}
 \begin{block}{What we see}
-\small An \textbf{early gain in every class} --- Tbqq 1.095$\pm$0.016
-($\sim$6$\sigma$), Wqq 1.036$\pm$0.004 ($\sim$9$\sigma$) --- that \textbf{decays
-to nothing by 1\,M}. Wqq has the \emph{fewest} splittings yet gains as much as
-anything: the effect is \textbf{not $b$-specific}.
-\smallskip
-
-At convergence \textbf{all three arms are null-or-worse}: plain training wins per
-GPU-hour.
+\small An \textbf{early gain in every class} --- Tbqq 1.095$\pm$0.016, Wqq
+1.036$\pm$0.004 --- that \textbf{decays to nothing by 1\,M}. Wqq has the
+\emph{fewest} splittings (21.6/jet) yet still gains at $\sim$9$\sigma$:
+\textbf{not confined to complex or $b$-containing jets}. At convergence all three
+arms are \textbf{null-or-worse}.
 \end{block}
 \begin{block}{What we do \emph{not} claim}
 \small
