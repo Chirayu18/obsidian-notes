@@ -1,0 +1,14 @@
+executable = /eos/user/c/cgupta/flashjet/bench_event/run_event_sweep.sh
+arguments  = $(ClusterId)$(ProcId)
+output = /eos/user/c/cgupta/flashjet/bench_event/condor/event.$(ClusterId).$(ProcId).out
+error  = /eos/user/c/cgupta/flashjet/bench_event/condor/event.$(ClusterId).$(ProcId).err
+log    = /eos/user/c/cgupta/flashjet/bench_event/condor/event.$(ClusterId).log
+should_transfer_files = NO
+getenv = False
+request_GPUs = 1
+request_CPUs = 16
+request_memory = 32 GB
+requirements = (TARGET.GPUs_DeviceName == "Tesla V100S-PCIE-32GB") && \
+               (TARGET.OpSysAndVer =?= "AlmaLinux9")
++JobFlavour = "nextweek"
+queue

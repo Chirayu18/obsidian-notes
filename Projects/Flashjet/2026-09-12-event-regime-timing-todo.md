@@ -1,6 +1,7 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-09-12-event-regime-sweep-run]]"
 date: 2026-09-12
 source: lxplus
 ---
