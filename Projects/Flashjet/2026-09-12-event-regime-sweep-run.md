@@ -76,3 +76,40 @@ That contrast is the point of the slide, not a defect.
 
 `ITERS=3` on the FastJet side (the classic per-event loop over ~590 clusters is
 slow). Fine for a ratio, thin for a quoted absolute.
+
+## Submitted 2026-09-12 ~21:45
+
+| cluster | what | flavour |
+|---|---|---|
+| **1116228** | smoke: 40 events, anti-kt only, R=1.0 | espresso |
+| **1116229** | full sweep: 3 algs x 5 radii x 5 bins, 3000 events | nextweek |
+
+Both **idle at submit** behind ~9,400 other idle jobs in the EosSubmit pool
+(3,242 running, 8,161 held pool-wide). 17 of ~19 V100S slots were free, so the
+V100S pin is not the bottleneck — this is ordinary queue contention. Per
+[[lxplus-condor-eossubmit]], do **not** start relaxing `requirements` over this.
+
+### Checking on them
+
+```bash
+ssh lxplus 'source /etc/profile.d/modules.sh; module load lxbatch/eossubmit; \
+            condor_q 1116228 1116229'
+```
+
+Output lands in `bench_event/condor/`; results JSON in `bench_event/results/`.
+Success markers: `SMOKE_OK` for the smoke job, `DONE_ALL` for the sweep.
+
+### When results land
+
+```bash
+ssh lxplus 'cd /eos/home-c/cgupta/flashjet/bench_event && \
+  EVSCRATCH=$PWD/results /eos/home-c/cgupta/EPR_task/b-hive/micromamba/envs/b_hive/bin/python make_event_plots.py'
+```
+
+That writes `event_abs_timing.png` and `regime_throughput.png` and prints the
+per-bin table. **Check the `njet %` column first** — if agreement is not ~100 %,
+the timing means nothing and the plots should not go near the deck.
+
+For the comparison plot, the jet-regime side is already verified to load:
+anti-kt R=1.0, boosted top, (N, Mpart/s) = (24.1, 57.3), (44.8, 96.6),
+(74.7, 76.5), (123.1, 50.2). Peak throughput at N≈45.
