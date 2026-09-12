@@ -187,6 +187,16 @@ particle's \textbf{geometric} nearest neighbour.
 \end{columns}
 \end{frame}
 
+\begin{frame}{How sequential recombination works \hfill \toyA}
+\begin{center}
+\includegraphics[width=0.93\linewidth]{fig/clustering_steps.png}
+\end{center}
+\vspace{-0.7em}
+\smallnote{Repeat until nothing is left: if the smallest distance is a $d_{ij}$,
+merge that pair; if it is a $d_{iB}$, call that a jet and remove it. One exponent
+$p$ selects the algorithm --- the \emph{same} kernel serves all three.}
+\end{frame}
+
 \begin{frame}{One exponent, three algorithms}
 \begin{center}
 The generalised-$k_t$ distance measure:
@@ -218,37 +228,6 @@ $+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$}\\
 \small The ordering is \textbf{what the substructure reads}: C/A is the tree for
 \textbf{grooming} and the \textbf{Lund plane}, $k_t$ for \textbf{exclusive
 subjets}.
-\end{block}
-\end{frame}
-
-\begin{frame}{How sequential recombination works \hfill \toyA}
-\begin{center}
-\includegraphics[width=1.0\linewidth]{fig/clustering_steps.png}
-\end{center}
-\vspace{-0.5em}
-\begin{columns}[T]
-\begin{column}{0.52\textwidth}
-\small
-\textbf{Two distances, computed for every pair:}
-\begin{itemize}\setlength\itemsep{0.15em}
-  \item $d_{ij}$ --- \emph{pair} distance, particle $i$ to particle $j$
-  \item $d_{iB}$ --- \emph{beam} distance, particle $i$ to the beam
-\end{itemize}
-\end{column}
-\begin{column}{0.48\textwidth}
-\small
-\textbf{Then repeat until nothing is left:}
-\begin{enumerate}\setlength\itemsep{0.15em}
-  \item find the smallest of all distances
-  \item if it is a $d_{ij}$: \textbf{merge} $i$ and $j$
-  \item if it is a $d_{iB}$: call $i$ a \textbf{jet}, remove it
-\end{enumerate}
-\end{column}
-\end{columns}
-\vspace{0.2em}
-\begin{block}{}
-\small Both distances are defined on the previous slide. One exponent $p$ selects
-the algorithm --- the \emph{same} kernel serves all three.
 \end{block}
 \end{frame}
 
@@ -332,9 +311,10 @@ from the problem size, not by the caller.}
 \textbf{Clustering}
 \begin{itemize}
   \item generalised-$k_t$: \akt, $k_t$, C/A
+  \item batched, ragged input via a mask
+  \item three backends, auto-dispatched by size
   \item merge history recorded in-kernel
-  \item many jets clustered in one batched call
-  \item scales from single jets to whole events
+  \item jet regime \emph{and} event regime
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
@@ -384,20 +364,13 @@ QCD spreads to small $z$.}
 % ------------------------------------------------------------
 \begin{frame}{F2 --- soft drop / mMDT grooming \hfill \toyA}
 \begin{center}
-\includegraphics[width=0.88\linewidth]{fig/softdrop_walk.png}
+\includegraphics[width=0.95\linewidth]{fig/softdrop_walk.png}
 \end{center}
-\vspace{-0.2em}
-\begin{center}
-\textbf{Stop when}\quad
-$\displaystyle
-\frac{\min(p_{T1},p_{T2})}{p_{T1}+p_{T2}}
-\;>\; z_{\mathrm{cut}}\left(\frac{\Delta R_{12}}{R}\right)^{\beta}$
-\end{center}
-\vspace{0.1em}
+\vspace{-0.3em}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \smallnote{Walk down the C/A tree along the harder branch, discarding the softer
-prong until that condition is met. $\beta=0$ recovers mMDT.}
+prong until the momentum-sharing condition is met. $\beta=0$ recovers mMDT.}
 \end{column}
 \begin{column}{0.5\textwidth}
 \smallnote{The walk is $O(\log_2 n)$ on the stored tree --- it never touches the
