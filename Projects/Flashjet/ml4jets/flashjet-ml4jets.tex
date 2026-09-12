@@ -72,7 +72,7 @@
   \end{frame}}
 
 \title[flashjet]{\textbf{flashjet}}
-\subtitle{GPU-native jet clustering with the full merge history}
+\subtitle{GPU-native jet clustering with the full merge history\\[0.3em]{\normalsize\normalfont designed for reclustering inside training loops, on padded tensors that stay on the GPU}}
 \author[C. Gupta]{%
   \textbf{Chirayu Gupta}\inst{1}\textsuperscript{,}* \and
   Sitian Qian\inst{2} \and
@@ -130,12 +130,13 @@
 \begin{column}{0.5\textwidth}
 \textbf{4.\ Why that costs us now}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item reclustering \textbf{inside a training loop}
+  \item \textbf{reclustering inside a training loop}, so the merge history
+        feeds \textbf{substructure} to a tagger
   \item scanning the \textbf{jet radius} $R$
   \item \textbf{substructure} computed on demand
 \end{itemize}
-\smallnote{every one of these pays a host\,$\leftrightarrow$\,device round trip,
-once per call}
+\smallnote{The tensors are already on the GPU --- each of these sends them back
+to the host and returns, once per call.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -143,37 +144,43 @@ once per call}
 \begin{frame}{flashjet --- a GPU jet clusterer}
 \textbf{What it does}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item generalised-$k_t$ clustering --- \akt, $k_t$, Cambridge--Aachen
+  \item generalised-$k_t$ clustering --- \akt, $k_t$, Cambridge--Aachen ---
+        \textbf{transcribed from FastJet and validated against it}
   \item runs on the GPU, \textbf{many jets or events per launch}
   \item returns jets, the \textbf{full merge history}, and substructure
         \textbf{as tensors}
+  \item[$\Rightarrow$] designed for \textbf{reclustering inside training loops},
+        on padded $(B,N,4)$ tensors that \textbf{stay on the GPU}
 \end{itemize}
-\vspace{0.3em}
+\vspace{-0.1em}
 
 \textbf{Why it can be done at all}
 \begin{itemize}\setlength\itemsep{0.1em}
   \item Cacciari--Salam nearest-neighbour lemma: the smallest $d_{ij}$ in the
         \emph{whole event} is always some particle's \textbf{geometric} nearest
         neighbour
-  \item so each particle only needs to track \textbf{its own} NN \ldots
-  \item \ldots and one merge invalidates only $O(1)$ of them
+  \item so each particle tracks only \textbf{its own} NN, and one merge
+        invalidates $O(1)$ of them
   \item[$\Rightarrow$] \textbf{$O(N^2)$ instead of $O(N^3)$} --- the serial chain
         stays, but each step becomes cheap and parallel
 \end{itemize}
-\vspace{0.3em}
+\vspace{-0.1em}
 
 \begin{columns}[T]
-\begin{column}{0.56\textwidth}
+\begin{column}{0.62\textwidth}
 \textbf{In the ML ecosystem}
 \begin{itemize}\setlength\itemsep{0.1em}
   \item a \textbf{PyTorch} call --- tensors in, tensors out
   \item no host\,$\leftrightarrow$\,device copy in a training loop
 \end{itemize}
 \end{column}
-\begin{column}{0.44\textwidth}
-\smallnote{Written in \textbf{Triton}: compiles and autotunes for whatever GPU it
-finds, so there is no separate CUDA build to maintain and results are
-reproducible once the tuning is cached.}
+\begin{column}{0.38\textwidth}
+\smallnote{\textbf{Two regimes:} \emph{event-based} ($N\sim$ hundreds) and
+\emph{jet-based} ($N\sim$ tens, $B$ large). \textbf{This talk is the second.}}
+\smallskip
+
+\smallnote{Written in \textbf{Triton}: autotunes for whatever GPU it finds --- no
+separate CUDA build.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -780,7 +787,8 @@ confined to complex or $b$-jets}. At convergence: \textbf{null-or-worse}.
 \begin{enumerate}
   \item \textbf{Clusters on the GPU and keeps the full merge history}, so
   substructure --- exclusive subjets, soft drop, Lund coordinates --- comes free
-  as array reads.
+  as array reads. Built for \textbf{reclustering inside a training loop}, on
+  tensors that never leave the GPU.
   \medskip
   \item \textbf{Gives the same jets as FastJet.} 150/150 grid points at 100\,\%
   $n_{\rm jets}$ agreement, across \akt/$k_t$/C-A, $R=0.4$--$1.2$ and 24--123
