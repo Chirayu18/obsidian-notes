@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  12 SEP 2026 18:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  12 SEP 2026 20:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -947,171 +947,161 @@ hjet-ml4jets.toc)
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+lmss on input line 
-139.
+141.
  (/usr/share/texmf/tex/latex/lm/ts1lmss.fd
 File: ts1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 139.
+(Font)              <8> on input line 141.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 139.
+(Font)              <6> on input line 141.
  [4
 
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <9> on input line 188.
- [5
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/dvi
+ps/lm/lm-mathit.enc}]
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 179.
 
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/
-dvips/lm/lm-rm.enc}] [6
+[5
+
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}]
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <9> on input line 217.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 217.
+ [6
 
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}]
-<fig/clustering_steps.png, id=185, 975.645pt x 325.215pt>
+<fig/clustering_steps.png, id=145, 975.645pt x 325.215pt>
 File: fig/clustering_steps.png Graphic file (type png)
 <use fig/clustering_steps.png>
-Package pdftex.def Info: fig/clustering_steps.png  used on input line 253.
-(pdftex.def)             Requested size: 435.24405pt x 145.07999pt.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <9> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 253.
-
-Overfull \vbox (27.6095pt too high) detected at line 253
- []
-
-[7
+Package pdftex.def Info: fig/clustering_steps.png  used on input line 245.
+(pdftex.def)             Requested size: 413.48051pt x 137.825pt.
+ [7
 
  <./fig/clustering_steps.png>]
-<fig/jet_areas.png, id=211, 1084.05pt x 332.442pt>
+<fig/jet_areas.png, id=159, 1084.05pt x 332.442pt>
 File: fig/jet_areas.png Graphic file (type png)
 <use fig/jet_areas.png>
-Package pdftex.def Info: fig/jet_areas.png  used on input line 264.
-(pdftex.def)             Requested size: 313.37624pt x 96.10135pt.
+Package pdftex.def Info: fig/jet_areas.png  used on input line 270.
+(pdftex.def)             Requested size: 404.77377pt x 124.12773pt.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 264.
+(Font)              <12> on input line 270.
  [8
 
  <./fig/jet_areas.png>]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-94.
-
-(/usr/share/texmf/tex/latex/lm/t1lmtt.fd
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
+05.
+ (/usr/share/texmf/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [9
 
-]
-\openout4 = `flashjet-ml4jets.vrb'.
-
- (./flashjet-ml4jets.vrb) [10
+] [10
 
 ]
-[11
-
-]
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <10> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 382.
-
-Overfull \hbox (43.6452pt too wide) detected at line 382
-[]\OML/lmm/m/it/10 ;  [];  []   []  d[] \OT1/lmr/m/n/10 = [](\OML/lmm/m/it/10 p
-[]; p[]\OT1/lmr/m/n/10 ) ^^A\OML/lmm/m/it/10 R[]=R[]
- []
-
-<fig/kt_observables.png, id=259, 758.835pt x 317.988pt>
+<fig/kt_observables.png, id=201, 758.835pt x 317.988pt>
 File: fig/kt_observables.png Graphic file (type png)
 <use fig/kt_observables.png>
-Package pdftex.def Info: fig/kt_observables.png  used on input line 382.
+Package pdftex.def Info: fig/kt_observables.png  used on input line 361.
 (pdftex.def)             Requested size: 252.44234pt x 105.78548pt.
-[12
+ [11
 
  <./fig/kt_observables.png>]
-<fig/softdrop_walk.png, id=270, 903.375pt x 325.215pt>
+<fig/softdrop_walk.png, id=213, 903.375pt x 325.215pt>
 File: fig/softdrop_walk.png Graphic file (type png)
 <use fig/softdrop_walk.png>
-Package pdftex.def Info: fig/softdrop_walk.png  used on input line 407.
+Package pdftex.def Info: fig/softdrop_walk.png  used on input line 386.
 (pdftex.def)             Requested size: 383.01688pt x 137.88951pt.
- [13
+ [12
 
  <./fig/softdrop_walk.png>]
-<fig/tree_gallery.png, id=280, 953.964pt x 332.01688pt>
+<fig/tree_gallery.png, id=222, 953.964pt x 332.01688pt>
 File: fig/tree_gallery.png Graphic file (type png)
 <use fig/tree_gallery.png>
-Package pdftex.def Info: fig/tree_gallery.png  used on input line 430.
+Package pdftex.def Info: fig/tree_gallery.png  used on input line 409.
 (pdftex.def)             Requested size: 422.18726pt x 146.93898pt.
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <8> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 430.
- [14
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 409.
+ [13
 
  <./fig/tree_gallery.png>]
-<fig/lund_plane.png, id=290, 758.835pt x 317.988pt>
+<fig/lund_plane.png, id=233, 758.835pt x 317.988pt>
 File: fig/lund_plane.png Graphic file (type png)
 <use fig/lund_plane.png>
-Package pdftex.def Info: fig/lund_plane.png  used on input line 455.
+Package pdftex.def Info: fig/lund_plane.png  used on input line 434.
 (pdftex.def)             Requested size: 348.19656pt x 145.91234pt.
- [15
 
- <./fig/lund_plane.png>] [16
+[14
 
-] [17
+ <./fig/lund_plane.png>] [15
+
+] [16
 
 ]
-<fig/zg_distribution.png, id=347, 448.074pt x 332.442pt>
+<fig/zg_distribution.png, id=290, 448.074pt x 332.442pt>
 File: fig/zg_distribution.png Graphic file (type png)
 <use fig/zg_distribution.png>
-Package pdftex.def Info: fig/zg_distribution.png  used on input line 505.
+Package pdftex.def Info: fig/zg_distribution.png  used on input line 484.
 (pdftex.def)             Requested size: 202.38689pt x 150.16057pt.
-<fig/softdrop_rho.png, id=348, 491.436pt x 346.896pt>
+<fig/softdrop_rho.png, id=291, 491.436pt x 346.896pt>
 File: fig/softdrop_rho.png Graphic file (type png)
 <use fig/softdrop_rho.png>
-Package pdftex.def Info: fig/softdrop_rho.png  used on input line 505.
+Package pdftex.def Info: fig/softdrop_rho.png  used on input line 484.
 (pdftex.def)             Requested size: 202.38689pt x 142.86345pt.
- [18
+ [17
 
  <./fig/zg_distribution.png> <./fig/softdrop_rho.png>]
-<fig/atlas_jetbyjet.png, id=358, 831.105pt x 303.534pt>
+<fig/atlas_jetbyjet.png, id=301, 831.105pt x 303.534pt>
 File: fig/atlas_jetbyjet.png Graphic file (type png)
 <use fig/atlas_jetbyjet.png>
-Package pdftex.def Info: fig/atlas_jetbyjet.png  used on input line 525.
+Package pdftex.def Info: fig/atlas_jetbyjet.png  used on input line 504.
 (pdftex.def)             Requested size: 400.42372pt x 146.24118pt.
- [19
+ [18
 
- <./fig/atlas_jetbyjet.png>] [20
+ <./fig/atlas_jetbyjet.png>] [19
+
+] [20
 
 ] [21
 
-]
-[22
-
-] [23
+] [22
 
 ]
-<fig/atlas_abs_timing.png, id=442, 867.24pt x 332.442pt>
+<fig/atlas_abs_timing.png, id=384, 867.24pt x 332.442pt>
 File: fig/atlas_abs_timing.png Graphic file (type png)
 <use fig/atlas_abs_timing.png>
-Package pdftex.def Info: fig/atlas_abs_timing.png  used on input line 642.
+Package pdftex.def Info: fig/atlas_abs_timing.png  used on input line 621.
+(pdftex.def)             Requested size: 391.71698pt x 150.16057pt.
+ [23
+
+ <./fig/atlas_abs_timing.png>]
+<fig/atlas_speedup_algs.png, id=394, 867.24pt x 332.442pt>
+File: fig/atlas_speedup_algs.png Graphic file (type png)
+<use fig/atlas_speedup_algs.png>
+Package pdftex.def Info: fig/atlas_speedup_algs.png  used on input line 631.
 (pdftex.def)             Requested size: 391.71698pt x 150.16057pt.
  [24
 
- <./fig/atlas_abs_timing.png>]
-<fig/atlas_speedup_algs.png, id=451, 867.24pt x 332.442pt>
-File: fig/atlas_speedup_algs.png Graphic file (type png)
-<use fig/atlas_speedup_algs.png>
-Package pdftex.def Info: fig/atlas_speedup_algs.png  used on input line 652.
-(pdftex.def)             Requested size: 391.71698pt x 150.16057pt.
- [25
-
  <./fig/atlas_speedup_algs.png>]
-<fig/atlas_R_independence.png, id=461, 505.89pt x 332.442pt>
+<fig/atlas_R_independence.png, id=403, 505.89pt x 332.442pt>
 File: fig/atlas_R_independence.png Graphic file (type png)
 <use fig/atlas_R_independence.png>
-Package pdftex.def Info: fig/atlas_R_independence.png  used on input line 676.
+Package pdftex.def Info: fig/atlas_R_independence.png  used on input line 655.
 (pdftex.def)             Requested size: 243.7356pt x 160.16891pt.
-[26
+ [25
 
- <./fig/atlas_R_independence.png>] [27
+ <./fig/atlas_R_independence.png>]
+\openout4 = `flashjet-ml4jets.vrb'.
+
+ (./flashjet-ml4jets.vrb) [26
+
+] [27
 
 ] [28
 
 ]
 LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 788.
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 800.
  [29
 
 ] [30
@@ -1121,38 +1111,38 @@ LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <12> not available
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\translate ' on input line 830.
+(hyperref)                removing `\translate ' on input line 842.
 
 [32
 
 ]
-<fig/atlas_radius_scan_atlastop-top.png, id=574, 1084.05pt x 303.534pt>
+<fig/atlas_radius_scan_atlastop-top.png, id=525, 1084.05pt x 303.534pt>
 File: fig/atlas_radius_scan_atlastop-top.png Graphic file (type png)
 <use fig/atlas_radius_scan_atlastop-top.png>
 Package pdftex.def Info: fig/atlas_radius_scan_atlastop-top.png  used on input 
-line 844.
+line 856.
 (pdftex.def)             Requested size: 217.62202pt x 60.93266pt.
-<fig/atlas_radius_scan_atlastop-qcd.png, id=575, 1084.05pt x 303.534pt>
+<fig/atlas_radius_scan_atlastop-qcd.png, id=526, 1084.05pt x 303.534pt>
 File: fig/atlas_radius_scan_atlastop-qcd.png Graphic file (type png)
 <use fig/atlas_radius_scan_atlastop-qcd.png>
 Package pdftex.def Info: fig/atlas_radius_scan_atlastop-qcd.png  used on input 
-line 844.
+line 856.
 (pdftex.def)             Requested size: 217.62202pt x 60.93266pt.
  [33
 
  <./fig/atlas_radius_scan_atlastop-top.png> <./fig/atlas_radius_scan_atlastop-q
 cd.png>]
-<fig/atlas_multiplicity_atlastop-top.png, id=585, 542.025pt x 361.35pt>
+<fig/atlas_multiplicity_atlastop-top.png, id=536, 542.025pt x 361.35pt>
 File: fig/atlas_multiplicity_atlastop-top.png Graphic file (type png)
 <use fig/atlas_multiplicity_atlastop-top.png>
 Package pdftex.def Info: fig/atlas_multiplicity_atlastop-top.png  used on input
- line 857.
+ line 869.
 (pdftex.def)             Requested size: 217.62202pt x 145.0833pt.
-<fig/atlas_multiplicity_atlastop-qcd.png, id=586, 542.025pt x 361.35pt>
+<fig/atlas_multiplicity_atlastop-qcd.png, id=537, 542.025pt x 361.35pt>
 File: fig/atlas_multiplicity_atlastop-qcd.png Graphic file (type png)
 <use fig/atlas_multiplicity_atlastop-qcd.png>
 Package pdftex.def Info: fig/atlas_multiplicity_atlastop-qcd.png  used on input
- line 857.
+ line 869.
 (pdftex.def)             Requested size: 217.62202pt x 145.0833pt.
  [34
 
@@ -1162,47 +1152,47 @@ Package pdftex.def Info: fig/atlas_multiplicity_atlastop-qcd.png  used on input
 ] [36
 
 ]
-<fig/nsys_timeline_H100.png, id=647, 1350.04375pt x 415.5525pt>
+<fig/nsys_timeline_H100.png, id=599, 1350.04375pt x 415.5525pt>
 File: fig/nsys_timeline_H100.png Graphic file (type png)
 <use fig/nsys_timeline_H100.png>
-Package pdftex.def Info: fig/nsys_timeline_H100.png  used on input line 947.
+Package pdftex.def Info: fig/nsys_timeline_H100.png  used on input line 959.
 (pdftex.def)             Requested size: 348.19656pt x 107.17241pt.
  [37
 
  <./fig/nsys_timeline_H100.png>]
-<fig/ncu_workload_imbalance_H100.png, id=657, 1517.67pt x 952.55875pt>
+<fig/ncu_workload_imbalance_H100.png, id=609, 1517.67pt x 952.55875pt>
 File: fig/ncu_workload_imbalance_H100.png Graphic file (type png)
 <use fig/ncu_workload_imbalance_H100.png>
 Package pdftex.def Info: fig/ncu_workload_imbalance_H100.png  used on input lin
-e 983.
+e 995.
 (pdftex.def)             Requested size: 217.62202pt x 136.58405pt.
 
 [38
 
  <./fig/ncu_workload_imbalance_H100.png>]
-<fig/ncu_occupancy_H100.png, id=678, 1437.37pt x 415.5525pt>
+<fig/ncu_occupancy_H100.png, id=630, 1437.37pt x 415.5525pt>
 File: fig/ncu_occupancy_H100.png Graphic file (type png)
 <use fig/ncu_occupancy_H100.png>
-Package pdftex.def Info: fig/ncu_occupancy_H100.png  used on input line 999.
+Package pdftex.def Info: fig/ncu_occupancy_H100.png  used on input line 1011.
 (pdftex.def)             Requested size: 206.74025pt x 59.7685pt.
-<fig/ncu_details_sol_launch_H100.png, id=679, 1517.67pt x 952.55875pt>
+<fig/ncu_details_sol_launch_H100.png, id=631, 1517.67pt x 952.55875pt>
 File: fig/ncu_details_sol_launch_H100.png Graphic file (type png)
 <use fig/ncu_details_sol_launch_H100.png>
 Package pdftex.def Info: fig/ncu_details_sol_launch_H100.png  used on input lin
-e 999.
+e 1011.
 (pdftex.def)             Requested size: 206.74025pt x 129.75267pt.
  [39
 
  <./fig/ncu_occupancy_H100.png> <./fig/ncu_details_sol_launch_H100.png>]
-<fig/lund_triangle.png, id=689, 491.436pt x 375.804pt>
+<fig/lund_triangle.png, id=641, 491.436pt x 375.804pt>
 File: fig/lund_triangle.png Graphic file (type png)
 <use fig/lund_triangle.png>
-Package pdftex.def Info: fig/lund_triangle.png  used on input line 1017.
+Package pdftex.def Info: fig/lund_triangle.png  used on input line 1029.
 (pdftex.def)             Requested size: 206.74025pt x 158.09465pt.
-<fig/qcd_beta_family.png, id=690, 505.89pt x 361.35pt>
+<fig/qcd_beta_family.png, id=642, 505.89pt x 361.35pt>
 File: fig/qcd_beta_family.png Graphic file (type png)
 <use fig/qcd_beta_family.png>
-Package pdftex.def Info: fig/qcd_beta_family.png  used on input line 1017.
+Package pdftex.def Info: fig/qcd_beta_family.png  used on input line 1029.
 (pdftex.def)             Requested size: 206.74025pt x 147.67476pt.
  [40
 
@@ -1239,10 +1229,10 @@ Package rerunfilecheck Info: File `flashjet-ml4jets.out' has not changed.
 (rerunfilecheck)             Checksum: 34927D986A40E96442C688B5EA46EB92;816.
  ) 
 Here is how much of TeX's memory you used:
- 23289 strings out of 469438
- 451331 string characters out of 5468410
- 821824 words of memory out of 5000000
- 51328 multiletter control sequences out of 15000+600000
+ 23266 strings out of 469438
+ 450298 string characters out of 5468410
+ 821122 words of memory out of 5000000
+ 51305 multiletter control sequences out of 15000+600000
  726807 words of font info for 108 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  128i,18n,123p,391b,995s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1268,10 +1258,10 @@ e/texmf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf
 /fonts/type1/public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.
 pfb>
-Output written on flashjet-ml4jets.pdf (45 pages, 3089572 bytes).
+Output written on flashjet-ml4jets.pdf (45 pages, 3083082 bytes).
 PDF statistics:
- 929 PDF objects out of 1000 (max. 8388607)
- 554 compressed objects within 6 object streams
+ 881 PDF objects out of 1000 (max. 8388607)
+ 530 compressed objects within 6 object streams
  97 named destinations out of 1000 (max. 500000)
- 1137 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 993 words of extra memory for PDF output out of 10000 (max. 10000000)
 

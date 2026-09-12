@@ -79,24 +79,65 @@ splitting scale a boosted-object tagger wants ($\sqrt{d_{12}}$, $\sqrt{d_{23}}$,
 That is why F1 uses $k_t$ and F2/F3 use C/A: different orderings expose different physics
 from the same clustering.
 
-### NOT DONE — needs your decisions, not mine
+### Second pass (all of S2/S3/S5/S6/S7/S8 now done)
 
-- **S2** ("content good, badly structured, look at other CMS presentations, remake") and
-  **S3** ("why triton not required, not well explained, needs a full remake"). These are
-  design remakes that depend on which reference decks you want to follow and how much
-  Triton detail belongs in a 20-minute talk. I could invent a structure, but you would be
-  reviewing my taste rather than the physics. **Tell me which CMS/ATLAS decks to imitate,
-  or sketch the bullet order you want, and I will build them.**
-- **S5 "take this table from a paper"** — not done. The generalised-$k_t$ table is
-  standard (Cacciari-Salam-Soyez, arXiv:0802.1189) but I did not want to lift a table
-  image without checking how you want it attributed. Say the word and I will either
-  redraw it citing 0802.1189 or reproduce the paper's version.
-- **S7 "better framing" / S6 "better caption in point form"** — I left the content alone.
-  Both are wording preferences where a concrete suggestion from you beats a guess from me.
-- **S8 "should move towards the end, just before ParT training"** — not moved. Moving
-  "Using it" (the code slide) past the Correctness and Speed sections is a big structural
-  change and it would land right before the two ParT slides another session just filled
-  in. I would rather do that as one deliberate pass once you are happy with S2/S3.
+You said: *"S2 and S3, go online, get me some reference slides first, then do that based
+on those. S5 do it without citing so reproduce. S7 and S6 same as S2 and S3. S8 also just
+do it."* All six are done. Deck compiles clean — **0 errors, 0 overfull boxes, 45 pages**.
+
+**Reference deck used:** the **CMS Patatrack** talk (Kortelainen et al., HOW2019, indico).
+It is the closest published analogue — a CMS GPU-offload project presented to a software
+audience. Its structure, which I copied:
+group/goal → *scope* ("focus on a ~10% slice of HLT time") → workflow → timing → lessons.
+The key move is that **implementation detail sits below the physics goal**, never above it.
+
+- **S2 remade** — now a numbered 1–4 argument instead of a flat bullet list:
+  *1. Where the field is* (GPUs in the HLT since Run 3; ~30% of reco offloaded → ~25% less
+  HLT time) → *2. What is missing*, as a centred standalone block: **"Jet clustering is
+  still on the CPU"** → *3. Why it stayed there* (sequential, IRC-safe, serial data
+  dependence) → *4. Why that costs us now* (reclustering in a training loop, R scans,
+  substructure on demand). Patatrack's shape: state of the field, then the gap, then the
+  cost of the gap.
+- **S3 remade** — retitled **"flashjet — a GPU jet clusterer"** and reordered to answer
+  *what it does* before *how it works*:
+  **What it does** → **Why it can be done at all** (the Cacciari–Salam nearest-neighbour
+  lemma as 4 steps, ending in $O(N^2)$ instead of $O(N^3)$) → **In the ML ecosystem**.
+  **Triton is demoted to a side note** — that is the answer to "why Triton not required":
+  it is an implementation choice (autotunes for whatever GPU it finds, no separate CUDA
+  build), not part of the argument, so it no longer sits at the top of the slide.
+- **S5 reproduced, not cited** — as you asked. The table is my own LaTeX (nothing lifted)
+  and now has a **5th column, "used for"**, so each exponent is tied to what it buys:
+  \akt → finding jets; C/A → grooming, Lund plane; $k_t$ → exclusive subjets. Row spacing
+  loosened (`\arraystretch 1.25`). The citation sits **commented out** in the source
+  (`%% \cite{Cacciari:2008gp}`) in case you later want it. Your closing statement kept.
+- **S6** — plot up from 0.72 to **0.93** linewidth, and the prose caption is now **two
+  columns of bullets** (left: what the panels are; right: what they show, ending on
+  "the algorithm's defining result, **reproduced without FastJet**").
+- **S7 reframed** — the closing block is now **"The tree is the product, not a
+  by-product"**, and a grey lead-in line at the foot points forward to F1/F2/F3 and the
+  real-jet tree slide.
+- **S8 moved** — "Using it" is now the **last slide of the Speed section, immediately
+  before the Downstream / ParT section** (slide 26 of 45), exactly as you asked.
+
+**Two bugs fixed while compiling** (both mine, from the edits above):
+- the S5 table preamble still declared 4 columns after I added the 5th → fatal
+  *"Extra alignment tab"*, no PDF produced.
+- S4 overflowed its frame by 27.6 pt once the plot went full width → removed the closing
+  block there (it said "both distances are defined on the previous slide", which is now
+  redundant since S5 precedes it) and trimmed the plot to 0.95 linewidth.
+- also cleared a pre-existing 43.6 pt overfull line on F1: the $d_{ij}$ definition was one
+  displayed equation in a narrow column; split over two lines.
+
+### One thing I did *not* do the way you said, and why
+
+S7: *"after this we need to right away jump to showing those binary trees."* The real-jet
+binary-tree gallery is slide **13**, three slides after S7 — not immediately after. I left
+the order alone because **that slide uses soft drop**, which is only defined on F2 (slide
+12). Moving the trees up to slide 10 would show drops before the reader knows what a drop
+is. Instead I changed S7's lead-in to promise the right thing: *"Three things are read off
+that tree — F1, F2, F3 — and then we look at it on a real jet."* If you would rather have
+the trees immediately and take the hit on soft drop being undefined, say so and I will
+move it.
 
 ### Note on this file's frontmatter
 
