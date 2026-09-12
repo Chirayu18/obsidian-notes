@@ -36,4 +36,6 @@ date: 2026-09-12
 - S7: Nice I like the final sentence content, maybe better framing? And after this we need to right away jump to showing those binary trees
 - S8: Looks fine for now. But I feel this should go more towards the end of the ppt, just before ParT training
 - S9: This should be written in better statements, like three backends part not needed, ragged input via a mask and all not needed, wdym by jet regime and event regime. 
-- 
+- S10: Dont put in slides put add a comment here explaining the results of the slide?
+- S11: Make the stop when formula bigger. 
+- I'll come to next slides in another iteration
