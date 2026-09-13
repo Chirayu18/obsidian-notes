@@ -113,3 +113,21 @@ the timing means nothing and the plots should not go near the deck.
 For the comparison plot, the jet-regime side is already verified to load:
 anti-kt R=1.0, boosted top, (N, Mpart/s) = (24.1, 57.3), (44.8, 96.6),
 (74.7, 76.5), (123.1, 50.2). Peak throughput at N≈45.
+
+## Status at 2026-09-13 ~00:15 — still queued, nothing has run
+
+Both clusters are **still idle in the queue** (`JobStatus=1`). Their condor logs
+contain only a "Job submitted" line — no execute, no terminate event — and
+`results/` is empty. The pool backlog was still ~11,300 idle at last check.
+
+**A monitor false alarm is recorded here so it is not mistaken for a result.**
+An earlier watcher reported "SMOKE left the queue ... BOTH JOBS FINISHED". That
+was wrong: its check treated *empty `condor_q` output* as *job finished*, so one
+transient ssh/module-load failure looked identical to completion. Re-querying
+showed both jobs present and idle. The replacement monitor requires three
+consecutive empty results **and** corroborating files on disk before believing a
+job is gone.
+
+Lesson, same shape as the `git rev-list` one: **a failed query is not a negative
+result.** Check the positive evidence (log events, output files), not the absence
+of a row.
