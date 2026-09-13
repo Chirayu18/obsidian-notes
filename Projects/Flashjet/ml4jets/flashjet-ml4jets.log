@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  12 SEP 2026 21:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  14 SEP 2026 00:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1142,120 +1142,138 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 [32
 
 ]
-<fig/atlas_R_independence.png, id=511, 505.89pt x 332.442pt>
-File: fig/atlas_R_independence.png Graphic file (type png)
-<use fig/atlas_R_independence.png>
-Package pdftex.def Info: fig/atlas_R_independence.png  used on input line 833.
+<fig/event_abs_timing.png, id=511, 505.89pt x 332.442pt>
+File: fig/event_abs_timing.png Graphic file (type png)
+<use fig/event_abs_timing.png>
+Package pdftex.def Info: fig/event_abs_timing.png  used on input line 840.
 (pdftex.def)             Requested size: 243.7356pt x 160.16891pt.
  [33
 
+ <./fig/event_abs_timing.png>]
+<fig/regime_throughput.png, id=520, 505.89pt x 332.442pt>
+File: fig/regime_throughput.png Graphic file (type png)
+<use fig/regime_throughput.png>
+Package pdftex.def Info: fig/regime_throughput.png  used on input line 865.
+(pdftex.def)             Requested size: 252.44234pt x 165.89085pt.
+ [34
+
+ <./fig/regime_throughput.png>]
+<fig/atlas_R_independence.png, id=541, 505.89pt x 332.442pt>
+File: fig/atlas_R_independence.png Graphic file (type png)
+<use fig/atlas_R_independence.png>
+Package pdftex.def Info: fig/atlas_R_independence.png  used on input line 889.
+(pdftex.def)             Requested size: 243.7356pt x 160.16891pt.
+
+[35
+
  <./fig/atlas_R_independence.png>]
-<fig/atlas_radius_scan_atlastop-top.png, id=532, 1084.05pt x 303.534pt>
+<fig/atlas_radius_scan_atlastop-top.png, id=562, 1084.05pt x 303.534pt>
 File: fig/atlas_radius_scan_atlastop-top.png Graphic file (type png)
 <use fig/atlas_radius_scan_atlastop-top.png>
 Package pdftex.def Info: fig/atlas_radius_scan_atlastop-top.png  used on input 
-line 847.
+line 903.
 (pdftex.def)             Requested size: 217.62202pt x 60.93266pt.
-<fig/atlas_radius_scan_atlastop-qcd.png, id=533, 1084.05pt x 303.534pt>
+<fig/atlas_radius_scan_atlastop-qcd.png, id=563, 1084.05pt x 303.534pt>
 File: fig/atlas_radius_scan_atlastop-qcd.png Graphic file (type png)
 <use fig/atlas_radius_scan_atlastop-qcd.png>
 Package pdftex.def Info: fig/atlas_radius_scan_atlastop-qcd.png  used on input 
-line 847.
+line 903.
 (pdftex.def)             Requested size: 217.62202pt x 60.93266pt.
- [34
+ [36
 
  <./fig/atlas_radius_scan_atlastop-top.png> <./fig/atlas_radius_scan_atlastop-q
 cd.png>]
-<fig/atlas_multiplicity_atlastop-top.png, id=543, 542.025pt x 361.35pt>
+<fig/atlas_multiplicity_atlastop-top.png, id=573, 542.025pt x 361.35pt>
 File: fig/atlas_multiplicity_atlastop-top.png Graphic file (type png)
 <use fig/atlas_multiplicity_atlastop-top.png>
 Package pdftex.def Info: fig/atlas_multiplicity_atlastop-top.png  used on input
- line 860.
+ line 916.
 (pdftex.def)             Requested size: 217.62202pt x 145.0833pt.
-<fig/atlas_multiplicity_atlastop-qcd.png, id=544, 542.025pt x 361.35pt>
+<fig/atlas_multiplicity_atlastop-qcd.png, id=574, 542.025pt x 361.35pt>
 File: fig/atlas_multiplicity_atlastop-qcd.png Graphic file (type png)
 <use fig/atlas_multiplicity_atlastop-qcd.png>
 Package pdftex.def Info: fig/atlas_multiplicity_atlastop-qcd.png  used on input
- line 860.
+ line 916.
 (pdftex.def)             Requested size: 217.62202pt x 145.0833pt.
- [35
+ [37
 
  <./fig/atlas_multiplicity_atlastop-top.png> <./fig/atlas_multiplicity_atlastop
--qcd.png>] [36
+-qcd.png>] [38
+
+] [39
 
 ]
-[37
-
-]
-<fig/nsys_timeline_H100.png, id=607, 1350.04375pt x 415.5525pt>
+<fig/nsys_timeline_H100.png, id=637, 1350.04375pt x 415.5525pt>
 File: fig/nsys_timeline_H100.png Graphic file (type png)
 <use fig/nsys_timeline_H100.png>
-Package pdftex.def Info: fig/nsys_timeline_H100.png  used on input line 950.
+Package pdftex.def Info: fig/nsys_timeline_H100.png  used on input line 1006.
 (pdftex.def)             Requested size: 348.19656pt x 107.17241pt.
- [38
+
+[40
 
  <./fig/nsys_timeline_H100.png>]
-<fig/ncu_workload_imbalance_H100.png, id=616, 1517.67pt x 952.55875pt>
+<fig/ncu_workload_imbalance_H100.png, id=646, 1517.67pt x 952.55875pt>
 File: fig/ncu_workload_imbalance_H100.png Graphic file (type png)
 <use fig/ncu_workload_imbalance_H100.png>
 Package pdftex.def Info: fig/ncu_workload_imbalance_H100.png  used on input lin
-e 986.
+e 1042.
 (pdftex.def)             Requested size: 217.62202pt x 136.58405pt.
- [39
+ [41
 
  <./fig/ncu_workload_imbalance_H100.png>]
-<fig/ncu_occupancy_H100.png, id=637, 1437.37pt x 415.5525pt>
+<fig/ncu_occupancy_H100.png, id=667, 1437.37pt x 415.5525pt>
 File: fig/ncu_occupancy_H100.png Graphic file (type png)
 <use fig/ncu_occupancy_H100.png>
-Package pdftex.def Info: fig/ncu_occupancy_H100.png  used on input line 1002.
+Package pdftex.def Info: fig/ncu_occupancy_H100.png  used on input line 1058.
 (pdftex.def)             Requested size: 206.74025pt x 59.7685pt.
-<fig/ncu_details_sol_launch_H100.png, id=638, 1517.67pt x 952.55875pt>
+<fig/ncu_details_sol_launch_H100.png, id=668, 1517.67pt x 952.55875pt>
 File: fig/ncu_details_sol_launch_H100.png Graphic file (type png)
 <use fig/ncu_details_sol_launch_H100.png>
 Package pdftex.def Info: fig/ncu_details_sol_launch_H100.png  used on input lin
-e 1002.
+e 1058.
 (pdftex.def)             Requested size: 206.74025pt x 129.75267pt.
- [40
+ [42
 
  <./fig/ncu_occupancy_H100.png> <./fig/ncu_details_sol_launch_H100.png>]
-<fig/lund_triangle.png, id=648, 491.436pt x 375.804pt>
+<fig/lund_triangle.png, id=678, 491.436pt x 375.804pt>
 File: fig/lund_triangle.png Graphic file (type png)
 <use fig/lund_triangle.png>
-Package pdftex.def Info: fig/lund_triangle.png  used on input line 1020.
+Package pdftex.def Info: fig/lund_triangle.png  used on input line 1076.
 (pdftex.def)             Requested size: 206.74025pt x 158.09465pt.
-<fig/qcd_beta_family.png, id=649, 505.89pt x 361.35pt>
+<fig/qcd_beta_family.png, id=679, 505.89pt x 361.35pt>
 File: fig/qcd_beta_family.png Graphic file (type png)
 <use fig/qcd_beta_family.png>
-Package pdftex.def Info: fig/qcd_beta_family.png  used on input line 1020.
+Package pdftex.def Info: fig/qcd_beta_family.png  used on input line 1076.
 (pdftex.def)             Requested size: 206.74025pt x 147.67476pt.
- [41
+
+[43
 
  <./fig/lund_triangle.png> <./fig/qcd_beta_family.png>]
 \openout4 = `flashjet-ml4jets.vrb'.
 
 
-(./flashjet-ml4jets.vrb) [42
+(./flashjet-ml4jets.vrb) [44
 
-] [43
+] [45
 
-] [44
+] [46
 
 ]
-<fig/part_rocratio_Wqq.png, id=706, 476.982pt x 448.074pt>
+<fig/part_rocratio_Wqq.png, id=736, 476.982pt x 448.074pt>
 File: fig/part_rocratio_Wqq.png Graphic file (type png)
 <use fig/part_rocratio_Wqq.png>
-Package pdftex.def Info: fig/part_rocratio_Wqq.png  used on input line 1131.
+Package pdftex.def Info: fig/part_rocratio_Wqq.png  used on input line 1187.
 (pdftex.def)             Requested size: 243.7356pt x 208.44925pt.
- [45
+ [47
 
  <./fig/part_rocratio_Wqq.png>]
-[46
-
-] [47
-
-] [48
+[48
 
 ] [49
+
+] [50
+
+] [51
 
 ]
 \tf@nav=\write7
@@ -1276,10 +1294,10 @@ Package rerunfilecheck Info: File `flashjet-ml4jets.out' has not changed.
 (rerunfilecheck)             Checksum: 0D19AA9417D4853821C703A32E10B931;916.
  ) 
 Here is how much of TeX's memory you used:
- 23359 strings out of 469438
- 453097 string characters out of 5468410
- 812780 words of memory out of 5000000
- 51388 multiletter control sequences out of 15000+600000
+ 23390 strings out of 469438
+ 453995 string characters out of 5468410
+ 812779 words of memory out of 5000000
+ 51415 multiletter control sequences out of 15000+600000
  732934 words of font info for 111 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  128i,18n,123p,391b,995s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1305,10 +1323,10 @@ e/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts/type1/public/lm
 /lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy9.pfb></usr/share/texmf/
 fonts/type1/public/lm/lmtt10.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt8.
 pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb>
-Output written on flashjet-ml4jets.pdf (49 pages, 3898359 bytes).
+Output written on flashjet-ml4jets.pdf (51 pages, 3994661 bytes).
 PDF statistics:
- 978 PDF objects out of 1000 (max. 8388607)
- 581 compressed objects within 6 object streams
- 105 named destinations out of 1000 (max. 500000)
- 1161 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1010 PDF objects out of 1200 (max. 8388607)
+ 599 compressed objects within 6 object streams
+ 109 named destinations out of 1000 (max. 500000)
+ 1207 words of extra memory for PDF output out of 10000 (max. 10000000)
 

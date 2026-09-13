@@ -409,3 +409,31 @@ within 1e-4 at min 0.9999. Identical to the V100S run. Two things follow:
 
 Mixing is the one thing to avoid. **(a) is the safe default for Vienna**; (b) is
 a deliberate, all-at-once change if a bigger headline is wanted.
+
+## 2026-09-14 — ALL JOBS COMPLETE
+
+`DONE_ALL`, **0 errors**, all four summary files written, and the 464 V100S
+files in `results_v100/` untouched.
+
+### Final state
+
+| run | cluster | device | grid | agreement |
+|---|---|---|---|---|
+| event regime | 1117581 | H100 NVL | 75/75 | 60/75 at 100 %, worst 99.785 % |
+| jet regime rerun | 1117583 | H100 NVL | **150/150** | **150/150 at 100.000 %** |
+| jet regime (in deck) | — | V100S | 150/150 | 150/150 at 100.000 % |
+
+H100 jet-regime speedup over the full grid: **53.8-143.3×, median 90.9×**
+(V100S: 39-99×, median 64×).
+
+### Where the outputs live
+
+- `bench_event/results/` — event sweep JSONs + summaries
+- `bench_event/{event_abs_timing,regime_throughput}.png` — both in the deck
+- `bench_atlas/results_h100/` — jet rerun (V100S results preserved separately)
+- scripts mirrored in `Projects/Flashjet/scripts/bench_event/`
+
+### Open decision (only one left)
+
+Whether to move the deck's speed section from V100S to H100 — see the previous
+section. **Default is to leave it as-is**; the deck is consistent and correct now.
