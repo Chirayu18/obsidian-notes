@@ -218,3 +218,50 @@ quoting any number.
 | **1117581** | full sweep, A100-or-H100 |
 
 Superseded: 1116228, 1116229, 1117575, 1117576, 1117577 (all removed).
+
+## 2026-09-14 — IT RAN. Event regime is 34-66x, not 1.4x
+
+Cluster **1117580** (smoke, A100) returned `SMOKE_OK` with 100 % agreement — first
+real GPU execution. Cluster **1117581** (full sweep) then ran on an
+**NVIDIA H100 NVL**; flashjet side 75/75 complete.
+
+### The smoke test's throughput number was wrong by ~40x — do not reuse it
+
+| | µs/event | Mpart/s |
+|---|---|---|
+| smoke, **40 events**, A100 | 398.7 | **1.43** |
+| sweep, **3000 events**, H100 | 4.9 (lo bin) | **66.7** |
+
+40 events is too small a batch to fill the GPU, so the smoke run measured launch
+overhead, not throughput. **A smoke test validates correctness, never performance.**
+Agreement was 100 % in both, so the smoke test did its actual job.
+
+### Real event-regime results (anti-kt R=1.0, H100 NVL, 3000 events)
+
+| bin | ⟨N⟩ | µs/event | Mpart/s |
+|---|---|---|---|
+| lo | 325.4 | 4.9 | **66.69** |
+| mid | 499.4 | 14.3 | 35.05 |
+| hi | 692.5 | 20.6 | 33.54 |
+| vhi | 935.2 | 39.5 | 23.68 |
+| all | 591.6 | 22.8 | 25.98 |
+
+Speedup vs vectorised FastJet, from 21 completed pairs: **34-66x**, with
+**100 % n_jets agreement** at 20/21 points (one kt/R=0.4/mid point at 99.91 %).
+
+### This weakens the intended slide, and that matters
+
+The planned story was "jet regime fills the GPU, event regime starves it." But the
+event regime gets **34-66x**, against the jet regime's **39-99x** — much closer than
+expected. And the two were measured on **different hardware**:
+
+| measurement | device |
+|---|---|
+| deck's jet-regime plot | Tesla V100S-PCIE-32GB (interactive) |
+| smoke | A100-PCIE-40GB |
+| **full event sweep** | **H100 NVL** |
+
+**The regime gap and the hardware gap are currently confounded.** A same-card rerun
+of the jet regime (H100 NVL) is the only way to separate them, and it is cheap —
+`bench_atlas/sweep_{flashjet,fastjet}.py` already exist. **Do not put event and jet
+numbers on one axis until that is done.**
