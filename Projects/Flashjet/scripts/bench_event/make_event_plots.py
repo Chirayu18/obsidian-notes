@@ -14,7 +14,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 EV  = os.environ.get("EVSCRATCH", "/eos/home-c/cgupta/flashjet/bench_event/results")
-JET = "/eos/home-c/cgupta/flashjet/bench_atlas/results_v100"
+JET = os.environ.get("JETRES", "/eos/home-c/cgupta/flashjet/bench_atlas/results_v100")
 OUT = "/eos/home-c/cgupta/flashjet/bench_event"
 ALGL = {"antikt": r"anti-$k_t$", "kt": r"$k_t$", "cambridge": "C/A"}
 BINS = ["lo", "mid", "hi", "vhi"]
@@ -80,9 +80,12 @@ def main():
     # confounded -- the title must not assert a regime conclusion. Device names
     # are in each JSON's "gpu" field; check them before using this figure.
     gset = sorted({j.get("gpu", "?") for j in list(jf.values()) + list(evf.values())})
-    ax.set_title("flashjet throughput by regime  [" + " vs ".join(gset) + "]"
-                 if len(gset) > 1 else
-                 r"flashjet throughput: many small units fill the GPU")
+    if len(gset) > 1:
+        # CONFOUNDED: different silicon on one axis -- name both, claim nothing.
+        ax.set_title("flashjet throughput by regime  [" + " vs ".join(gset) + "]")
+    else:
+        ax.set_title("flashjet throughput: many small units fill the GPU\n"
+                     + gset[0], fontsize=11)
     ax.grid(alpha=.3, which="both"); ax.legend()
     fig.tight_layout(); fig.savefig(f"{OUT}/regime_throughput.png", dpi=140)
     print("wrote regime_throughput.png")

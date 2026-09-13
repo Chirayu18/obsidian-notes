@@ -808,6 +808,62 @@ Physics closures: analytic predictions on toy showers.}
 \appendix
 \section{Backup}
 
+\begin{frame}{Backup --- the event regime \hfill \realC}
+\begin{columns}[T]
+\begin{column}{0.56\textwidth}
+\includegraphics[width=\linewidth]{fig/event_abs_timing.png}
+\end{column}
+\begin{column}{0.44\textwidth}
+\textbf{One timed unit = one whole event} ($\sim$590 ATLAS calorimeter clusters),
+3\,000 events, same method as the jet regime.
+\smallskip
+
+\begin{tabular}{@{}lrr@{}}
+\toprule
+$\langle N\rangle$ & $\mu$s/event & speedup\\
+\midrule
+325 & 4.9 & \textbf{65$\times$}\\
+499 & 14.3 & 34$\times$\\
+693 & 20.6 & 33$\times$\\
+935 & 39.5 & 22$\times$\\
+\bottomrule
+\end{tabular}
+\smallskip
+
+\smallnote{\textbf{22--65$\times$} over vectorised FastJet. Jet-count agreement:
+\textbf{60/75 grid points exactly 100\,\%}, worst \textbf{99.785\,\%} (busiest
+bin); leading-jet $p_T$ within $10^{-4}$ at \textbf{all 75}. Benchmarked on
+\textbf{H100 NVL} --- \emph{not} the V100-class card used for the jet-regime
+plots.}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Backup --- why the jet regime is the good one \hfill \realC}
+\begin{columns}[T]
+\begin{column}{0.58\textwidth}
+\includegraphics[width=\linewidth]{fig/regime_throughput.png}
+\end{column}
+\begin{column}{0.42\textwidth}
+Thousands of small jets launch \textbf{thousands of independent programs} that
+fill the GPU. One large event is a \textbf{single serial program} that starves it.
+\medskip
+
+\begin{block}{}
+\small Peak \textbf{215} vs \textbf{67}\,Mpart/s --- a \textbf{3--6$\times$}
+throughput advantage for the jet regime, on the \emph{same} card.
+\end{block}
+\medskip
+
+\smallnote{Both curves on \textbf{H100 NVL}, so this is a regime comparison, not
+a hardware one. For reference the same jet-regime sweep on the V100-class card
+used elsewhere in this talk is \textbf{2.2--2.5$\times$} slower at every
+multiplicity --- comparable to the regime effect itself, which is why the two
+must not be mixed on one axis.}
+\end{column}
+\end{columns}
+\end{frame}
+
 \begin{frame}{Backup --- cost is independent of $R$ and of the algorithm \hfill \realC}
 \begin{columns}[T]
 \begin{column}{0.56\textwidth}
