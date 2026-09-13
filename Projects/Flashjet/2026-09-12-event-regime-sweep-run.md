@@ -131,3 +131,52 @@ job is gone.
 Lesson, same shape as the `git rev-list` one: **a failed query is not a negative
 result.** Check the positive evidence (log events, output files), not the absence
 of a row.
+
+## 2026-09-13 — the V100S pin was unsatisfiable; repinned to A100
+
+The first two clusters (1116228/1116229) sat idle ~26 h and **could never have
+run**. `condor_q -better-analyze` was explicit: *"No machines matched the job's
+constraints"*, 0 slots willing.
+
+**Root cause: the pool rewrites CPU/memory to a per-GPU floor, and that floor
+exceeds every V100S slot.**
+
+- Submitted 16 CPU / 32 GB → queued as **6 CPU / 18000 MB**.
+- Resubmitted 4 CPU / 14 GB → queued as **5 CPU / 15000 MB** (a *floor*, not a cap).
+- V100S slots are **4 CPU / 16000 MB** at best (14 of ~20; the rest 4/10000 or 0/6000).
+
+5 > 4, so no request can fit a V100S while asking for a GPU. **The V100S pin is
+unsatisfiable on the EosSubmit pool, whatever the request.** Repinned to
+**NVIDIA A100-PCIE-40GB** (free slots with 8-12 CPUs and 93-106 GB), which flipped
+the analyzer from "No machines matched" / 0-0 to *9 slots reject / 20 would match
+if drained* — i.e. a real queue wait rather than an impossibility.
+
+### This changes a deck claim
+
+`bench_atlas/condor/atlas.sub` requests **H100 NVL or A100** — but
+`results_v100/*.json` says the sweep ran on **Tesla V100S-PCIE-32GB**, and
+`bench_atlas/condor/output/` is **empty**. So the jet-regime sweep in the deck was
+**not** run through that submit file; it was run interactively on a V100S node.
+
+Consequence: the deck's "V100-class" label is correct, but the event-regime
+numbers will come from an **A100**. Do **not** put the two absolute numbers on one
+axis without saying so. Options: (a) label both plots with their device, (b) rerun
+the jet regime on A100 interactively for a like-for-like pair. **(b) is the honest
+one if the two ever share an axis** — Mpart/s across different silicon is not a
+regime comparison, it is a hardware comparison.
+
+### Also hit: expired AFS token
+
+`condor_submit` failed with *"store_cred of Kerberos credential failed"*, alongside
+`/afs/.../.bashrc: Permission denied` on every ssh. Fix is `aklog` (not kinit, not
+reconnect) — see [[lxplus-afs-token-aklog]]. Every remote command in this workflow
+should run `aklog` first; the monitor does.
+
+### Current clusters
+
+| cluster | what | submitted |
+|---|---|---|
+| **1117576** | smoke, 40 events, A100 | 2026-09-13 |
+| **1117577** | full sweep, A100 | 2026-09-13 |
+
+Old 1116228/1116229/1117575 removed.
