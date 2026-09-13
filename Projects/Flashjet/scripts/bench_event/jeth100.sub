@@ -1,0 +1,14 @@
+executable = /eos/user/c/cgupta/flashjet/bench_atlas/run_atlas_h100.sh
+arguments  = $(ClusterId)$(ProcId)
+output = /eos/user/c/cgupta/flashjet/bench_atlas/condor/jeth100.$(ClusterId).$(ProcId).out
+error  = /eos/user/c/cgupta/flashjet/bench_atlas/condor/jeth100.$(ClusterId).$(ProcId).err
+log    = /eos/user/c/cgupta/flashjet/bench_atlas/condor/jeth100.$(ClusterId).log
+should_transfer_files = NO
+getenv = False
+request_GPUs = 1
+request_CPUs = 8
+request_memory = 20 GB
+requirements = (TARGET.GPUs_DeviceName == "NVIDIA H100 NVL") && \
+               (TARGET.OpSysAndVer =?= "AlmaLinux9")
++JobFlavour = "nextweek"
+queue

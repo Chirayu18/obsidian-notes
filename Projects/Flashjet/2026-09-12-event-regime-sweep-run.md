@@ -265,3 +265,27 @@ expected. And the two were measured on **different hardware**:
 of the jet regime (H100 NVL) is the only way to separate them, and it is cheap —
 `bench_atlas/sweep_{flashjet,fastjet}.py` already exist. **Do not put event and jet
 numbers on one axis until that is done.**
+
+## 2026-09-14 — jet-regime rerun on H100 submitted (cluster 1117583)
+
+To decouple the regime gap from the hardware gap, the jet-regime sweep is being
+rerun on the **same card the event sweep used (H100 NVL)**.
+
+- runner `bench_atlas/run_atlas_h100.sh`, submit `bench_atlas/jeth100.sub`
+- writes to **`bench_atlas/results_h100/`** — the 464 V100S files in
+  `results_v100/` are **not** touched
+- pinned to **H100 NVL only** (a like-for-like rerun must be the same card)
+- reuses the existing `sweep_flashjet.py` / `sweep_fastjet.py` unchanged, so the
+  only difference from the deck's plot is the GPU
+
+Matchability checked at submit (the lesson from the V100S fiasco):
+**1 slot willing**, 5 would match if drained, 3 free H100 NVL — it should start
+promptly rather than sit unmatchable.
+
+### What this enables
+
+Once both finish there are three comparisons, and only the first two are honest:
+
+1. **event vs jet, both on H100** — the real regime comparison, on one axis.
+2. **jet on V100S vs jet on H100** — the hardware delta, useful on its own.
+3. ~~event on H100 vs jet on V100S~~ — confounded; **do not plot**.
