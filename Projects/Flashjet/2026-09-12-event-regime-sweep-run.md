@@ -377,3 +377,35 @@ dangerous — the hardware factor is the same order as the effect being claimed.
 - The deck's existing jet-regime speed plots stay **V100S** and stay labelled so;
   do not silently upgrade them to H100 numbers, which would inflate the headline
   39-99x by ~2.3x without the correctness grid having been rerun.
+
+## 2026-09-14 — H100 jet rerun: correctness identical, speedup higher
+
+Cluster 1117583 essentially complete (flashjet 150/150, fastjet 145+/150).
+
+### Correctness is hardware-independent — a genuine cross-check
+
+**145/145 paired points at exactly 100.000 % n_jets agreement**, leading-jet $p_T$
+within 1e-4 at min 0.9999. Identical to the V100S run. Two things follow:
+
+1. The deck's correctness claim does not depend on the card.
+2. The event regime's 99.785 % outliers are a property of **busy events**
+   (⟨N⟩≈935), not of the H100 — the same card gives a perfect jet-regime grid.
+
+### Speedup is higher on H100 — a choice the deck has to make
+
+| | range | median |
+|---|---|---|
+| V100S (in the deck now) | 39-99× | 64× |
+| **H100 NVL** | **54-143×** | **91×** |
+
+**Do not silently swap these in.** Options:
+
+- **(a) Keep V100S everywhere** (current state). Conservative, internally
+  consistent, and the number the correctness grid was quoted alongside. The
+  event-regime backup slide already flags that it used a different card.
+- **(b) Move the whole speed section to H100.** Bigger headline (54-143×) and it
+  would match the event-regime slides — but every speed figure must be
+  regenerated together, and the "V100-class" labels updated in three places.
+
+Mixing is the one thing to avoid. **(a) is the safe default for Vienna**; (b) is
+a deliberate, all-at-once change if a bigger headline is wanted.
