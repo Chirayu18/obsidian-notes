@@ -289,3 +289,48 @@ Once both finish there are three comparisons, and only the first two are honest:
 1. **event vs jet, both on H100** — the real regime comparison, on one axis.
 2. **jet on V100S vs jet on H100** — the hardware delta, useful on its own.
 3. ~~event on H100 vs jet on V100S~~ — confounded; **do not plot**.
+
+## 2026-09-14 — EVENT SWEEP COMPLETE (cluster 1117581)
+
+`DONE_ALL`, **0 errors**, 75/75 flashjet and 75/75 fastjet results, both summary
+files written. Ran on **NVIDIA H100 NVL**, 3000 events.
+
+### Results (anti-kt R=1.0)
+
+| bin | ⟨N⟩ | µs/event | Mpart/s | FastJet vec. µs | speedup | n_jets |
+|---|---|---|---|---|---|---|
+| lo | 325.4 | 4.9 | 66.69 | 318.1 | **65.2×** | 100.000 % |
+| mid | 499.4 | 14.3 | 35.05 | 486.1 | 34.1× | 100.000 % |
+| hi | 692.5 | 20.6 | 33.54 | 684.1 | 33.1× | 100.000 % |
+| vhi | 935.2 | 39.5 | 23.68 | 879.3 | 22.3× | 100.000 % |
+| all | 591.6 | 22.8 | 25.98 | 594.3 | 26.1× | 100.000 % |
+
+### Agreement across the FULL 75-point grid — read this before quoting
+
+- **60/75 points at exactly 100.000 %**; worst point **99.785 %**
+  (C/A R=1.0 vhi, kt R=0.8 vhi, kt R=1.0 vhi — all the vhi bin, ⟨N⟩≈935).
+- **Leading-jet pT within 1e-4 at 1.0000 on all 75 points** (min = median = 1.0).
+
+So the jets that are found are right everywhere; a handful of the busiest events
+differ by a jet at the margin. **This is NOT the jet regime's unqualified
+"100.000 % at every one of 150 points"** — if an event-regime agreement number
+goes on a slide it must say *60/75 at 100 %, worst 99.785 %*, not "100 % everywhere".
+
+### Plots
+
+- `event_abs_timing.png` — **usable as-is.** One regime, one device, flashjet vs
+  both FastJet interfaces, log y. Clean separation.
+- `regime_throughput.png` — **DO NOT USE in current form.** It draws jet-regime
+  (V100S) and event-regime (H100) on one axis under the title *"many small units
+  fill the GPU"*, which asserts a regime conclusion the data cannot support while
+  the devices differ. `make_event_plots.py` now auto-names the devices in the
+  title whenever they differ, so the figure flags itself. Regenerate once the
+  H100 jet rerun (1117583) lands.
+
+### The framing problem, now quantified
+
+Event regime **22–65×** vs jet regime **39–99×** — overlapping ranges. The
+"event regime starves the GPU" story is **not supported** by these numbers as
+they stand. Peak throughput is even comparable (66.7 vs 96.6 Mpart/s), on
+different silicon. Cluster 1117583 (jet regime on H100) is what decides whether
+any regime gap survives once hardware is held fixed.

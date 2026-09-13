@@ -76,7 +76,13 @@ def main():
     ax.set_xscale("log")
     ax.set_xlabel("particles per unit, N")
     ax.set_ylabel("throughput [Mparticles/s]")
-    ax.set_title(r"flashjet throughput: many small units fill the GPU")
+    # NOTE: if the two regimes were measured on DIFFERENT GPUs this plot is
+    # confounded -- the title must not assert a regime conclusion. Device names
+    # are in each JSON's "gpu" field; check them before using this figure.
+    gset = sorted({j.get("gpu", "?") for j in list(jf.values()) + list(evf.values())})
+    ax.set_title("flashjet throughput by regime  [" + " vs ".join(gset) + "]"
+                 if len(gset) > 1 else
+                 r"flashjet throughput: many small units fill the GPU")
     ax.grid(alpha=.3, which="both"); ax.legend()
     fig.tight_layout(); fig.savefig(f"{OUT}/regime_throughput.png", dpi=140)
     print("wrote regime_throughput.png")
