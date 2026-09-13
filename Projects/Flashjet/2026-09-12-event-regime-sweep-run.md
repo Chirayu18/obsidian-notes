@@ -180,3 +180,41 @@ should run `aklog` first; the monitor does.
 | **1117577** | full sweep, A100 | 2026-09-13 |
 
 Old 1116228/1116229/1117575 removed.
+
+## 2026-09-14 — A100 pin was also starved; widened to A100-or-H100
+
+The A100 repin fixed the *impossibility* but not the wait. After 30 min:
+*0 slots match and are willing*, **26 would match if drained**, negotiator logging
+`Reason for last match failure: no match found`.
+
+**Cause this time is different from the V100S one — and benign.** Checking the
+free A100 slots showed `GPUs = 0`: the unclaimed *partitionable* slots have CPU
+and memory left but **no free GPU**, because every A100 GPU in the pool is handed
+out to a running job.
+
+```
+A100-PCIE-40GB : 20 slots with a free GPU,  0 unclaimed
+H100 NVL       : 34 slots with a free GPU,  2 unclaimed
+H200           : 17 slots with a free GPU,  1 unclaimed
+```
+
+So `GPUs >= 1 && State == Unclaimed` is the availability query that matters —
+**not** `State == Unclaimed` alone, which counts slots whose GPUs are all busy and
+is what made 15-17 "free" slots look available when none were.
+
+Widened `requirements` to **A100-PCIE-40GB OR H100 NVL**; candidate slots went
+9 → 26. Still 0 willing at submit (all GPUs busy), but this is now an ordinary
+wait for a GPU to free, not a dead end.
+
+The sweep scripts record `torch.cuda.get_device_name(0)` into every result JSON,
+so whichever card it lands on is self-documenting — check the `gpu` field before
+quoting any number.
+
+### Current clusters
+
+| cluster | what |
+|---|---|
+| **1117580** | smoke, 40 events, A100-or-H100 |
+| **1117581** | full sweep, A100-or-H100 |
+
+Superseded: 1116228, 1116229, 1117575, 1117576, 1117577 (all removed).
