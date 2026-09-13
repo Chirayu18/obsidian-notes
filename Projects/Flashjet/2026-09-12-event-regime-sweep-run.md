@@ -334,3 +334,46 @@ Event regime **22–65×** vs jet regime **39–99×** — overlapping ranges. T
 they stand. Peak throughput is even comparable (66.7 vs 96.6 Mpart/s), on
 different silicon. Cluster 1117583 (jet regime on H100) is what decides whether
 any regime gap survives once hardware is held fixed.
+
+## 2026-09-14 — LIKE-FOR-LIKE: the starvation story IS real
+
+The H100 jet-regime rerun (1117583) finished its flashjet half (75/75, top
+sample). Both regimes are now measured on **the same card, NVIDIA H100 NVL**:
+
+### anti-kt R=1.0, Mparticles/s, H100 NVL
+
+| jet regime | | event regime | |
+|---|---|---|---|
+| N=24.1 | **144.98** | N=325.4 | 66.69 |
+| N=44.8 | **215.32** | N=499.4 | 35.05 |
+| N=74.7 | 179.26 | N=692.5 | 33.54 |
+| N=123.1 | 110.49 | N=935.2 | 23.68 |
+
+**Jet regime peaks at 215 Mpart/s vs the event regime's 67 — a 3-6x throughput
+advantage with no overlap between the curves.** The "many small units fill the
+GPU, one big event starves it" framing is **supported** once hardware is held fixed.
+
+My earlier concern that the two regimes looked too similar (22-65x vs 39-99x) was
+an artefact of comparing **event-on-H100 against jet-on-V100S**. Correcting the
+confound restored the effect.
+
+### The hardware delta, now measured separately
+
+| bin | ⟨N⟩ | V100S | H100 | ratio |
+|---|---|---|---|---|
+| lo | 24.1 | 57.33 | 144.98 | **2.53×** |
+| mid | 44.8 | 96.64 | 215.32 | 2.23× |
+| hi | 74.7 | 76.52 | 179.26 | 2.34× |
+| vhi | 123.1 | 50.22 | 110.49 | 2.20× |
+
+Consistently **2.2-2.5×** across every bin. So the two effects decompose cleanly:
+~2.3× from silicon, 3-6× from regime. **This is why the confounded plot was
+dangerous — the hardware factor is the same order as the effect being claimed.**
+
+### Slide guidance
+
+- Plot **both regimes on H100** for the regime claim (regenerate
+  `regime_throughput.png` once 1117583 fully lands).
+- The deck's existing jet-regime speed plots stay **V100S** and stay labelled so;
+  do not silently upgrade them to H100 numbers, which would inflate the headline
+  39-99x by ~2.3x without the correctness grid having been rerun.
