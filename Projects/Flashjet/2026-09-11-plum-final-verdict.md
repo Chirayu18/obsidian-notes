@@ -1128,3 +1128,32 @@ jets and could move several points. The 8000-jet run settles it. The decisive
 number is the **drop at 40k vs at 1M**: the redundancy account predicts it shrinks
 as the encoder folds the information into the particle representations (which is
 what the rising self-attention shows).
+
+### Attention rerun with the sampling bug fixed — all 10 classes (2026-09-14)
+
+condor 9314110, 8192 jets/checkpoint, ~800 per class, random permutation within
+each shard. `analysis/lund_attention_cpu2.json`. **Supersedes the 7-class numbers
+above for per-class reading; the three headline results are unchanged.**
+
+| | 40k | 100k | 300k | 1M |
+|---|---|---|---|---|
+| CLS ratio, mean over 10 classes | 0.410 | 0.346 | 0.265 | **0.214** |
+| self ratio, mean over 10 classes | 0.253 | 0.266 | 0.303 | **0.363** |
+
+- **Below uniform everywhere**: max CLS ratio anywhere is **0.478**. Confirmed on
+  all 10 classes, all 4 checkpoints.
+- **CLS decays −47.8 %**, and is **strictly monotone in 10/10 classes**.
+- **Self-attention rises +43.9 %**, monotone in **8/10**. ZToQQ (0.231 → 0.231) and
+  WToQQ (0.270 → 0.265) are flat-or-slightly-down over the first step, then rise.
+  Earlier "7/7 monotone" for self-attention was true of the biased sample only —
+  **the correct claim is 8/10, with two flat first steps.**
+
+**The sampling bug cost coverage, not accuracy.** Every class present in both runs
+agrees to ≤0.004 in CLS ratio at 40k (e.g. TTBarLep 0.480 → 0.478, ZToQQ 0.336 →
+0.338). So the earlier conclusions were not distorted, they were just drawn from 7
+of 10 classes.
+
+**HToBB, the class Sitian named**: CLS ratio 0.406 → 0.323 → 0.244 → **0.195**, the
+**lowest of all 10 at 1M**. It is not attended more than the others at any stage —
+it ends up attended least. Whatever makes HToBB special (and the ablation says
+something does), it is not a larger share of attention.
