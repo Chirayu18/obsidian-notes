@@ -1,9 +1,10 @@
 % flashjet -- ML4Jets 2026 (Vienna, 14-18 Sep 2026)
 % Build: latexmk -pdf flashjet-ml4jets.tex
 %
-% DATA POLICY: ATLAS Open Data + toy/analytic closures ONLY. No CMS data.
-%   (The opening slide CITES CMS's public HLT GPU deployment as context. That is
-%    a published fact, not CMS data - no CMS event or plot is used anywhere.)
+% DATA POLICY: ATLAS Open Data + toy/analytic closures ONLY for all OUR results.
+%   (The opening slide reproduces a PUBLISHED CMS Preliminary timing figure from
+%    EPJ Web Conf. 295 (2024) 11020, credited on the slide. That is a published
+%    plot used as context - no CMS event data is processed anywhere in this work.)
 % HARDWARE: all speed numbers are NVIDIA H100 NVL (jet AND event regimes), moved
 %   from V100-class on 2026-09-14 so both regimes share one device. V100S results
 %   are preserved at bench_atlas/results_v100 if the older numbers are ever wanted.
@@ -78,7 +79,7 @@
   \end{frame}}
 
 \title[flashjet]{\textbf{flashjet}}
-\subtitle{GPU-native jet clustering with the full merge history\\[0.3em]{\normalsize\normalfont designed for reclustering inside training loops, on padded tensors that stay on the GPU}}
+\subtitle{GPU-native jet clustering with the full merge history}
 \author[C. Gupta]{%
   \textbf{Chirayu Gupta}\inst{1}\textsuperscript{,}* \and
   Sitian Qian\inst{2} \and
@@ -92,9 +93,6 @@
 
 \begin{frame}[plain,noframenumbering]
   \titlepage
-  \begin{center}
-  \smallnote{* speaker}
-  \end{center}
 \end{frame}
 
 % ============================================================
@@ -106,26 +104,19 @@
 \section{Jet clustering, and flashjet}
 
 \begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
-\textbf{1.\ Where the field is}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item GPUs in the CMS High Level Trigger since Run~3
-  \item $\sim$\textbf{30\,\%} of HLT reco offloaded $\rightarrow$
-        $\sim$\textbf{25\,\%} less HLT time
-  \item pixel local reco $\cdot$ tracks $\cdot$ vertices $\cdot$ calo local reco
-\end{itemize}
-\vspace{0.4em}
-
-\textbf{2.\ What is missing}
 \begin{center}
-\begin{block}{}
-\centering\large Jet clustering is \textcolor{fjred}{\textbf{still on the CPU}}.
-\end{block}
+\includegraphics[height=0.40\textheight]{fig/cms_hlt_gpu_timing.png}
 \end{center}
-\vspace{0.2em}
+\vspace{-0.5em}
+\smallnote{CMS HLT per-event time, CPU-only (\textbf{690\,ms}) vs with GPU offload
+(\textbf{398\,ms}) --- $\sim$\textbf{30\,\%} of the reco offloaded buys
+$\sim$\textbf{40\,\%} less HLT time. \textbf{\textcolor{fjred}{Jets/MET} barely
+moves}: it is still on the CPU. [CMS, EPJ Web Conf.\ \textbf{295} (2024) 11020]}
+\vspace{0.3em}
 
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
-\textbf{3.\ Why it stayed there}
+\textbf{Why clustering stayed on the CPU}
 \begin{itemize}\setlength\itemsep{0.1em}
   \item sequential recombination is \textbf{IRC safe} --- that is why it won
   \item but each merge \textbf{depends on the previous one}
@@ -133,14 +124,14 @@
 \end{itemize}
 \end{column}
 \begin{column}{0.5\textwidth}
-\textbf{4.\ Why that costs us now}
+\textbf{Why that costs us now}\\[0.15em]
+\smallnote{Inside a training loop the tensors are already on the GPU; each of
+these sends them back to the host and returns.}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item \textbf{reclustering inside a training loop}
+  \item \textbf{reclustering}
   \item scanning the \textbf{jet radius} $R$
   \item \textbf{substructure} on demand
 \end{itemize}
-\smallnote{The tensors are already on the GPU --- each of these sends them back
-to the host and returns, once per call.}
 \end{column}
 \end{columns}
 \end{frame}
