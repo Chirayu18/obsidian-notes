@@ -1157,3 +1157,72 @@ of 10 classes.
 **lowest of all 10 at 1M**. It is not attended more than the others at any stage —
 it ends up attended least. Whatever makes HToBB special (and the ablation says
 something does), it is not a larger share of attention.
+
+### ABLATION at 8k: the drop GROWS with training — my redundancy account is FALSIFIED
+
+condor 9314117, 8192 jets per checkpoint. `analysis/lund_ablation_cpu.json`.
+
+| | 40k | 100k | 300k | 1M |
+|---|---|---|---|---|
+| intact | 83.643 | 83.997 | 85.828 | 86.389 |
+| ablated | 76.819 | 69.250 | 69.434 | **61.145** |
+| **drop** | **+6.82** | **+14.75** | **+16.39** | **+25.24** |
+
+**I predicted this would SHRINK.** The redundancy account said the encoder folds the
+Lund information into the particle representations (which the rising self-attention
+shows), so by 1M the tokens should be removable at little cost. The opposite
+happened: removing them costs **4x more** at 1M than at 40k.
+
+So the trained model is **more** dependent on these tokens the longer it trains,
+while simultaneously **gaining nothing** from them on the test set (-0.006). Those
+two facts together are the real puzzle, and neither Sitian's account nor mine
+explains them.
+
+### Is the ablation off-manifold? Partly — and this is the key caveat
+
+HToWW4Q at 1M drops to **3.95 %**, *below* the 10 % random baseline. A model that had
+merely lost useful information would degrade toward chance, not below it. Masking all
+48 tokens is an input the model **never saw in training** (real jets always have
+splittings), so the residual stream lands off-distribution.
+
+Diagnostic (`analysis/ablation_diagnostic.py`, 2048 jets, 1M):
+
+| predicted class | intact | ablated |
+|---|---|---|
+| TTBarLep | 173 | **326** |
+| TTBar | 118 | **328** |
+| HToWW4Q | 141 | **7** |
+| HToBB | 136 | **29** |
+| ZToQQ | 289 | 100 |
+| WToQQ | 356 | 369 |
+
+Largest single predicted class: **18.0 % ablated vs 17.4 % intact** — so it is *not*
+a total collapse onto one class, which is what a pure off-manifold artifact usually
+looks like. But the redistribution is systematic: the model stops predicting HToWW4Q
+and HToBB almost entirely and over-predicts the two top classes.
+
+**Rai & Ganguly hit this exact problem** ([2605.09881], §4): they document "a
+structural incompatibility between off-manifold (Gaussian) corruption and the
+standard recovery-score formulation ... for any kinematically narrow physics
+dataset", and use **on-manifold corruption** instead — patching in activations from
+a *different real jet* rather than zeroing.
+
+**Therefore the +25.24 number is not interpretable as "dependence".** It mixes real
+dependence with off-manifold breakage, and the two cannot be separated by this
+measurement. The honest statement:
+
+- The tokens are **not** freely removable at any checkpoint — that much is solid.
+- The *magnitude* and the *growth with training* are confounded by the corruption
+  being off-manifold, and the growth may simply reflect a sharper, more confident
+  model being easier to push off-distribution.
+
+**What would fix it:** on-manifold ablation — replace the 48 Lund tokens with those
+from a *different randomly chosen jet of the same class* (preserving the input
+statistics the model expects), or with the class-mean token block. That is a small
+change to `ablate_lund_tokens.py` and is the correct next measurement.
+
+**Status of the mechanism: OPEN.** Neither account survives. What is measured and
+safe: the features are redundant in content (PairEmbed computes the same three
+functions per pair), the tokens are attended far below chance and decreasingly so,
+the gain decays to null by 300k, and the tokens cannot be zeroed without damage.
+Why a model that gains nothing from them also cannot lose them is **unexplained**.
