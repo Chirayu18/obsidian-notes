@@ -105,45 +105,32 @@
 
 \begin{frame}{Reconstruction is moving to accelerators --- clustering has not}
 \begin{center}
-\includegraphics[height=0.40\textheight]{fig/cms_hlt_gpu_timing.png}
+\includegraphics[height=0.60\textheight]{fig/cms_hlt_gpu_timing.png}
 \end{center}
 \vspace{-0.5em}
-\smallnote{CMS HLT per-event time, CPU-only (\textbf{690\,ms}) vs with GPU offload
-(\textbf{398\,ms}) --- $\sim$\textbf{30\,\%} of the reco offloaded buys
+\smallnote{CMS HLT per-event time, CPU-only (left) vs with GPU offload
+(right) --- $\sim$\textbf{30\,\%} of the reco offloaded buys
 $\sim$\textbf{40\,\%} less HLT time. \textbf{\textcolor{fjred}{Jets/MET} barely
 moves}: it is still on the CPU. [CMS, EPJ Web Conf.\ \textbf{295} (2024) 11020]}
 \vspace{0.3em}
 
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
 \textbf{Why clustering stayed on the CPU}
-\begin{itemize}\setlength\itemsep{0.1em}
+\begin{itemize}
   \item sequential recombination is \textbf{IRC safe} --- that is why it won
-  \item but each merge \textbf{depends on the previous one}
-  \item serial dependence is what a GPU does worst
+  \item but each merge \textbf{depends on the previous one} --- serial dependence is what a GPU does worst
 \end{itemize}
-\end{column}
-\begin{column}{0.5\textwidth}
-\textbf{Why that costs us now}\\[0.15em]
-\smallnote{Inside a training loop the tensors are already on the GPU; each of
-these sends them back to the host and returns.}
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item \textbf{reclustering}
-  \item scanning the \textbf{jet radius} $R$
-  \item \textbf{substructure} on demand
-\end{itemize}
-\end{column}
-\end{columns}
 \end{frame}
 
 \begin{frame}{flashjet --- a GPU jet clusterer}
 \textbf{What it does}
 \begin{itemize}\setlength\itemsep{0.1em}
-  \item generalised-$k_t$ --- \akt, $k_t$, C/A --- \textbf{transcribed from
-        FastJet and validated against it}
+  \item generalised-$k_t$ --- \akt, $k_t$, C/A
   \item \textbf{many jets or events per launch}
   \item returns jets, the \textbf{full merge history}, and substructure
         \textbf{as tensors}
+    \item written in 
+\textbf{Triton}: autotunes for whatever
+GPU it finds — no separate CUDA build.
   \item[$\Rightarrow$] built for \textbf{reclustering inside training loops}, on
         padded $(B,N,4)$ tensors that \textbf{stay on the GPU}
 \end{itemize}
@@ -160,61 +147,11 @@ these sends them back to the host and returns.}
 \end{itemize}
 \vspace{-0.1em}
 
-\begin{columns}[T]
-\begin{column}{0.62\textwidth}
 \textbf{In the ML ecosystem}
 \begin{itemize}\setlength\itemsep{0.1em}
   \item a \textbf{PyTorch} call --- tensors in, tensors out
   \item no host\,$\leftrightarrow$\,device copy in a training loop
 \end{itemize}
-\end{column}
-\begin{column}{0.38\textwidth}
-\smallnote{\textbf{Two regimes:} \emph{event-based} ($N\sim$ hundreds) and
-\emph{jet-based} ($N\sim$ tens, $B$ large). \textbf{This talk is the second.}}
-\smallskip
-
-\smallnote{Written in \textbf{Triton}: autotunes for whatever GPU it finds --- no
-separate CUDA build.}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{One exponent, three algorithms}
-\begin{center}
-The generalised-$k_t$ distance measure:
-\begin{align*}
-d_{ij} &= \min\!\left(p_{Ti}^{2p},\, p_{Tj}^{2p}\right)
-          \frac{\Delta R_{ij}^{2}}{R^{2}},
-\qquad &\Delta R_{ij}^{2} &= (y_i-y_j)^2+(\phi_i-\phi_j)^2\\[3pt]
-d_{iB} &= p_{Ti}^{2p}
-\end{align*}
-\end{center}
-\smallnote{Merge the pair with the smallest $d_{ij}$; if the smallest distance is
-a $d_{iB}$, call $i$ a jet and remove it.}
-\vspace{0.5em}
-
-%% \cite{Cacciari:2008gp}  % arXiv:0802.1189 -- uncomment if a citation is wanted
-\textbf{Only the exponent $p$ changes:}
-\begin{center}
-\renewcommand{\arraystretch}{1.25}
-\begin{tabular}{@{}c l l l l@{}}
-\toprule
-$p$ & algorithm & merges first & tree ordered by & used for\\
-\midrule
-$-1$ & \akt & the \textbf{hardest} pairs & --- & \textbf{finding jets}\\
-$0$ & Cambridge--Aachen & the \textbf{closest} pair & \textbf{angle} &
-      grooming, Lund plane\\
-$+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$} &
-      exclusive subjets\\
-\bottomrule
-\end{tabular}
-\end{center}
-\vspace{0.3em}
-\begin{block}{}
-\small \akt{} answers \emph{which particles form a jet}. The other two answer
-\emph{how that jet came apart} --- and the \textbf{ordering is what the
-substructure reads}.
-\end{block}
 \end{frame}
 
 \begin{frame}{How sequential recombination works \hfill \toyA}
@@ -247,78 +184,76 @@ there selects which algorithm this loop runs.}
 
 \begin{frame}{\akt{} gives rigid, circular jets \hfill \toyB}
 \begin{center}
-\includegraphics[width=0.93\linewidth]{fig/jet_areas.png}
+\includegraphics[width=0.86\linewidth]{fig/jet_areas.png}
 \end{center}
-\vspace{-0.4em}
-\begin{columns}[T]
-\begin{column}{0.48\textwidth}
-\small
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item jet catchment areas, all three algorithms
-  \item clustered by \textbf{flashjet itself}
-\end{itemize}
-\end{column}
-\begin{column}{0.52\textwidth}
-\small
-\begin{itemize}\setlength\itemsep{0.1em}
-  \item $k_t$, C/A: \textbf{ragged}, fluctuating boundaries
-  \item \akt: \textbf{circles of area $\pi R^2$} on each hard particle
-  \item[$\Rightarrow$] the algorithm's defining result, \textbf{reproduced
-        without FastJet}
-\end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{It returns the tree, not just the jets}
-Clustering a batch returns \textbf{two} things --- the jets, and the record of how
-they were built.
-\medskip
-
+\vspace{-0.6em}
+\textbf{Only the exponent $p$ changes:}
 \begin{center}
-\small
-\begin{tabular}{@{}lll@{}}
+\renewcommand{\arraystretch}{1.05}
+\footnotesize
+\begin{tabular}{@{}c l l l l l@{}}
 \toprule
-\textbf{field} & \textbf{shape} & \textbf{what it holds}\\
+$p$ & algorithm & merges first & tree ordered by & used for & \textbf{panel above}\\
 \midrule
-\texttt{jet\_idx} & $(B,N)$ & which jet each particle ended up in\\
-\texttt{n\_jets} & $(B,)$ & how many jets were found\\
-\addlinespace
-\texttt{hist\_p1}, \texttt{hist\_p2} & $(B,N)$ & \textbf{which pair merged}, at each step\\
-\texttt{hist\_child} & $(B,N)$ & what they merged \emph{into}\\
-\texttt{hist\_d} & $(B,N)$ & the distance $d_{ij}$ at that step\\
+$-1$ & \akt & the \textbf{hardest} pairs & --- & \textbf{finding jets} &
+      \textbf{right} --- circular, rigid\\
+$0$ & Cambridge--Aachen & the \textbf{closest} pair & \textbf{angle} &
+      grooming, Lund plane & \textbf{middle} --- ragged edges\\
+$+1$ & $k_t$ & the \textbf{softest} pair & \textbf{relative $p_T$} &
+      exclusive subjets & \textbf{left} --- most irregular\\
 \bottomrule
 \end{tabular}
 \end{center}
-\medskip
-
-\begin{block}{The tree is the product, not a by-product}
-\small The bottom three rows are the \textbf{complete binary merge tree}. Groomed
-mass, $z_g$, $R_g$, Lund coordinates and exclusive subjets are not separate
-algorithms --- they are \textbf{coordinates on that one tree}. Compute it once,
-read them all off, \textbf{no second clustering pass}.
-\end{block}
-\vspace{0.2em}
-\begin{center}
-\small\color{fjgray} Three things are read off that tree --- F1, F2, F3 --- and then
-we look at it on a real jet.
-\end{center}
+\vspace{-0.3em}
+\smallnote{Only \akt{} gives jets whose area is insensitive to the soft
+background --- which is why it is the one used to \emph{find} jets. The other
+two are used on a jet that has \emph{already} been found.}
 \end{frame}
 
-\begin{frame}{What is implemented}
+\begin{frame}{It returns the tree, not just the jets \hfill \realC}
+\vspace{-0.2em}
+{\footnotesize Clustering a batch returns \textbf{two} things --- the jets
+(\texttt{jet\_idx} $(B,N)$, \texttt{n\_jets} $(B,)$), and the
+\textcolor{fjred}{\textbf{merge history}} below: \texttt{hist\_p1},
+\texttt{hist\_p2} (which pair merged), \texttt{hist\_child} (what they merged
+into) and \texttt{hist\_d} (the distance), each $(B,N)$.}
+\vspace{-0.1em}
+
+\begin{center}
+\includegraphics[width=\linewidth]{fig/hist_to_tree.png}
+\end{center}
+\vspace{-0.5em}
+\smallnote{One real ATLAS jet with 8 constituents, C/A. Read column~0: particles
+\texttt{0} and \texttt{5} merge into \texttt{8} --- the node at the bottom right.
+Seven columns, seven merges, and the tree is complete. \textbf{Everything
+downstream --- grooming, subjets, Lund coordinates --- is a read of these rows},
+never a second clustering.}
+\end{frame}
+
+{% transition slide: what exists, before the three feature slides that follow
+\setbeamertemplate{headline}{}
+\begin{frame}[plain,noframenumbering]
+\vfill
+\begin{center}
+{\usebeamercolor[fg]{structure}\Large\bfseries What is implemented}
+\vskip3pt
+{\color{fjred}\rule{0.30\textwidth}{1.2pt}}
+\end{center}
+\vskip1.2em
+
 \begin{columns}[T]
-\begin{column}{0.5\textwidth}
+\begin{column}{0.46\textwidth}
 \textbf{Clustering}
-\begin{itemize}
+\begin{itemize}\setlength\itemsep{0.15em}
   \item generalised-$k_t$: \akt, $k_t$, C/A
   \item merge history recorded in-kernel
   \item many jets clustered in one batched call
   \item scales from single jets to whole events
 \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}
+\begin{column}{0.46\textwidth}
 \textbf{Substructure} --- reads of the history
-\begin{itemize}
+\begin{itemize}\setlength\itemsep{0.15em}
   \item \textbf{F1} exclusive $k_t$ subjets
   \item \textbf{F2} soft drop / mMDT / mass-drop
   \item \textbf{F3} primary Lund coordinates
@@ -328,12 +263,13 @@ we look at it on a real jet.
 identical, negligible cost.}
 \end{column}
 \end{columns}
-\end{frame}
+\vfill
+\end{frame}}
 
 % ------------------------------------------------------------
 \begin{frame}{F1 --- exclusive subjets from the $k_t$ history \hfill \toyA}
 \begin{columns}[T]
-\begin{column}{0.42\textwidth}
+\begin{column}{0.3\textwidth}
 \textbf{What it does.} Undo the last merges of the sequence to expose exactly
 $n$ subjets --- or stop at a $d_{cut}$.
 \smallskip
@@ -348,15 +284,14 @@ merges are the hard prongs --- exactly what a 2-prong decay leaves behind.
 
 The splitting scales come straight from \texttt{hist\_d}:
 \[\sqrt{d_{12}},\ \sqrt{d_{23}},\ \dots\]
-\vspace{-1.0em}
-\[\text{with}\ \ d_{ij}=\min\!\left(p_{Ti}^{2},p_{Tj}^{2}\right)\frac{\Delta R_{ij}^2}{R^2}\]
 \end{column}
-\begin{column}{0.58\textwidth}
+\begin{column}{0.7\textwidth}
 \includegraphics[width=\linewidth]{fig/kt_observables.png}\\
 \smallnote{Toy W-like (2-prong) vs QCD-like fat jets.
 \textbf{Left:} the $k_t$ splitting scale $\sqrt{d_{12}}$ separates cleanly.
 \textbf{Right:} the momentum balance $z$ of the two exclusive subjets ---
 the W sits near $z \sim 0.4$, QCD spreads to small~$z$.}
+
 \end{column}
 \end{columns}
 \end{frame}
@@ -364,16 +299,8 @@ the W sits near $z \sim 0.4$, QCD spreads to small~$z$.}
 % ------------------------------------------------------------
 \begin{frame}{F2 --- soft drop / mMDT grooming \hfill \toyA}
 \begin{center}
-\includegraphics[width=0.88\linewidth]{fig/softdrop_walk.png}
+\includegraphics[width=\linewidth]{fig/softdrop_walk.png}
 \end{center}
-\vspace{-0.2em}
-\begin{center}
-\textbf{Stop when}\quad
-$\displaystyle
-\frac{\min(p_{T1},p_{T2})}{p_{T1}+p_{T2}}
-\;>\; z_{\mathrm{cut}}\left(\frac{\Delta R_{12}}{R}\right)^{\beta}$
-\end{center}
-\vspace{0.1em}
 \begin{columns}[T]
 \begin{column}{0.5\textwidth}
 \smallnote{Walk down the C/A tree along the harder branch, discarding the softer
@@ -388,25 +315,11 @@ constituents again, so grooming is essentially free once clustered.}
 
 % ------------------------------------------------------------
 \begin{frame}{What the tree looks like on real jets \hfill \realC}
+\vspace{-0.8em}
 \begin{center}
-\includegraphics[width=0.97\linewidth]{fig/tree_gallery.png}
+\makebox[\textwidth][c]{%
+  \includegraphics[width=1.06\paperwidth]{fig/tree_gallery.png}}
 \end{center}
-\vspace{-0.5em}
-\begin{columns}[T]
-\begin{column}{0.5\textwidth}
-\smallnote{\textbf{A jet without a decay has nothing to stop on.} The
-light-quark/gluon jet is a long \emph{staircase}: soft prong after soft prong is
-stripped, and its mass collapses to nothing.}
-\end{column}
-\begin{column}{0.5\textwidth}
-\smallnote{\textbf{A real decay stops at once.} Both top jets halt on their very
-first split, because it is already hard and balanced --- so the mass survives.}
-\end{column}
-\end{columns}
-\smallskip
-\smallnote{ATLAS Open Data, C/A with soft drop ($z_{cut}\!=\!0.1$, $\beta\!=\!0$).
-\textbf{The number of drops is itself a discriminant} --- and it is read straight
-off the stored tree, at no extra cost.}
 \end{frame}
 
 \begin{frame}{F3 --- primary Lund coordinates \hfill \toyA}

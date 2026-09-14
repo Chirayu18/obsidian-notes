@@ -8,8 +8,8 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-SRC="/tmp/cgupta_toptag_test.h5"
-OUT="/eos/home-c/cgupta/flashjet/bench_atlas"
+SRC="/eos/opendata/atlas/datascience/ATL-PHYS-PUB-2022-039/test.h5"
+OUT="/eos/home-c/cgupta/flashjet/bench_atlas/fig_tree"
 TREE="#9aa3b0"; KEPT="#3f7d54"; DROP="#b04434"; STOP="#b8791c"; INK="#4a5462"
 
 def ca_cluster(P,R=1.0):
@@ -107,15 +107,15 @@ def draw(ax,rec,title,caption):
         ax.plot(X[nd],-depth[nd],"o",ms=5.8,mfc="none",mec=DROP,mew=1.7,zorder=4)
     if stop is not None:
         ax.plot(X[stop],-depth[stop],"o",ms=11,mfc="none",mec=STOP,mew=2.6,zorder=5)
-    ax.set_title(title,fontsize=11,weight="bold",color="#1a1f27",pad=7)
-    ax.text(.5,-.09,caption,transform=ax.transAxes,ha="center",va="top",fontsize=8.8,color=INK)
+    ax.set_title(title,fontsize=12.5,weight="bold",color="#1a1f27",pad=7)
+    ax.text(.5,-.09,caption,transform=ax.transAxes,ha="center",va="top",fontsize=10.0,color=INK)
     ax.text(.5,-.225,f"$n_{{drop}}$ = {ndrop}      $m$: {mu:.0f} $\\to$ {ms_:.0f} GeV",
-            transform=ax.transAxes,ha="center",va="top",fontsize=9.2,family="monospace",color="#1a1f27")
+            transform=ax.transAxes,ha="center",va="top",fontsize=10.4,family="monospace",color="#1a1f27")
     ax.set_xlim(-.9,len(order)-.1); ax.set_ylim(-maxd-.6,.6)
     ax.set_xticks([]); ax.set_yticks([])
     for s_ in ax.spines.values(): s_.set_visible(False)
 
-fig,axes=plt.subplots(1,3,figsize=(13.2,4.6))
+fig,axes=plt.subplots(1,3,figsize=(13.6,5.3))
 draw(axes[0],qcd,"Light quark / gluon jet","a long spine: soft prong after soft prong\nis stripped, and the mass collapses")
 draw(axes[1],wln,"Boosted top — a clean two-prong core","the very first split is already balanced,\nso nothing is groomed away")
 draw(axes[2],top,"Boosted top — the full $t\\to bW$ system","also stops at once, but on a wider split,\nso the whole decay is kept")
@@ -123,11 +123,12 @@ h=[Line2D([],[],marker="o",ls="",mfc="none",mec=KEPT,mew=1.9,ms=8,label="soft-dr
    Line2D([],[],marker="o",ls="",mfc="none",mec=DROP,mew=1.7,ms=7,label="dropped prong"),
    Line2D([],[],marker="o",ls="",mfc="none",mec=STOP,mew=2.4,ms=10,label="grooming stops here"),
    Line2D([],[],marker="o",ls="",mfc=TREE,mec="none",ms=5,label="constituent")]
-fig.legend(handles=h,loc="lower center",ncol=4,fontsize=9.2,frameon=False,bbox_to_anchor=(.5,.005))
-fig.suptitle("C/A merge trees of real jets — root at top, constituents at the bottom",
-             fontsize=12.5,weight="bold",color="#1a1f27")
-fig.text(.5,.905,"ATLAS Top Tagging Open Data  ·  vertical = declustering depth  ·  horizontal = angular ordering",
-         ha="center",fontsize=8.8,color="#79828f")
-fig.tight_layout(rect=(0,.075,1,.885))
-fig.savefig(f"{OUT}/tree_gallery.png",dpi=170,facecolor="white")
+fig.legend(handles=h,loc="lower center",ncol=4,fontsize=10.5,frameon=False,bbox_to_anchor=(.5,.004))
+# NOTE: the slide title already says these are C/A merge trees on real jets, and
+# the frame carries the [ATLAS Open Data] tag -- so the figure keeps only the
+# axis-reading hint and spends the rest of the height on the trees themselves.
+fig.text(.5,.982,"vertical = declustering depth   ·   horizontal = angular ordering",
+         ha="center",va="top",fontsize=9.6,color="#79828f")
+fig.tight_layout(rect=(0,.062,1,.958))
+fig.savefig(f"{OUT}/tree_gallery.png",dpi=200,facecolor="white")
 print("wrote",OUT+"/tree_gallery.png")
