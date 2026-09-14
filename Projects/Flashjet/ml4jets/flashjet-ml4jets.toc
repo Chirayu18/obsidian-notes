@@ -1,5 +1,5 @@
 \beamer@sectionintoc {1}{Jet clustering, and flashjet}{3}{0}{1}
 \beamer@sectionintoc {2}{Correctness}{15}{0}{2}
-\beamer@sectionintoc {3}{Speed --- the jet regime}{19}{0}{3}
+\beamer@sectionintoc {3}{Speed}{19}{0}{3}
 \beamer@sectionintoc {4}{Downstream: the clustering tree as tagger input}{24}{0}{4}
 \beamer@sectionintoc {5}{Backup}{32}{1}{5}
