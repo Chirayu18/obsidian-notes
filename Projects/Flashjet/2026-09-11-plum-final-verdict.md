@@ -1579,3 +1579,46 @@ the R^2 values sit on a single comparable scale. Earlier CAPair numbers (0.039
 trained-bias, 0.062 proxy MLP) used different inputs and are NOT comparable to
 ca's 0.33-0.44. If the R^2 ordering does not line up with the early effects, H5
 joins the other four.
+
+### H5 measured on ONE scale -- supported, but weakly (2026-09-14)
+
+All arms probed with an identical design (MLP 64-64, same jets, same inputs per
+channel type). Controls: tok[0] 1.000, noise -0.003, pairfts[0] 1.000 -- clean.
+
+| arm | mean R^2 | early effect |
+|---|---|---|
+| subjet | **0.195** | +0.22 pp |
+| ca | **0.373** | **-1.30 pp** |
+| capair | **0.137** | ? (queued) |
+
+Per channel:
+
+```
+ca:      lnkt 0.444  has_bp 0.428  lndR 0.337  lnz 0.329  depth 0.329
+subjet:  lnptfrac 0.351  lnm 0.166  nconst 0.067
+capair:  share_bp 0.335  depth_lca 0.067  lnkt_lca 0.011
+```
+
+**CORRECTION to the section above.** I quoted subjet at "R^2 = 0.05" from
+`base_model.py`'s note -- but that note is about subjet MASS specifically
+(0.166 here), not the arm mean. Measured on one scale the arms are 0.195 vs
+0.373, a far narrower gap than the 0.05-vs-0.4 I described. The ordering holds;
+the separation is much weaker than claimed.
+
+**Status: H5 is CONSISTENT with the data, not established by it.** Two points
+cannot distinguish a U-shape from a line, and the high-R^2 end (PLuM) is not
+measurable this way -- its tokens are not per-particle columns, so there is no
+comparable probe. Treat as the best surviving hypothesis, not a result.
+
+**What it says about CAPair:** at mean 0.137 (depth alone 0.067) it is the
+LOWEST-risk arm of the three by this metric, below even subjet. Note the split
+within it -- the pre-existing `share_bp` (0.335) sits in ca's dangerous range
+while the added `depth_lca` (0.067) and `lnkt_lca` (0.011) are nearly
+unreachable. H5 therefore predicts CAPair should NOT repeat ca's early damage,
+which the queued run tests directly.
+
+**No revised probability.** That number has moved three times today and each
+move was undercut by the next measurement. The premise checks agree (depth is
+novel on three independent probes: 0.067 here, 0.039 trained-bias, 0.062 proxy;
+AUC 0.70), and the counter-evidence is ca's null, which after five falsified
+hypotheses remains unexplained.
