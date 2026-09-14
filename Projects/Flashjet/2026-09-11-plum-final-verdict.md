@@ -1082,3 +1082,49 @@ it is a *redundancy* account, not an *attention-share* one.
 - Attention share is not the same as *causal* importance. A token can be attended
   little and still matter. The decisive follow-up is **ablating the lund tokens at
   each checkpoint** and measuring the accuracy drop.
+
+### ABLATION (2026-09-14): the tokens ARE load-bearing — attention share was the wrong proxy
+
+Attention share says where attention *goes*, not whether the model *depends* on it.
+Masking the 48 Lund tokens out of attention entirely and re-running the same
+checkpoint on the same jets measures the dependence directly.
+Script: `analysis/ablate_lund_tokens.py`.
+
+**Smoke test, 512 jets, 40k checkpoint** (condor 9314117 running this at 8000):
+
+| | intact | ablated | drop |
+|---|---|---|---|
+| **overall** | 85.55 % | 80.47 % | **+5.08** |
+| **HToBB** | 88.10 % | 66.67 % | **+21.43** |
+| TTBarLep | 81.63 % | 73.47 % | +8.16 |
+| HToWW4Q | 76.09 % | 69.57 % | +6.52 |
+| HToWW2Q1L | 80.65 % | 74.19 % | +6.45 |
+| ZToQQ | 97.14 % | 91.43 % | +5.71 |
+| HToGG | 67.35 % | 63.27 % | +4.08 |
+| TTBar | 80.00 % | 76.67 % | +3.33 |
+| HToCC | 98.28 % | 96.55 % | +1.72 |
+| ZJetsToNuNu | 68.42 % | 68.42 % | 0.00 |
+| WToQQ | 100.00 % | 100.00 % | 0.00 |
+
+**This overturns the natural reading of the attention result.** The tokens are
+attended 2-5x LESS than chance and yet removing them costs 5 accuracy points at
+40k — and **21 points on HToBB, Sitian's headline class**. Low attention share is
+NOT low importance: attention is a weighted average, and a small weight on a large,
+distinctive value vector still moves the output.
+
+**So the correct statement is narrower than "the mechanism fails."** What the
+attention measurement rules out is the specific claim that the gain comes from
+*re-allocating attention mass* toward the Lund plane — that allocation never
+happens. It does NOT rule out the tokens mattering, and they clearly do.
+
+**And HToBB ranking first here is the first evidence FOR Sitian's per-class
+intuition** that has survived a test. His four named classes (HToBB, TTBar,
+HToWW4Q, HToCC) are not cleanly on top — HToCC is near the bottom at +1.72 — but
+HToBB leading by 3x is exactly what he predicted, and it is absent from the gain
+ranking where checkpoint noise dominated.
+
+Caveats: 512 jets, ~30-80 per class, no error bars — HToBB's +21.4 rests on 42
+jets and could move several points. The 8000-jet run settles it. The decisive
+number is the **drop at 40k vs at 1M**: the redundancy account predicts it shrinks
+as the encoder folds the information into the particle representations (which is
+what the rising self-attention shows).
