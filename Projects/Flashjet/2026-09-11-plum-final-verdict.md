@@ -1622,3 +1622,25 @@ move was undercut by the next measurement. The premise checks agree (depth is
 novel on three independent probes: 0.067 here, 0.039 trained-bias, 0.062 proxy;
 AUC 0.70), and the counter-evidence is ca's null, which after five falsified
 hypotheses remains unexplained.
+
+## How to check the CAPair run later (2026-09-15)
+
+Cluster **1118678**, submitted 2026-09-14 ~17:06, still IDLE the next morning --
+zero free H100/A100/H200 cards in the pool. Session-bound monitors cannot
+outlast a queue wait this long, so use the script instead:
+
+```bash
+ssh lxplus 'bash ~/flashjet_condor/capair_status.sh'
+```
+
+It prints the queue state and, once checkpoints exist, the EARLY per-checkpoint
+deltas vs baseline followed by the late-10 mean with the noise floor attached.
+
+**Read the EARLY checkpoints, not the final accuracy.** At sd=0.00102 a single
+run cannot resolve a sub-0.002 effect, so the final number will probably be
+uninterpretable either way. The falsifiable prediction is at 20k-40k: `ca`
+showed **-1.302 pp** at its first checkpoint, and H5 says CAPair (mean R^2
+0.137, the low-risk regime) should NOT. That answer arrives at ~4% of the run.
+
+Results land in
+`output/TrainingTask/jet_class_capair/JetClass_train_100_mod/b_hive_paper_capair_1/`.
