@@ -53,9 +53,12 @@ honestly (21 interleaved rounds, within-round ratios, FastJet timed *from-raw*).
 It branches from `0c4314c`, i.e. **before** our substructure work.
 **Test merge into `benchmarking` is clean**: 3 union conflicts (`api.py`, `CLAUDE.md`,
 `.gitignore`), **154 passed / 13 skipped**, and F1/F2/F3 all still match the torch
-backend exactly through the new CPU auto-routing. One unpinned contract found:
-`hist_p1`/`hist_p2` are **p1↔p2 swapped** in 28/480 entries vs torch (same pair, same
-child, identical `d`) — benign, but nothing enforces parent order. Merge lives on
+backend exactly through the new CPU auto-routing. The p1/p2 swap seen vs torch
+(28/480, same pair, same child, identical `d`) is **not a PR bug**: cpu(C++) matches
+`nn_reference` in **0** disagreements, and `reference` vs `nn_reference` (24/60) and
+`reference` vs `torch` (19/60) already disagree on `benchmarking` with no PR code.
+Parent *order* is an undefined contract — it's a mutual-NN argmin tie; `hist_child`
+and `hist_d` agree bitwise everywhere. Merge lives on
 `merge-cpu-backend-test` at `/tmp/fj-merge-test` (node-local `/tmp`, will be reaped).
 `benchmarking` untouched at `2e912ef`.
 Note: [[2026-09-14-cpu-backend-pr-merge-test]].

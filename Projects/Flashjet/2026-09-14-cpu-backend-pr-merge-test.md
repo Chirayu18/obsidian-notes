@@ -68,12 +68,45 @@ F1/F2/F3 read the merge history. Checked CPU vs torch backend on identical input
 - **Exact match:** `jet_idx`, `n_jets`, `hist_child`, `hist_d`, F1 `exclusive_jets`,
   F3 `lund_coordinates`, `splitting_scales`, and **all six** F2 `groomed_jets` fields
   (`groomed_p4`, `z`, `dR`, `mu_split`, `n_drop`, `tagged`).
-- **`hist_p1`/`hist_p2` differ in 28 of 480 entries — every single one is exactly a
-  `p1`↔`p2` swap**: same pair, same `hist_child`, bitwise-identical `hist_d`. The two
-  backends record a merge's parents in opposite order. Benign, no physics output
-  affected — but it is an **unpinned cross-backend contract**: `CLAUDE.md`'s
-  "Cross-backend contracts" section says these tensors are compared exactly, and
-  nothing currently enforces parent *order*. Worth a comment on the PR.
+- **`hist_p1`/`hist_p2` differ in 28 of 480 entries — every one exactly a `p1`↔`p2`
+  swap**: same pair, same `hist_child`, bitwise-identical `hist_d`.
+
+### That swap is NOT a CPU-backend bug (corrected 2026-09-14)
+
+First read said "unpinned contract, worth a PR comment". **Wrong — checked, and the
+CPU backend is not the odd one out.** Comparing all four implementations on one event:
+
+| | reference | nn_reference | cpu (C++) | torch |
+|---|---|---|---|---|
+| **reference** (brute force) | 0 | 24 | 24 | 19 |
+| **nn_reference** (NumPy) | 24 | **0** | **0** | 5 |
+| **cpu (C++)** | 24 | **0** | 0 | 5 |
+| **torch** | 19 | 5 | 5 | 0 |
+
+(`hist_p1` disagreements out of 60 steps.)
+
+- **cpu(C++) vs nn_reference: 0** — the C++ kernel reproduces its stated validation
+  target exactly, which is what `test_cpu_vs_reference.py` pins.
+- **All four agree bitwise on `hist_child` and `hist_d`** — the merge *sequence* is
+  universally agreed; only the labelling of which parent is "first" varies.
+- **The divergence predates the PR.** Run on `benchmarking` with no PR code loaded:
+  reference vs nn_reference differ in **24/60**, reference vs torch in **19/60**,
+  nn_reference vs torch in **5/60**. Three orderings already coexist on our branch.
+
+**Mechanism:** for a mutual-NN pair (a,b), `cand[a] == cand[b]` bitwise (both equal
+`min(w_a,w_b)·dR²/R²`). Whichever slot wins that tie becomes `p1` and survives; the
+other becomes `p2` and dies. The O(N²) geometric-NN family and the O(N³) brute force
+simply reach that tie from different directions. In event 0 there were exactly **28
+mutual-NN exact ties — matching the 28 swapped entries**.
+
+So `p1`/`p2` **order is not a defined contract in flashjet**, and never has been. The
+`CLAUDE.md` "Cross-backend contracts" section lists `hist_p1/p2` among tensors
+"compared exactly", which overstates what the tests actually enforce — they pin
+`hist_child`, `hist_d` and the resulting partition, all of which hold. **Nothing to
+fix in the PR.** If anything is worth doing it is a docs correction on our side:
+say that parent *order* within a merge is unspecified, and that consumers must treat
+`{p1,p2}` as an unordered pair. Our F1/F2/F3 already do — they were verified to match
+torch exactly through the CPU routing.
 
 ## Env trap hit (and repaired)
 
