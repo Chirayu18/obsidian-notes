@@ -936,3 +936,61 @@ The accuracy delta peaks at 100k (+0.065) and dies by 300k.
 **PLuM helps early, on everything, and the help is gone by 300k.** Different classes peak
 at different stages (Tbqq and Wqq at 40k; Hbb and Hgg at 100k), all converging to 1.0.
 No class-specific mechanism is needed or supported by the data.
+
+
+## Sitian's "Lund attention share" hypothesis — tested, NOT supported (2026-09-14)
+
+**The hypothesis** (Sitian, ML4Jets 2026): PLuM is not new information, it is an
+*inductive bias* — it re-directs ParT's attention toward the Lund plane. So the gain
+should scale with the **"loss of Lund attention share"**: classes where the baseline
+under-attends Lund structure should gain most. He named **Hbb, Tbqq, H4q, Hcc** as the
+largest-loss classes and read them as the fast-converging ones.
+
+This is worth taking seriously: it *predicts* the decay we measured (the baseline
+eventually learns the allocation itself), rather than being retrofitted to it.
+
+**Test.** Early gain vs C/A splittings per jet — the available proxy for "how much Lund
+structure is there to attend to". Both quantities were already measured (gains @90 %
+eff; splittings on 100k real JetClass jets). Plot:
+`analysis/make_gain_vs_splittings.py` (numbers inline, regenerates in ~1 s).
+
+| | Pearson $r$ | $1/\sigma^2$-weighted $r$ | Spearman |
+|---|---|---|---|
+| 40k | +0.19 | **−0.42** | +0.04 |
+| 100k | +0.43 (p~0.34) | **+0.87** | +0.43 |
+
+**The verdict is the instability, not either number.** The weighted correlation swings
+**−0.42 → +0.87 between two adjacent checkpoints**, and the per-class gain ordering
+**anti-correlates with itself across those checkpoints: Spearman = −0.32**.
+
+- 40k ranking: Tbqq, H4q, **Wqq**, Hcc, Zqq, **Hbb**, **Hgg**
+- 100k ranking: **Hbb**, Hcc, Tbqq, **Hgg**, H4q, Zqq, **Wqq**
+
+Hbb goes 6th → 1st; Wqq goes 3rd → last; Hgg goes last → 4th. A mechanism tied to a
+*fixed structural property of each class* cannot produce an ordering that reverses in
+60k iterations. The +0.87 at 100k is the kind of number that looks like support if you
+only measure at one checkpoint — 40k is what kills it.
+
+**On the four named classes**: they do average higher than the rest (+0.023 at 40k,
++0.017 at 100k), so the intuition is not baseless. But **Wqq — the fewest splittings
+(21.6) — gains 1.036 ±0.004 (9σ) at 40k**, and **Hgg — the most (42.9) — gains least**
+at 40k. The separation is carried by which checkpoint you look at, not by structure.
+
+**This supersedes nothing above** — it is the same conclusion as "CORRECTION 2: the
+mechanism stories are both dead", reached against a new and better-motivated
+hypothesis. Recorded because the hypothesis will come up again.
+
+### What would actually test it (not done)
+
+The proxy is the weak link: splittings/jet measures *available* Lund structure, not
+*attention share*, which is the real claim and is directly measurable on checkpoints
+we already have.
+
+1. attention mass on the 48 Lund tokens, per class, at 40k / 100k / 1M — his mechanism
+   needs it high early and decaying. If it is flat, the mechanism fails regardless.
+2. in the **baseline**, attention concentration on the pairs that are the hard
+   splittings — that is the "loss" quantity that should predict per-class gain.
+
+Both are a day on existing checkpoints. Caveat that applies to any such ranking:
+**one seed per arm**, and two PLuM seeds differ by 0.132 in val accuracy at 100k —
+comparable to the whole effect. A 7-class ordering is not seed-stable either.
