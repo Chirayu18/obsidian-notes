@@ -1331,3 +1331,78 @@ lacks."* A clean negative there makes the null materially stronger.
 Submit dir is `/eos/user/c/cgupta/flashjet/condor/` -- the EosSubmit schedd
 rejects any submit file with AFS exec/log/output paths, so `~/flashjet_condor`
 cannot be used for GPU jobs.
+
+## depth_lca SURVIVES two falsification tests (2026-09-14)
+
+Run before spending a GPU on CAPair, to test the premise the whole arm rests on:
+*depth is information `PairEmbed` cannot reconstruct from pair kinematics.*
+Decision rule fixed BEFORE seeing results (R^2 > 0.8 kill the job, 0.4-0.8
+limited headroom, < 0.4 genuinely new).
+
+### Test 1 -- linear probe on the TRAINED 1M baseline's attention bias
+
+Checkpoint verified (`acc_val=0.8623`, 0 missing / 0 unexpected keys; an earlier
+attempt unwrapped the wrong key and left `pair_embed` RANDOMLY INITIALISED --
+caught only by an assert). Probe: 8 bias channels -> CA feature, 1800 jets.
+
+| channel | R^2 |
+|---|---|
+| `share_bp` | **+0.322** |
+| `lnkt_lca` | +0.004 |
+| `depth_lca` | **+0.039** |
+
+`share_bp` scoring highest is the sanity check: it is the most kinematically
+determined of the three, so partial recoverability there is what a working probe
+should show.
+
+### Test 2 -- can an MLP predict depth from PairEmbed's own four inputs?
+
+Given (ln kT, ln z, ln delta, ln m^2) per pair -- exactly what `PairEmbed` sees:
+
+```
+linear             R^2 = +0.038
+MLP(4->64->64->1)  R^2 = +0.062
+```
+
+**The two tests corroborate independently: 0.039 (trained model) vs 0.062
+(proxy MLP).** Different method, different data, same answer.
+
+### Test 3 -- does depth discriminate classes at all?
+
+Per-jet mean of each channel, 1-D AUC class-vs-rest, 4800 balanced jets:
+
+| class | share_bp | lnkt_lca | **depth_lca** |
+|---|---|---|---|
+| QCD | 0.302 | 0.549 | **0.271** (0.729 inverted) |
+| Hgg | 0.290 | 0.560 | **0.701** |
+| H4q | 0.448 | 0.612 | **0.693** |
+| Tbqq | 0.462 | 0.476 | **0.690** |
+| Wqq | 0.598 | 0.474 | 0.381 |
+| Zqq | 0.580 | 0.459 | 0.396 |
+
+A single scalar reaches AUC 0.69-0.73 on Hgg / H4q / Tbqq / QCD, and the sign
+is physical: multi-prong decays separate LATE in the tree, QCD early.
+
+### What this does and does not establish
+
+**Does:** depth is (a) not in the trained model, (b) not computable from
+`PairEmbed`'s inputs, (c) class-discriminating on its own. This is the FIRST
+result in the study that supports running an arm. It also quantifies why the
+other arms failed -- `share_bp`, a kinematic quantity, is 32% recoverable from
+the trained bias; the three null arms supplied exactly that kind of feature.
+
+**Does NOT:** discriminating is not the same as ADDITIVE. ParT is at 86.2%
+using everything else; the real question is whether depth is *conditionally*
+novel given 2.1M trained parameters, which none of these tests can answer. A
+linear probe is also only a LOWER bound on what the model encodes.
+
+**Unexplained:** `lnkt_lca` at R^2=0.004 on the trained probe. It is an
+explicitly kinematic quantity and should have been MORE recoverable than
+`share_bp`, not less.
+
+**Estimate revised 15% -> ~40%.** The noise floor still binds: depth must clear
+~0.002 to be visible at all. Recommendation: let cluster 1118678 run. A null now
+means something far stronger than the previous three, because we can say we
+tested information the architecture demonstrably lacks.
+
+Scripts: `~/flashjet_condor/check_disc.py`, `check_probe.py` (lxplus AFS).
