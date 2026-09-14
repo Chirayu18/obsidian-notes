@@ -1406,3 +1406,76 @@ means something far stronger than the previous three, because we can say we
 tested information the architecture demonstrably lacks.
 
 Scripts: `~/flashjet_condor/check_disc.py`, `check_probe.py` (lxplus AFS).
+
+## Why the `ca` arm failed: NOT redundancy (2026-09-14)
+
+Prompted by the user pointing out that `ca` already shipped `part_ca_depth` --
+which it did, and which I had failed to check before recommending a depth-based
+arm. Chasing that down overturned the standing interpretation of this arm.
+
+### Four facts, all measured
+
+| question | answer | evidence |
+|---|---|---|
+| did the features reach the model? | **yes** | `input_bn` width **22** vs baseline **17** = exactly +5 |
+| are they informative? | **yes** | depth alone: AUC **0.810** (Hgg), 0.733 (H4q), 0.710 (Tbqq) |
+| can ParT compute them itself? | **NO** | R^2 **0.33-0.44**, controls 1.000 / -0.001 |
+| what did they do? | **HURT early** | **-1.302 pp @ 20k** -> -0.105 @ 1M, monotone |
+
+Probe detail (ParT's own 17 token features -> each CA column, MLP 17->64->64->1):
+
+```
+part_ca_lnkt    0.440      tok[0] control   1.000  OK
+part_ca_has_bp  0.417      tok[6] control   1.000  OK
+part_ca_lnz     0.351      noise  control  -0.001  OK
+part_ca_lndR    0.345
+part_ca_depth   0.330
+```
+
+A first version of this probe reported similar numbers with a BROKEN control
+(-0.008): it was asked to predict `px`, which the `[..., :-4]` split had already
+removed from its inputs. Numbers from that run are void. The rerun above uses
+in-block controls plus a noise control, and all three behave correctly.
+
+### What this rules out, and what it implies
+
+**The arity argument does NOT explain this arm.** ParT cannot compute these
+columns from its own per-particle inputs -- nothing reaches 0.7. The features
+were novel, informative, and correctly delivered, and the model still ended up
+marginally worse.
+
+**The early-damage curve identifies the mechanism.** Compare the three arms as
+pp vs baseline:
+
+| | ~20k | ~40k | ~100k | ~300k | 1M |
+|---|---|---|---|---|---|
+| **ca** | **-1.302** | -0.458 | -0.433 | -0.225 | -0.105 |
+| subjet | +0.224 | +0.065 | -0.068 | +0.010 | +0.010 |
+| plum | -0.029 | +0.027 | +0.096 | +0.033 | +0.113 |
+
+A redundant input is IGNORED and sits flat -- that is `subjet` at +0.01. An
+input costing **1.3 pp at 20k (13x the noise floor)** is one the model must
+spend capacity learning to **suppress**, converging back to neutral once it has.
+That is a PRESENTATION failure, not a content failure.
+
+Two candidate defects, both flagged as risks in the original plan file:
+1. **raw integer `depth`** (max 20, heavy tail) dropped into a block of
+   log-scaled O(1) features;
+2. **the all-zeros sentinel** -- `has_bp=0` sets ALL FIVE columns to zero, and
+   zero is a legitimate value for `lnz` (z->1) and for `depth`, so "missing"
+   is indistinguishable from "measured".
+
+(Quantification of both is running; this section records the part that is settled.)
+
+### Consequence for the talk
+
+"All three arms are explained by redundancy" is **too strong**, and I helped
+build that claim. It holds for PLuM -- whose tokens really are a kT-ordered
+subsample of what `pairwise_lv_fts_paper` computes per pair -- but for `ca` it
+is measurably wrong. That arm failed for an engineering reason.
+
+This also reopens CAPair, which I had recommended killing on the grounds that
+`ca` "already tested depth". It did not test it fairly: CAPair log1p-scales
+depth, puts it in the pairwise channel, and has no all-zeros collision. No
+revised probability until the presentation defects are quantified -- this number
+has moved twice today already, both times prematurely.
