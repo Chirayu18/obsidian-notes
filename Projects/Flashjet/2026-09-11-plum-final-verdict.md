@@ -1465,7 +1465,41 @@ Two candidate defects, both flagged as risks in the original plan file:
    zero is a legitimate value for `lnz` (z->1) and for `depth`, so "missing"
    is indistinguishable from "measured".
 
-(Quantification of both is running; this section records the part that is settled.)
+### BOTH presentation hypotheses are FALSIFIED (measured immediately after)
+
+| hypothesis | prediction | measured | verdict |
+|---|---|---|---|
+| H2' zeros collision | "missing" collides with real values | sentinel rows 2.85%, **collisions 0.000%** | **REJECTED** |
+| H3 conditioning | depth is badly scaled vs ParT's inputs | depth \|max\|/sd **9.55** vs ParT mean 7.89, ParT **worst 25.69** | **REJECTED** |
+
+The zero convention the plan file chose actually works: `lnz` is bounded above
+by 0 but never reaches it on real jets, so "missing" stays distinguishable.
+And depth is 2.7x BETTER conditioned than ParT's own worst column, before
+`input_bn` even normalises it.
+
+**So the presentation story is wrong too.** That is the THIRD mechanism proposed
+for this study and falsified by measurement (redundancy -> falsified by the Lund
+ablation; presentation -> falsified here).
+
+### What actually survives: an unexplained result
+
+- features arrived (input_bn 22 vs 17) OK
+- features are informative (depth AUC 0.810) OK
+- features are NOT redundant (R^2 <= 0.44, controls clean) OK
+- features are well conditioned (9.55 vs ParT's 25.69) OK
+- sentinel convention is clean (0.000% collisions) OK
+- and `ca` still cost **-1.302 pp @ 20k**, decaying to -0.105 @ 1M
+
+Novel, informative, correctly delivered, well-scaled information made the model
+measurably WORSE early and neutral late. **No mechanism currently explains this.**
+
+One observation, offered as a lead rather than an answer: the early cost may
+simply scale with the NUMBER of added columns -- `subjet` added 3 and cost
++0.22/-0.02 at 20k/40k, `ca` added 5 and cost -1.30. That would be a
+capacity/optimisation effect, not an information one, and it predicts the early
+penalty tracks column count rather than feature content. PLuM is not a clean
+comparison (it adds TOKENS, not columns). A cheap test would be a 1-column
+variant of `ca` at 40k.
 
 ### Consequence for the talk
 
