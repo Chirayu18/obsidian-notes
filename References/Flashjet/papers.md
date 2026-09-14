@@ -52,3 +52,9 @@ Broader review (all of the above, with context): Marzani-Soyez-Spannowsky,
 | Gouskos & Maier — *Particle-Lund Multimodality in Jet Taggers* (PLuM) | [2605.26821](https://arxiv.org/abs/2605.26821) | **The closest published work to our C/A-features study.** Adds Lund splittings to ParT as separate *tokens*. Reports gains on H→bb and top, **explicitly no gain from C/A-ordered splittings**. See [[2026-09-07-plum-paper-vs-our-result]]. PDF: [[2605.26821-PLuM-particle-lund-multimodality.pdf]] |
 | Lim & Nojiri — *Interpretable deep learning ... jet spectra* | [1807.03312](https://arxiv.org/abs/1807.03312) | S2 sufficiency: functional Taylor expansion ⇒ leading nontrivial term is the **2-body** energy-correlation spectrum. The theory backing our arity argument. |
 | Chakraborty, Lim, Nojiri | [1904.02092](https://arxiv.org/abs/1904.02092) | Follow-up; slide 22 of the AEI talk is the PY8/HW7 transfer precedent that motivated our Herwig test. |
+
+## Conference talks (added 2026-09-14)
+
+| Talk | Venue | Why it matters here |
+|---|---|---|
+| Hong (ATLAS) — *ML-based 4-prong tagger for boosted WW* | [ML4Jets 2026](https://indico.global/event/15240/contributions/165301/) | **LundNet in production at ATLAS**, i.e. the GNN-on-the-tree arm our PLuM null does *not* cover. Also a per-split Lund calibration that reclusters every **subjet** with C/A — a live consumer of exactly what flashjet emits. Trained on 1M jets/class, which supports our "gain decays with scale" reading. See [[2026-09-14-ml4jets-hong-4prong-lundnet]]. PDF: [[ML4Jets2026-Hong-ATLAS-4prong-LundNet-tagger.pdf]] |
