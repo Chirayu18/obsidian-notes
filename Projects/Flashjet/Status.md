@@ -43,6 +43,23 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-09-14 — PR #1 (cpu-backend) reviewed + test-merged clean (Claude, lxplus)
+`DickyChant/FlastJetDemo` **PR #1** is Sitian Qian's **C++ CPU backend** (12 commits,
+4–7 Sep, open, `cpu-backend`→`main`): `_cpu_kernel.cpp` running FastJet's strategy
+ladder (N2Plain <24, tiled min-heap above) + OpenMP over events, a NumPy fallback,
+CI that asserts the kernel actually built, and a pure-C++ benchmark claiming
+**1.13–1.37× over FastJet single-threaded at every N from 20 to 6000** — measured
+honestly (21 interleaved rounds, within-round ratios, FastJet timed *from-raw*).
+It branches from `0c4314c`, i.e. **before** our substructure work.
+**Test merge into `benchmarking` is clean**: 3 union conflicts (`api.py`, `CLAUDE.md`,
+`.gitignore`), **154 passed / 13 skipped**, and F1/F2/F3 all still match the torch
+backend exactly through the new CPU auto-routing. One unpinned contract found:
+`hist_p1`/`hist_p2` are **p1↔p2 swapped** in 28/480 entries vs torch (same pair, same
+child, identical `d`) — benign, but nothing enforces parent order. Merge lives on
+`merge-cpu-backend-test` at `/tmp/fj-merge-test` (node-local `/tmp`, will be reaped).
+`benchmarking` untouched at `2e912ef`.
+Note: [[2026-09-14-cpu-backend-pr-merge-test]].
+
 ### 2026-07-18 — Tagger-inputs study: the declustering sequence is the payload (Claude, lxplus)
 Closed the tagger-inputs TODO. Per-jet extraction of kT scales (√d12/√d23/√d34) + C/A
 grooming + Lund summaries on all three samples (HTCondor 9128460), then a weighted-logistic
