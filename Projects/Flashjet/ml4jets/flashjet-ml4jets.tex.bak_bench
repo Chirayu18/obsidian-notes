@@ -31,9 +31,6 @@
 \definecolor{fjgray}{HTML}{555555}
 \definecolor{fjorange}{HTML}{EA580C}
 \definecolor{fjblue}{HTML}{1D4ED8}
-% regime key colours -- MUST match make_combined_regimes.py (JETC/EVC)
-\definecolor{regjet}{HTML}{1F77B4}
-\definecolor{regevt}{HTML}{D95F02}
 \definecolor{fjgreen}{HTML}{16A34A}
 
 % Madrid, recoloured to the flashjet red
@@ -523,56 +520,42 @@ another implementation of the same algorithm.
 % ============================================================
 \section{Speed}
 
-\begin{frame}{The benchmark --- two regimes \hfill \realC}
+\begin{frame}{The benchmark --- jet regime \hfill \realC}
 \begin{columns}[T]
-\begin{column}{0.53\textwidth}
-\textbf{Two ways the clusterer gets used}
-\smallskip
-
-\begin{block}{\textcolor{regjet}{Jet regime} --- one \emph{jet} per unit}
-\small Recluster a single jet's constituents to read substructure off the tree.
-\textbf{Small $N$, huge batch} --- thousands of independent jets per launch.
-\smallnote{This is the ML use case: features inside a training loop.}
-\end{block}
-
-\begin{block}{\textcolor{regevt}{Event regime} --- one \emph{event} per unit}
-\small Cluster a whole event's calorimeter clusters to \emph{find} the jets.
-\textbf{Large $N$, modest batch} --- the classic reconstruction task.
-\end{block}
-\smallnote{Same kernel, same API --- only the shape of the input tensor differs.
-The regimes are timed separately because a jet and an event are different units.}
-\end{column}
-\begin{column}{0.47\textwidth}
+\begin{column}{0.5\textwidth}
 \textbf{Data} --- ATLAS Open Data, freely presentable
-\smallskip
 
-{\footnotesize
-\begin{tabular}{@{}llrr@{}}
+\smallskip
+\begin{tabular}{@{}lrr@{}}
 \toprule
-& sample & units & $\langle N\rangle$\\
+sample & jets & $\langle n_{\rm const}\rangle$\\
 \midrule
-\textcolor{regjet}{jet} & boosted top & 30\,000 & 59.2\\
-\textcolor{regjet}{jet} & QCD ($q/g$) & 30\,000 & 52.4\\
-\textcolor{regevt}{event} & $t\bar t$ reco & 3\,000 & 591.6\\
+boosted top & 30\,000 & 59.2\\
+QCD (light $q/g$) & 30\,000 & 52.4\\
 \bottomrule
-\end{tabular}}
+\end{tabular}
 \smallskip
 
-\smallnote{Grids: \textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity
-bins} in each regime --- 150 jet points, 75 event points.}
-\medskip
-
-\textbf{Method} \smallnote{(identical in both)}
-\begin{enumerate}\setlength\itemsep{0pt}
+\smallnote{Large-$R$ jets with calorimeter-cluster constituents. The grid is
+\textbf{3 algorithms $\times$ 5 radii $\times$ 5 multiplicity bins}, 20\,000 jets
+per bin.}
+\end{column}
+\begin{column}{0.5\textwidth}
+\textbf{Method}
+\begin{enumerate}
   \item extract constituents once, save;
-  \item cluster on GPU, time it;
-  \item cluster the \emph{same saved file} with FastJet;
+  \item cluster on GPU, time it, save the \emph{same} events;
+  \item cluster those saved events with FastJet;
   \item \textbf{check they agree} --- else the timing is meaningless.
 \end{enumerate}
 \smallskip
-
-\smallnote{Speedups are quoted against the \textbf{vectorised} FastJet
-interface --- the faster, fairer baseline.}
+\begin{block}{}
+\small Both clusterers read the \textbf{same saved file}. Speedups are quoted
+against the \textbf{vectorised} FastJet interface --- the faster, fairer baseline.
+\end{block}
+\smallnote{\textbf{One timed unit = one large-$R$ jet} (24--123 constituents),
+batched. The same method is applied to whole events ($\sim$590 clusters) on the
+next slide.}
 \end{column}
 \end{columns}
 \end{frame}
