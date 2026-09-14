@@ -111,12 +111,17 @@ for it in ITERS:
     acc = {c: dict(n=0, cls_num=0.0, cls_unif=0.0, self_num=0.0, self_unif=0.0,
                    nvalid=0.0, nlund=0.0) for c in range(10)}
     seen = 0; t0 = time.time()
-    # Test shards are grouped by class, so reading them in order fills the
-    # budget with one class. Take a few batches from EVERY shard instead.
-    per_shard = max(1, NJETS // max(len(files), 1))
+    # Within a shard the jets are sorted by class in CONTIGUOUS BLOCKS, so
+    # taking the leading rows of each shard returns only whichever class sits
+    # first -- that silently dropped 3 of 10 classes (incl. HToBB) on the first
+    # run. Draw a RANDOM subset of each shard's rows instead.
+    per_shard = max(BS, NJETS // max(len(files), 1))
+    rng = np.random.default_rng(12345)
     for f in files:
         if seen >= NJETS: break
         feats, truth = shard(f)
+        idx = rng.permutation(len(truth))[:per_shard]
+        feats, truth = feats[idx], truth[idx]
         took = 0
         for b in range(0, len(truth), BS):
             if seen >= NJETS or took >= per_shard: break

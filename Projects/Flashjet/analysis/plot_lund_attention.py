@@ -35,22 +35,23 @@ for ax,key,ttl in [(axes[0],"cls_ratio","CLS attention  (the jet-level decision)
                 color=cmap(i%10), alpha=1.0 if named else .45,
                 label=c+("  *" if named else ""),zorder=3 if named else 2)
     ax.axhline(1.0,color=SUB,ls="--",lw=1.2,zorder=1)
-    ax.annotate("uniform (attended exactly as often\nas their token count warrants)",
-                (iters[0],1.0),textcoords="offset points",xytext=(6,7),
-                fontsize=9,color=SUB)
+    ax.annotate("uniform — attended exactly as often as their token count warrants",
+                (iters[-1],1.0),textcoords="offset points",xytext=(-4,6),
+                ha="right",fontsize=9,color=SUB)
     ax.set_xscale("log")
     ax.set_xlabel("training iteration",fontsize=11,color=SUB)
-    ax.set_title(ttl,fontsize=12.5,color=INK,weight="bold",pad=9)
+    ax.set_title(ttl,fontsize=12.5,color=INK,weight="bold",pad=14)
     ax.grid(True,color=GRID,lw=.8); ax.set_axisbelow(True)
     for s in ("top","right"): ax.spines[s].set_visible(False)
     for s in ("left","bottom"): ax.spines[s].set_color(GRID)
+for a in axes: a.set_ylim(0.15,1.05)
 axes[0].set_ylabel("attention on Lund tokens / uniform",fontsize=11,color=SUB)
-axes[1].legend(fontsize=8.6,ncol=2,frameon=False,loc="best")
+axes[1].legend(fontsize=8.6,ncol=2,frameon=False,loc="lower right")
 
-fig.suptitle("Does ParT actually attend to the Lund tokens, and does it stop?",
+fig.suptitle("ParT attends to Lund tokens far LESS than chance — and the jet-level decision walks away",
              fontsize=13.5,weight="bold",color=INK,y=.985)
-fig.text(.5,.925,"* = classes named as largest “Lund attention loss”;  "
-                 "a decaying curve supports the inductive-bias mechanism, a flat one does not",
+fig.text(.5,.925,"every curve is BELOW 1 at every stage: 48 Lund tokens are ~46 % of the sequence "
+                 "but never get their share of attention   ·   * = classes named as largest “Lund attention loss”",
          ha="center",fontsize=10.2,color=SUB)
 fig.tight_layout(rect=(0,0,1,.905))
 fig.savefig("lund_attention.png",dpi=200,facecolor="white")

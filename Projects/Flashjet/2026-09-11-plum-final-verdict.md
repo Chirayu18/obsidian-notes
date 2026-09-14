@@ -994,3 +994,91 @@ we already have.
 Both are a day on existing checkpoints. Caveat that applies to any such ranking:
 **one seed per arm**, and two PLuM seeds differ by 0.132 in val accuracy at 100k —
 comparable to the whole effect. A 7-class ordering is not seed-stable either.
+
+
+## Lund ATTENTION measured directly — the mechanism's premise fails (2026-09-14)
+
+The splittings-vs-gain test above used a *proxy*. This measures the thing Sitian's
+hypothesis is actually about: **how much of ParT's attention lands on the 48 Lund
+tokens**, per class, at 40k / 100k / 300k / 1M.
+
+Scripts: `analysis/measure_lund_attention.py` (condor 9314077, 5120 jets per
+checkpoint, ~4 min each on 8 CPU), `analysis/plot_lund_attention.py`.
+Raw numbers: `analysis/lund_attention_cpu.json`.
+
+**Method.** Each block's `nn.MultiheadAttention` is wrapped in a shim forcing
+`need_weights=True` — the checkpoint is the trained artefact and is not edited.
+Two quantities: **CLS attention** in the 2 class-attention blocks (the jet-level
+decision) and **encoder self-attention** averaged over particle queries.
+
+**The normalisation is the whole point.** The 48 Lund tokens are **~46 % of the
+sequence** (measured: 46.6 valid lund vs 59.0 valid particles). A model attending
+*at random* would put ~46 % of its mass on them. So the raw share is meaningless;
+everything below is **measured / uniform**, with padded particles and invalid lund
+slots excluded from both numerator and null, per jet.
+
+### Result 1 — the tokens are attended FAR LESS than chance, always
+
+CLS attention / uniform:
+
+| class | 40k | 100k | 300k | 1M |
+|---|---|---|---|---|
+| TTBarLep | 0.480 | 0.399 | 0.290 | 0.236 |
+| HToWW4Q* | 0.437 | 0.329 | 0.264 | 0.217 |
+| HToCC* | 0.408 | 0.371 | 0.288 | 0.230 |
+| HToGG | 0.418 | 0.377 | 0.277 | 0.223 |
+| ZJetsToNuNu | 0.440 | 0.413 | 0.305 | 0.262 |
+| ZToQQ | 0.336 | 0.309 | 0.236 | 0.193 |
+| WToQQ | 0.372 | 0.292 | 0.232 | 0.196 |
+| **mean** | **0.413** | **0.356** | **0.270** | **0.222** |
+
+**Every entry is below 1.** At its peak the jet-level decision gives Lund tokens
+under **half** the attention their token count alone would warrant. They are 46 %
+of the input and never win more than ~22 % of CLS attention (raw: 15-22 % at 40k,
+9-12 % at 1M).
+
+### Result 2 — CLS attention decays monotonically, −46 %
+
+Mean 0.413 → 0.222, **monotone in all 7 classes**, no exceptions. This is the decay
+Sitian predicted, and it is real.
+
+### Result 3 — but encoder self-attention RISES over the same window
+
+Self-attention / uniform, mean: **0.26 → 0.28 → 0.31 → 0.37**, also monotone, also
+every class. The two panels move in **opposite directions**.
+
+### What this means for the hypothesis
+
+**The prediction is confirmed and the mechanism is still not supported.** Sitian
+predicted decaying Lund attention; CLS attention decays 46 %. But the mechanism
+requires the tokens to be *attended more than the model would otherwise* — an
+inductive bias that redirects attention *toward* the Lund plane. They are attended
+**2-5x LESS than chance at every checkpoint**, including the earliest one where the
+gain is largest. You cannot explain a gain by a redirection that never happens.
+
+The rising self-attention is the more likely story: the encoder is **integrating**
+the lund information into the particle representations over training, after which
+CLS reads it from the particles instead of from the tokens. That is consistent with
+"the tokens supply structure the model can otherwise learn for itself" (above) — but
+it is a *redundancy* account, not an *attention-share* one.
+
+### Caveats
+
+- **5120 jets/checkpoint**, no error bars. The trends are large (46 % decay, monotone
+  in 7/7 classes) and will not be overturned by statistics, but per-class *ordering*
+  here is not resolvable — the same limitation as the gain ranking.
+- **Three classes (HToBB, TTBar, HToWW2Q1L) are missing — a SAMPLING BUG, not
+  statistics.** Within each shard the jets are sorted by class in contiguous blocks
+  (verified: rows 0-1000 of `file_0.lz4` are all class 3). The sampler took the
+  leading rows of every shard, so it only ever saw whichever class sits first.
+  **HToBB is Sitian's headline class**, so the per-class read above is incomplete
+  and the 7 classes shown are not a random sample of the 10.
+  Fixed in `measure_lund_attention.py` (random permutation within each shard);
+  rerun is condor 9314110 (8k jets), GPU 20k run 9314058 still queued.
+  **The three headline results are unaffected** — every one of the 7 measured
+  classes is below uniform at every checkpoint, CLS decays monotonically in 7/7,
+  self-attention rises in 7/7. A missing class could change the per-class ordering,
+  not a 2-5x effect that holds without exception in everything measured.
+- Attention share is not the same as *causal* importance. A token can be attended
+  little and still matter. The decisive follow-up is **ablating the lund tokens at
+  each checkpoint** and measuring the accuracy drop.
