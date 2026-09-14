@@ -437,3 +437,35 @@ H100 jet-regime speedup over the full grid: **53.8-143.3×, median 90.9×**
 
 Whether to move the deck's speed section from V100S to H100 — see the previous
 section. **Default is to leave it as-is**; the deck is consistent and correct now.
+
+## 2026-09-14 — three deck figures had NO generator script
+
+A full recursive grep of `/eos/home-c/cgupta/flashjet/` found **no file**
+referencing `atlas_abs_timing`, `atlas_speedup_algs` or `atlas_R_independence`.
+`bench_atlas/make_atlas_plots.py` only writes `atlas_radius_scan_*` and
+`atlas_multiplicity_*` — two of the seven speed figures in the deck.
+
+So three main-slide figures were produced ad hoc and **the code was thrown away**.
+They could not have been regenerated, re-styled, or checked against new data.
+
+Fixed: **`bench_atlas/make_h100_speed.py`** (mirrored in
+`Projects/Flashjet/scripts/bench_event/`) now regenerates all of them plus the
+combined regime plot, parameterised by results dir:
+
+```bash
+ATRES=<jet results> EVRES=<event results> OUT=<dir> python make_h100_speed.py
+```
+
+It also prints the exact numbers the captions quote (µs/jet ranges, speedup
+min/median/max, R spread), so slide text and figures cannot drift apart.
+
+### How the false "advantage grows" caption survived
+
+The retired figure plotted **speedup vs $R$** at fixed multiplicity bins. Speedup
+vs *multiplicity* was never plotted, so the peak at $N\approx45$ was invisible
+and the caption claimed a monotonic trend nobody could see was false. Two lessons:
+
+1. **Plot the axis the caption claims.** A caption asserting "grows with X" needs
+   a figure with X on an axis.
+2. **Keep the generator.** An ad-hoc figure cannot be re-examined when the claim
+   is questioned.
