@@ -1226,3 +1226,108 @@ safe: the features are redundant in content (PairEmbed computes the same three
 functions per pair), the tokens are attended far below chance and decreasingly so,
 the gain decays to null by 300k, and the tokens cannot be zeroed without damage.
 Why a model that gains nothing from them also cannot lose them is **unexplained**.
+
+## The noise floor is LARGER than the between-arm spread (2026-09-14)
+
+Measured while preparing the CAPair run. This is the sharpest quantitative
+statement in the study, and it reframes every arm comparison.
+
+Validation accuracy over the **last 10 saved checkpoints** of each 1M run
+(saves are 20k iterations apart, so these are late-training points at
+convergence):
+
+| arm | mean (last 10) | sd | min | max | vs baseline |
+|---|---|---|---|---|---|
+| baseline | 0.86148 | 0.00100 | 0.85952 | 0.86230 | — |
+| ca (per-particle) | 0.86100 | 0.00108 | 0.85847 | 0.86194 | **-0.00048** |
+| subjet | 0.86147 | 0.00110 | 0.85910 | 0.86233 | **-0.00001** |
+| plum | 0.86196 | 0.00090 | 0.85987 | 0.86266 | **+0.00048** |
+
+**Typical within-run late sd = 0.00102. Total between-arm spread = 0.00080.**
+
+The noise a single run shows *against itself* between adjacent late checkpoints
+is larger than the entire difference between the four arms. Every arm-to-arm
+difference is well under 1 sigma.
+
+### Two corrections this forces
+
+1. **Stop quoting `best_acc`.** Comparing maxima over 50 noisy samples is biased
+   upward and rewards whichever run happened to fluctuate highest -- that, not
+   any property of the features, is why PLuM looked "best" at 0.8627 vs baseline
+   0.8623. On late-training *means* the ordering is plum > baseline ~ subjet > ca,
+   all within noise. I had quoted the maxima earlier in this session.
+2. **A single run cannot resolve an effect of this size.** Consistent with the
+   accidental-second-seed section above (seed-to-seed |diff| mean 0.145 pp at
+   early iterations, 0.068 pp late) -- that was a BETWEEN-run estimate, this is a
+   WITHIN-run one, and they agree that the design is underpowered for ~0.05 pp
+   effects.
+
+### Why this STRENGTHENS the null
+
+"Three encodings gave no gain" was an eyeballed claim. It is now quantitative:
+**all differences lie below a measured noise floor.** That is a claim a referee
+cannot wave away, and it needs no seed replicates -- the within-run variance is
+a legitimate noise estimate from data already on disk.
+
+It also sets the bar for CAPair: to be visible at all, depth would have to clear
+roughly **0.002** (2 sigma). A returned value of 0.8630 would NOT be
+distinguishable from noise, and should not be reported as a gain.
+
+## CAPair arm: depth channel added, submitted as cluster 1118678 (2026-09-14)
+
+The pairwise-bias arm was **already built on 2026-09-04** (commit e0ad1cf,
+`utils/models/particletransformer_ca_pair.py`) and never trained past a smoke
+test -- baseline and PLuM both went to 1M, this one has only `smoke_capair_v1`.
+Its two channels are `share_bp` (same branch point) and `lnkt_lca`.
+
+**Added a third channel, `pair_ca_depth_lca`** (commit 507e7c9). Rationale: the
+existing two describe the branch point's KINEMATICS, which pair momenta partly
+determine, whereas depth counts TREE STEPS -- a property of the whole event's
+clustering that `PairEmbed` provably cannot reconstruct from a pair's
+four-vectors. This is the one respect in which CAPair differs in KIND from the
+three null arms, all of which supplied kinematic functions ParT already
+computes pairwise.
+
+Validated on 1024 real JetClass jets, all 10 classes:
+
+| channel | density | unique | note |
+|---|---|---|---|
+| `share_bp` | 10.7% | 2 | matches the 9.6% the Rule C comment records |
+| `lnkt_lca` | 59.4% | 5305 | |
+| `depth_lca` | 59.4% | 16 | range [0, 2.83] in log1p |
+
+`depth` vs `share_bp` \|r\|=0.28, vs `lnkt_lca` \|r\|=0.21 -- **not redundant**.
+Model builds at `pairwise_lv_dim` 4+3=7 (BatchNorm1d(7), 2.144 M params);
+fwd/bwd on a real batch gives loss 2.333 ~ ln(10), gradnorm 6.49.
+
+### Two traps hit on the way (both would have wasted days)
+
+1. **Hand-slicing the shard was wrong.** Each row is
+   `[15 global | 128 x 23 cpf | 10 labels | 2 trailing]` = 2959 feature columns.
+   Slicing from column 0 shears every particle by 15 floats: it reported 18.4
+   "valid" constituents (vs the true 38.0) and 0.2% feature density, which looked
+   exactly like a degenerate feature and produced a spurious `depth`-vs-`share_bp`
+   \|r\|=0.965 "redundant" verdict. **Drive `model.get_inpt(raw)` instead of
+   rebuilding the layout by hand.**
+2. **`torch.compile` would have killed the job** (commit bbc2606). `ca_pair_context`
+   calls `flashjet.cluster`, whose triton-large backend does
+   `mask.contiguous().view(torch.uint8)` -- inductor cannot lower it
+   (`torch.bool is not supported by torch.iinfo`), surfacing as
+   `BackendCompilerFailed`. This is the SAME failure a22ae1c fixed for PLuM
+   (job 9281282, rc=40) in a different file; CAPair predates that fix and never
+   got the guard. **All four earlier checks passed EAGER and none could have
+   caught it.** Fixed with `torch._dynamo.disable`; compiled fwd+bwd now
+   completes. NB verified on CPU, not the triton-large GPU backend.
+
+### Expectation
+
+**~15% chance of a gain that survives**, unchanged by any of the above work --
+fixing the crash only buys the right to get a number. Three encodings of the same
+information already came out null, and the noise-floor section above shows depth
+must clear ~0.002 to be visible at all. The run's value is closing the obvious
+referee objection: *"you never tested information the architecture provably
+lacks."* A clean negative there makes the null materially stronger.
+
+Submit dir is `/eos/user/c/cgupta/flashjet/condor/` -- the EosSubmit schedd
+rejects any submit file with AFS exec/log/output paths, so `~/flashjet_condor`
+cannot be used for GPU jobs.
