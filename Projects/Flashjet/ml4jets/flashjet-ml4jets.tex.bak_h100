@@ -4,10 +4,7 @@
 % DATA POLICY: ATLAS Open Data + toy/analytic closures ONLY. No CMS data.
 %   (The opening slide CITES CMS's public HLT GPU deployment as context. That is
 %    a published fact, not CMS data - no CMS event or plot is used anywhere.)
-% HARDWARE: all speed numbers are NVIDIA H100 NVL (jet AND event regimes), moved
-%   from V100-class on 2026-09-14 so both regimes share one device. V100S results
-%   are preserved at bench_atlas/results_v100 if the older numbers are ever wanted.
-% DISCLOSURE POLICY: the MAIN slides name the card and
+% DISCLOSURE POLICY: the MAIN slides state hardware only as "V100-class" and
 %   carry no profiler internals. The BACKUP section (added back on request,
 %   2026-09-04) does carry the full nsys/ncu detail - occupancy, registers,
 %   SM counts and the ~1.7-1.8x headroom estimate - and its figures are
@@ -563,22 +560,22 @@ batched. Event-regime timing is not in this talk.}
 \begin{center}
 \includegraphics[width=0.90\linewidth]{fig/atlas_abs_timing.png}
 \end{center}
-\smallnote{\textbf{Log scale.} flashjet stays nearly flat while both FastJet
-interfaces climb: \textbf{0.17--1.1\,$\mu$s/jet} vs \textbf{10--102\,$\mu$s}
-(vectorised) and \textbf{59--323\,$\mu$s} (one at a time), on an NVIDIA
-\textbf{H100 NVL}. \textbf{Per jet, batched} --- amortised cost, not latency.}
+\smallnote{\textbf{Log scale} --- each gridline is $10\times$. flashjet stays
+nearly flat while both FastJet interfaces climb steeply with multiplicity:
+\textbf{0.35--2.7\,$\mu$s per jet} against \textbf{17--155\,$\mu$s} for vectorised
+FastJet, and \textbf{110--620\,$\mu$s} per jet one at a time. Benchmarked on an
+NVIDIA \textbf{V100-class} GPU. \textbf{Per jet, batched} --- the GPU clusters the
+whole batch at once, so this is amortised cost, not single-jet latency.}
 \end{frame}
 
-\begin{frame}{How the speedup varies --- jet regime \hfill \realC}
+\begin{frame}{The advantage grows with jet complexity --- jet regime \hfill \realC}
 \begin{center}
-\includegraphics[width=\linewidth,trim=0 8 0 8,clip]{fig/atlas_speedup_algs.png}
+\includegraphics[width=0.90\linewidth]{fig/atlas_speedup_algs.png}
 \end{center}
-\smallnote{All three algorithms, both samples, $R=1.0$. \textbf{54--143$\times$}
-over vectorised FastJet across the 150-point grid (median \textbf{89$\times$}),
-every point at \textbf{100\,\%} $n_{\rm jets}$ agreement. The speedup \textbf{peaks
-near $N\approx45$}: below it the GPU is under-filled, above it the $O(N^2)$ work
-per jet grows faster than FastJet's. The peak sits squarely in the
-\textbf{boosted-object range}.}
+\smallnote{All three algorithms, both samples, $R=1.0$. \textbf{39--99$\times$}
+over vectorised FastJet across the grid (median \textbf{64$\times$}), and every
+point has \textbf{100\,\%} $n_{\rm jets}$ agreement. Busier jets $\rightarrow$
+bigger win --- the regime that matters for boosted-object physics.}
 \end{frame}
 
 \begin{frame}[fragile]{Using it}
@@ -783,9 +780,9 @@ Wqq --- the \emph{fewest} splittings --- gains at $\sim$9$\sigma$ early:
   \item \textbf{Reproduces the experiment's own reconstructed jets} exactly, at
   $\sim$600 clusters per event.
   \medskip
-  \item \textbf{54--143$\times$ faster} than vectorised FastJet \textbf{in the jet
-  regime} (one large-$R$ jet per timed unit, batched), peaking in the
-  boosted-object range. Cost is independent of $R$ and of algorithm.
+  \item \textbf{39--99$\times$ faster} than vectorised FastJet \textbf{in the jet
+  regime} (one large-$R$ jet per timed unit, batched), and the advantage
+  \emph{grows} with jet complexity. Cost is independent of $R$ and of algorithm.
   \medskip
   \item Still a \textcolor{fjorange}{\textbf{prototype}}, with meaningful headroom
   left.
@@ -835,8 +832,9 @@ $\langle N\rangle$ & $\mu$s/event & speedup\\
 
 \smallnote{\textbf{22--65$\times$} over vectorised FastJet. Jet-count agreement:
 \textbf{60/75 grid points exactly 100\,\%}, worst \textbf{99.785\,\%} (busiest
-bin); leading-jet $p_T$ within $10^{-4}$ at \textbf{all 75}. \textbf{H100 NVL} ---
-the same card as the jet-regime plots, so the two are directly comparable.}
+bin); leading-jet $p_T$ within $10^{-4}$ at \textbf{all 75}. Benchmarked on
+\textbf{H100 NVL} --- \emph{not} the V100-class card used for the jet-regime
+plots.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -858,9 +856,10 @@ throughput advantage for the jet regime, on the \emph{same} card.
 \medskip
 
 \smallnote{Both curves on \textbf{H100 NVL}, so this is a regime comparison, not
-a hardware one. The same jet-regime sweep on a V100-class card is
-\textbf{2.2--2.5$\times$} slower at every multiplicity --- comparable in size to
-the regime effect itself, which is why the two must never be mixed on one axis.}
+a hardware one. For reference the same jet-regime sweep on the V100-class card
+used elsewhere in this talk is \textbf{2.2--2.5$\times$} slower at every
+multiplicity --- comparable to the regime effect itself, which is why the two
+must not be mixed on one axis.}
 \end{column}
 \end{columns}
 \end{frame}
@@ -938,9 +937,9 @@ qcd & \akt & 120.2 & 2.673 & 154.9 & $58\times$\\
 \end{center}
 \medskip
 \begin{block}{}
-\small \textbf{54--143$\times$} over vectorised FastJet (median $89\times$), with
-100\,\% jet-count agreement at all 150 points. \textbf{One timed unit = one jet},
-batched. Benchmarked on an \textbf{NVIDIA H100 NVL}.
+\small \textbf{39--99$\times$} over vectorised FastJet (median $64\times$), with
+100\,\% jet-count agreement everywhere. \textbf{One timed unit = one jet},
+batched. Benchmarked on an \textbf{NVIDIA V100-class} GPU.
 \end{block}
 \smallskip
 \smallnote{$R=1.0$ rows shown. Against the per-jet FastJet interface the gap is
