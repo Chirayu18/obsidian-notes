@@ -1513,3 +1513,69 @@ This also reopens CAPair, which I had recommended killing on the grounds that
 depth, puts it in the pairwise channel, and has no all-zeros collision. No
 revised probability until the presentation defects are quantified -- this number
 has moved twice today already, both times prematurely.
+
+## Column count FALSIFIED; H5 (predictability U-shape) replaces it (2026-09-14)
+
+### Column count: dead, from existing runs, no GPU needed
+
+| arm | +cols | mean early delta | **pp per column** |
+|---|---|---|---|
+| subjet | 3 | +0.142 | **+0.047** |
+| ca | 5 | -0.568 | **-0.114** |
+
+A per-column capacity cost would give roughly EQUAL pp/col. The two arms have
+**opposite signs**: 3 added columns helped early, 5 hurt. Width alone cannot
+produce that. (Fourth hypothesis falsified in this study; this one was free.)
+
+### H5: the damage is a U-shape in PREDICTABILITY
+
+Putting the measured R^2 next to `base_model.py`'s own note on subjet:
+
+| arm | predictability R^2 | early effect |
+|---|---|---|
+| **subjet** | **0.05** -- fully novel | **+0.22** |
+| **ca** | **0.33-0.44** -- partially derivable | **-1.30** |
+| **plum** | high -- kT subsample of `PairEmbed` | -0.03 (flat) |
+
+Monotonic with the MIDDLE as the dangerous regime: fully novel helps slightly,
+fully redundant is ignored, and features the model can ALMOST derive itself do
+the damage -- two partially-correlated views of overlapping information, and
+early capacity spent learning which to trust.
+
+Unlike the four previous hypotheses, H5 explains ALL THREE arms at once rather
+than being fitted to one.
+
+### Convergence with Sitian's hypothesis -- and where it breaks
+
+Sitian's framing (PLuM re-directs ParT attention to the Lund plane; the model
+receives two interpretations) is **the same mechanism class**: interference, not
+insufficiency. The attention measurement supports it -- CLS attention on Lund
+tokens decays 47.8% while encoder self-attention rises 43.9%, which is what
+"learning which signal to trust" looks like.
+
+**Where they differ:**
+- Sitian's version predicted gain tracks *loss of Lund attention share*, ranked
+  by class (HToBB, TTBar, H4q, HToCC). That ranking was tested and FAILED
+  (Spearman -0.32). See the Sitian section above.
+- H5 predicts the damage peaks at INTERMEDIATE predictability and appears EARLY
+  then decays -- which is exactly the -1.302 -> -0.105 curve. Sitian's version
+  makes no time-dependence prediction; H5 does, and that is where the evidence
+  is strongest.
+
+**Reading: right about the mechanism class, wrong about the observable.** The
+interference story survives; the attention-share ranking does not. H5 is the
+sharper version, with the R^2 ordering as the observable.
+
+**Important caution against over-merging.** Sitian's hypothesis was about PLuM
+-- and PLuM is the arm with essentially NO early damage (-0.03). The arm that
+got hurt is `ca`, which that framing was not about. If plain interference were
+the whole story, PLuM should be hit HARDEST, since its tokens are the most
+redundant with `PairEmbed`. It was not. The combined picture therefore only
+works WITH the U-shape: "two interpretations conflict" alone predicts the wrong
+arm.
+
+Running now: one identical probe design across all arms (ca, subjet, capair) so
+the R^2 values sit on a single comparable scale. Earlier CAPair numbers (0.039
+trained-bias, 0.062 proxy MLP) used different inputs and are NOT comparable to
+ca's 0.33-0.44. If the R^2 ordering does not line up with the early effects, H5
+joins the other four.
