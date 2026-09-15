@@ -1625,6 +1625,9 @@ hypotheses remains unexplained.
 
 ## How to check the CAPair run later (2026-09-15)
 
+**Resubmitted 2026-09-15 as cluster 1119125** (see below); the text under this
+heading describes the original 1118678.
+
 Cluster **1118678**, submitted 2026-09-14 ~17:06, still IDLE the next morning --
 zero free H100/A100/H200 cards in the pool. Session-bound monitors cannot
 outlast a queue wait this long, so use the script instead:
@@ -1644,3 +1647,44 @@ showed **-1.302 pp** at its first checkpoint, and H5 says CAPair (mean R^2
 
 Results land in
 `output/TrainingTask/jet_class_capair/JetClass_train_100_mod/b_hive_paper_capair_1/`.
+
+## request_memory was 3x too large -- resubmitted as 1119125 (2026-09-15)
+
+Prompted by the user asking whether the submit script really matched the other
+arms. It did not, and I had asserted it did in my own submit-file comment
+without diffing.
+
+Both arms that actually trained to 1M use **32 GB**:
+`/eos/user/c/cgupta/flashjet/condor/paper.sub` (baseline) and
+`/eos/user/c/cgupta/flashjet/condor_jobs/plum.sub` (PLuM). Mine asked for
+**100 GB**, copied from an AFS `paper_capair.sub` that had never successfully
+submitted.
+
+The pool floors the request per GPU, so the effect was larger than I first
+judged -- I had said it "isn't today's blocker" on the basis that
+`RequestMemory <= MY.Memory` passed on the few hosts I inspected:
+
+| | old (1118678) | new (1119125) |
+|---|---|---|
+| request_memory | 100 GB | **32 GB** |
+| floored to | 34 CPU / 102000 MB | **16 CPU / 48000 MB** |
+| "would match if drained" | 6 | **24** |
+
+**Eligible slots quadrupled.** Still 0 willing at resubmission -- the remaining
+wait is genuine contention plus `SCond_vo_filter`, which reserves several
+otherwise-free H100/H200 machines for another VO and which no submit-file
+change can affect.
+
+**Deliberately NOT changed** (user asked for the memory fix only):
+- the `InStagedDrain =!= true` clause, which I had added and neither successful
+  arm has;
+- the **uncompiled fallback**. PLuM's runner retries with
+  `--use-torch-compile False` if the compiled run exits nonzero
+  (`UNCOMPILED_FALLBACK=1`); this runner does not. My `torch.compile` guard
+  (commit bbc2606) was verified on **CPU only**, while PLuM's original failure
+  was on the triton-large GPU backend -- so if it recurs, this job dies where
+  PLuM recovered. **Live risk, accepted knowingly.**
+
+Check with `ssh lxplus 'bash ~/flashjet_condor/capair_status.sh'` (repointed at
+1119125). NB that script counts free *slots*, which overstates availability --
+a partitionable slot advertises leftover CPU/memory while every GPU is taken.
