@@ -1688,3 +1688,52 @@ change can affect.
 Check with `ssh lxplus 'bash ~/flashjet_condor/capair_status.sh'` (repointed at
 1119125). NB that script counts free *slots*, which overstates availability --
 a partitionable slot advertises leftover CPU/memory while every GPU is taken.
+
+## The 32 GB "fix" was WRONG -- CAPair needs 100 GB (2026-09-15)
+
+Cluster 1119125 (the 32 GB resubmission) **started, trained ~42 min on a real
+GPU, and was evicted**:
+
+```
+Job has gone over cgroup memory limit of 48000 megabytes.
+Last measured usage: 83658 megabytes.
+```
+
+**The 100 GB was not a copy-paste artefact.** `ca_pair_context` builds per-pair
+tensors over 128x128 pairs at batch 512, which is far heavier on HOST memory
+than baseline or PLuM. I argued for matching the other arms purely on
+consistency grounds and never asked whether this arm's memory profile differed.
+Peak 83.7 GB, so 100 GB (floored to 102000 MB) is right, with ~18 GB headroom.
+
+### Second defect found the same way: output lost on eviction
+
+Only the condor `.log` survived. `when_to_transfer_output = ON_EXIT` discards
+stdout/stderr when a job is EVICTED rather than exiting, so 42 minutes of
+iteration output -- every loss/acc line -- was thrown away, and no checkpoint
+existed (first save is at 20k). Fixed to **ON_EXIT_OR_EVICT**. (PLuM sidesteps
+this with `should_transfer_files = NO`, but its paths are relative; ours are
+absolute on EOS.)
+
+### What the condor log still showed
+
+| quantity | value |
+|---|---|
+| wall/CPU | ~42 min (31:42 usr + 11:36 sys) |
+| GPU memory | 21444 MB |
+| GPU utilisation | 0.73 |
+| **host memory peak** | **59517 MB measured / 83658 MB at kill** |
+| CPU used | **1.05** of 16 requested |
+
+1.05 CPUs at 73% GPU utilisation says the run is GPU-bound, not dataloader-bound
+-- `--n-threads 16` is not buying anything here.
+
+### Corrections to earlier claims in this note
+
+- **"Eligible slots 6 -> 24" was a false economy.** That widening came from the
+  32 GB request that cannot actually run. At the required 100 GB it is back to 6.
+  The queue wait is the price of this arm's memory profile.
+- **The fair-share starvation diagnosis was over-confident.** I read
+  `LastRejMatchReason = "no match found"` plus the group being 2.5x over quota as
+  starvation. The job was scheduled a few hours later, so contention was ordinary.
+
+Live cluster: **1123266** (100 GB + ON_EXIT_OR_EVICT).
