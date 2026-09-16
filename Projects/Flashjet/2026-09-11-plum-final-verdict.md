@@ -1737,3 +1737,38 @@ absolute on EOS.)
   starvation. The job was scheduled a few hours later, so contention was ordinary.
 
 Live cluster: **1123266** (100 GB + ON_EXIT_OR_EVICT).
+
+## CAPair IS RUNNING -- H5's prediction holds at 80k (2026-09-16)
+
+Cluster **1123266** (100 GB + ON_EXIT_OR_EVICT) started and has 4 checkpoints.
+
+| ckpt | iters | capair delta | **ca delta** |
+|---|---|---|---|
+| 1 | 20k | **-0.239** | **-1.302** |
+| 2 | 40k | -0.264 | -0.458 |
+| 3 | 60k | -0.090 | +0.055 |
+| 4 | 80k | **-0.041** | -0.782 |
+
+### The pre-registered prediction is CONFIRMED
+
+H5 said: capair (mean R^2 **0.137**, low-risk regime) should NOT repeat ca's
+(R^2 **0.373**) early damage. It did not -- **-0.239 vs -1.302, about 5x
+smaller**, and converging toward zero (-0.239 -> -0.041).
+
+This is the first pre-registered prediction in the study to survive contact with
+data, and it was made before the run existed (see the H5 section above, which
+records the R^2 values and the prediction).
+
+### Three caveats that keep this from being a gain
+
+1. **-0.239 pp is still ~2 sigma below baseline**, not zero. H5 predicted
+   "not -1.3", which is confirmed; it did NOT predict "positive".
+2. **One seed.** The accidental-second-seed section above measured seed-to-seed
+   spread at **0.529 pp at 20k** -- larger than this entire effect. At early
+   checkpoints a single run cannot separate this from initialisation noise.
+3. **Every checkpoint is negative.** If this holds to 1M it is a FOURTH null,
+   consistent with the rest of the study, and the noise-floor section says the
+   final number will sit below resolution either way.
+
+So: the mechanism prediction survives, the arm tracks toward null. The headline
+result for the talk is unchanged.
