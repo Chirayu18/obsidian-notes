@@ -176,6 +176,49 @@ Other methodology points:
 - **Sample provenance.** Sample produced under CMSSW_14_0_X, unpacked under 16_0_X.
   Fine for timing, but worth one line confirming the DAQ format didn't change between.
 
+## Decode path (Huffman / hitmap) vs the in-tree CPU reference
+
+The Alpaka decode is an **independent reimplementation** of the CPU decoder in
+`DataFormats/Phase2TrackerDigi/` (`Phase2ITQCore.cc`, `Phase2ITBitReader.h`), so
+diffing the two is a genuine cross-check — no RD53B spec reading needed. (Note the CPU
+round trip *alone* is not such a check: `encodeQCore` and `decodeHitmap` are methods of
+the same class sharing one Huffman tree definition, so they mirror each other by
+construction. It is the Alpaka-vs-CPU comparison that has value.)
+
+**Finding — the ported `BitReader::next()` lost its bounds check.** (SOURCE-READ,
+verified first-hand.)
+
+```cpp
+// reference, Phase2ITBitReader.h:14-20
+bool next() {
+  if (pos_ >= nBits_) return false;                    // GUARD
+  const bool b = (bytes_[pos_ / 8] >> (7 - pos_ % 8)) & 1;
+  ++pos_; return b; }
+
+// alpaka, Phase2ITUnpackerKernels.dev.cc:38-42
+ALPAKA_FN_ACC bool next() {
+  const bool b = (bytes[pos >> 3] >> (7 - (pos & 7))) & 1;   // reads FIRST, no guard
+  ++pos; return b; }
+```
+
+No live out-of-bounds path found: every current caller guards at the call site —
+`nextOr0()` checks `pos < len`, `bits(n)` has it in the loop condition, and `decPair`
+checks before each `next()`. But the guarantee now lives in the callers rather than the
+reader, unguarded `next()` is public on the struct, and the comment at `:32` claims it
+is *"clamped like binaryToInt"* — a safety property the code no longer has. In GPU code
+an OOB read is silent. Restoring the guard is two lines and one predictable branch.
+
+**Checked and correct, recorded so nobody re-derives it:**
+- `decPair` matches `decPairBits` at every branch including both end-of-stream returns;
+  the `first<<1|second` packing is consistent throughout.
+- `decChunk8` unrolls the reference's generic `decChunk` for n=8 and reproduces its
+  active-set evolution exactly. Only fragility: `act2[4]` is sized for exactly n=8, so a
+  larger chunk would overflow silently. The name signals the constraint; low priority.
+- **`bitOffset` is byte-aligned by construction** — `ChipFillKernel:275` computes
+  `(fedByteBase + payloadWord * 4) * 8`, a byte quantity times 8, so `>>3` in the
+  `BitReader` constructor is exact and cannot misalign the stream. Raised as a possible
+  decode-corrupting bug; **not one**.
+
 ## What is genuinely good
 
 Worth saying plainly — this is well-built code, and the review above is mostly about
@@ -206,12 +249,14 @@ claims, not craft.
 2. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
 3. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
-4. **Re-quote timings with `timing=2`**, or label the current number
+4. **Restore the bounds check in `BitReader::next()`** to match the in-tree reference,
+   or fix the comment that claims it is already there.
+5. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-5. **Repeat every timing point ≥5×** and show a spread.
-6. **Get an exclusive machine** before any number goes in a note, and record
+6. **Repeat every timing point ≥5×** and show a spread.
+7. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-7. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+8. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
 ## Open items (not yet measured)
