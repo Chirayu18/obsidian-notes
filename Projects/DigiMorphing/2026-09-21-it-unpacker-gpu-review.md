@@ -359,6 +359,11 @@ instrumented module-map walk). **These numbers retire the main code finding.**
 | nTrackerDetUnits (all) / nPixelDetUnits (IT) | 30400 / 4000 |
 | max `index()` over IT dets | **3999** |
 
+**The legacy and Alpaka chains agree digi-for-digi.** Same run: `legacy 1021985,
+soa 1021985, only-legacy 0, only-soa 0` — ~1.02M digis, zero asymmetry. That is a
+stronger validation result than slide 17 claims, and worth him saying so (with the
+caveat in the validation-gap note below: the comparison keys on four of seven columns).
+
 **The `moduleId` provenance bug is not a live bug.** Our reasoning about the mechanism
 was right — `GeomDet::index()` *is* a tracker-wide counter, 30400 det units here, far
 above 4000 and above `uint16_t`. But the IT modules occupy indices **0–3999, the first
@@ -490,18 +495,10 @@ claims, not craft.
 
 ## Recommended fixes, in priority order
 
-0. **Declare `WatchRuns` on the producers that override `beginRun`** — a real defect,
-   found by Ian Tomalin and verified here. `RawToPixelProducer.cc:28` and
-   `RawToBitStreamProducer.cc:31` are `edm::stream::EDProducer<>` with **no
-   `WatchRuns`**, yet both override `beginRun`. That function is never called, so it is
-   a silent no-op — and both bodies initialise `slinkMap_`, which `produce()` then
-   dereferences on the first event. `BitStreamToRawProducer.cc:28` gets it right
-   (`edm::one::EDProducer<edm::one::WatchRuns>`), which shows the idiom is known.
-   Ian reports it affects the OT unpackers too.
-1. **Rebase off `PortableHostCollection2` / `PortableCollection2`.** Upstream deleted
+0. **Rebase off `PortableHostCollection2` / `PortableCollection2`.** Upstream deleted
    the multi-collection template after he branched — a rebase cost, not a design error.
-   Also drop the stale `RawDataBuffer.cc` and take upstream's.
-1b. **Document that the test needs `CondCore/SiPhase2TrackerPlugins`** in the package
+   He reportedly already has the patches. Also drop the stale `RawDataBuffer.cc`.
+1. **Document that the test needs `CondCore/SiPhase2TrackerPlugins`** in the package
    set; without it the cabling-map lookups fail in a way that looks like a map gap.
 2. **(Hardening, not a bug — measurement retired this.)** Validate cabling/geometry-derived
    indices before using them as array indices — `moduleId` *and* `subtype`.
@@ -519,12 +516,26 @@ claims, not craft.
 4. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
 5. **Restore the bounds check in `BitReader::next()`** to match the in-tree reference,
    or fix the comment that claims it is already there.
-6. **Re-quote timings with `timing=2`**, or label the current number
+6. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
+   hygiene, **not** a crash. `RawToPixelProducer.cc:28` and `RawToBitStreamProducer.cc:31`
+   are `edm::stream::EDProducer<>` overriding `beginRun` without declaring `WatchRuns`,
+   while `BitStreamToRawProducer.cc:28` declares it correctly. **MEASURED: `beginRun` is
+   entered in all three**, `slinkMap_` is initialised, and the round trip agrees across
+   ~1.02M digis - there is no null dereference. In `CMSSW_16_0_0_pre1`,
+   `FWCore/Framework/interface/stream/implementors.h:305-314` defines `WatchRuns` as an
+   **empty marker class** with the `beginRun` signature commented out, so dispatch does
+   not go through it and the callback fires regardless. The declarations are still
+   inconsistent and rely on unguaranteed framework behaviour, so aligning them is right -
+   but it is maintainability, not a bug.
+   *(Ian Tomalin reported this as "will never be called"; reasonable from the declaration,
+   but it does not hold for `stream` modules in this release. Whether it holds for
+   `edm::one` modules is unchecked - worth asking which he tested.)*
+7. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-7. **Repeat every timing point ≥5×** and show a spread.
-8. **Get an exclusive machine** before any number goes in a note, and record
+8. **Repeat every timing point ≥5×** and show a spread.
+9. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-9. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+10. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
 ## Open items
