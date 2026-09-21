@@ -529,8 +529,11 @@ claims, not craft.
 
 ## Open items
 
-- **`timing=1` vs `timing=2` delta** — quantifies how much of the ~7x is the missing
-  D2H transfer. Now runnable; needs a go-ahead.
+- **`timing=1` vs `timing=2` delta** — *not pursued (decision, 2026-09-22).* It would
+  have quantified how much of the ~7x is the uncharged D2H transfer. The critique does
+  not depend on it: it rests on his own cfg comment that timing=1 drops the analyzer and
+  so the transfer never happens, plus the measured lxplus-gpu contention. Worth asking
+  him to re-quote rather than re-measuring ourselves.
 - **Verify the findings against `P2-Tracker-BES-SW/cmssw`** rather than the personal
   fork, before anything is raised with him.
 - **Nobody has reviewed the OT-side rewrite** in `EventFilter/Phase2TrackerRawToDigi`
