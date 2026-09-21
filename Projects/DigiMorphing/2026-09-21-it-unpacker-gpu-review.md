@@ -505,6 +505,56 @@ What remains true, and is the point worth making to him:
   trailer is inside it: the kernel's `overrun` bound at `:196` is ~4 words looser than
   CPU's, and a truncated FED is accepted with no check at all where CPU errors out.
 
+### The format carries less information than its readers assume
+
+**The unifying finding, and the one worth raising as a single point.** (SOURCE-READ,
+second reviewer; extended and verified here.) Agreement between the packer and the two
+decoders is maintained by **convention**, not by the data. Three instances:
+
+**1. The trailer** (above): not distinguishable from payload, so its position is
+*searched for* rather than known.
+
+**2. `dropTot` is out-of-band.** `grep dropTot BitStreamToRawProducer.cc` returns
+**zero** — it is absent from the chip header and from the FED format entirely. It is an
+independent edm parameter in **four** places:
+
+```
+PixelToBitStreamProducer.cc:90            desc.add<bool>("dropTot", false)   encoder
+BitStreamToPixelProducer.cc:69            desc.add<bool>("dropTot", false)   CPU decoder
+RawToPixelProducer.cc:66                  desc.add<bool>("dropTot", false)   CPU fused
+alpaka/Phase2ITBitStreamToPixelProducer.cc:88  desc.add<bool>("dropTot", false)  GPU
+```
+
+Both decoders admit it in a comment: *"Must match the dropTot setting that produced the
+bitstream."* A mismatch is **not** graceful degradation. If the encoder wrote ToT and
+the decoder skips it, every subsequent qcore in that chip is read at the wrong bit
+offset — `ccol`, `islast`, `qrow` and the hitmap all decode from misaligned bits. The
+output is garbage hits at garbage coordinates for the whole chip, silently. The reverse
+mismatch overruns the stream and the reader's clamping yields zeros.
+
+**3. `handleGapPixels` is out-of-band too — and its defaults do not even match.**
+
+```
+PixelToBitStreamProducer.cc:91            "handleGapPixels", "AGGREGATE"   encoder
+BitStreamToPixelProducer.cc:70            "handleGapPixels", "DROP"        CPU decoder
+RawToPixelProducer.cc:67                  "handleGapPixels", "DROP"        CPU fused
+alpaka/Phase2ITBitStreamToPixelProducer.cc:89  "handleGapPixels", "DROP"   GPU
+```
+
+It selects the pixel-coordinate geometry (`kRowsPerChipKeep` vs `kRowsPerChip`, etc. at
+`Phase2ITUnpackerKernels.dev.cc:144-147`), so a genuine mismatch yields **wrong row/col
+for every hit**. It is harmless today only by coincidence: `parseKeepMode`
+(`Phase2ITUnpacker.h:31-37`) maps both `DROP` and `AGGREGATE` to `keepMode = false`, so
+the differing defaults happen to agree. If `AGGREGATE` is ever given its own geometry —
+and the comment at `:29-30` says gap handling is "later to be properly treated in
+simulation" — the defaults become silently wrong.
+
+**The fix is cheap and the space exists.** The chip header has 7 unused bits:
+`27..24` error flags (`FIXME dummy given for now`) and `23..21` reserved
+(`BitStreamToRawProducer.cc:130-132`). One or two bits would make the stream
+self-describing, and the decoders could then *check* rather than assume. Failing that,
+at minimum align the `handleGapPixels` defaults.
+
 ### Malformed input is silent on the device
 
 | Case | CPU | Alpaka |
@@ -531,6 +581,17 @@ behaving correctly.
 
 (SOURCE-READ, second reviewer.)
 
+- **`encodeQCore` ordering matches `decodeChip` field for field** — `ccol` only on a
+  new column group (`isNewCol` on the encode side == `previousIsLast` on the decode
+  side: the same condition from two directions), `islast`/`isneighbour` push order,
+  conditional 8-bit `qrow`, hitmap, then per-hit 4-bit ADC. `dropTot` symmetry exact.
+  Alpaka consumes in the same order, differing only in form (interleaved vs batched).
+- **`Phase2ITBitBuffer` cannot inject stray set bits.** `push()` zero-initialises each
+  new byte and only ORs in set bits, so implicit padding is always zero; word padding
+  appends literal zero bytes. This closes the hoped-for route to making the trailer
+  finding demonstrable — padding is *not* a source of all-ones runs.
+  *(Latent nit, not live: `append(int, int)` shifts a signed int without masking, so a
+  negative value would write sign-extended ones. All current callers pass non-negative.)*
 - **`endBit`/`sizeWords` round trip is exact.** Packer computes
   `sizeWords = ceil(bits/32)`, `endBit = bits % 32` (`BitStreamToRawProducer.cc:126-127`);
   decoder reconstructs `(endBit==0) ? sizeWords*32 : (sizeWords-1)*32+endBit`
@@ -635,21 +696,28 @@ claims, not craft.
    trailer a distinct pattern or a length field, or search forward from a computed
    position. Also: CPU searches and Alpaka does not, so the two paths can disagree on
    the same fragment — and that agreement is the validation criterion.
-4. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
+4. **Put `dropTot` and `handleGapPixels` in the chip header.** Both are currently
+   out-of-band edm parameters replicated across four modules, with the decoders
+   commenting that they "must match" the encoder. A `dropTot` mismatch desynchronises
+   the bit reader and yields garbage hits at garbage coordinates for the whole chip,
+   silently. `handleGapPixels` defaults already disagree (encoder `AGGREGATE`, all three
+   decoders `DROP`) and are harmless only because both map to `keepMode=false`. The chip
+   header has 7 unused bits. At minimum, align the defaults.
+5. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
    chips). Device code cannot log, so corrupt data is currently indistinguishable from
    empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
    round-trip test something to assert on. Covers his own `FIXME` at `:171`.
-5. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
+6. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
-6. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
-7. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
+7. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
+8. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
    unchecked primitive: the guard was never removed — the struct was written this way in
    the first commit (`d0ec6f36e26`), with `nextOr0()` and `bits()` as checked siblings,
    and every call site uses a checked path. Sensible for a per-bit hot loop. But the
    comment at `:32` claims it is "clamped like binaryToInt", which is false for `next()`
    and misled two reviewers into reading it as a dropped safety check. Document the
    contract, or rename it `nextUnchecked()`.
-8. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
+9. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
    hygiene, **not** a crash. `RawToPixelProducer.cc:28` and `RawToBitStreamProducer.cc:31`
    are `edm::stream::EDProducer<>` overriding `beginRun` without declaring `WatchRuns`,
    while `BitStreamToRawProducer.cc:28` declares it correctly. **MEASURED: `beginRun` is
@@ -663,12 +731,12 @@ claims, not craft.
    *(Ian Tomalin reported this as "will never be called"; reasonable from the declaration,
    but it does not hold for `stream` modules in this release. Whether it holds for
    `edm::one` modules is unchecked - worth asking which he tested.)*
-9. **Re-quote timings with `timing=2`**, or label the current number
+10. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-10. **Repeat every timing point ≥5×** and show a spread.
-11. **Get an exclusive machine** before any number goes in a note, and record
+11. **Repeat every timing point ≥5×** and show a spread.
+12. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-12. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+13. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
 ## Open items
