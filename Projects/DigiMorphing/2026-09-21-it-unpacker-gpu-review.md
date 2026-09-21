@@ -9,15 +9,18 @@ source: laptop
 
 Review of Si Hyun Jeon's Tracker DPG talk `20260902_trackerdpg_unpackergpu.pdf`
 and the code at `github.com/sihyunjeon/cmssw` branch `feature/it_alpaka_tests`
-(HEAD `3354683874a`, base CMSSW_16_0_X).
+(HEAD `3354683874a`; slide 10 says base CMSSW_16_0_X, but it **only builds on
+CMSSW_16_1_0_pre1** — see the blocking section below).
 
 Read via a proper release area, not a raw clone:
 `lxplus:/afs/cern.ch/user/c/cgupta/CMSSW_16_0_9/src` (SCRAM_ARCH `el9_amd64_gcc13`),
 `git cms-init` + his fork as remote `sihyun`. Files read with
 `git show sihyun/feature/it_alpaka_tests:<path>`.
 
-**Every claim below is labelled MEASURED / SOURCE-READ / INFERRED.** The area was
-never compiled, so nothing here is a runtime result unless it says MEASURED.
+**Every claim below is labelled MEASURED / SOURCE-READ / INFERRED.** This area was
+never compiled; a separate build was attempted on EOS and **failed to compile** (see
+below), so no claim here is a runtime result from executing the unpacker. MEASURED
+means observed — a build error, or a machine's load — not a physics output.
 
 ## His two questions
 
@@ -176,6 +179,48 @@ Other methodology points:
 - **Sample provenance.** Sample produced under CMSSW_14_0_X, unpacked under 16_0_X.
   Fine for timing, but worth one line confirming the DAQ format didn't change between.
 
+## Blocking: the branch does not build on any released CMSSW
+
+**MEASURED** (build attempted by a second reviewer on `/eos/user/c/cgupta/phase2build`,
+commit `3354683874a`, `el9_amd64_gcc13`; cvmfs greps verified first-hand here).
+
+```
+DataFormats/Phase2ITBitStreamSoA/interface/Phase2ITModuleMapHost.h:8
+  error: 'PortableHostCollection2' does not name a type;
+         did you mean 'PortableHostCollection'?
+```
+
+`PortableHostCollection2` / `PortableCollection2` exist in **exactly one** release.
+Occurrences in `DataFormats/Portable/interface/PortableHostCollection.h`:
+
+| Release | `PortableHostCollection2` | `PortableHostMultiCollection` |
+|---|---|---|
+| 16_0_9 | 0 | 0 |
+| **16_1_0_pre1** | **1** | **30** |
+| 16_1_0_pre2 | 0 | 0 |
+| 16_1_3 | 0 | 0 |
+
+So in `16_1_0_pre1` it is a thin alias over `PortableHostMultiCollection` — and *that*
+template is itself gone from `pre2` onward. In `16_1_3` only the single-layout
+`PortableCollection` / `PortableObject` survive; there is no variadic multi-layout
+template anywhere in the package. The concept was **withdrawn**, not renamed.
+
+Consequences, in order of importance:
+
+1. **The port cannot be integrated into current CMSSW as written.** It depends on an
+   API that existed in one pre-release and was removed. Migrating `Phase2ITModuleMapHost`
+   / `Phase2ITModuleMapDevice` off the multi-collection template is a prerequisite for
+   upstreaming, independent of whether the physics is right. This is arguably a larger
+   blocker than the `moduleId` bug.
+2. **His slide 10 says "based on CMSSW_16_0_X", which does not hold for this commit** —
+   no 16_0_X release has the template.
+3. Only `16_1_0_pre1` can build it, so any timing number is taken on a release nobody
+   will ship. Fine for a measurement, but it must be labelled as such.
+
+A second, independent error — `RawDataBuffer.cc:34: 'memcpy' was not declared`, missing
+`#include <cstring>` — is **not his bug and self-resolves**: `16_1_0_pre1` already has
+that include at line 11. His branch carries a stale copy of a file upstream had fixed.
+
 ## Decode path (Huffman / hitmap) vs the in-tree CPU reference
 
 The Alpaka decode is an **independent reimplementation** of the CPU decoder in
@@ -240,6 +285,9 @@ claims, not craft.
 
 ## Recommended fixes, in priority order
 
+0. **Migrate off `PortableHostCollection2` / `PortableCollection2`.** Blocks upstreaming
+   entirely — the template exists only in `CMSSW_16_1_0_pre1` and was withdrawn after.
+   Also drop the stale `RawDataBuffer.cc` and take upstream's.
 1. **Fix `moduleId`.** Map detId → dense pixel index (the one `layerStart` partitions
    over `[0, nModulesPix)`), not `GeomDet::index()`. Add an explicit range check in the
    ESProducer — throw there, where it is cheap and catchable, rather than relying on a
