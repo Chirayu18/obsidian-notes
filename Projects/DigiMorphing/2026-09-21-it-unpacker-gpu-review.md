@@ -10,7 +10,15 @@ source: laptop
 Review of Si Hyun Jeon's Tracker DPG talk `20260902_trackerdpg_unpackergpu.pdf`
 and the code at `github.com/sihyunjeon/cmssw` branch `feature/it_alpaka_tests`
 (HEAD `3354683874a`; true base **CMSSW_16_0_0_pre1**, merge-base `dd7156a9fb`,
-2025-10-03. It builds there — but cannot process an event of its own test cfg).
+2025-10-03. It builds there and runs clean, given the right package set.)
+
+> **Caveat on the target — this may be the wrong repo.** `sihyunjeon/cmssw` is a
+> personal fork. The BES work lives on **`P2-Tracker-BES-SW/cmssw`**, whose default
+> branch is `unpackers_16_0_0`, and Ian Tomalin has already migrated to
+> `unpackers_20_1_0_pre3` (reporting it "currently doesn't compile, due to Alpaka
+> interface being out of date"). Everything below was derived against the fork;
+> anything version-specific — above all the `PortableHostCollection2` rebase item —
+> must be re-checked against the org repo before being raised with him.
 
 Read via a proper release area, not a raw clone:
 `lxplus:/afs/cern.ch/user/c/cgupta/CMSSW_16_0_9/src` (SCRAM_ARCH `el9_amd64_gcc13`),
@@ -332,45 +340,55 @@ A second, independent error — `RawDataBuffer.cc:34: 'memcpy' was not declared`
 `#include <cstring>` — is **not his bug and self-resolves**: `16_1_0_pre1` already has
 that include at line 11. His branch carries a stale copy of a file upstream had fixed.
 
-## It builds — and then cannot process a single event of its own test cfg
+## It builds and runs — `moduleId` hypothesis DISPROVEN by measurement
 
-**MEASURED 2026-09-22** (second reviewer; build at
-`/eos/user/c/cgupta/phase2build/CMSSW_16_0_0_pre1`, exact branch tree, **no patches**,
-asserts ON, CPU backend).
+**MEASURED 2026-09-22** (second reviewer; `CMSSW_16_0_0_pre1`, D112, CPU, asserts ON,
+instrumented module-map walk). **These numbers retire the main code finding.**
 
-The build succeeds: `rc=0`, zero errors, on `CMSSW_16_0_0_pre1` — his true merge-base.
-Then the stock cfg, with no instrumentation, dies on the **first event**:
+| Quantity | Value |
+|---|---|
+| `nModules` | 4000 |
+| stored `geomIdx` min / max | **0 / 3999** |
+| host `index()` min / max | 0 / 3999 |
+| count `index() >= 4000` | **0** |
+| count `index() >= 65536` (truncation) | **0** |
+| count `stored != cast(index())` | **0** |
+| count null detUnit / `index() < 0` | 0 / 0 |
+| `subtype` min / max, count 0, count >12 | **1 / 12**, 0, 0 |
+| nTrackerDetUnits (all) / nPixelDetUnits (IT) | 30400 / 4000 |
+| max `index()` over IT dets | **3999** |
 
-```
-Begin processing the 1st record. Run 1, Event 9201, LumiSection 93
-category: 'TrackerDetToDTCELinkCablingMap has been asked to return ModuleInfo
-           for a DetId not present in the map.'
-   [2] Calling method for module PixelToBitStreamProducer
-Exception Message:  DetId = 303042565            rc=65
-```
+**The `moduleId` provenance bug is not a live bug.** Our reasoning about the mechanism
+was right — `GeomDet::index()` *is* a tracker-wide counter, 30400 det units here, far
+above 4000 and above `uint16_t`. But the IT modules occupy indices **0–3999, the first
+contiguous block** of that enumeration, and the cabling map only ever asks for IT
+detIds. So the values stay in range by construction. `max index() over IT dets = 3999`
+is the number that settles it, and the truncation counter — the only check that can
+detect a lossy cast — is 0.
 
-It fails in **his own packing module**, upstream of anything GPU. An instrumented run
-hit the same root cause one guard earlier, in the ESProducer's `:57-58` throw, with
-detId `303042581`. Both decode to `det=1, subdet=1` — PixelBarrel, genuine IT — and are
-only 16 apart, so this looks like a contiguous block of IT modules missing from the
-shipped cabling map rather than one stray entry. A control run without instrumentation
-confirms this is **not** an artefact of the added analyzer.
+What survives is a **hardening note, not a bug**: the code is *correct for this
+geometry* but not *defended* against one where IT det units are not enumerated first,
+and the only enforcement is an `ALPAKA_ASSERT_ACC` that compiles out in release. Demote
+accordingly.
 
-**Likely cause (INFERRED, not confirmed): geometry mismatch.** The cfg loads
-`GeometryExtendedRun4D112Reco_cff` (`:61`) and the RelVal is `Run4D112`, while the
-committed `OTandITDTCCablingMap.db` appears to have been built for a different
-geometry — `ClusteringConstants.h:26` documents D110. Nobody has tried D110, because
-that changes the configuration under test.
+`subtype` is likewise clean: exactly 1..12, nothing at the unused index 0, nothing
+above 12. The `kQuadX` concern is also hardening, not a defect.
 
-Two consequences, both worth putting to him directly:
-
-1. **The `moduleId` measurement is unobtainable as configured.** The job dies at the
-   cabling map, far upstream of the clusterizer, so there is no distribution to measure.
-   The provenance bug may well be real — it is simply *not reachable* on this cfg.
-2. **Which input produced the DPG numbers?** If this cfg cannot read this RelVal, then
-   the slide-18 timings came from some other combination of input, cabling map or
-   geometry. That is the single most useful question to ask him, because it determines
-   whether the ~7× is reproducible at all.
+> **RETRACTED 2026-09-22 — "the committed test configuration does not run".** An earlier
+> version of this section reported that the branch could not process event 1, throwing
+> `"DetId not present in the map"` inside `PixelToBitStreamProducer`. **That was wrong
+> and is withdrawn.** The cause was a missing package in the reviewer's checkout —
+> `CondCore/SiPhase2TrackerPlugins`, whose single file does
+> `REGISTER_PLUGIN(TrackerDetToDTCELinkCablingMapRcd, TrackerDetToDTCELinkCablingMap)`.
+> Without it the `.db` payload has no registered deserializer and lookups fail even
+> though the entries are present. Adding that one package takes the job to a clean
+> `rc=0`. Si Hyun had already given this exact fix to Ian Tomalin on the BES channel.
+> **Nothing was wrong with his branch or his cabling map.**
+>
+> The methodological lesson, worth keeping: a control run *was* performed and correctly
+> showed the failure was not instrumentation-induced — but control and instrumented runs
+> shared the same missing package. **A control isolates the variable you changed, not
+> the ones you never had.**
 
 ## Decode path (Huffman / hitmap) vs the in-tree CPU reference
 
@@ -471,17 +489,21 @@ claims, not craft.
 
 ## Recommended fixes, in priority order
 
-0. **Say which input, cabling map and geometry produced the slide-18 numbers.** The
-   committed cfg + committed `.db` + the RelVal it names cannot process one event, so
-   the published timings came from a combination that is not in the branch. Everything
-   else is secondary until this is answered.
-0b. **Ship a cabling map matching the cfg's geometry** (or point the cfg at the geometry
-   the map was built for). Currently the test is unrunnable as committed.
-0c. **Rebase off `PortableHostCollection2` / `PortableCollection2`.** Upstream deleted
-   the multi-collection template after he branched, so this is a rebase cost, not a
-   design error. Also drop the stale `RawDataBuffer.cc` and take upstream's.
-1. **Validate cabling/geometry-derived indices before using them as array indices** —
-   `moduleId` *and* `subtype`, which are the same defect.
+0. **Declare `WatchRuns` on the producers that override `beginRun`** — a real defect,
+   found by Ian Tomalin and verified here. `RawToPixelProducer.cc:28` and
+   `RawToBitStreamProducer.cc:31` are `edm::stream::EDProducer<>` with **no
+   `WatchRuns`**, yet both override `beginRun`. That function is never called, so it is
+   a silent no-op — and both bodies initialise `slinkMap_`, which `produce()` then
+   dereferences on the first event. `BitStreamToRawProducer.cc:28` gets it right
+   (`edm::one::EDProducer<edm::one::WatchRuns>`), which shows the idiom is known.
+   Ian reports it affects the OT unpackers too.
+1. **Rebase off `PortableHostCollection2` / `PortableCollection2`.** Upstream deleted
+   the multi-collection template after he branched — a rebase cost, not a design error.
+   Also drop the stale `RawDataBuffer.cc` and take upstream's.
+1b. **Document that the test needs `CondCore/SiPhase2TrackerPlugins`** in the package
+   set; without it the cabling-map lookups fail in a way that looks like a map gap.
+2. **(Hardening, not a bug — measurement retired this.)** Validate cabling/geometry-derived
+   indices before using them as array indices — `moduleId` *and* `subtype`.
    - `moduleId`: map detId → dense pixel index (the one `layerStart` partitions over
      `[0, nModulesPix)`), not `GeomDet::index()`. Range-check in the ESProducer — throw
      there, where it is cheap and catchable, rather than relying on a device assert that
@@ -491,32 +513,32 @@ claims, not craft.
    - `subtype`: reject anything outside 1..12 in the ESProducer, and bound `chipId`
      against the actual chip count for that subtype. The CPU reference
      (`ChipModuleMap::quadrantOf`) throws on both; the port dropped both.
-2. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
+3. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
-3. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
-4. **Restore the bounds check in `BitReader::next()`** to match the in-tree reference,
+4. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
+5. **Restore the bounds check in `BitReader::next()`** to match the in-tree reference,
    or fix the comment that claims it is already there.
-5. **Re-quote timings with `timing=2`**, or label the current number
+6. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-6. **Repeat every timing point ≥5×** and show a spread.
-7. **Get an exclusive machine** before any number goes in a note, and record
+7. **Repeat every timing point ≥5×** and show a spread.
+8. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-8. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+9. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
-## Open items (not yet measured)
+## Open items
 
-- **Max `moduleId` actually emitted on a real event**, plus counts ≥4000 (his base's
-  `numberOfModules`) and ≥5000 (his base's `maxNumModules`); ≥6872 too, for the
-  post-rebase bound.
-  This converts finding #1 from suspected to confirmed. Build in progress on
-  `/eos/user/c/cgupta/phase2build`.
-  **Method matters:** the stored `uint16_t` *cannot* reveal truncation, because
-  truncation is exactly what hides it. The test must compute `det->index()` on the host
-  as an `int` and compare it against the stored value per detId. A report quoting only
-  post-cast `geomIdx` leaves the >65535 question open no matter what the numbers say.
-- **`timing=1` vs `timing=2` delta** — quantifies how much of the ~7× is the missing
-  D2H transfer.
+- **`timing=1` vs `timing=2` delta** — quantifies how much of the ~7x is the missing
+  D2H transfer. Now runnable; needs a go-ahead.
+- **Verify the findings against `P2-Tracker-BES-SW/cmssw`** rather than the personal
+  fork, before anything is raised with him.
+- **Nobody has reviewed the OT-side rewrite** in `EventFilter/Phase2TrackerRawToDigi`
+  — ~40% of the diff, including deletion of the entire legacy `Phase2TrackerFED*`
+  stack. Out of scope for this review, but unexamined.
+
+*(Answered 2026-09-22: the max `moduleId` on a real event is 3999, with zero
+out-of-range and zero truncation — see the measurement section. That item is closed and
+the hypothesis it was testing is disproven.)*
 
 ## Gotchas hit along the way (lxplus)
 
