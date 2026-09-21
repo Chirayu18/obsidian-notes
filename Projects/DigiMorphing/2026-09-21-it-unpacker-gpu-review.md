@@ -17,6 +17,46 @@ Read via a proper release area, not a raw clone:
 `git cms-init` + his fork as remote `sihyun`. Files read with
 `git show sihyun/feature/it_alpaka_tests:<path>`.
 
+**True base: `CMSSW_16_0_0_pre1`** (merge-base `dd7156a9fb`), not 16_0_9 — which is why
+the topology constants below differ from current, and part of why it does not build on
+16_0_X. Against that base the branch is **73 added / 27 deleted / 20 modified**.
+
+## Shape of the port (`git diff --name-status dd7156a9fb <branch>`)
+
+- **New Alpaka unpacker** (`EventFilter/Phase2PixelRawToDigi/plugins/alpaka/`, 5 files):
+  `Phase2ITUnpackerKernels.{h,dev.cc}`, `Phase2ITRawToBitStreamProducer.cc`,
+  `Phase2ITBitStreamToPixelProducer.cc`, `Phase2ITModuleMapESProducer.cc`.
+- **New host-side chain** (same package, `plugins/`): `PixelToBitStreamProducer`,
+  `BitStreamToRawProducer`, `RawToBitStreamProducer`, `BitStreamToPixelProducer`,
+  `RawToPixelProducer` (fused), `BitStreamToAuroraProducer`, `Phase2ITElinkAnalyzer`;
+  plus `interface/` headers (`Phase2ITUnpacker.h`, `Phase2AuroraPacker.h`,
+  `Phase2DAQFormatSpecification.h`, `SLinkModuleMap.h`, `ELinkChipMap.h`,
+  `Phase2ITModuleMapRecord.h`). Deletes `Phase2ITQCoreProducer.cc`.
+- **New DataFormats package** `Phase2ITBitStreamSoA` (16 files): the chip-bitstream and
+  module-map SoAs, their alpaka collections, and the cuda/rocm ROOT dictionaries.
+- **`Phase2TrackerDigi`**: adds `ChipModuleMap.h`, `Phase2ITBitReader.h`,
+  `Phase2ITBitBuffer.h`, `Phase2ITAuroraBitStream.h`; modifies `Phase2ITChip`,
+  `Phase2ITQCore`, `Phase2ITChipBitStream` and both `classes*` dictionaries.
+- **Conditions**: `TrackerDetToDTCELinkCablingMap` gains the IT module info (`subtype`);
+  `DTCCablingMapProducer`/`TestReader` updated; two new IT cabling cfgs; a committed
+  `OTandITDTCCablingMap.db` sqlite payload in the test dir.
+- **Large OT-side rewrite** — `EventFilter/Phase2TrackerRawToDigi`, and the bulk of the
+  27 deletions: removes the whole legacy FED-buffer stack
+  (`Phase2TrackerFEDBuffer/Header/DAQHeader/DAQTrailer/Channel/RawChannelUnpacker/ZSChannelUnpacker`,
+  `utils.h`, `Phase2TrackerDigiProducer`, `Phase2TrackerCommissioningDigiProducer`, their
+  `_cfi.py`s and the old doc/html), replacing it with `SensorHybrid.h`, `TrackerBlock.h`,
+  `ChannelsOffset.h`, `DTHOrbitFieldSizes.h`, `RawToClusterProducer`,
+  `ClusterToRawProducer`, `DTHDAQToFEDRawDataConverter`.
+- **Test/benchmark harness**: `Phase2ITUnpackAlpaka_cfg.py`, `Phase2ITDigiCompare.cc`,
+  `Phase2ITDigiRecovery.cc`, `Phase2ITUnpackScan.sh`, `Phase2ITBlockScan.sh`, the two
+  scan plotters, `Phase2ITRecoveryPlot.py`.
+- **Also modified**: `DataFormats/FEDRawData/FEDRawDataCollection` (+ the stale
+  `RawDataBuffer.cc` noted below).
+
+**Not touched by him:** `SimplePixelTopology.h`, `ClusteringConstants.h`,
+`PixelClustering.h`, `SiPixelDigisSoA.h`. Where those differ from 16_0_9 it is upstream
+drift since his base, not his edit.
+
 **Every claim below is labelled MEASURED / SOURCE-READ / INFERRED.** This area was
 never compiled; a separate build was attempted on EOS and **failed to compile** (see
 below), so no claim here is a runtime result from executing the unpacker. MEASURED
@@ -60,10 +100,13 @@ clusterizer. `pixelClustering::invalidClusterId` is the honest placeholder.
 *Range — his slide is correct for his own base; the concern is forward-compatibility.*
 **Corrected 2026-09-22.** An earlier draft of this note said the range was 4000 for
 `Phase2` and 6872 for `Phase2OT`. That is true of **stock CMSSW_16_0_9**, but *not* of
-the branch under review, which modifies `SimplePixelTopology.h` heavily
-(108 insertions / 354 deletions vs 16_0_9). On the branch:
+the tree his branch is built on. His true base is **CMSSW_16_0_0_pre1**
+(merge-base `dd7156a9fb`), and he does **not** touch `SimplePixelTopology.h`,
+`ClusteringConstants.h` or `PixelClustering.h` at all — they differ from 16_0_9 purely
+through upstream evolution since his base (354/108, 2/1 and 134/141 lines respectively).
+So this was never his edit; it is base drift. On his base:
 
-| | His branch | Stock 16_0_9 |
+| | His base (16_0_0_pre1) | Stock 16_0_9 |
 |---|---|---|
 | `phase2PixelTopology::numberOfModules` | 4000 | `nModulesPix` = 4000 |
 | `nModulesOT` / `nModulesTot` | *absent* | 2872 / 6872 |
