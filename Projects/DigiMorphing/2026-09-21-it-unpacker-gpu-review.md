@@ -79,6 +79,15 @@ older tree than current 16_0_X, where the CA extension added `Phase2OT` with
 rebased — which it must be, see the blocking section — the bound stops being a literal
 4000 and becomes `TrackerTraits::numberOfModules`. Worth writing that way now.
 
+**A loose end worth one slide-line: the constant, its comment, and the test geometry
+are three different things.** On his branch `ClusteringConstants.h:26` reads
+`maxNumModules = 5000` justified by the comment *"D110 has 4000 modules"*, while the
+test cfg loads **D112** (`GeometryExtendedRun4D112Reco_cff`, cfg `:61`, and the RelVal
+sample is `Run4D112`). Whether D112's IT module count still fits under 4000 — and
+therefore whether the 5000 ceiling has the headroom the comment claims — is not
+derivable from the cff files; it comes from the geometry XML. This is not a new bug so
+much as the reason the runtime measurement is the only thing that settles the range.
+
 *Provenance — the likely bug.* `Phase2ITModuleMapESProducer.cc` (SOURCE-READ) fills
 the field from the **TrackerGeometry** det-unit index:
 
