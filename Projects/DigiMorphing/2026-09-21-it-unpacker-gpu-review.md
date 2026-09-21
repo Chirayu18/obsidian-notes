@@ -102,6 +102,37 @@ and must guarantee the invariant itself.
 It remains SOURCE-READ: nobody has yet run an event to print the actual max. That
 measurement is in progress — see Open items.)*
 
+**This is a pattern, not a one-off — `subtype` has the same defect.** (SOURCE-READ,
+verified first-hand. Found by a second reviewer; the reference comparison is mine.)
+
+`hitToRowCol` indexes a flattened quadrant table with a cabling-derived integer:
+
+```cpp
+constexpr int8_t kQuadX[13][4] = {...};   // ":111  index 0 unused (subtype is 1..12)"
+const int rowOffset = (kQuadX[subtype][chipId] > 0) ? ... ;   // :148, no bound check
+```
+
+`subtype` travels `TrackerDetToDTCELinkCablingMap.h:45` (`uint8_t subtype = 0`,
+**default 0**) → ESProducer `:64` → SoA → kernel `:346` → `kQuadX[subtype][chipId]`,
+with **no range check at any hop**. A subtype of 13..255 reads off the end of a 52-byte
+constexpr array. An *uninitialised* cabling entry gives subtype 0 — the row the author's
+own comment marks unused — and `kQuadX[0]` is `{0}`, zero-filled, so it silently yields
+offset 0 rather than any error.
+
+**The CPU reference validates what the port does not.** `ChipModuleMap.h:69-75`
+`quadrantOf()` looks the subtype up in a `std::map` and throws
+`"unknown Module_SubType"` on a miss, *and* throws again if the chip index is out of
+range for that subtype. The port flattened that map into a fixed `[13][4]` array and
+dropped **both** checks. The second one matters independently: subtypes 1 and 5 have
+only 1 and 2 chips (`CHIP_QUADRANT` `:23,:27`), but every `kQuadX` row is 4 wide, so an
+out-of-range `chipId` reads a neighbouring subtype's data and returns a plausible wrong
+offset instead of throwing.
+
+So `moduleId` and `subtype` are the same defect: **cabling/geometry-derived integers
+used as array indices without validation, in code ported from a reference that
+validated them.** Worth presenting to him as one systemic point rather than two bugs —
+it is harder to wave off, and the fix is the same in both places.
+
 **Why validation missed it (SOURCE-READ).** `test/Phase2ITDigiCompare.cc` keys on
 `(rawIdArr, xx, yy, adc)` only. `moduleId`, `clus` and `pdigi` are **never compared**.
 And the legacy CPU producer emits `DetSetVector<PixelDigi>` keyed by detId — it has no
@@ -264,6 +295,41 @@ an OOB read is silent. Restoring the guard is two lines and one predictable bran
   `BitReader` constructor is exact and cannot misalign the stream. Raised as a possible
   decode-corrupting bug; **not one**.
 
+## Other kernel findings
+
+(SOURCE-READ, second reviewer's survey. Priority order; none measured.)
+
+**MEDIUM — `digis[cursor++]` is an unbounded write.** `DigiFillKernel:348-354` takes
+`cursor = offsets[c]` and increments per hit with no check against
+`digis.metadata().size()`. Correctness rests entirely on the count and fill passes
+decoding byte-identically — they share `decodeChip`, so it holds normally. But any
+divergence between the passes (the unguarded `BitReader::next()` above is one candidate)
+writes into the next chip's range or past the collection end. Not a demonstrable bug;
+it is an unbounded write whose only guard is a cross-kernel behavioural invariant.
+One-line fix: `ALPAKA_ASSERT_ACC(cursor < digis.metadata().size())` — free in release,
+and it traps in exactly the asserts-on build being used for the runtime check.
+
+**LOW — silent module loss on malformed input.** Two self-documented FIXMEs:
+- `:171` *"malformed offsets are clamped and the module dropped silently"* —
+  `moduleSpan` sets `s.start = s.end = 0` with no counter and no `LogWarning`. A corrupt
+  FED loses modules invisibly. Fine in a unit test; a different statement entirely in a
+  DQM context, where "we drop bad modules silently" is the kind of thing that needs a
+  monitoring hook before data-taking.
+- `:250` *"chips per module is static, so this count could be built once per IOV"* —
+  performance, not correctness.
+
+**LOW — zero-size chip truncates a module quietly.** `forEachChip:196` flags
+`sizeWords == 0 && endBit != 0` as overrun, but `sizeWords == 0 && endBit == 0` falls
+through to a zero-length stream; the cursor then advances 1 word into mid-payload, the
+next `readWord` fails the magic check, and the module ends early with no diagnostic.
+Self-limiting — the walk is bounded by `chipId >= CHIPS_PER_MODULE` (=4) — so it is
+neither a hang nor unbounded, just a malformed-data path that produces no message.
+
+**Checked and correct** (recorded so nobody re-derives): the `moduleSpan` 128-bit
+padding arithmetic matches the legacy CPU path line for line; the spare-row zeroing is
+`once_per_grid`-guarded and targets `size()-1`; and the overrun test correctly bounds
+against the FED body rather than the module span.
+
 ## What is genuinely good
 
 Worth saying plainly — this is well-built code, and the review above is mostly about
@@ -288,12 +354,17 @@ claims, not craft.
 0. **Migrate off `PortableHostCollection2` / `PortableCollection2`.** Blocks upstreaming
    entirely — the template exists only in `CMSSW_16_1_0_pre1` and was withdrawn after.
    Also drop the stale `RawDataBuffer.cc` and take upstream's.
-1. **Fix `moduleId`.** Map detId → dense pixel index (the one `layerStart` partitions
-   over `[0, nModulesPix)`), not `GeomDet::index()`. Add an explicit range check in the
-   ESProducer — throw there, where it is cheap and catchable, rather than relying on a
-   device assert that vanishes in release. The producer already throws on two other
-   bad-input cases, so this is consistent with its own style; check **before** the
-   `uint16_t` cast, since afterwards the evidence is gone.
+1. **Validate cabling/geometry-derived indices before using them as array indices** —
+   `moduleId` *and* `subtype`, which are the same defect.
+   - `moduleId`: map detId → dense pixel index (the one `layerStart` partitions over
+     `[0, nModulesPix)`), not `GeomDet::index()`. Range-check in the ESProducer — throw
+     there, where it is cheap and catchable, rather than relying on a device assert that
+     vanishes in release. Check **before** the `uint16_t` cast; afterwards the evidence
+     is gone. The producer already throws on two other bad-input cases, so this matches
+     its own style.
+   - `subtype`: reject anything outside 1..12 in the ESProducer, and bound `chipId`
+     against the actual chip count for that subtype. The CPU reference
+     (`ChipModuleMap::quadrantOf`) throws on both; the port dropped both.
 2. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
 3. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
