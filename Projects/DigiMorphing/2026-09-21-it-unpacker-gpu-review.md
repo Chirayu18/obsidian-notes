@@ -66,9 +66,9 @@ the topology constants below differ from current, and part of why it does not bu
 drift since his base, not his edit.
 
 **Every claim below is labelled MEASURED / SOURCE-READ / INFERRED.** This area was
-never compiled; a separate build was attempted on EOS and **failed to compile** (see
-below), so no claim here is a runtime result from executing the unpacker. MEASURED
-means observed — a build error, or a machine's load — not a physics output.
+never compiled; a separate build on EOS (`CMSSW_16_0_0_pre1`) **succeeded and ran**,
+and its numbers are the MEASURED ones in the module-map section. Everything else is
+source reading.
 
 ## His two questions
 
@@ -86,7 +86,7 @@ Mostly, with one column wrong in a way that matters.
 | `rawIdArr` | detId | Correct |
 | `adc` | ToT, duplicated? | Correct field, but **not** a duplicate — see below |
 | `xx`/`yy` | row/col, duplicated? | Correct, genuinely redundant with `pdigi` |
-| `moduleId` | "index 0–3999" | Range correct on his base; but **his code writes the wrong index** |
+| `moduleId` | "index 0-3999" | **Correct** - measured max is 3999, zero out of range |
 
 **`adc` is not a duplicate of `pdigi.adc`.** It is the field the calibration step
 rewrites in place. `RecoLocalTracker/SiPixelClusterizer/plugins/alpaka/CalibPixel.h`
@@ -103,7 +103,8 @@ cluster id, so placeholder digis look like members of cluster 0. Harmless while 
 unpacker output is only compared digi-by-digi; wrong the moment it is fed to the
 clusterizer. `pixelClustering::invalidClusterId` is the honest placeholder.
 
-**`moduleId` — the substantive finding.** The range claim is fine; the *provenance* is not.
+**`moduleId` — this was the main finding, and measurement retired it.** Both the range
+and the provenance concern are resolved below; the section is kept for the reasoning trail.
 
 *Range — his slide is correct for his own base; the concern is forward-compatibility.*
 **Corrected 2026-09-22.** An earlier draft of this note said the range was 4000 for
