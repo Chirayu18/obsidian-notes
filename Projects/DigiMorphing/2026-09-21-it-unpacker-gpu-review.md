@@ -439,6 +439,82 @@ an OOB read is silent. Restoring the guard is two lines and one predictable bran
   `BitReader` constructor is exact and cannot misalign the stream. Raised as a possible
   decode-corrupting bug; **not one**.
 
+## Line-by-line: Alpaka kernels vs the CPU reference
+
+(SOURCE-READ, verified first-hand 2026-09-22, comparing
+`plugins/alpaka/Phase2ITUnpackerKernels.dev.cc` against `interface/Phase2ITUnpacker.h`
+and `plugins/RawToPixelProducer.cc`.)
+
+### The Alpaka path never locates the IT trailer; the CPU path does
+
+The CPU producer finds the trailer first and uses it to bound the last module:
+
+```cpp
+// RawToPixelProducer.cc:110-116
+const int trailerStart = Phase2ITUnpacker::findTrailerStart(dataPtr, fedSizeInWords);
+if (trailerStart < 0) { /* error out */ }
+forEachModule(dataPtr, fedSizeInWords, trailerStart, ...);
+//   moduleEndWord = (last module) ? trailerStart : nextOffset
+```
+
+The kernel has no trailer concept at all:
+
+```cpp
+// Phase2ITUnpackerKernels.dev.cc:169-170
+s.end = (idxInFed + 1 < numModules) ? dataBlockStart + readWord(...)
+                                    : fedSizeWords;   // "magic check stops at the IT trailer"
+```
+
+and `fedSizeWords` (from `stripSLinkWrapper`, `Phase2ITUnpacker.h:56`) subtracts only the
+**SLinkRocket** header/trailer — the 4-word IT trailer is still inside it. So the last
+module's span runs into the `0xFFFFFFFF` padding.
+
+It is survivable, as the comment says: `(0xFFFFFFFF >> 28) & 0xF == 0xF != 0xE`, so the
+magic check at `:190` breaks the walk. But two consequences differ from CPU:
+
+1. **No validation.** CPU errors out when the trailer is missing or malformed; the
+   kernel never checks, so a truncated or corrupt FED is silently accepted.
+2. **A looser overrun bound.** `:196` bounds payload reads against
+   `bodyEnd = fedSizeWords`, which *includes* the trailer — so a corrupt `sizeWords` can
+   read up to 4 words further than the CPU path permits before being caught.
+
+The round-trip test cannot see this, because the packer always emits a well-formed
+trailer. Worth raising: **the two paths do not validate the same input equally.**
+
+### Malformed input is silent on the device
+
+| Case | CPU | Alpaka |
+|---|---|---|
+| Module offset out of FED bounds | `LogWarning` + skip module | `start = end = 0`, silent |
+| Bitstream past FED end | `LogWarning`, chip treated empty | `bitLen = 0`, silent |
+| Trailer not found | error | not checked |
+
+His `FIXME` at `:171` acknowledges the first. Device code cannot log, so this is partly
+inherent to any port — but the effect is that **corrupt data is indistinguishable from
+empty data** on the GPU path. For DQM that is the difference between "quiet detector"
+and "broken FED". A per-event error/dropped-module counter carried out in the SoA would
+close it cheaply, and would also give the round-trip test something to assert on.
+
+### `CHIPS_PER_MODULE` cap is Alpaka-only (benign, but undocumented)
+
+`:187` breaks the chip walk at `chipId >= 4`; the CPU walk has no such cap. It is a
+genuine hardware bound and arguably the better behaviour, but it is an undocumented
+divergence: a malformed module claiming 5 chips yields 4 chips on GPU and 5 on CPU, and
+`Phase2ITDigiCompare` would report that as an *Alpaka* fault when Alpaka is the one
+behaving correctly.
+
+### Checked and equivalent — recorded so nobody re-derives it
+
+- **ADC ordering.** CPU batches (`decodeADCs`, then `adcValues[adcIndex++]`); Alpaka
+  reads `bits(4)` inline per hit. Different structure, **identical bit order** — both
+  consume sequentially in hitmap-index order. Not a bug.
+- **`islast`/`isneighbor` state machine**: `previousIsLast`, `prevRow + 1`, and a fresh
+  `ccol` only at a new column group — matches exactly.
+- **Offset-block padding arithmetic**: identical on both sides.
+- **`readWord`** big-endian assembly: identical.
+- **`hitToRowCol`**: the `shiftedRow*2 + rocCol%2` / `(x+8)%16` transform reproduces
+  `decodeQCoreIndex` + `getGlobalPixelCoordinate`.
+
 ## Other kernel findings
 
 (SOURCE-READ, second reviewer's survey. Priority order; none measured.)
@@ -511,12 +587,26 @@ claims, not craft.
    - `subtype`: reject anything outside 1..12 in the ESProducer, and bound `chipId`
      against the actual chip count for that subtype. The CPU reference
      (`ChipModuleMap::quadrantOf`) throws on both; the port dropped both.
-3. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
+3. **Bound the last module by the IT trailer, as the CPU path does** — the kernel
+   ends the last span at `fedSizeWords`, which still contains the 4-word trailer, and
+   never calls anything like `findTrailerStart`. Survivable via the magic check, but it
+   means a truncated FED is accepted silently and the overrun guard is ~4 words looser
+   than CPU. The two paths should validate the same input equally.
+4. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
+   chips). Device code cannot log, so corrupt data is currently indistinguishable from
+   empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
+   round-trip test something to assert on. Covers his own `FIXME` at `:171`.
+5. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
-4. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
-5. **Restore the bounds check in `BitReader::next()`** to match the in-tree reference,
-   or fix the comment that claims it is already there.
-6. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
+6. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
+7. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
+   unchecked primitive: the guard was never removed — the struct was written this way in
+   the first commit (`d0ec6f36e26`), with `nextOr0()` and `bits()` as checked siblings,
+   and every call site uses a checked path. Sensible for a per-bit hot loop. But the
+   comment at `:32` claims it is "clamped like binaryToInt", which is false for `next()`
+   and misled two reviewers into reading it as a dropped safety check. Document the
+   contract, or rename it `nextUnchecked()`.
+8. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
    hygiene, **not** a crash. `RawToPixelProducer.cc:28` and `RawToBitStreamProducer.cc:31`
    are `edm::stream::EDProducer<>` overriding `beginRun` without declaring `WatchRuns`,
    while `BitStreamToRawProducer.cc:28` declares it correctly. **MEASURED: `beginRun` is
@@ -530,12 +620,12 @@ claims, not craft.
    *(Ian Tomalin reported this as "will never be called"; reasonable from the declaration,
    but it does not hold for `stream` modules in this release. Whether it holds for
    `edm::one` modules is unchecked - worth asking which he tested.)*
-7. **Re-quote timings with `timing=2`**, or label the current number
+9. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-8. **Repeat every timing point ≥5×** and show a spread.
-9. **Get an exclusive machine** before any number goes in a note, and record
+10. **Repeat every timing point ≥5×** and show a spread.
+11. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-10. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+12. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
 ## Open items
