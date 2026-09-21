@@ -715,36 +715,27 @@ claims, not craft.
    - `subtype`: reject anything outside 1..12 in the ESProducer, and bound `chipId`
      against the actual chip count for that subtype. The CPU reference
      (`ChipModuleMap::quadrantOf`) throws on both; the port dropped both.
-3. **Make the IT trailer distinguishable from payload.** Header and trailer are both
-   4x `0xFFFFFFFF` (`BitStreamToRawProducer.cc:181-184`, `:191-194`, both `FIXME Dummy`),
-   and `findTrailerStart` scans backward returning the first match — so payload
-   containing four aligned all-ones words silently truncates the last module. Give the
-   trailer a distinct pattern or a length field, or search forward from a computed
-   position. Also: CPU searches and Alpaka does not, so the two paths can disagree on
-   the same fragment — and that agreement is the validation criterion.
-4. **Put `dropTot` and `handleGapPixels` in the chip header.** Both are out-of-band
-   edm parameters replicated across four modules, with the decoders commenting that they
-   "must match" the encoder. A `dropTot` mismatch desynchronises the bit reader and
-   yields garbage hits at garbage coordinates for the whole chip, silently. For
-   `handleGapPixels` the encoder has three modes and the decoder only two, so the
-   decoder cannot express `AGGREGATE` at all — inert today (its effect is encoder-side),
-   but a decode-side geometry for it would silently pick the wrong one. The chip header
-   has 7 unused bits. At minimum, align the defaults.
-5. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
+*(Two format-level items — the trailer/payload aliasing and the out-of-band
+`dropTot`/`handleGapPixels` — were **dropped from this list on 2026-09-22**: Si Hyun is
+the packer/DAQ-format expert and both are his own design space, with the relevant words
+already carrying his `FIXME` placeholders. The analysis is kept in the findings sections
+above for reference, not as recommendations.)*
+
+3. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
    chips). Device code cannot log, so corrupt data is currently indistinguishable from
    empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
    round-trip test something to assert on. Covers his own `FIXME` at `:171`.
-6. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
+4. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
    round trip does not cover them.
-7. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
-8. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
+5. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
+6. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
    unchecked primitive: the guard was never removed — the struct was written this way in
    the first commit (`d0ec6f36e26`), with `nextOr0()` and `bits()` as checked siblings,
    and every call site uses a checked path. Sensible for a per-bit hot loop. But the
    comment at `:32` claims it is "clamped like binaryToInt", which is false for `next()`
    and misled two reviewers into reading it as a dropped safety check. Document the
    contract, or rename it `nextUnchecked()`.
-9. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
+7. **Declare `WatchRuns` on the two `stream` producers that override `beginRun`** -
    hygiene, **not** a crash. `RawToPixelProducer.cc:28` and `RawToBitStreamProducer.cc:31`
    are `edm::stream::EDProducer<>` overriding `beginRun` without declaring `WatchRuns`,
    while `BitStreamToRawProducer.cc:28` declares it correctly. **MEASURED: `beginRun` is
@@ -758,12 +749,12 @@ claims, not craft.
    *(Ian Tomalin reported this as "will never be called"; reasonable from the declaration,
    but it does not hold for `stream` modules in this release. Whether it holds for
    `edm::one` modules is unchecked - worth asking which he tested.)*
-10. **Re-quote timings with `timing=2`**, or label the current number
+8. **Re-quote timings with `timing=2`**, or label the current number
    "unpacking only, excludes D2H".
-11. **Repeat every timing point ≥5×** and show a spread.
-12. **Get an exclusive machine** before any number goes in a note, and record
+9. **Repeat every timing point ≥5×** and show a spread.
+10. **Get an exclusive machine** before any number goes in a note, and record
    `uptime` + `nvidia-smi` per point regardless.
-13. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
+11. Consider whether `TrackerTraits` should be a template parameter, so `Phase2` vs
    `Phase2OT` bounds follow the sequence instead of being assumed.
 
 ## Open items
