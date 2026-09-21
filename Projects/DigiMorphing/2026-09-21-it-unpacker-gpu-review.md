@@ -38,7 +38,7 @@ Mostly, with one column wrong in a way that matters.
 | `rawIdArr` | detId | Correct |
 | `adc` | ToT, duplicated? | Correct field, but **not** a duplicate — see below |
 | `xx`/`yy` | row/col, duplicated? | Correct, genuinely redundant with `pdigi` |
-| `moduleId` | "index 0–3999" | **Right shape, wrong range, and his code writes the wrong index** |
+| `moduleId` | "index 0–3999" | Range correct on his base; but **his code writes the wrong index** |
 
 **`adc` is not a duplicate of `pdigi.adc`.** It is the field the calibration step
 rewrites in place. `RecoLocalTracker/SiPixelClusterizer/plugins/alpaka/CalibPixel.h`
@@ -55,14 +55,29 @@ cluster id, so placeholder digis look like members of cluster 0. Harmless while 
 unpacker output is only compared digi-by-digi; wrong the moment it is fed to the
 clusterizer. `pixelClustering::invalidClusterId` is the honest placeholder.
 
-**`moduleId` — the substantive finding.** Two separate problems.
+**`moduleId` — the substantive finding.** The range claim is fine; the *provenance* is not.
 
-*Range.* `Geometry/CommonTopologies/interface/SimplePixelTopology.h` (SOURCE-READ):
-`nModulesPix = 4000`, `nModulesOT = 2872`, `nModulesTot = 6872`. There are two
-Phase-2 traits: `Phase2` (`numberOfModules = 4000`) and `Phase2OT`, which inherits
-from it and *shadows* `numberOfModules = 6872`. So "0–3999" is correct only for
-`Phase2`; under `Phase2OT` the valid range is 0..6871. The bound is
-`TrackerTraits::numberOfModules`, not a fixed 4000.
+*Range — his slide is correct for his own base; the concern is forward-compatibility.*
+**Corrected 2026-09-22.** An earlier draft of this note said the range was 4000 for
+`Phase2` and 6872 for `Phase2OT`. That is true of **stock CMSSW_16_0_9**, but *not* of
+the branch under review, which modifies `SimplePixelTopology.h` heavily
+(108 insertions / 354 deletions vs 16_0_9). On the branch:
+
+| | His branch | Stock 16_0_9 |
+|---|---|---|
+| `phase2PixelTopology::numberOfModules` | 4000 | `nModulesPix` = 4000 |
+| `nModulesOT` / `nModulesTot` | *absent* | 2872 / 6872 |
+| `Phase2OT` traits | *absent* | present, shadows to 6872 |
+| `pixelClustering::maxNumModules` | 5000 | 6872 |
+
+So **"moduleId: index 0–3999" is right on his base** — there is no OT extension there
+and no second traits struct. Withdraw the "wrong range" criticism.
+
+What survives is a forward-compatibility note, not an error: his branch is based on an
+older tree than current 16_0_X, where the CA extension added `Phase2OT` with
+`numberOfModules = 6872` and raised `maxNumModules` from 5000 to 6872. When this port is
+rebased — which it must be, see the blocking section — the bound stops being a literal
+4000 and becomes `TrackerTraits::numberOfModules`. Worth writing that way now.
 
 *Provenance — the likely bug.* `Phase2ITModuleMapESProducer.cc` (SOURCE-READ) fills
 the field from the **TrackerGeometry** det-unit index:
@@ -78,13 +93,15 @@ in build order. That is not the dense pixel index the clusterizer requires, and
 nothing in `SimplePixelTopology.h` bounds it.
 
 Two failure modes, neither caught at runtime in a release build:
-- index ≥ 4000 (or ≥ 6872) → `clus_view[moduleId]` indexes out of bounds.
+- index ≥ `numberOfModules` (4000 on his base) → `clus_view[moduleId]` indexes out of
+  bounds; `maxNumModules` is only 5000 there, so there is little headroom.
 - index > 65535 wraps silently to a small, plausible, wrong module.
 
 **The producer validates the det but never the index.** It throws if the cabling map
 has no `ModuleInfo` (`:57-58`) and throws again if `idToDetUnit` returns null
 (`:60-61`) — then casts `det->index()` to `uint16_t` at `:65` with no bound check at
-all: not against 4000, not 6872, not 65535. The author explicitly handled two failure
+all: not against `numberOfModules`, not `maxNumModules`, not 65535. The author
+explicitly handled two failure
 modes and threw on both, which makes the missing third one read as an oversight rather
 than a considered trust assumption. That is the cleanest statement of the finding.
 
@@ -94,9 +111,19 @@ means any det reaching the cast is registered, and `addDetUnit` sets its index. 
 first-hand in the source.)*
 
 The only guard is `ALPAKA_ASSERT_ACC(thisModuleId < TrackerTraits::numberOfModules)`
-(`PixelClustering.h:327`) — **compiled out in release builds**. The `static_assert`s
-bound the traits constant, not the runtime value. The unpacker is the trust boundary
-and must guarantee the invariant itself.
+(`PixelClustering.h:212` on the branch, in `FindClus`; a second one at `:164` in
+`CountModules`) — **compiled out in release builds**. The harmful write is
+`clus_view[thisModuleId].clusInModule()` at `:801`. The `static_assert`s bound the
+traits constant, not the runtime value. The unpacker is the trust boundary and must
+guarantee the invariant itself.
+
+> **All `PixelClustering.h` line numbers here are branch-relative and were corrected
+> on 2026-09-22.** An earlier draft cited `:327` for the assert, which came from
+> *stock* 16_0_9; the branch rewrites that file (141 insertions / 134 deletions, 275
+> lines differing), and its `:327` is a closing brace. A reader checking `:327` in
+> either tree finds no assert and could reasonably conclude the finding was fabricated.
+> Verified on the branch: `grep ALPAKA_ASSERT_ACC.*numberOfModules` returns exactly
+> `:164` and `:212`.
 
 *(Range/provenance analysis cross-checked by a second reviewer against the same tree.
 It remains SOURCE-READ: nobody has yet run an event to print the actual max. That
@@ -380,7 +407,9 @@ claims, not craft.
 
 ## Open items (not yet measured)
 
-- **Max `moduleId` actually emitted on a real event**, plus counts ≥4000 and ≥6872.
+- **Max `moduleId` actually emitted on a real event**, plus counts ≥4000 (his base's
+  `numberOfModules`) and ≥5000 (his base's `maxNumModules`); ≥6872 too, for the
+  post-rebase bound.
   This converts finding #1 from suspected to confirmed. Build in progress on
   `/eos/user/c/cgupta/phase2build`.
   **Method matters:** the stored `uint16_t` *cannot* reveal truncation, because
