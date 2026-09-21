@@ -9,8 +9,8 @@ source: laptop
 
 Review of Si Hyun Jeon's Tracker DPG talk `20260902_trackerdpg_unpackergpu.pdf`
 and the code at `github.com/sihyunjeon/cmssw` branch `feature/it_alpaka_tests`
-(HEAD `3354683874a`; slide 10 says base CMSSW_16_0_X, but it **only builds on
-CMSSW_16_1_0_pre1** — see the blocking section below).
+(HEAD `3354683874a`; true base **CMSSW_16_0_0_pre1**, merge-base `dd7156a9fb`,
+2025-10-03. It builds there — but cannot process an event of its own test cfg).
 
 Read via a proper release area, not a raw clone:
 `lxplus:/afs/cern.ch/user/c/cgupta/CMSSW_16_0_9/src` (SCRAM_ARCH `el9_amd64_gcc13`),
@@ -310,26 +310,67 @@ Occurrences in `DataFormats/Portable/interface/PortableHostCollection.h`:
 | 16_1_0_pre2 | 0 | 0 |
 | 16_1_3 | 0 | 0 |
 
-So in `16_1_0_pre1` it is a thin alias over `PortableHostMultiCollection` — and *that*
-template is itself gone from `pre2` onward. In `16_1_3` only the single-layout
-`PortableCollection` / `PortableObject` survive; there is no variadic multi-layout
-template anywhere in the package. The concept was **withdrawn**, not renamed.
+**Corrected 2026-09-22 — the direction of this was wrong in an earlier draft.** At his
+merge-base `dd7156a9fb` (2025-10-03) the template **was present**: 1 occurrence of
+`PortableHostCollection2` over 19 of `PortableHostMultiCollection`. By 16_0_9 both are
+**0**. So he did not reach for a nonexistent or unreleased API — *upstream removed it
+after he branched*. The earlier framing ("needs a newer release") was backwards.
 
 Consequences, in order of importance:
 
-1. **The port cannot be integrated into current CMSSW as written.** It depends on an
-   API that existed in one pre-release and was removed. Migrating `Phase2ITModuleMapHost`
-   / `Phase2ITModuleMapDevice` off the multi-collection template is a prerequisite for
-   upstreaming, independent of whether the physics is right. This is arguably a larger
-   blocker than the `moduleId` bug.
-2. **His slide 10 says "based on CMSSW_16_0_X", which does not hold for this commit** —
-   no 16_0_X release has the template.
-3. Only `16_1_0_pre1` can build it, so any timing number is taken on a release nobody
-   will ship. Fine for a measurement, but it must be labelled as such.
+1. **The port cannot be integrated into current CMSSW as written** — not because the
+   API was exotic, but because it was deleted underneath him. Migrating
+   `Phase2ITModuleMapHost` / `Phase2ITModuleMapDevice` onto whatever replaces the
+   multi-collection template is a prerequisite for upstreaming, independent of whether
+   the physics is right. That is a rebase cost he has not yet paid, not a design error.
+2. **His slide 10's "based on CMSSW_16_0_X" is true of his base but misleading now** —
+   his base is `CMSSW_16_0_0_pre1`, and no *current* 16_0_X release has the template.
+3. It builds cleanly on `CMSSW_16_0_0_pre1` (MEASURED — see below), so this is a
+   rebase blocker, not a "the code is broken" blocker.
 
 A second, independent error — `RawDataBuffer.cc:34: 'memcpy' was not declared`, missing
 `#include <cstring>` — is **not his bug and self-resolves**: `16_1_0_pre1` already has
 that include at line 11. His branch carries a stale copy of a file upstream had fixed.
+
+## It builds — and then cannot process a single event of its own test cfg
+
+**MEASURED 2026-09-22** (second reviewer; build at
+`/eos/user/c/cgupta/phase2build/CMSSW_16_0_0_pre1`, exact branch tree, **no patches**,
+asserts ON, CPU backend).
+
+The build succeeds: `rc=0`, zero errors, on `CMSSW_16_0_0_pre1` — his true merge-base.
+Then the stock cfg, with no instrumentation, dies on the **first event**:
+
+```
+Begin processing the 1st record. Run 1, Event 9201, LumiSection 93
+category: 'TrackerDetToDTCELinkCablingMap has been asked to return ModuleInfo
+           for a DetId not present in the map.'
+   [2] Calling method for module PixelToBitStreamProducer
+Exception Message:  DetId = 303042565            rc=65
+```
+
+It fails in **his own packing module**, upstream of anything GPU. An instrumented run
+hit the same root cause one guard earlier, in the ESProducer's `:57-58` throw, with
+detId `303042581`. Both decode to `det=1, subdet=1` — PixelBarrel, genuine IT — and are
+only 16 apart, so this looks like a contiguous block of IT modules missing from the
+shipped cabling map rather than one stray entry. A control run without instrumentation
+confirms this is **not** an artefact of the added analyzer.
+
+**Likely cause (INFERRED, not confirmed): geometry mismatch.** The cfg loads
+`GeometryExtendedRun4D112Reco_cff` (`:61`) and the RelVal is `Run4D112`, while the
+committed `OTandITDTCCablingMap.db` appears to have been built for a different
+geometry — `ClusteringConstants.h:26` documents D110. Nobody has tried D110, because
+that changes the configuration under test.
+
+Two consequences, both worth putting to him directly:
+
+1. **The `moduleId` measurement is unobtainable as configured.** The job dies at the
+   cabling map, far upstream of the clusterizer, so there is no distribution to measure.
+   The provenance bug may well be real — it is simply *not reachable* on this cfg.
+2. **Which input produced the DPG numbers?** If this cfg cannot read this RelVal, then
+   the slide-18 timings came from some other combination of input, cabling map or
+   geometry. That is the single most useful question to ask him, because it determines
+   whether the ~7× is reproducible at all.
 
 ## Decode path (Huffman / hitmap) vs the in-tree CPU reference
 
@@ -430,9 +471,15 @@ claims, not craft.
 
 ## Recommended fixes, in priority order
 
-0. **Migrate off `PortableHostCollection2` / `PortableCollection2`.** Blocks upstreaming
-   entirely — the template exists only in `CMSSW_16_1_0_pre1` and was withdrawn after.
-   Also drop the stale `RawDataBuffer.cc` and take upstream's.
+0. **Say which input, cabling map and geometry produced the slide-18 numbers.** The
+   committed cfg + committed `.db` + the RelVal it names cannot process one event, so
+   the published timings came from a combination that is not in the branch. Everything
+   else is secondary until this is answered.
+0b. **Ship a cabling map matching the cfg's geometry** (or point the cfg at the geometry
+   the map was built for). Currently the test is unrunnable as committed.
+0c. **Rebase off `PortableHostCollection2` / `PortableCollection2`.** Upstream deleted
+   the multi-collection template after he branched, so this is a rebase cost, not a
+   design error. Also drop the stale `RawDataBuffer.cc` and take upstream's.
 1. **Validate cabling/geometry-derived indices before using them as array indices** —
    `moduleId` *and* `subtype`, which are the same defect.
    - `moduleId`: map detId → dense pixel index (the one `layerStart` partitions over
