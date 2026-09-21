@@ -216,10 +216,14 @@ only 1 and 2 chips (`CHIP_QUADRANT` `:23,:27`), but every `kQuadX` row is 4 wide
 out-of-range `chipId` reads a neighbouring subtype's data and returns a plausible wrong
 offset instead of throwing.
 
-So `moduleId` and `subtype` are the same defect: **cabling/geometry-derived integers
-used as array indices without validation, in code ported from a reference that
-validated them.** Worth presenting to him as one systemic point rather than two bugs —
-it is harder to wave off, and the fix is the same in both places.
+So `moduleId` and `subtype` are the same defect — and the precise claim matters:
+**the port drops validation the CPU reference performs.** Not "indices are unvalidated
+in this codebase", which is false and easy to refute: `ChipModuleMap` validates
+*consistently*, both `quadrantOf` and its inverse `chipIndex` throwing on a bad subtype
+and a bad quadrant/chip. Every unvalidated index is on the Alpaka/SoA side. Stated
+broadly the finding collapses; stated as "validation was dropped where the code was
+ported", `ChipModuleMap` becomes supporting evidence — the same shape as
+`BitReader::next()` losing the bounds check its reference has.
 
 **Why validation missed it (SOURCE-READ).** `test/Phase2ITDigiCompare.cc` keys on
 `(rawIdArr, xx, yy, adc)` only. `moduleId`, `clus` and `pdigi` are **never compared**.
@@ -532,7 +536,7 @@ offset — `ccol`, `islast`, `qrow` and the hitmap all decode from misaligned bi
 output is garbage hits at garbage coordinates for the whole chip, silently. The reverse
 mismatch overruns the stream and the reader's clamping yields zeros.
 
-**3. `handleGapPixels` is out-of-band too — and its defaults do not even match.**
+**3. `handleGapPixels`: the decoder cannot express a mode the encoder supports.**
 
 ```
 PixelToBitStreamProducer.cc:91            "handleGapPixels", "AGGREGATE"   encoder
@@ -541,19 +545,39 @@ RawToPixelProducer.cc:67                  "handleGapPixels", "DROP"        CPU f
 alpaka/Phase2ITBitStreamToPixelProducer.cc:89  "handleGapPixels", "DROP"   GPU
 ```
 
-It selects the pixel-coordinate geometry (`kRowsPerChipKeep` vs `kRowsPerChip`, etc. at
-`Phase2ITUnpackerKernels.dev.cc:144-147`), so a genuine mismatch yields **wrong row/col
-for every hit**. It is harmless today only by coincidence: `parseKeepMode`
-(`Phase2ITUnpacker.h:31-37`) maps both `DROP` and `AGGREGATE` to `keepMode = false`, so
-the differing defaults happen to agree. If `AGGREGATE` is ever given its own geometry —
-and the comment at `:29-30` says gap handling is "later to be properly treated in
-simulation" — the defaults become silently wrong.
+The asymmetry is structural, not just a defaults mismatch. The **encoder** parses a
+three-way enum (`parseGapMode`, `PixelToBitStreamProducer.cc:52-59`: `Drop`, `Keep`,
+`Aggregate`), and `Aggregate` does real work — merging gap-pixel ADC into the chip-edge
+pixel, saturated at 15, then dropping it (`:125-129`). The **decoder** collapses to a
+bool (`parseKeepMode`, `Phase2ITUnpacker.h:31-37`: `DROP` and `AGGREGATE` both give
+`keepMode = false`). So the decoder's vocabulary cannot represent the encoder's third
+mode at all.
+
+**Today this is correct**, and a reviewer checking current behaviour will find it so:
+`Aggregate`'s effect is entirely encoder-side — the aggregation happens before encoding
+and nothing downstream needs to know. The differing defaults are inert for the same
+reason. The risk is specific and future-facing: `keepMode` selects the pixel-coordinate
+geometry (`kRowsPerChipKeep` vs `kRowsPerChip`, `Phase2ITUnpackerKernels.dev.cc:144-147`),
+so **if `AGGREGATE` ever acquires a decode-side geometry** — and the comment at `:29-30`
+says gap handling is "later to be properly treated in simulation" — the collapse at
+`:32-33` silently picks the wrong one, giving wrong row/col for every hit.
 
 **The fix is cheap and the space exists.** The chip header has 7 unused bits:
 `27..24` error flags (`FIXME dummy given for now`) and `23..21` reserved
 (`BitStreamToRawProducer.cc:130-132`). One or two bits would make the stream
 self-describing, and the decoders could then *check* rather than assume. Failing that,
-at minimum align the `handleGapPixels` defaults.
+at minimum align the `handleGapPixels` defaults so the shipped configuration does not
+depend on two modes happening to collapse to the same bool.
+
+**Scope note — this is about the port, not the codebase.** The CPU-side
+`ChipModuleMap` validates *consistently*: `quadrantOf` (`:69-77`) **and** its inverse
+`chipIndex` (`:56-65`) each throw on an unknown subtype and on an out-of-range
+quadrant/chip. The unvalidated indices are all on the Alpaka/SoA side —
+`kQuadX[subtype]` (kernels `:148`), `moduleId` into `clus_view`, the `geomIdx`
+`uint16_t` cast. So the accurate claim is narrower and more pointed than "indices are
+unvalidated": **the port drops validation the reference performs.** Same shape as
+`BitReader::next()` losing the guard its reference has. Stated the broad way,
+`ChipModuleMap` refutes it; stated this way, it is supporting evidence.
 
 ### Malformed input is silent on the device
 
@@ -678,8 +702,10 @@ claims, not craft.
    He reportedly already has the patches. Also drop the stale `RawDataBuffer.cc`.
 1. **Document that the test needs `CondCore/SiPhase2TrackerPlugins`** in the package
    set; without it the cabling-map lookups fail in a way that looks like a map gap.
-2. **(Hardening, not a bug — measurement retired this.)** Validate cabling/geometry-derived
-   indices before using them as array indices — `moduleId` *and* `subtype`.
+2. **(Hardening, not a bug — measurement retired this.) Restore, on the ported path,
+   the index validation the CPU reference performs.** `ChipModuleMap::quadrantOf` and
+   `chipIndex` both throw on a bad subtype and a bad quadrant/chip; the Alpaka side
+   checks neither.
    - `moduleId`: map detId → dense pixel index (the one `layerStart` partitions over
      `[0, nModulesPix)`), not `GeomDet::index()`. Range-check in the ESProducer — throw
      there, where it is cheap and catchable, rather than relying on a device assert that
@@ -696,13 +722,14 @@ claims, not craft.
    trailer a distinct pattern or a length field, or search forward from a computed
    position. Also: CPU searches and Alpaka does not, so the two paths can disagree on
    the same fragment — and that agreement is the validation criterion.
-4. **Put `dropTot` and `handleGapPixels` in the chip header.** Both are currently
-   out-of-band edm parameters replicated across four modules, with the decoders
-   commenting that they "must match" the encoder. A `dropTot` mismatch desynchronises
-   the bit reader and yields garbage hits at garbage coordinates for the whole chip,
-   silently. `handleGapPixels` defaults already disagree (encoder `AGGREGATE`, all three
-   decoders `DROP`) and are harmless only because both map to `keepMode=false`. The chip
-   header has 7 unused bits. At minimum, align the defaults.
+4. **Put `dropTot` and `handleGapPixels` in the chip header.** Both are out-of-band
+   edm parameters replicated across four modules, with the decoders commenting that they
+   "must match" the encoder. A `dropTot` mismatch desynchronises the bit reader and
+   yields garbage hits at garbage coordinates for the whole chip, silently. For
+   `handleGapPixels` the encoder has three modes and the decoder only two, so the
+   decoder cannot express `AGGREGATE` at all — inert today (its effect is encoder-side),
+   but a decode-side geometry for it would silently pick the wrong one. The chip header
+   has 7 unused bits. At minimum, align the defaults.
 5. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
    chips). Device code cannot log, so corrupt data is currently indistinguishable from
    empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
