@@ -445,41 +445,65 @@ an OOB read is silent. Restoring the guard is two lines and one predictable bran
 `plugins/alpaka/Phase2ITUnpackerKernels.dev.cc` against `interface/Phase2ITUnpacker.h`
 and `plugins/RawToPixelProducer.cc`.)
 
-### The Alpaka path never locates the IT trailer; the CPU path does
+### The IT trailer is not distinguishable from payload — and the CPU search can lock onto data
 
-The CPU producer finds the trailer first and uses it to bound the last module:
+**The most serious structural finding in the review.** (SOURCE-READ, verified
+first-hand; found by a second reviewer.)
 
-```cpp
-// RawToPixelProducer.cc:110-116
-const int trailerStart = Phase2ITUnpacker::findTrailerStart(dataPtr, fedSizeInWords);
-if (trailerStart < 0) { /* error out */ }
-forEachModule(dataPtr, fedSizeInWords, trailerStart, ...);
-//   moduleEndWord = (last module) ? trailerStart : nextOffset
-```
-
-The kernel has no trailer concept at all:
+The IT header and trailer are **byte-identical**: four words of `0xFFFFFFFF`, both
+emitted by `BitStreamToRawProducer.cc:181-184` and `:191-194`, both marked
+`FIXME Dummy given for now`. The decoder identifies the trailer by scanning
+**backward from the end** and returning the *first* match:
 
 ```cpp
-// Phase2ITUnpackerKernels.dev.cc:169-170
-s.end = (idxInFed + 1 < numModules) ? dataBlockStart + readWord(...)
-                                    : fedSizeWords;   // "magic check stops at the IT trailer"
+// Phase2ITUnpacker.h:72-80
+for (int i = fedSizeInWords - HEADER_TRAILER_LINES; i >= HEADER_TRAILER_LINES; --i)
+  if (verifyHeaderTrailerPattern(dataPtr, i))   // 4 consecutive words == 0xFFFFFFFF
+    return i;
 ```
 
-and `fedSizeWords` (from `stripSLinkWrapper`, `Phase2ITUnpacker.h:56`) subtracts only the
-**SLinkRocket** header/trailer — the 4-word IT trailer is still inside it. So the last
-module's span runs into the `0xFFFFFFFF` padding.
+`0xFFFFFFFF` is an ordinary 32-bit value that chip payload is not forbidden from
+containing. Because the search runs backward, a payload match **late** in the fragment
+is found **before** the real trailer, and `findTrailerStart` returns a position inside
+the data block. That value is then used as the end of the last module's span
+(`Phase2ITUnpacker.h:111`), silently truncating it — the out-of-range check at
+`:102-107` guards the module *start* and logs, but a too-small *end* is only clamped
+(`:112-113`), never warned about.
 
-It is survivable, as the comment says: `(0xFFFFFFFF >> 28) & 0xF == 0xF != 0xE`, so the
-magic check at `:190` breaks the walk. But two consequences differ from CPU:
+**This is exactly the class of bug the round trip cannot find.** The packer writes the
+trailer at a known position and the decoder searches for it; on any event whose payload
+happens not to contain the pattern, both agree and the test passes. It is data-dependent
+and latent.
 
-1. **No validation.** CPU errors out when the trailer is missing or malformed; the
-   kernel never checks, so a truncated or corrupt FED is silently accepted.
-2. **A looser overrun bound.** `:196` bounds payload reads against
-   `bodyEnd = fedSizeWords`, which *includes* the trailer — so a corrupt `sizeWords` can
-   read up to 4 words further than the CPU path permits before being caught.
+*Honest strength assessment:* it has **not** been established that a real chip bitstream
+can contain four 32-bit-aligned all-ones words (~128 consecutive set bits at an aligned
+offset). Plausible for a dense qcore; the alignment requirement may make it rare or
+impossible. Grade MEDIUM-HIGH on structure, dropping to LOW if the encoding provably
+cannot produce it — a cheap question to settle by counting 4-aligned all-ones runs in
+real chip payloads. **The robust fix does not depend on the answer:** make the trailer
+distinguishable (a distinct pattern, or a length field), or search forward from a
+computed position rather than backward from the end. Both `FIXME`s show the author
+already regards these words as placeholders.
 
-The round-trip test cannot see this, because the packer always emits a well-formed
-trailer. Worth raising: **the two paths do not validate the same input equally.**
+### The Alpaka path ignores the trailer entirely — a real CPU/GPU divergence
+
+**Reframed 2026-09-22.** An earlier version of this section treated the kernel's lack of
+a trailer search as a *weakness* versus CPU. Given the finding above, it is closer to
+the opposite: the Alpaka path **cannot be fooled by a payload trailer-alias, because it
+never searches.** It runs to the end of the FED and relies on `forEachChip`'s magic
+check (`:190`) breaking when the top nibble is `0xF`, not `0xE`.
+
+What remains true, and is the point worth making to him:
+
+- **CPU and GPU can produce different digis on the same fragment.** On any event where
+  `findTrailerStart` false-positives, the CPU path truncates the last module and the
+  Alpaka path does not. So CPU-vs-GPU agreement is *not* guaranteed by construction —
+  which matters directly, because that agreement is the validation criterion in
+  `Phase2ITDigiCompare`.
+- **The kernel still validates less.** `fedSizeWords` (from `stripSLinkWrapper`,
+  `Phase2ITUnpacker.h:56`) subtracts only the SLinkRocket wrapper, so the 4-word IT
+  trailer is inside it: the kernel's `overrun` bound at `:196` is ~4 words looser than
+  CPU's, and a truncated FED is accepted with no check at all where CPU errors out.
 
 ### Malformed input is silent on the device
 
@@ -502,6 +526,23 @@ genuine hardware bound and arguably the better behaviour, but it is an undocumen
 divergence: a malformed module claiming 5 chips yields 4 chips on GPU and 5 on CPU, and
 `Phase2ITDigiCompare` would report that as an *Alpaka* fault when Alpaka is the one
 behaving correctly.
+
+### Packer side: checked and correct
+
+(SOURCE-READ, second reviewer.)
+
+- **`endBit`/`sizeWords` round trip is exact.** Packer computes
+  `sizeWords = ceil(bits/32)`, `endBit = bits % 32` (`BitStreamToRawProducer.cc:126-127`);
+  decoder reconstructs `(endBit==0) ? sizeWords*32 : (sizeWords-1)*32+endBit`
+  (`Phase2ITUnpacker.h:137-138`). Tabulated for bits = 0,1,31,32,33,63,64,65,96 — all
+  exact, including the subtle `endBit==0` case.
+- **`endBit` field width**: masked `& 0x1F` on both sides, true range 0..31, fits exactly.
+- **Module offsets and padding**: packer writes word offsets relative to the data block
+  and pads to 16 B; decoder and Alpaka `moduleSpan` use the identical formula. All three
+  agree.
+- **`sizeWords` narrowing** (`:136`, `& 0xFFFF`) has no overflow check — a chip stream
+  over 65535 words would wrap. Almost certainly unreachable for one chip, so LOW; noted
+  as another instance of the unchecked-narrowing pattern rather than its own item.
 
 ### Checked and equivalent — recorded so nobody re-derives it
 
@@ -587,11 +628,13 @@ claims, not craft.
    - `subtype`: reject anything outside 1..12 in the ESProducer, and bound `chipId`
      against the actual chip count for that subtype. The CPU reference
      (`ChipModuleMap::quadrantOf`) throws on both; the port dropped both.
-3. **Bound the last module by the IT trailer, as the CPU path does** — the kernel
-   ends the last span at `fedSizeWords`, which still contains the 4-word trailer, and
-   never calls anything like `findTrailerStart`. Survivable via the magic check, but it
-   means a truncated FED is accepted silently and the overrun guard is ~4 words looser
-   than CPU. The two paths should validate the same input equally.
+3. **Make the IT trailer distinguishable from payload.** Header and trailer are both
+   4x `0xFFFFFFFF` (`BitStreamToRawProducer.cc:181-184`, `:191-194`, both `FIXME Dummy`),
+   and `findTrailerStart` scans backward returning the first match — so payload
+   containing four aligned all-ones words silently truncates the last module. Give the
+   trailer a distinct pattern or a length field, or search forward from a computed
+   position. Also: CPU searches and Alpaka does not, so the two paths can disagree on
+   the same fragment — and that agreement is the validation criterion.
 4. **Carry a malformed-data counter out of the kernels** (dropped modules, overrun
    chips). Device code cannot log, so corrupt data is currently indistinguishable from
    empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
