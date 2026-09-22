@@ -226,10 +226,16 @@ ported", `ChipModuleMap` becomes supporting evidence — the same shape as
 `BitReader::next()` losing the bounds check its reference has.
 
 **Why validation missed it (SOURCE-READ).** `test/Phase2ITDigiCompare.cc` keys on
-`(rawIdArr, xx, yy, adc)` only. `moduleId`, `clus` and `pdigi` are **never compared**.
+`(rawIdArr, xx, yy, adc)` only. `moduleId`, `clus` and `pdigi` are **never compared** —
+though `pdigi` is packed from row/col/adc, so it is implied by the three that are. The
+real gaps are `moduleId` and `clus`, and neither is derived from the bitstream: one
+comes from the ESProducer geometry lookup, the other is a hardcoded constant. The four
+compared columns can all match while either is wrong.
 And the legacy CPU producer emits `DetSetVector<PixelDigi>` keyed by detId — it has no
 `moduleId` concept at all, so the round trip *structurally cannot* test it. The green
-ΔADC plot on slide 17 is real but covers 4 of 7 columns. Worth saying out loud in the
+ΔADC plot on slide 17 is real, and does establish that the **decode** is correct —
+but it says nothing about the two fields that do not come from the decode. Worth saying
+out loud in the
 next talk.
 
 ### Q2 — "Is lxplus-gpu good enough, or is there a dedicated machine?"
@@ -366,7 +372,8 @@ instrumented module-map walk). **These numbers retire the main code finding.**
 **The legacy and Alpaka chains agree digi-for-digi.** Same run: `legacy 1021985,
 soa 1021985, only-legacy 0, only-soa 0` — ~1.02M digis, zero asymmetry. That is a
 stronger validation result than slide 17 claims, and worth him saying so (with the
-caveat in the validation-gap note below: the comparison keys on four of seven columns).
+caveat in the validation-gap note below: the comparison covers the decoded fields, not
+`moduleId` or `clus`).
 
 **The `moduleId` provenance bug is not a live bug.** Our reasoning about the mechanism
 was right — `GeomDet::index()` *is* a tracker-wide counter, 30400 det units here, far
@@ -725,8 +732,18 @@ above for reference, not as recommendations.)*
    chips). Device code cannot log, so corrupt data is currently indistinguishable from
    empty data — for DQM that is "broken FED" vs "quiet detector". It also gives the
    round-trip test something to assert on. Covers his own `FIXME` at `:171`.
-4. **Add `moduleId`/`clus`/`pdigi` to `Phase2ITDigiCompare`**, or state clearly that the
-   round trip does not cover them.
+4. **Add `moduleId` and `clus` to `Phase2ITDigiCompare`.** The comparison keys on
+   `(rawIdArr, xx, yy, adc)`, which covers everything derived from the bitstream — so a
+   clean ΔADC plot does establish the decode is correct. But `moduleId` and `clus` do
+   not come from the decode: `moduleId` is filled from the module-map ESProducer's
+   geometry lookup, and `clus` is a hardcoded placeholder. All four compared columns can
+   match while either is wrong, because nothing reads them. (`pdigi` is packed from
+   row/col/adc and is therefore already covered — no need to ask for it.)
+   *Practical note:* `moduleId` has no legacy counterpart — `DetSetVector<PixelDigi>`
+   has no such field — so it cannot be a legacy-vs-Alpaka comparison. It has to be a
+   consistency assertion instead: `moduleId < numberOfModules`, and agreeing with the
+   geometry lookup for `rawIdArr`. `clus` is simpler: assert it holds `invalidClusterId`
+   once fix #5 lands.
 5. **Use `invalidClusterId`, not 0**, for the `clus` placeholder.
 6. **Fix the `BitReader` comment, not the code.** `next()` is deliberately an
    unchecked primitive: the guard was never removed — the struct was written this way in
