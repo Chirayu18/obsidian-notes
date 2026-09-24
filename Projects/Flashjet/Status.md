@@ -43,6 +43,13 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-09-24 — No-pair arms C/E/F final at 1M (Claude, lxplus)
+Full write-up in [[2026-09-24-nopair-arms-final]]. On test accuracy, measured against A (86.21): C −1.35, E −1.05, F −1.42, P −0.01, D −0.06.
+F − C ≈ 0, so adding ln m² neither helps nor hurts. That answers Alex's "why is F worse than C".
+The loss sits in the Zqq, Wqq, Hcc and Hgg AUCs. Conclusion: the pairwise bias is valuable for pair *selection*, not pair *description*.
+Next: the learned carried-state teacher/student on the C/A recluster (Hi-LANDER-style).
+Before that, check whether the raw JetClass ROOT files carry parton truth (`aux_genpart_*`) for prong labels.
+
 ### 2026-09-14 — PR #1 (cpu-backend) reviewed + test-merged clean (Claude, lxplus)
 `DickyChant/FlastJetDemo` **PR #1** is Sitian Qian's **C++ CPU backend** (12 commits,
 4–7 Sep, open, `cpu-backend`→`main`): `_cpu_kernel.cpp` running FastJet's strategy
