@@ -353,3 +353,22 @@ two x-points (100k, 1M) and will fill in to four.
 - `rocboot_{Hbb,Tbqq}_{100k,1M}.png` — bootstrap 68% bands, ratio sub-panel.
   (Bands are bootstrap, not paired: the arms are scored on *different* jet subsets
   because the dataloader shuffles and drops partial batches.)
+
+## LM-kT GNN-guided ceiling (2026-09-24)
+
+tags: [plot]
+Date: 2026-09-24
+Description: Learned-metric kT (IRC-safe EWMP GNN pair logits modulating C/A) against C/A, kt, anti-kt and a truth oracle, on own Pythia truth-level W/Z/top/QCD AK8 jets.
+- prong_masses.png: groomed W/Z prong mass, top W-candidate mass, QCD sculpting.
+- structure_metrics.png: prongs correct, top W pairing (C/A 0.33 → LM-kT 0.66), mass windows.
+- pair_auc.png: same-prong AUC (GNN 0.999, ΔR 0.983, LM-kT tree 0.882, C/A tree 0.869).
+- irc_harness.png: IR/C failure rate vs perturbation scale, LM-kT equal to C/A.
+See [[2026-09-24-lmkt-gnn-ceiling]].
+Path: /eos/user/c/cgupta/flashjet/lmkt/plots/structure_metrics.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/lmkt/plots/structure_metrics.png
+Path: /eos/user/c/cgupta/flashjet/lmkt/plots/prong_masses.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/lmkt/plots/prong_masses.png
+Path: /eos/user/c/cgupta/flashjet/lmkt/plots/pair_auc.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/lmkt/plots/pair_auc.png
+Path: /eos/user/c/cgupta/flashjet/lmkt/plots/irc_harness.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/lmkt/plots/irc_harness.png

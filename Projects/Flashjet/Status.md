@@ -43,6 +43,18 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-09-24 — LM-kT GNN ceiling evaluated (Claude, lxplus)
+LM-kT is an IRC-safe learned clustering in flashjet: branch `lmkt`, `0bddc57`, 22 tests.
+The GNN was trained on own Pythia truth-level jets on lxplus905 (T4).
+- Top W pairing: C/A 0.33 → LM-kT 0.66 (truth oracle 0.86).
+- W/Z: no gain.
+- QCD: no sculpting.
+- JetClass tagger proxy: +0.5 points over C/A tree features.
+- IRC: identical to C/A.
+- The GNN costs about 130× flashjet's Triton C/A, so inference needs the student.
+Next: G2 (no pair bias + rank-K prong-membership channels), approved after this evaluation, with precomputed memberships.
+See [[2026-09-24-lmkt-gnn-ceiling]].
+
 ### 2026-09-24 — No-pair arms C/E/F final at 1M (Claude, lxplus)
 Full write-up in [[2026-09-24-nopair-arms-final]]. On test accuracy, measured against A (86.21): C −1.35, E −1.05, F −1.42, P −0.01, D −0.06.
 F − C ≈ 0, so adding ln m² neither helps nor hurts. That answers Alex's "why is F worse than C".

@@ -66,7 +66,7 @@ Baseline A absolute AUCs: Hbb 0.99898, Hcc 0.99465, Hgg 0.97194, H4q 0.99393, Hq
 
 - Arm B: no pair bias and no extra features. This is the anchor that says how much the bias alone is worth.
 - ln Δ-only pair bias (`pairwise_lv_fts_paper`, `num_outputs=1`). If the score stays near 86, the all-pairs structure is what matters; if it drops to about 84.6, the features matter.
-- The learned carried-state approach ([[2026-09-24-learned-clustering-teacher-student]]) is the direct attack on "selection": a tree walk that learns which merges are prong–prong.
+- The learned carried-state approach ([[2026-09-24-lmkt-gnn-ceiling]]; the student step is deferred) is the direct attack on "selection": a tree walk that learns which merges are prong–prong.
 
 ## Where things live
 
