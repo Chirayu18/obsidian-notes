@@ -118,3 +118,39 @@ Report the smoke and timing numbers when launching; don't wait for approval unle
 1. **v1 first, or go straight to v2 (hybrid)?** Recommendation: build v1 plus the smoke and timing checks. If that is cheap, run R1 and R2 at 200k in parallel.
 2. K = 16 as the default?
 3. Compute: condor H100 (matches A and C, but queues) or the lxplus905 T4 (immediately available, but a T4 run is not comparable in iterations per second)? Recommendation: condor for R1/R2, the T4 for R0 and the smoke tests.
+
+
+## 8. State at compaction (2026-09-25 evening)
+
+**Arm A vs arm C on the same 50k test jets** (best_model, logit-difference AUCs; `lmkt/results/eval_{A,C_prefix,C_fixed}.json`):
+
+| | acc | Hbb | Hcc | Hgg | H4q | Zqq | Wqq | Tbqq |
+|---|---|---|---|---|---|---|---|---|
+| A (my forward, subset) | 0.8618 | 0.99869 | 0.99442 | 0.97192 | 0.99421 | 0.97560 | 0.97814 | 0.99866 |
+| A (saved b-hive predictions, random 50k) | 0.8624 | 0.99934 | 0.99521 | 0.97482 | 0.99458 | 0.97623 | 0.97840 | 0.99863 |
+| C, pre-fix flashjet (as trained) | 0.8499 | 0.99847 | 0.99238 | 0.97087 | 0.99288 | 0.97255 | 0.97513 | 0.99813 |
+| C, fixed flashjet | 0.8502 | 0.99847 | 0.99237 | 0.97087 | 0.99288 | 0.97255 | 0.97514 | 0.99813 |
+
+- My forward reproduces b-hive inference: the differences are subset noise, as the two rows use different random jets.
+- **The pseudojet bug's impact on arm C is negligible:** |ΔAUC| ≤ 1e-5 and Δacc = +0.04 points.
+- A − C on this subset: Zqq −31e-4, Wqq −30e-4, Hcc −20e-4, Hgg −10e-4, H4q −13e-4, accuracy −1.19 points. This is consistent with the full-test numbers.
+
+**Corrected ablation and substitution reruns** (logits, best_model): relaunched on lxplus905. Logs: `lmkt/logs/{part_head_ablation_logit,tree_subst_logit}.log`; results: `lmkt/results/*_logit.json`. The first attempt died from a syntax slip. **When they finish, update the AUC tables in [[2026-09-25-part-pairbias-anatomy-and-tree-substitution]] and remove the CORRECTION banner.**
+
+**RecTree v1 model:** written. Files (uncommitted in b-hive `cawork`):
+- `utils/models/particletransformer_rectree.py`;
+- `utils/flashjet_tree_embed.py`;
+- `utils/models/models.py` (RecTree registered).
+
+It uses config `jet_class_ca`, so RecTree − C isolates the node tokens.
+
+**Smoke test** (`lmkt/smoke_rectree.py`, T4, batch 256, eager):
+- It learns like arm C: loss 2.64 → 2.27 vs 2.59 → 2.25.
+- Gradients reach the merge network, the ancestor projection and the embedding.
+- **Cost 1.91× arm C per step** (761 vs 399 ms); the tree part is about 48%, above the 40% threshold. The cause is two Python loops of about 128 small ops (tree replay, recursion forward and backward).
+- The compile-mode smoke test (`COMPILE=1`) was launched, but its output was lost to a tool error. **Rerun it.**
+
+**Next steps (the user approved training):**
+1. Rerun the compile smoke test.
+2. **Speed-up before or alongside launch.** Apply the MLP correction only at the M hardest nodes (e.g. M = 32). All other nodes become exact sums: leaf sums via membership, plus the corrections of selected descendants. That leaves ≤ M sequential steps. Alternatively, CUDA-graph the loop. Target: tree part < 30% of a step.
+3. Write the runner `/eos/user/c/cgupta/flashjet/run_paper_rectree.sh` (a copy of `run_paper_nopair_ca.sh` with model `ParticleTransformer_RecTree_JetClass` and version `b_hive_rectree_v1`) and a condor sub (a copy of `condor/paper_nopair_ca.sub`, 100 GB, H100). Submit 1M iterations; judge at the 200k checkpoint against the A/C validation curves (decision rule in §4).
