@@ -154,3 +154,14 @@ It uses config `jet_class_ca`, so RecTree − C isolates the node tokens.
 1. Rerun the compile smoke test.
 2. **Speed-up before or alongside launch.** Apply the MLP correction only at the M hardest nodes (e.g. M = 32). All other nodes become exact sums: leaf sums via membership, plus the corrections of selected descendants. That leaves ≤ M sequential steps. Alternatively, CUDA-graph the loop. Target: tree part < 30% of a step.
 3. Write the runner `/eos/user/c/cgupta/flashjet/run_paper_rectree.sh` (a copy of `run_paper_nopair_ca.sh` with model `ParticleTransformer_RecTree_JetClass` and version `b_hive_rectree_v1`) and a condor sub (a copy of `condor/paper_nopair_ca.sub`, 100 GB, H100). Submit 1M iterations; judge at the 200k checkpoint against the A/C validation curves (decision rule in §4).
+
+## 9. Launched (2026-09-25 afternoon)
+
+**Sparse merge (v1 as trained).** The MLP correction is applied only at the M = 32 hardest splittings (by ln kT, root first); all other nodes are exact leaf sums. K = 16 node tokens are the first 16 of those 32. Implemented as `TreeMergeSparse` in `utils/flashjet_tree_embed.py`:
+- Node embeddings come from an ancestor closure (7 batched matmuls), then one loop over *levels* of selected nodes (about 16), with no per-merge Python loop.
+- `tree_context(replay=False)` also drops flashjet's sequential `_pseudojet_p4` loop: node four-vectors are the fp64 sum of their leaves over the closure.
+- Tests (`lmkt/test_tree_embed.py`) pass: sparse with M = all nodes equals the full recursion; small M equals a per-jet reference with the MLP only at the selected nodes; the loop-free context equals the replay context.
+
+**Smoke test (T4 shared with the reruns, so timings are not meaningful):** eager and `torch.compile` both run. The loss drops as for arm C (2.62 → 2.27 vs 2.58 → 2.26). Gradients reach the merge network, the ancestor projection and the embedding. The user asked not to profile further; the real throughput comes from the H100 job.
+
+**Condor job 9455884:** `~/flashjet_condor/paper_rectree.sub` → `run_paper_rectree.sh`, training version `b_hive_rectree_v1`, config `jet_class_ca`, model `ParticleTransformer_RecTree_JetClass`, 1M iterations, every other setting identical to arm C. Judge at 200k iterations with the §4 rule.
