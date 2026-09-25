@@ -102,7 +102,18 @@ Every run matches arm A/C settings: JetClass_train_100_mod, batch 512, Ranger wi
 - Quantify the pseudojet bug's impact on arms C/D/F/subjet.
 - The v2 ancestry-label Pythia generation (`lmkt/data2/`, running in tmux `lmktgen2` on lxplus914).
 
-## 7. Open decisions for the user
+## 7. User decision (2026-09-25, before compaction)
+
+"Run the things you are running and then proceed with training of the recursive network."
+The user **approved training** without further questions. Defaults used, because the options below were not answered explicitly:
+- **v1 first** (R1);
+- **K = 16**;
+- **condor H100** for R1 at 200k iterations (then the decision rule);
+- the lxplus905 T4 for smoke tests and timing.
+
+Report the smoke and timing numbers when launching; don't wait for approval unless something is off (the loss doesn't drop, or the recursion costs more than 40% of a step).
+
+## 7b. Options that were open (the defaults above were chosen)
 
 1. **v1 first, or go straight to v2 (hybrid)?** Recommendation: build v1 plus the smoke and timing checks. If that is cheap, run R1 and R2 at 200k in parallel.
 2. K = 16 as the default?

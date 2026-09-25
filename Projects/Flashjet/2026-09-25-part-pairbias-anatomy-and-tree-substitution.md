@@ -7,6 +7,10 @@ source: lxplus
 
 # What ParT's pair bias does, and whether a merge tree can carry it
 
+> **CORRECTION PENDING (2026-09-25):** the AUC columns in the ablation and substitution tables below were computed with the softmax-probability difference P_c − P_QCD. b-hive's reference AUCs (final_auc.py, arm tables) use the **logit difference**; see [[2026-09-06-logit-discriminant-bug]]. The probes also used `model_1000000.pt` rather than `best_model.pt`. Accuracy columns are unaffected.
+> Being recomputed with logits and best_model (logs `lmkt/logs/{eval_A,eval_C_prefix,eval_C_fixed,part_head_ablation_logit,tree_subst_logit}.log`, results `lmkt/results/*_logit.json` and `eval_*.json`).
+> **Do not send these AUC numbers until corrected.** Arm A vs arm C on the same 50k jets is being added for reference.
+
 Context: the goal is a cheap clusterer (flashjet) whose tree replaces ParT's O(N²) pairwise attention bias. Arm C (no pair bias) is 1.35 points below arm A (86.21 test). See [[2026-09-24-nopair-arms-final]] and [[2026-09-24-lmkt-gnn-ceiling]].
 All studies use arm A: ParT paper model, 1M iterations, `b_hive_paper_compile_4`, JetClass test.
 Scripts are in `/eos/user/c/cgupta/flashjet/lmkt/`: `part_attn_tree.py`, `part_head_anatomy.py`, `part_head_ablation.py`, `tree_subst.py`.
