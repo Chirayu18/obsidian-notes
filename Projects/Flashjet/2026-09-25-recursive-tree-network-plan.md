@@ -8,7 +8,7 @@ source: lxplus
 # Plan: recursive merge-embedding network (RecTree ParT)
 
 Why this, now: [[2026-09-25-part-pairbias-anatomy-and-tree-substitution]].
-- ParT's pairwise bias is about 80% a function of each pair's **C/A common-ancestor node**. Replacing it by f(LCA ln kT, ln Δ, ln m², z) inside the trained ParT recovers 82% of the Z/W/Hcc/Hgg loss.
+- ParT's pairwise bias is mostly (77% in AUC, 82% in accuracy) a function of each pair's **C/A common-ancestor node**: replacing it by f(LCA ln kT, ln Δ, ln m², z) inside the frozen trained ParT recovers that fraction of the Z/W/Hcc/Hgg loss (corrected, logit AUCs).
 - **C/A is the best tree**; learned trees do not help. So the lever is **how the tree is used**, not a better tree.
 - Per-particle tree summaries cannot carry pairwise information (arm C: −1.35 points).
 - A subjet arm with the pair bias on was null (86.191 vs 86.212), so subjet information is redundant *given* the bias.
@@ -135,7 +135,7 @@ Report the smoke and timing numbers when launching; don't wait for approval unle
 - **The pseudojet bug's impact on arm C is negligible:** |ΔAUC| ≤ 1e-5 and Δacc = +0.04 points.
 - A − C on this subset: Zqq −31e-4, Wqq −30e-4, Hcc −20e-4, Hgg −10e-4, H4q −13e-4, accuracy −1.19 points. This is consistent with the full-test numbers.
 
-**Corrected ablation and substitution reruns** (logits, best_model): relaunched on lxplus905. Logs: `lmkt/logs/{part_head_ablation_logit,tree_subst_logit}.log`; results: `lmkt/results/*_logit.json`. The first attempt died from a syntax slip. **When they finish, update the AUC tables in [[2026-09-25-part-pairbias-anatomy-and-tree-substitution]] and remove the CORRECTION banner.**
+**Corrected ablation and substitution reruns** (logits, best_model): DONE, anatomy note updated (C/A 77% AUC, 82% accuracy). Logs: `lmkt/logs/{part_head_ablation_logit,tree_subst_logit}.log`; results: `lmkt/results/*_logit.json`. The first attempt died from a syntax slip. **When they finish, update the AUC tables in [[2026-09-25-part-pairbias-anatomy-and-tree-substitution]] and remove the CORRECTION banner.**
 
 **RecTree v1 model:** written. Files (uncommitted in b-hive `cawork`):
 - `utils/models/particletransformer_rectree.py`;
