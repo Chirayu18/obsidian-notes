@@ -43,6 +43,11 @@ micromamba run -n b_hive python -m pytest -q          # 85 passed, 13 skipped (C
 
 ## Log
 
+### 2026-09-25 — ParT pair-bias anatomy, flashjet p4 bug fixed, recursive-tree plan (Claude, lxplus)
+- Tree substitution: ParT's pair bias is about 80% a function of the C/A common-ancestor node. C/A is the best tree; LM-kT and GNN trees do not help. See [[2026-09-25-part-pairbias-anatomy-and-tree-substitution]].
+- **flashjet bug:** `history._pseudojet_p4` zeroed the last real particle in padded jets. Fixed on `lmkt` (`46e566d`), with a regression test. Arms C/D/F and subjet features were affected slightly; impact not yet quantified. See [[2026-09-25-flashjet-pseudojet-p4-padding-bug]].
+- Next: recursive merge-embedding ParT. See [[2026-09-25-recursive-tree-network-plan]]. Recursion module written and tested; b-hive model not yet written.
+
 ### 2026-09-24 — LM-kT GNN ceiling evaluated (Claude, lxplus)
 LM-kT is an IRC-safe learned clustering in flashjet: branch `lmkt`, `0bddc57`, 22 tests.
 The GNN was trained on own Pythia truth-level jets on lxplus905 (T4).
