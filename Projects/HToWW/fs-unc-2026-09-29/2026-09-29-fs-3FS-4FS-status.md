@@ -120,15 +120,32 @@ spread on R is ~25% per bin.
 5. **0 GEN c-jet region:** R(0c) ≈ 0.62 — 3FS is 38% below 4FS there too. Weighting 0c events by 1
    ignores this; relevant for the ~22% of selected signal with a light-mistag candidate. Decision needed.
 
-### Decay-cleaned c-jets — RUNNING
-GenJets within ΔR<0.4 of any stable Higgs decay product (status 1, fromHardProcess or
-hard-process τ-decay product, not ν) removed. `derive_ratio_nano_clean.py` → `fs_unc/clean_*.json`,
-plots `fs_unc/plots/official_decayclean/`, summary `…/comparisons/comparison_summary.txt`.
-Pass criterion: GG vs WW shape-only χ²/ndf ≈ 1 in c-jet pT.
+### Decay-cleaned c-jets — DONE (2026-09-29)
+GenJets within ΔR<0.4 of any stable Higgs decay product (status 1, fromHardProcess or hard-process
+τ-decay product, not ν) removed (**overlap removal**, NOT STXS-style reclustering — NanoAOD lacks the
+stable particles to recluster; STXS/Rivet `HiggsTemplateCrossSections` clusters jets excluding Higgs
+decay products). Removes 16.6% (GG) vs 11.5% (WW) of c-jets in acceptance.
+`derive_ratio_nano_clean.py` → `fs_unc/clean_*.json`, plots `fs_unc/plots/official_decayclean/`.
 
-### Interim recommendation for the card
-Integrated **R(≥1c) = 0.795** (flat ~21% on events with a GEN c-jet) — the part that passed every test.
-Binned shape only once the decay-cleaned comparison passes.
+**GG vs WW, shape only (R/R_incl) — uncleaned → cleaned**
+| variable | uncleaned | cleaned |
+|---|---|---|
+| **c-jet pT (≥1c)** | 81/7 ❌ | **7.9/7 ✅** |
+| pT(H) ≥1c | 37/7 ❌ | 16.3/7 ⚠️ (≤8%) |
+| pT(H) 0c | 8.0/7 ✅ | 9.1/7 ✅ |
+| pT(H) inclusive | — | 6.6/7 ✅ |
+| leading jet 0c | 150/8 ❌ | 104/8 ❌ (not used for weights) |
+⇒ **decay contamination of the jets caused the GG/WW shape difference; the cleaned c-jet-pT shape transfers.**
+
+**Integrated, cleaned:** R(≥1c) Run-2 GG 0.797, Run-2 WW 0.821; **Run-3 four eras 0.813 / 0.820 / 0.815 / 0.824**
+(eras agree, χ²/ndf ≈ 1). Fraction ratio GG vs WW now differs 1.4% (1.281 vs 1.263; was 0.2%) — the
+overlap-removal artifact (whole c-jets dropped, decay-dependent rate).
+**Definition systematic:** Run-3 R(≥1c) 0.792 (uncleaned) → 0.813 (cleaned), ~2.6%.
+
+### Recommendation for the card (updated after cleaning)
+Run-3 **R(≥1c) ≈ 0.80–0.82** → an ~18–20% effect on events with a GEN c-jet, with a ~2–3% jet-definition
+systematic. The binned cleaned c-jet-pT shape is now transferable GG → WW. Next: a **c-hadron-based**
+cross-check (decay-independent without removing jets) to pin the integrated value.
 
 ## 4. Plots
 Official: [CERNBox `fs_unc/plots/official/`](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/official) — one folder per sample (≥1c, 0c, inclusive; no bands) + `comparisons/`.
