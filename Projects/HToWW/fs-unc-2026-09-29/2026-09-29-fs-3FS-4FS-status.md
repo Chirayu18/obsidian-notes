@@ -53,7 +53,14 @@ The numerical Run-2 GG-vs-WW comparison (below) tests this including decay effec
 
 ## 3. Results
 
-### Run 3, private NanoGEN from the central gridpacks (400k per scheme) — DONE
+### ⛔ Run 3, PRIVATE NanoGEN (400k per scheme) — DO NOT USE IN ANY PRESENTATION
+> **Never put the numbers or plots in this subsection into slides, the AN, or any talk.**
+> They come from events I generated privately from the central gridpacks (a mistake — the
+> official samples were on DAS). Kept only as an internal cross-check of the official result.
+> For anything shown to others, use the **official-sample** results below only.
+> Files affected: `fs_unc/ratio_full.json`, `fs_unc/test_ratio.json`, `fs_unc/out/`,
+> `fs_unc/out_r2/`, `fs_unc/test*/`, and `fs_unc/plots/fs_ratio_{cjet1_pt,higgs_pt,stats}.*`.
+> (user instruction, 2026-09-29)
 | | 3FS | 4FS | R |
 |---|---|---|---|
 | σ inclusive | 54.9 fb | 83.2 fb | **0.659** |
@@ -77,6 +84,8 @@ Logs: `fs_unc/logs/ratio_{run3_official,run2_GG,run2_WW}.log` (tmux `r3off`, `r2
 Comparison: `python3 fs_unc/gen/compare_ratios.py fs_unc/plots/cmp_all "Run3=…json" "Run2 GG=…json" "Run2 WW=…json"`.
 
 ## 4. Plots
+> ⛔ The three plots listed below are **private-sample** plots — internal only, never in a ppt.
+> Official-sample plots will be added under new names (`*_official*`, `cmp_*`).
 `/eos/user/c/cgupta/HToWW/fs_unc/plots/` — [CERNBox](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots)
 - `fs_ratio_cjet1_pt.png`, `fs_ratio_higgs_pt.png` — Run-3 3FS vs 4FS + ratio (private 400k)
 - `fs_ratio_stats.png` — stat vs scale uncertainty vs effect size, per bin
