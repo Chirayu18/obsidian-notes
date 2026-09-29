@@ -225,6 +225,33 @@ it loses c-jets (16.6% γγ vs 11.5% WW) and causes the 1.4% γγ/WW fraction of
   our signal is NanoAOD-level in the framework, so the per-event GEN c-jet quantity must come from MiniAOD
   (or an equivalent stored in the signal ntuples).
 
+### ⚠️ BUG FOUND in the running stitch derivation (2026-09-29 18:20) — FxFx normalisation
+`run_stitch.sh` gives R(≥1c) ≈ 0.23 — WRONG. Cause: for **FxFx** samples, Σ genWeight / genEventCount is
+the σ **before** the FxFx merging veto (~2/3 of LHE events are vetoed in Pythia; survivors keep their LHE
+weight; NanoAOD `genEventCount` counts only survivors). Measured 4FS-FxFx σ: 262.6 fb (Run-2 γγ) vs
+**XSDB 90.67 fb** (ratio 0.345); Run-3 281.7 fb. Non-FxFx samples are unaffected (they matched XSDB).
+**Region fractions and all binned shapes are fine** (single constant factor) → **no rerun needed**; fix:
+σ₄(region) = σ_XSDB(FxFx) × Σw_region/Σw_all. Run-2 γγ: R(≥1c) = 0.232/0.345 ≈ **0.67** (paper's γ+c: ~0.62).
+**Needed from the user:** XSDB σ for the Run-3 4FS FxFx HTo2G samples (13.6 TeV, all eras). XSDB 13 TeV
+FxFx: HToGG 90.67 fb, HToWWTo2L2Nu 90.50 fb (UL18). `SUMMARY_STITCH.md` will carry the WRONG absolute R —
+apply the correction before quoting anything.
+
+### MiniAOD exact-subtraction job — PROTOTYPED, NOT YET QUEUED (segfault)
+- Collections confirmed in both Run-2 UL18 MiniAODv2 and Run-3 22EE MiniAODv4: `slimmedGenJets`,
+  `slimmedGenJetsFlavourInfos` (official hadron flavour), `packedGenParticles`, `prunedGenParticles`,
+  `GenEventInfoProduct`, `LHEEventProduct`, and **`GenLumiInfoProduct` in the lumi tree** → the FxFx
+  matching efficiency (and correct normalisation) can be computed natively, like GenXSecAnalyzer.
+- Code: `fs_unc/gen/mini_fs.py` (FWLite: per jet, subtract constituents whose pruned mother chain reaches the
+  H; writes raw sums per file + lumi accepted/tried counts) and `fs_unc/gen/mini_job.sh` (CMSSW_13_0_17,
+  el8_amd64_gcc11, run inside `cmssw-el8`). Planned: one condor job per MiniAOD file + an aggregator
+  (`mini_agg.py`, not written) → same JSON format → existing `plot_ratio.py` / `compare_ratios.py`.
+- **Status: the 300-event test on a Run-2 UL18 WW 3FS file SEGFAULTS inside FWLite** (log
+  `fs_unc/logs/test_mini.log`; test file in `fs_unc/test_mini_file.txt`). Suspects, in order: (1) reading a
+  10_6 UL MiniAOD with CMSSW_13_0 — try CMSSW_10_6_X (slc7) for Run-2, 13_0_X for Run-3; (2) `jet.daughter(d)`
+  on slimmedGenJets returning a bad/null ref; (3) the `GenLumiInfoProduct` loop. Debug by bisecting the script.
+- The three comparisons to run once it works: Run-3 era consistency, Run-2 γγ vs WW (decay transfer),
+  Run-2 vs Run-3 γγ (energy) — 3FS vs **4FS FxFx**, c-jets pT>10.
+
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
    derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
