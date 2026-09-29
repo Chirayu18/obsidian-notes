@@ -209,6 +209,13 @@ it loses c-jets (16.6% γγ vs 11.5% WW) and causes the 1.4% γγ/WW fraction of
   Trace each constituent to the Higgs (mother chain via `prunedGenParticles`), subtract exactly the
   Higgs-descendant constituents from the jet 4-momentum, then apply pT>10, |η|<2.4 and keep the official
   `hadronFlavour`. Exact, no approximation, no reclustering.
+- **What "Higgs descendant" covers:** every stable constituent whose ancestry reaches the H — not just the W
+  (W's are unstable and never jet constituents). For H→WW→2ℓ2ν: charged leptons, τ decay products (π±, K±,
+  π⁰ photons), and FSR photons off those leptons (ν are already excluded from GenJets). For H→γγ: the photons
+  + their FSR. Kept: charm hadronisation products, ISR, underlying event.
+- **Implementation caveat:** `packedGenParticles` → `prunedGenParticles` gives only the first mother; walk up
+  the pruned chain until the Higgs is reached (pruned keeps H, W, τ, leptons, so the chain is intact).
+  Hadronic W decays would be subtracted by the same logic (not present in WW→2ℓ2ν).
 - **Tools:** FWLite / CMSSW (python), reading MiniAOD over xrootd; standalone in `fs_unc/`, outside the framework.
 - **Samples (MiniAOD confirmed on DAS 2026-09-29):** Run-3 `Run3Summer22EEMiniAODv4` 3FS + 4FS-FxFx HTo2G;
   Run-2 `RunIISummer20UL18MiniAODv2` 3FS + 4FS-FxFx for HToGG and HToWWTo2L2Nu.
