@@ -76,3 +76,11 @@ Full JetClass test set (20M jets), logit AUCs, via `~/flashjet_condor/rectree_au
 - **Cost: 9.6 it/s, slower than arm A (11.2) and C (20.8)** on the H100 (28.8 h vs 24.9 h vs 13.4 h for 1M). So v1 is neither better nor cheaper than the pair bias.
 
 **Verdict on v1:** a small, consistent gain concentrated where the pair bias matters (Z/W, Hcc), which matches the capacity test (v1 carries about 3% of the pair bias pairwise; the rest must come from node-token attention). It does not justify its cost. Test 1 says v2 carries about 10× more; building v2 is the only remaining RecTree option, and even that is capped at about 37% by the q·k form.
+
+## RecTree v2 submitted (2026-09-29)
+
+At the user's request, v2 was submitted directly. The per-depth capacity re-test (the proposed step 1) was skipped.
+- **Model:** `ParticleTransformer_RecTree2_JetClass`, b-hive `utils/models/particletransformer_rectree2.py`. It is v1 plus a **per-depth tree positional encoding**: for each particle, its chain of selected ancestors (the M = 32 hardest splittings) from the root; slot d = ±(harder/softer child) × g(φ of the depth-d node); 16 slots, rank 16, **concatenated**, then a zero-initialised Linear to d = 128, added to the particle token. At initialisation it is exactly v1. v2 − v1 isolates the encoding.
+- **Tests:** `lmkt/test_rectree2.py`: every (particle, slot) entry matches a brute-force per-jet walk of the tree (M = 8/32, D = 16/4). The v1 tests (`test_tree_embed.py`) still pass.
+- **Smoke (T4, batch 128):** v2 learns both eager and compiled (loss about 2.6 → 2.25); the gradient reaches `pe_proj`. The first compiled step took 5.5 s from recompiling on per-batch ints, so the encoding now runs outside torch.compile (`@torch._dynamo.disable`). After the fix: 333 ms per step, with no recompiles (the T4 was shared, so the relative timings are not meaningful).
+- **Condor cluster 9472742:** `~/flashjet_condor/paper_rectree2.sub` → `run_paper_rectree2.sh`, version `b_hive_rectree_v2`, config `jet_class_ca`, 1M iterations, identical to v1 and arm C otherwise. Compare with A / C / v1 using `~/flashjet_condor/rectree_auc.py` (add the v2 arm).
