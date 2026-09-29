@@ -78,12 +78,61 @@ pT > 110 GeV is stat-limited (12–18%), and the signal barely populates it. pT(
 **Physics:** inclusive gap 34% (AN "~30%", its Table 1 → 38%); only **21% in the ≥1c region**.
 Shape is mild → mostly a normalisation.
 
-### Run 3 official (2022postEE, 3.9M each) — RUNNING → `ratio_run3_official_GG.json`
-### Run 2 UL18 official, HToGG and HToWW — RUNNING → `ratio_run2_{GG,WW}.json`
-Logs: `fs_unc/logs/ratio_{run3_official,run2_GG,run2_WW}.log` (tmux `r3off`, `r2GG`, `r2WW`, lxplus966).
-Comparison: `python3 fs_unc/gen/compare_ratios.py fs_unc/plots/cmp_all "Run3=…json" "Run2 GG=…json" "Run2 WW=…json"`.
+### Official-sample results (2026-09-29) — USE THESE
+All from central NanoAOD, read over xrootd, every event (one UL18 GG 4FS file of 77 timed out;
+excluded consistently). Script `fs_unc/gen/derive_ratio_nano.py`, outputs `fs_unc/ratio_*.json`.
+
+**Run 3, HTo2G 13.6 TeV — all four eras agree (χ²/ndf ≈ 1 in every variable)**
+
+| era | R incl | **R (≥1 GEN c-jet)** | R (0 GEN c-jets) | σ3FS [fb] | σ4FS [fb] |
+|---|---|---|---|---|---|
+| 2022postEE | 0.655 | 0.792 | 0.620 | 54.67 | 83.43 |
+| 2022preEE | 0.656 | 0.797 | 0.619 | 54.63 | 83.31 |
+| 2023 | 0.658 | 0.793 | 0.622 | 54.84 | 83.37 |
+| 2023BPix | 0.662 | 0.806 | 0.624 | 55.17 | 83.35 |
+
+→ **R(≥1c) ≈ 0.795** (≈21% effect), sub-percent statistics. Statistics are not the limit: the 7-pt scale
+spread on R is ~25% per bin.
+2022postEE per bin (c-jet pT 20/30/45/60/80/110/150/∞): 0.728, 0.860, 0.804, 0.776, 0.907, 0.957, 0.868.
+
+**Run 2 UL18, 13 TeV**
+
+| | R incl | R (≥1c) | R (0c) | f3FS | f4FS | f3/f4 | σ3FS | σ4FS |
+|---|---|---|---|---|---|---|---|---|
+| HToGG | 0.622 | 0.770 | 0.584 | 0.2550 | 0.2060 | **1.2377** | 50.06 | 80.46 |
+| HToWW | 0.650 | 0.806 | 0.612 | 0.2403 | 0.1939 | **1.2397** | 50.44 | 77.61 |
+
+(f = σ(≥1c)/σ_incl; R(≥1c) = R_incl × f3/f4 separates normalisation from kinematics.)
+
+**Validation findings**
+1. **Energy:** Run 2 → Run 3 (GG) R(≥1c) 0.770 → 0.792 (+3%), c-jet-pT shape differs ≤9%
+   ⇒ derive at 13.6 TeV (done), don't borrow Run 2.
+2. **Decay (GG vs WW), integrated:** c-jet fraction ratio agrees to 0.2% (1.238 vs 1.240) ✅.
+3. **Decay, normalisation:** the WW 4FS central sample has a 3.4% LOWER generator σ.
+   **XSDB confirms it** (4FS non-FxFx, 13 TeV): HToGG 80.65 fb, HToZZ 80.65 fb, **HToWW 77.88 fb**;
+   ours 80.46 / — / 77.61 → our computation reproduces XSDB to ≤0.5% (also Run 3 3FS: XSDB 54.97 vs
+   ours 54.67 fb). The offset belongs to that production, not physics or statistics ⇒ compare GG vs WW
+   on shape/fractions only. (XSDB lists identical 49.87 fb for 3FS GG and 3FS WW — copied entries.)
+4. **Decay, shape: FAILS for the jet-based variables** (shape-only, R/R_incl): c-jet pT χ² 81/7
+   (≤21%), pT(H) ≥1c 37/7, leading jet 0c 150/8; but pT(H) in 0c 8/7 ✅. Cause: GenJets cluster the
+   Higgs decay products (photons in GG, leptons in WW). ⇒ **the binned GG c-jet-pT shape must not
+   be applied to the WW signal as is.** Fix in progress: decay-cleaned c-jets (below).
+5. **0 GEN c-jet region:** R(0c) ≈ 0.62 — 3FS is 38% below 4FS there too. Weighting 0c events by 1
+   ignores this; relevant for the ~22% of selected signal with a light-mistag candidate. Decision needed.
+
+### Decay-cleaned c-jets — RUNNING
+GenJets within ΔR<0.4 of any stable Higgs decay product (status 1, fromHardProcess or
+hard-process τ-decay product, not ν) removed. `derive_ratio_nano_clean.py` → `fs_unc/clean_*.json`,
+plots `fs_unc/plots/official_decayclean/`, summary `…/comparisons/comparison_summary.txt`.
+Pass criterion: GG vs WW shape-only χ²/ndf ≈ 1 in c-jet pT.
+
+### Interim recommendation for the card
+Integrated **R(≥1c) = 0.795** (flat ~21% on events with a GEN c-jet) — the part that passed every test.
+Binned shape only once the decay-cleaned comparison passes.
 
 ## 4. Plots
+Official: [CERNBox `fs_unc/plots/official/`](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/official) — one folder per sample (≥1c, 0c, inclusive; no bands) + `comparisons/`.
+Decay-cleaned: `fs_unc/plots/official_decayclean/` (same layout).
 > ⛔ The three plots listed below are **private-sample** plots — internal only, never in a ppt.
 > Official-sample plots will be added under new names (`*_official*`, `cmp_*`).
 `/eos/user/c/cgupta/HToWW/fs_unc/plots/` — [CERNBox](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots)
