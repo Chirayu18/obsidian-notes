@@ -25,7 +25,7 @@ We measure R = σ(3FS)/σ(4FS) in the ≥1 GEN c-jet region, binned.
 GEN c-jet = GenJet hadronFlavour==4, pT>20, |η|<2.4. Scale band = 7-point envelope
 (LHEScaleWeight 0,1,3,5,7,8).
 
-Two ways to use it. **DECISION (user, 2026-09-29): option (a), uncertainty only.**
+Two ways to use it. ~~DECISION (user, 2026-09-29): option (a)~~ → **superseded the same day by §3c: stitching via reweighting, following LHCHWG-2026-007.**
 Conditions before it goes in the card: (1) Run-2 GG ≈ WW, (2) the official Run-3 result
 confirms the private one, (3) applied at GEN level (R if ≥1 GEN c-jet, else 1).
 Reviewer points to pre-empt: why not stitch the nominal (answer: keep the established FxFx
@@ -146,6 +146,70 @@ overlap-removal artifact (whole c-jets dropped, decay-dependent rate).
 Run-3 **R(≥1c) ≈ 0.80–0.82** → an ~18–20% effect on events with a GEN c-jet, with a ~2–3% jet-definition
 systematic. The binned cleaned c-jet-pT shape is now transferable GG → WW. Next: a **c-hadron-based**
 cross-check (decay-independent without removing jets) to pin the integrated value.
+
+## 3b. LHCHWG-2026-007 (arXiv:2608.26863) changes the approach — READ THIS FIRST
+Official LHC Higgs WG report (Bevilacqua et al., 27 Aug 2026), the written version of the talk.
+Saved: `References/HToWW/2026-LHCHWG-2026-007_Hc_flavour_schemes_arXiv2608.26863.pdf`.
+
+**Its recommendation:** without NNLO at analysis level, use a **stitched signal**. This *"mitigates the need
+for the flavour-scheme uncertainty obtained from a plain yield comparison of the massive and massless
+samples, as used in Ref. [47] and resulting in O(30%)"*; the residual is covered by the **scale
+uncertainty of the stitched sample**. ⇒ option (a) (flat 3FS/4FS nuisance) is what the paper moves away
+from. **The user's decision was revisited: we now do the stitching via REWEIGHTING (below).**
+
+**Stitching per the paper (Sec. 4.4):**
+- split on N(GEN c-jets, **pT > 10 GeV**) (footnote 4: lower than the usual 25 GeV to resolve the soft-charm
+  region); **0 → 4FS FxFx**, **≥1 → 3FS**.
+- normalise each region to its own fiducial σ × a flat NNLO/NLO K-factor (3FS K taken from bb̄H), then
+  rescale the total to the NNLO MiNNLOPS cc̄H σ (Table 3: 0.1664 fb × BR(γγ) ⇒ ≈ 73 fb at 13.6 TeV,
+  ~25% below NLO 4FS).
+- c-jet: "highest-pT jet containing at least one charm quark among those clustered with anti-kT"
+  (Sec 5.3) / "jet containing a D or B hadron" (5.1). **Says nothing about excluding the Higgs decay
+  products** — every study in the paper is H→γγ, so decay transfer never arises for them.
+- **Denominator is 4FS FxFx (our nominal), not 4FS non-FxFx.** Table 3: 3FS 0.1248 fb/BR ≈ 55.0 fb
+  (= ours), 4FS 0.2216 fb/BR ≈ 97.6 fb (FxFx). With γ+c cuts the 3FS/4FS ratio is 0.62 (~38%). ⇒ the
+  earlier non-FxFx R ≈ 0.80 **understates** the difference relevant to our FxFx signal.
+
+**Limit implications (qualitative, not yet computed):** stitching removes the flat FS nuisance
+(`xsec_hplusc_4FS_5FS` costs 1034→921 today, 10.9%) and replaces it with the stitched scale variations.
+NNLO normalisation is a SEPARATE choice that lowers σ_SM by ~25% ⇒ r-limit worse by ~25%, but it is the
+more accurate prediction; compare options at equal normalisation. Limit is 62% stat-dominated.
+Cheap bracket not yet run: copy the card to fs_unc/, set the FS lnN to 0 / 20% / 38%.
+
+## 3c. Stitching via REWEIGHTING — the chosen path (2026-09-29)
+**No new samples needed.** Literal stitching needs full-sim **3FS H→WW** for every era (does not exist
+in Run 3: only 3FS H→γγ centrally; 3FS has 40% neg. weights ⇒ millions of events per era). Instead:
+keep the **4FS FxFx** H→WW signal; events with **≥1 GEN c-jet (pT>10)** get weight **w(pT) = R(pT) =
+σ(3FS)/σ(4FS FxFx)**, binned in leading GEN c-jet pT; 0c events keep weight 1 (= 4FS FxFx, as in
+stitching). Captures stitching in the binned variable, not the full 3FS kinematics.
+
+**Derivation — RUNNING (started 2026-09-29 18:00, tmux `stitch` on lxplus966, standalone):**
+- script `fs_unc/gen/derive_stitch.py` (pT>10 split, bins 10/20/30/45/60/80/110/150/∞), driver
+  `fs_unc/gen/run_stitch.sh`. Batch 1 = **decay-cleaned** (primary), batch 2 = **uncleaned** (paper-literal;
+  definition systematic).
+- samples: official 3FS + **4FS FxFx** HTo2G for all four Run-3 eras; Run-2 UL18 HToGG and HToWW
+  (3FS + 4FS FxFx) for the decay-transfer validation. File lists `fs_unc/filelists/*_4FSFXFX.txt`.
+- outputs: `fs_unc/stitch/{clean,noclean}_<sample>.json`; plots `fs_unc/plots/stitch_fxfx/`;
+  **self-written summary `/eos/user/c/cgupta/HToWW/fs_unc/SUMMARY_STITCH.md`** — weight tables per era,
+  era-combined weight table w(pT), GG-vs-WW shape-only χ². Driver log `fs_unc/logs/run_stitch.log`
+  ends with `STITCH_DONE`.
+- **Resume after a break:** `cat /eos/user/c/cgupta/HToWW/fs_unc/SUMMARY_STITCH.md`. If it is missing, check
+  `tmux ls` on lxplus966 and `logs/stitch_*.log` (a `SKIP` line = xrootd timeout on one file, tolerated).
+  Rerun with `bash fs_unc/gen/run_stitch.sh` (idempotent).
+
+**Acceptance criteria before any framework work:** (1) the Run-3 eras agree (χ²/ndf ≈ 1);
+(2) Run-2 GG vs WW, shape-only, c-jet pT χ²/ndf ≈ 1 for the **cleaned** definition;
+(3) the cleaned-vs-uncleaned difference is quoted as the definition systematic.
+
+**Framework steps (ONLY after user says go):**
+1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
+   derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
+   decay products** (leptons, τ products; not ν). `select_gen_fs` is drafted (threshold 20, no cleaning) →
+   update. Reprocess signal only, all eras (proxy valid until ~2026-10-07).
+2. Weight: `w = R(gen_cjet1_pt)` if `gen_ncjets ≥ 1` else 1, from the era-combined table (correctionlib).
+3. Normalisation per the paper (per-region K-factors, total to NNLO ~73 fb) — decide with the user.
+4. Card: remove `xsec_hplusc_4FS_5FS`; signal `scalevar_*` shapes now evaluated on the stitched signal.
+5. Limit vs 1034, impacts, and the AN Systematics section.
 
 ## 4. Plots
 Official: [CERNBox `fs_unc/plots/official/`](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/official) — one folder per sample (≥1c, 0c, inclusive; no bands) + `comparisons/`.

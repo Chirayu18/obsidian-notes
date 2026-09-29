@@ -100,3 +100,12 @@ open directly in Obsidian on the laptop.
 
 > Convention: reference papers/PDFs live here under `References/<Project>/` (committed); generated
 > notes live under `Projects/<Project>/`; regenerable plots/data stay on EOS and are linked.
+
+## LHCHWG-2026-007 — H+c flavour schemes (arXiv:2608.26863, 27 Aug 2026)
+File: `2026-LHCHWG-2026-007_Hc_flavour_schemes_arXiv2608.26863.pdf`
+Bevilacqua, Biello, Caminada, Lange, Missiroli, Pagani, Selvaggi, Zaro — "Simulations and flavour-scheme
+studies for Higgs-boson production in association with charm quarks". Official LHC Higgs WG report;
+written version of Bevilacqua's 23-06-26 talk. **Recommends a stitched signal** (Nc-jet(pT>10)=0 → 4FS FxFx,
+≥1 → 3FS; per-region NNLO/NLO K-factors; total → NNLO MiNNLOPS cc̄H) and says this **mitigates the need**
+for a flat 3FS-vs-4FS yield uncertainty (the O(30%) used by Run-2). All studies use H→γγ.
+Used in [[2026-09-29-fs-3FS-4FS-status]].
