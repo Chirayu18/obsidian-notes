@@ -25,7 +25,12 @@ We measure R = σ(3FS)/σ(4FS) in the ≥1 GEN c-jet region, binned.
 GEN c-jet = GenJet hadronFlavour==4, pT>20, |η|<2.4. Scale band = 7-point envelope
 (LHEScaleWeight 0,1,3,5,7,8).
 
-Two ways to use it (**decision pending — user/convener**):
+Two ways to use it. **DECISION (user, 2026-09-29): option (a), uncertainty only.**
+Conditions before it goes in the card: (1) Run-2 GG ≈ WW, (2) the official Run-3 result
+confirms the private one, (3) applied at GEN level (R if ≥1 GEN c-jet, else 1).
+Reviewer points to pre-empt: why not stitch the nominal (answer: keep the established FxFx
+nominal, cover the scheme difference as an uncertainty); the symmetric Down = 2−R is
+conservative, since the physics is one-sided (3FS < 4FS in every bin).
 - (a) **uncertainty only:** nominal stays 4FS FxFx, `xsec_hplusc_3FS_4FS` Up=R, Down=2−R,
   replacing the flat `xsec_hplusc_4FS_5FS = 1.30` lnN (misnamed — for H+c it is 3FS/4FS).
 - (b) **stitched nominal** (the talk's recommendation): ≥1c events → 3FS prediction, 0c → 4FS,
