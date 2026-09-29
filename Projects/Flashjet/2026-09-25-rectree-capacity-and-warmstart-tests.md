@@ -41,7 +41,7 @@ Fit R² per head: v1 0.17–0.33; v2 0.30–0.54, **except h3 ≈ 0 in every v2 
 
 **Implication:** v2 is clearly better than v1 as a carrier of the pair bias, but even v2 is unlikely to match A through the attention logits alone. If v2 is built, the encoding should be richer than a single signed sum: per-depth slots (concatenated, not summed), so that q·k can pick out the LCA depth.
 
-## Test 2: warm-start fine-tune (running)
+## Test 2: warm-start fine-tune (done 2026-09-26)
 
 Script `lmkt/finetune_warm.py`, runner `~/flashjet_condor/run_finetune_warm.sh`, submit file `finetune_warm.sub`, condor cluster **9456493** (proc 0 = control, proc 1 = RecTree). Outputs in `lmkt/finetune/{warm_control,warm_rectree}/hist.json`.
 - Both runs start from arm C `best_model.pt` and train 40k iterations: batch 512, AdamW, lr 1e-4 (10× for the new tree parameters), 1k warmup then cosine, bf16, seeded identical data order. **BatchNorm running statistics are frozen**; without that, 20 steps at batch 64 dropped accuracy from 0.856 to 0.73 in both arms.
@@ -49,4 +49,30 @@ Script `lmkt/finetune_warm.py`, runner `~/flashjet_condor/run_finetune_warm.sh`,
 - Validation: 200k fixed val jets every 5k iterations; final: 50k test jets.
 - Measure: RecTree − control at matched iterations.
 
-From-scratch v1 (cluster 9455884) is **running** as of 2026-09-25 evening.
+**Result** (200k val jets; control / RecTree):
+
+| iteration | acc | Zqq | Wqq | ΔAUC Z / W (1e-4) |
+|---|---|---|---|---|
+| 0 | 0.8475 / 0.8471 | 0.9720 / 0.9719 | 0.9756 / 0.9755 | −1.1 / −0.9 |
+| 20k | 0.8446 / 0.8447 | 0.9717 / 0.9719 | 0.9752 / 0.9753 | +2.4 / +1.2 |
+| 40k | 0.8453 / 0.8463 | 0.9718 / 0.9721 | 0.9753 / 0.9755 | +3.6 / +2.4 |
+
+On 50k test jets: acc 0.8470 → 0.8476; Zqq +1.3e-4, Wqq +2.4e-4. The gain is consistent in sign from 15k iterations on, but it is small: about +0.1 accuracy points and +3e-4 on Z/W, **about 10% of the A−C gap**.
+
+## From-scratch v1, 1M iterations (cluster 9455884, done)
+
+Full JetClass test set (20M jets), logit AUCs, via `~/flashjet_condor/rectree_auc.py` (reuses final_auc.py):
+
+| | acc | Hcc | Hgg | H4q | Zqq | Wqq | Tbqq |
+|---|---|---|---|---|---|---|---|
+| A (pair bias) | 86.212 | 0.99465 | 0.97194 | 0.99393 | 0.97567 | 0.97899 | 0.99862 |
+| C (no pair, C/A cols) | 84.862 | 0.99278 | 0.97031 | 0.99268 | 0.97253 | 0.97592 | 0.99825 |
+| **RecTree v1** | **84.955** | 0.99333 | 0.97039 | 0.99284 | 0.97365 | 0.97692 | 0.99817 |
+| R − C (1e-4; acc in points) | +0.09 | +5.5 | +0.8 | +1.6 | **+11.2** | **+10.0** | −0.8 |
+| A − C | +1.35 | +18.7 | +16.3 | +12.4 | +31.4 | +30.7 | +3.7 |
+
+- **Gap closed:** 7% in accuracy; about 35% on Zqq and Wqq (the target classes), but only at the ~10e-4 noise floor; 29% on Hcc; about 0 on Hgg and H4q.
+- Validation curve: f = (R − C)/(A − C) = 0.13 averaged over 120–200k iterations and 0.09 over 820k–1M. By the §4 rule (< 0.1: stop), this is a stop.
+- **Cost: 9.6 it/s, slower than arm A (11.2) and C (20.8)** on the H100 (28.8 h vs 24.9 h vs 13.4 h for 1M). So v1 is neither better nor cheaper than the pair bias.
+
+**Verdict on v1:** a small, consistent gain concentrated where the pair bias matters (Z/W, Hcc), which matches the capacity test (v1 carries about 3% of the pair bias pairwise; the rest must come from node-token attention). It does not justify its cost. Test 1 says v2 carries about 10× more; building v2 is the only remaining RecTree option, and even that is capped at about 37% by the q·k form.
