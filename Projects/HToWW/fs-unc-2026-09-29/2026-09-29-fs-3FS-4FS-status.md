@@ -201,26 +201,27 @@ stitching). Captures stitching in the binned variable, not the full 3FS kinemati
 (2) Run-2 GG vs WW, shape-only, c-jet pT χ²/ndf ≈ 1 for the **cleaned** definition;
 (3) the cleaned-vs-uncleaned difference is quoted as the definition systematic.
 
-**NEXT STEP — better decay treatment WITHOUT reclustering (user, 2026-09-29):** the user wants to keep the
-**official GenJets and their official hadronFlavour**; STXS-style reclustering is **dropped**. The current
-"cleaning" removes whole GenJets near decay products (overlap removal): it loses c-jets (16.6% γγ vs
-11.5% WW) and causes the 1.4% γγ/WW fraction offset. Replace it with **subtraction**:
-- **A (primary, NanoAOD, approximate):** for each official GenJet, subtract the 4-momentum of every Higgs
-  decay product within ΔR<0.4 (status-1, fromHardProcess or hard-process τ product, not ν); then apply
-  pT>10 to the corrected jet. Keeps official jets + hadronFlavour, keeps overlapping c-jets, and a jet
-  that *was* a decay product falls to ~0. **Same definition can be applied to our H→WW signal NanoAOD**
-  → derivation and application exactly consistent. Implement as a variant of `derive_stitch.py`.
-- **B (exact cross-check, MiniAOD):** `slimmedGenJets` constituents → `packedGenParticles` traced to the
-  Higgs; subtract exactly those. FWLite/CMSSW, heavier; run on a subset to validate A.
-  MiniAOD confirmed on DAS (2026-09-29): Run-3 Run3Summer22EEMiniAODv4 3FS + 4FS-FxFx HTo2G; Run-2
-  RunIISummer20UL18MiniAODv2 3FS + 4FS-FxFx for HToGG and HToWWTo2L2Nu.
-- Pass criteria as before (eras agree; γγ vs WW c-jet-pT shape χ²/ndf ≈ 1) **plus** the γγ/WW fraction
-  ratio agreeing at the ~0.2% level seen for uncleaned jets.
+**QUEUED NEXT STEP — exact decay treatment on MiniAOD (user, 2026-09-29):** keep the **official GenJets
+and their official hadronFlavour**; no reclustering, and no approximate NanoAOD subtraction (both dropped
+by the user). The current NanoAOD "cleaning" removes whole GenJets near decay products (overlap removal):
+it loses c-jets (16.6% γγ vs 11.5% WW) and causes the 1.4% γγ/WW fraction offset.
+- **Method:** in MiniAOD, `slimmedGenJets` keep references to their constituents in `packedGenParticles`.
+  Trace each constituent to the Higgs (mother chain via `prunedGenParticles`), subtract exactly the
+  Higgs-descendant constituents from the jet 4-momentum, then apply pT>10, |η|<2.4 and keep the official
+  `hadronFlavour`. Exact, no approximation, no reclustering.
+- **Tools:** FWLite / CMSSW (python), reading MiniAOD over xrootd; standalone in `fs_unc/`, outside the framework.
+- **Samples (MiniAOD confirmed on DAS 2026-09-29):** Run-3 `Run3Summer22EEMiniAODv4` 3FS + 4FS-FxFx HTo2G;
+  Run-2 `RunIISummer20UL18MiniAODv2` 3FS + 4FS-FxFx for HToGG and HToWWTo2L2Nu.
+- **Pass criteria:** Run-3 eras agree; γγ vs WW c-jet-pT shape χ²/ndf ≈ 1; γγ/WW fraction ratio agrees at
+  the ~0.2% level seen for uncleaned jets.
+- **Open point to decide then:** how the weights get applied to our H→WW signal with the *same* definition —
+  our signal is NanoAOD-level in the framework, so the per-event GEN c-jet quantity must come from MiniAOD
+  (or an equivalent stored in the signal ntuples).
 
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
    derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
-   decay products** (leptons, τ products; not ν) — **to be replaced by the subtraction definition (A) above**. `select_gen_fs` is drafted (threshold 20, no cleaning) →
+   decay products** (leptons, τ products; not ν) — **to be replaced by the exact MiniAOD definition above**. `select_gen_fs` is drafted (threshold 20, no cleaning) →
    update. Reprocess signal only, all eras (proxy valid until ~2026-10-07).
 2. Weight: `w = R(gen_cjet1_pt)` if `gen_ncjets ≥ 1` else 1, from the era-combined table (correctionlib).
 3. Normalisation per the paper (per-region K-factors, total to NNLO ~73 fb) — decide with the user.
