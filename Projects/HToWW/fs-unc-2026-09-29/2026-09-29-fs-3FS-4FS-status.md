@@ -256,6 +256,20 @@ apply the correction before quoting anything.
   Run-2 vs Run-3 γγ (energy) — 3FS vs **4FS FxFx**, c-jets pT>10.
 
 
+
+> ## ✅ DECISION (user, 2026-09-30) — FINAL FS TREATMENT
+> - **Nominal unchanged:** 4FS FxFx, its own event weights, its NLO cross section. **No stitching, no NNLO normalisation**
+>   (the sample is NLO; an NNLO total would not carry the right selection efficiency).
+> - **The FS uncertainty accounts ONLY for the 3FS vs 4FS flavour-scheme difference** — exactly its role in Run 2
+>   (AN-23-102 §7.1: "Obtain the flavor scheme uncertainties (4FS vs. 3FS) ... The differences between the two predictions
+>   are used as uncertainty"). It replaces `xsec_hplusc_4FS_5FS` (30% lnN) with a **shape systematic** derived from
+>   3FS/4FS in bins of leading GEN c-hadron pT, with both samples at the SAME inclusive cross section (normalisation-free:
+>   pure fraction ratios, so it captures how the scheme redistributes events and hence changes the selection efficiency).
+> - **No normalisation lnN** (NLO vs NNLO) is added.
+> - **⚠️ Mandatory caveat on every slide/AN text about this:** "This uncertainty covers only the 3FS–4FS flavour-scheme
+>   difference. It does not cover the difference between the NLO normalisation of the nominal sample and higher-order
+>   (NNLO, MiNNLOPS) predictions, which LHCHWG-2026-007 Table 3 finds ~25% lower inclusively (13.6 TeV)."
+
 ## 3d. RESULTS — MiniAOD exact Higgs-constituent subtraction (2026-09-30) — CURRENT
 **Method:** official `slimmedGenJets` + official `hadronFlavour` (`slimmedGenJetsFlavourInfos`). For every jet,
 constituents whose ancestry reaches the H are subtracted from the jet momentum (no reclustering, no jet
