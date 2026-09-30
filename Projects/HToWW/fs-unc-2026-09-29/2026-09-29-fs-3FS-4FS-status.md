@@ -319,6 +319,29 @@ LHE weights in `mini_fs.py`); (d) how to get the same subtracted GEN c-jet into 
 has no constituents — options: a MiniAOD-side friend column, or accept NanoAOD overlap removal, ~1–2% on R);
 (e) framework steps, only when the user says go.
 
+
+## 3e. C-HADRON definition — CURRENT APPROACH (2026-09-30)
+**Why:** the MiniAOD c-jet study is not usable in the framework (no MiniAOD there). User proposed using the
+GEN **c-hadron** instead of the c-jet: it is stored in NanoAOD `GenPart` (Run 2 v9 and Run 3 v13, status 2), so the
+derivation and the framework can use the identical definition, and the Higgs decay cannot touch it.
+**Definition:** leading weakly-decaying open-charm hadron (|pdgId| 4xx/4xxx, charmonium 44x excluded, no c-hadron
+daughter so D*→D counts once), not from a b-hadron, |η|<2.5, pT > T. **T = 5 GeV primary, 10 GeV variation**
+(c-hadron carries ~60% of the c-jet pT; the paper's c-jet pT>10 split ≈ hadron 5–7 GeV). Regions: ≥1 c-hadron →
+weight w(pT) = σ(3FS)/σ(4FS FxFx); 0 → weight 1. 4FS FxFx normalised to XSDB.
+Script `fs_unc/gen/derive_chad.py`, driver `gen/run_chad.sh` (tmux `chad`, lxplus971), outputs
+`fs_unc/chad/<sample>_T{5,10}.json`, logs `logs/chad_*.log`.
+
+**Run-2 γγ vs WW (the decisive check) — PASSES** (all 192 γγ and 72 WW files, 0 skips):
+| | R(≥1 c-had) γγ | WW | c-hadron pT χ²/ndf | pT(H) ≥1c χ²/ndf |
+|---|---|---|---|---|
+| T = 5 GeV | 0.700 | 0.701 | 13.1/9 | 6.6/7 |
+| T = 10 GeV | 0.645 | 0.642 | 12.1/8 | 5.1/7 |
+Per-bin weights (T=5): 0.78 (5–10), 0.71 (10–15), 0.62 (15–20), 0.58–0.62 (20–110), ~0.6–0.7 above; γγ and WW agree
+bin by bin within ≤2.3σ (one bin, 20–30 GeV). Table: `fs_unc/chad/run2_GG_vs_WW_weights.md`; plots
+`fs_unc/plots/stitch_chad/comparisons/`. The 0c/inclusive pT(H) show a ~1.5σ coherent offset from the 0.8%
+3FS Σw/N difference between the two 3FS samples (50.06 vs 50.44 fb) — irrelevant for the ≥1c weights.
+**Pending:** Run-3 eras (incl. 2022preEE, NanoAOD is on disk) and Run-2 vs Run-3; then the card bracket.
+
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
    derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
