@@ -54,3 +54,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
 - Description: 3FS vs 4FS FxFx, official GenJets with Higgs-descendant constituents subtracted, c-jet pT>10; per sample + Run-3 eras / Run-2 γγ vs WW / Run-2 vs Run-3 comparisons. R(≥1c) ≈ 0.66 everywhere.
 - Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/stitch_mini
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/stitch_mini
+
+### H+c FS shape systematic (3FS vs 4FS FxFx, c-hadron pT) — GEN + Run 2 WW reco validation
+- tags: [plot]
+- Date: 2026-09-30
+- Description: shape weights at equal inclusive σ (eras, γγ vs WW, Run 2 vs Run 3, T5 vs T10) and Run 2 UL18 H→WW SR closure vs real 3FS. Caveat: covers only the scheme difference, not NLO vs NNLO normalisation.
+- Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
