@@ -357,6 +357,21 @@ reproduces the 3FS envelope exactly (as true stitching would). Do NOT use 4FS LH
 envelope (+14/−9%) and underestimates. Totals in ≥1c: Run-2 recipe ≈ 4FS scale ⊕ 30% ≈ ±31–33%; true stitching ≈ ±20%
 (+ poor 3FS MC stat); reweighting ≈ ±20% ⊕ ≤4.5% ≈ ±20.5%.
 
+
+### 3f. What LHCHWG-2026-007 Figs 8–11 + Table 3 already tell us (2026-09-30)
+- **Table 3 (13.6 TeV, H→γγ, fb incl. BR):** γ+c fiducial: NLO 3FS 0.0140 vs NLO 4FS 0.0226 (ratio **0.62**, the Run-2-style
+  "30%"); after scheme-specific NNLO/NLO K-factors (bb̄H-derived): 3FS 0.0182 vs 4FS 0.0172 (**ratio 1.06**), MiNNLOPS 0.0165.
+  ⇒ the big 3FS/4FS gap is mostly a **normalisation / perturbative-order** effect (K3 ≈ 1.31, K4 ≈ 0.76), not kinematics.
+- **Figs 9–11:** all samples normalised to the NNLO total. In the fiducial γγ + c-jet(pT>25) region (Fig 11, closest to
+  our SR) 4FS-FxFx, 3FS, stitched and MiNNLOPS agree in shape within ~10–15%, inside the scale bands; the largest
+  FxFx deviation is in the lowest pT(H) bins. Stitching's shape gain over FxFx is modest.
+- **Fig 8:** D-hadron pT, normalised to the same inclusive σ: 3FS/FxFx ≈ 1.1–1.25 at low pT — consistent with our
+  c-hadron f3/f4 = 1.26–1.27 (T=5).
+- **Implication (user's approach: 4FS-FxFx nominal + FS systematic):** shapes of 4FS FxFx are supported by Fig 11. Our NLO
+  R(pT) ≈ 0.66–0.70 as a Down variation would re-create the "plain yield comparison" the paper says stitching replaces,
+  because it contains the K-factor normalisation effect. Defensible split: **shape** systematic = R(pT)/⟨R⟩ (±~15%);
+  **normalisation** = NLO-vs-NNLO (FxFx NLO ≈ 33% above NNLO inclusive) or NNLO σ with its +4/−3% (incl.), +9/−9% (γ+c) unc.
+
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
    derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
