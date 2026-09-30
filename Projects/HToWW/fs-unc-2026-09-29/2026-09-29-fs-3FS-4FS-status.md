@@ -225,7 +225,9 @@ it loses c-jets (16.6% γγ vs 11.5% WW) and causes the 1.4% γγ/WW fraction of
   our signal is NanoAOD-level in the framework, so the per-event GEN c-jet quantity must come from MiniAOD
   (or an equivalent stored in the signal ntuples).
 
-### ⚠️ BUG FOUND in the running stitch derivation (2026-09-29 18:20) — FxFx normalisation
+### ✅ FIXED (2026-09-30) — BUG in the stitch derivation: FxFx normalisation
+> Fixed with the Run-3 XSDB value from the user (**4FS FxFx HTo2G 13.6 TeV = 97.62 fb**, 22postEE entry; same process name/gridpack used for all eras) and independently **validated from `GenLumiInfoProduct`**: pre-veto σ × accepted/tried (event counts) = 262.6×0.3458 = 90.8 fb (XSDB 90.67), 263.7×0.3438 = 90.7 (XSDB 90.50), 281.7×0.3464 = 97.6 (XSDB 97.62). Corrected NanoAOD-overlap-removal JSONs: `fs_unc/stitch/clean_<sample>_fxfxfixed.json` (script `gen/fix_fxfx_norm.py`). The `run_stitch.sh` tmux session died at 18:51 on 29 Sep (2023BPix + the whole uncleaned batch never finished) — **not rerun: superseded by the MiniAOD result in §3d.**
+
 `run_stitch.sh` gives R(≥1c) ≈ 0.23 — WRONG. Cause: for **FxFx** samples, Σ genWeight / genEventCount is
 the σ **before** the FxFx merging veto (~2/3 of LHE events are vetoed in Pythia; survivors keep their LHE
 weight; NanoAOD `genEventCount` counts only survivors). Measured 4FS-FxFx σ: 262.6 fb (Run-2 γγ) vs
@@ -236,7 +238,8 @@ weight; NanoAOD `genEventCount` counts only survivors). Measured 4FS-FxFx σ: 26
 FxFx: HToGG 90.67 fb, HToWWTo2L2Nu 90.50 fb (UL18). `SUMMARY_STITCH.md` will carry the WRONG absolute R —
 apply the correction before quoting anything.
 
-### MiniAOD exact-subtraction job — PROTOTYPED, NOT YET QUEUED (segfault)
+### MiniAOD exact-subtraction job — ✅ segfault fixed, RAN on condor 2026-09-29/30 → results in §3d
+> Segfault cause: `pr.first.key()` on the `RefToBase` inside `slimmedGenJetsFlavourInfos` crashes FWLite for some entries. Fix: the AssociationVector is 1:1 in order with `slimmedGenJets`, so use `finfo.value(j).getHadronFlavour()` by index (size equality checked, 0 mismatches). CMSSW_13_0_17 reads UL18 MiniAOD fine — no 10_6 needed. The original notes below are kept for history.
 - Collections confirmed in both Run-2 UL18 MiniAODv2 and Run-3 22EE MiniAODv4: `slimmedGenJets`,
   `slimmedGenJetsFlavourInfos` (official hadron flavour), `packedGenParticles`, `prunedGenParticles`,
   `GenEventInfoProduct`, `LHEEventProduct`, and **`GenLumiInfoProduct` in the lumi tree** → the FxFx
@@ -251,6 +254,70 @@ apply the correction before quoting anything.
   on slimmedGenJets returning a bad/null ref; (3) the `GenLumiInfoProduct` loop. Debug by bisecting the script.
 - The three comparisons to run once it works: Run-3 era consistency, Run-2 γγ vs WW (decay transfer),
   Run-2 vs Run-3 γγ (energy) — 3FS vs **4FS FxFx**, c-jets pT>10.
+
+
+## 3d. RESULTS — MiniAOD exact Higgs-constituent subtraction (2026-09-30) — CURRENT
+**Method:** official `slimmedGenJets` + official `hadronFlavour` (`slimmedGenJetsFlavourInfos`). For every jet,
+constituents whose ancestry reaches the H are subtracted from the jet momentum (no reclustering, no jet
+removal). c-jet = hadronFlavour 4, **subtracted** pT > 10, |η| < 2.4. 3FS vs **4FS FxFx**. Normalisation: 4FS FxFx
+= XSDB (cross-checked with `GenLumiInfoProduct`, above); 3FS = lumi `lheXSec` (= XSDB 49.87 / 54.97 fb exactly).
+**Jobs:** condor cluster 9472853, 1776 jobs (one per MiniAOD file), submit dir `~/fs_mini_condor/` (AFS),
+per-file output `fs_unc/mini/<sample>/<i>.json`, aggregator `fs_unc/gen/mini_agg.py`, results
+`fs_unc/mini_results/mini_<sample>.json`, weight table `fs_unc/mini_results/weight_table.md`.
+**Statistics:** 100% of files processed for 5 of 6 samples (e.g. Run-3 22postEE: 3.9M 3FS + 7.6M 4FS FxFx events;
+Run-2 WW 4FS FxFx: 19.8M events).
+
+**⚠️ 2022preEE is missing:** its MiniAOD (3FS and 4FS FxFx) sits only on **tape** (T1_US_FNAL_Tape /
+T1_FR_CCIN2P3_Tape) + two unreachable T3s; all 159 jobs failed to open the files. Needs a Rucio disk-replica
+request (user decision). Three Run-3 eras are available; they agree (below).
+
+| sample | R_incl | **R(≥1c)** | R(0c) | f3/f4 | σ3FS [fb] | σ4FS FxFx [fb] |
+|---|---|---|---|---|---|---|
+| Run 3 2022postEE | 0.563 | **0.659** | 0.502 | 1.171 | 54.97 | 97.62 |
+| Run 3 2023 | 0.563 | **0.663** | 0.500 | 1.177 | 54.97 | 97.62 |
+| Run 3 2023BPix | 0.563 | **0.659** | 0.502 | 1.170 | 54.97 | 97.62 |
+| Run 2 UL18 γγ | 0.550 | **0.660** | 0.481 | 1.200 | 49.87 | 90.67 |
+| Run 2 UL18 WW | 0.551 | **0.657** | 0.486 | 1.192 | 49.87 | 90.50 |
+
+**3FS/4FS-FxFx difference in the ≥1c region: ~34%** (R ≈ 0.66) — the paper's γ+c number is ~0.62 (38%).
+
+**The three comparisons (per-bin pulls, χ²/ndf on absolute R):**
+| comparison | c-jet pT (≥1c) | pT(H) (≥1c) | pT(H) (0c) | lead jet pT (0c) | pT(H) (incl) |
+|---|---|---|---|---|---|
+| Run-3 eras (2023, 2023BPix vs 22postEE) | 10.1/8, 9.5/8 | 2.0/7, 2.6/7 | 8.3/7, 3.3/7 | 3.7/8, 7.4/8 | 4.9/7, 2.1/7 |
+| Run-2 γγ vs WW (decay transfer) | **14.1/8** | 8.7/7 | 6.6/7 | **486/8** ⚠️ | 6.6/7 |
+| Run-2 vs Run-3 γγ (energy) | 11.3/8 | 10.3/7 | **92/7** | **57/8** | **95/7** |
+
+Reading:
+1. **Era consistency: passes** (all χ²/ndf ≈ 1).
+2. **γγ → WW transfer in the ≥1c region: passes.** R(≥1c) agrees to 0.4% (0.660 vs 0.657); f3/f4 to 0.6%. c-jet
+   pT χ²=14.1/8 (p≈0.08, driven by the 30–45 GeV bin, −2.3σ) — acceptable. With the old NanoAOD uncleaned jets
+   this was 81/7 → **the exact subtraction fixes the decay contamination.** ⚠️ The 0c leading-jet pT disagrees
+   strongly (486/8, WW higher at low pT); the ≥1c weights do not use it, but the cause is **not yet understood**.
+3. **Energy (13 → 13.6 TeV): the ≥1c region transfers** (11.3/8, 10.3/7). The 0c/inclusive pT(H) differ only in
+   the first bin (0–15 GeV, +9.5σ) — an energy/tune effect in the 0c region, which gets weight 1 anyway.
+4. NanoAOD overlap-removal (FxFx-fixed) gave R(≥1c) = 0.664–0.673 → removing whole jets moves R by ~1–2% vs exact
+   subtraction; exact subtraction barely changes the number of c-jets above 10 GeV (0.03%) but shifts their pT.
+
+**Weights w(pT) = R — Run-3 era-combined (22postEE+2023+2023BPix), applied to 4FS-FxFx events with ≥1 GEN c-jet:**
+| leading GEN c-jet pT [GeV] | Run 3 combined | Run 2 γγ | Run 2 WW |
+|---|---|---|---|
+| 10–20 | 0.761 ± 0.003 | 0.757 ± 0.006 | 0.746 ± 0.004 |
+| 20–30 | 0.620 ± 0.003 | 0.623 ± 0.007 | 0.615 ± 0.004 |
+| 30–45 | 0.583 ± 0.004 | 0.601 ± 0.008 | 0.580 ± 0.005 |
+| 45–60 | 0.571 ± 0.005 | 0.563 ± 0.010 | 0.562 ± 0.007 |
+| 60–80 | 0.580 ± 0.006 | 0.564 ± 0.012 | 0.585 ± 0.009 |
+| 80–110 | 0.584 ± 0.009 | 0.570 ± 0.018 | 0.581 ± 0.013 |
+| 110–150 | 0.647 ± 0.015 | 0.600 ± 0.030 | 0.645 ± 0.020 |
+| 150–∞ | 0.630 ± 0.021 | 0.678 ± 0.043 | 0.605 ± 0.028 |
+(uncertainties = MC stat only; no scale envelopes in the MiniAOD pass.)
+
+**Plots:** [CERNBox `fs_unc/plots/stitch_mini/`](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/stitch_mini) — one folder per sample + `comparisons/` (`run3_eras_*`, `run2_GG_vs_WW_*`, `run2_vs_run3_GG_*`, with `.txt` tables).
+
+**Still open:** (a) 2022preEE tape recall; (b) the 0c lead-jet γγ/WW discrepancy; (c) scale envelopes (need
+LHE weights in `mini_fs.py`); (d) how to get the same subtracted GEN c-jet into the framework signal (NanoAOD
+has no constituents — options: a MiniAOD-side friend column, or accept NanoAOD overlap removal, ~1–2% on R);
+(e) framework steps, only when the user says go.
 
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the

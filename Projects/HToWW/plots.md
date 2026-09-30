@@ -47,3 +47,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
 - `plot_validation.png` — ONNX vs TMVA::Reader, both flavours, max |Δ| = 2e-07
 - `plot_separation.png` — score distributions, prompt vs nonprompt (log y)
 - `plot_roc.png` — prompt eff vs nonprompt eff, markers at score > 0.0 / 0.4 / 0.8
+
+### H+c 3FS/4FS-FxFx ratio — MiniAOD exact Higgs-constituent subtraction
+- tags: [plot]
+- Date: 2026-09-30
+- Description: 3FS vs 4FS FxFx, official GenJets with Higgs-descendant constituents subtracted, c-jet pT>10; per sample + Run-3 eras / Run-2 γγ vs WW / Run-2 vs Run-3 comparisons. R(≥1c) ≈ 0.66 everywhere.
+- Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/stitch_mini
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/stitch_mini
