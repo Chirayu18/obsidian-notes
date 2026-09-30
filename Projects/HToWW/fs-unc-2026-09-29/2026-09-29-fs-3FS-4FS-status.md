@@ -342,6 +342,21 @@ bin by bin within ≤2.3σ (one bin, 20–30 GeV). Table: `fs_unc/chad/run2_GG_v
 3FS Σw/N difference between the two 3FS samples (50.06 vs 50.44 fb) — irrelevant for the ≥1c weights.
 **Pending:** Run-3 eras (incl. 2022preEE, NanoAOD is on disk) and Run-2 vs Run-3; then the card bracket.
 
+
+### 3e-bis. Uncertainty budget: reweighting vs true stitching vs Run-2 recipe (2026-09-30)
+From the stored 7-point envelopes (`fs_unc/chad/unc_budget.md`, script `gen/unc_budget.py`), ≥1 c-hadron (T=5), H→WW Run 2:
+| source | per bin | integrated ≥1c |
+|---|---|---|
+| 4FS-FxFx scale (what the signal carries today) | +8…+20 / −6…−13% | +14/−9% |
+| **3FS scale (what true stitching carries)** | ±14…22% | **+21/−19%** (Run 3 postEE: +20/−19%) |
+| weight MC stat | 0.4–1% below 30 GeV, 2–7% above | 0.2% |
+| γγ→WW transfer | ≤4.5% (21% in 110–∞, 1.6σ, stat-limited) | 0.3% |
+| definition T=5 vs 10 GeV | identical weights above 10 GeV; only events with leading c-hadron 5–10 GeV change (41% of 4FS ≥1c GEN events, weight 0.78 vs 1) | stitched total −4.5%; reco-level impact ≤ this, to be measured |
+**Key implementation point:** propagate the scale uncertainty with scale-varied weights w_k(pT) = σ3FS_k/σ4FS_nom, which
+reproduces the 3FS envelope exactly (as true stitching would). Do NOT use 4FS LHEScaleWeight × w — that gives the 4FS
+envelope (+14/−9%) and underestimates. Totals in ≥1c: Run-2 recipe ≈ 4FS scale ⊕ 30% ≈ ±31–33%; true stitching ≈ ±20%
+(+ poor 3FS MC stat); reweighting ≈ ±20% ⊕ ≤4.5% ≈ ±20.5%.
+
 **Framework steps (ONLY after user says go):**
 1. GEN columns on the H+c signal: `gen_ncjets`, `gen_cjet1_pt` with the **SAME definition as the
    derivation** — pT>10, |η|<2.4, hadronFlavour==4, and **excluding GenJets within ΔR<0.4 of the H→WW
