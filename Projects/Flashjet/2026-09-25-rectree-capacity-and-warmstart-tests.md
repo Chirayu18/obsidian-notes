@@ -92,3 +92,25 @@ The proposed B2 is arm A plus an additive attention bias T[layer, head, LCA(i, j
 - **CAPair's channels:** share_bp, ln kT at that node, and log1p(depth), fed through the same pair MLP as the 4 kinematic inputs; one static bias for all layers. B2 would use the node's full φ (including mass and child masses) plus the current layer's subtree token sum, per layer and head.
 - **CAPair never reached convergence.** Cluster 1123266 wrote checkpoints to 80k only (last file 2026-09-16 02:23; val accuracy vs baseline −0.239, −0.264, −0.090, −0.041 pp at 20–80k). No later checkpoint and no test inference exist; why it stopped is not recorded.
 - **PLuM** (Lund splitting tokens, pair bias on) is a different mechanism: tokens rather than a bias, and 2-body splitting kinematics. At 1M: −0.006 test accuracy vs baseline.
+
+## B2 submitted (2026-09-30): arm A + common-ancestor attention bias
+
+- **Model:** `ParticleTransformer_LCABias_JetClass`, b-hive `utils/models/particletransformer_lcabias.py`.
+  - logit = q·k + U(pair kinematics, arm A) + T_{layer,head}[LCA(i, j)], over the full C/A tree (R = 10, all N−1 nodes).
+  - T comes from each node's φ (7), the mean of the current layer's tokens under it, and ln(1 + n).
+  - The last layer of each head is zero-initialised.
+  - Parameters: 2,249,548 vs A's 2,143,486 (+106,062, +4.9%).
+- **Checks** (`lmkt/test_lcabias.py`, T4):
+  - the LCA equals a brute-force walk on 19,200 pairs;
+  - with A's best_model loaded, max |logit_B2 − logit_A| = 0 exactly;
+  - every layer's bias head gets gradient.
+- **Memory** (eager fwd+bwd, measured at batch 32/64/128, linear to 512): A about 21 GB; B2 not measured separately. B3 was about 30 GB.
+- **Smoke test not completed:**
+  - batch 512 ran out of memory on the 16 GB T4;
+  - batch 64 died when the shared lxplus905 node killed a dataloader worker (SIGKILL) during `torch.compile`.
+  Submitted without it, at the user's request.
+- **Condor cluster 9475839:** `~/flashjet_condor/paper_lcabias.sub` → `run_paper_lcabias.sh`.
+  - Training arguments are verbatim from arm A's `run_paper_baseline.sh`; only `--model-name` and `--training-version b_hive_paper_lcabias_1` differ.
+  - The runner checks at start that B2 = A + `lca_*` params only.
+  - Scheduling differs from A's paper.sub: 100 GB host memory (v1 peaked at 139 GB) and H100 NVL only.
+- **B3 (full hypergraph: hyperedge states, particle↔hyperedge messages)** was built and passed the same checks (`particletransformer_hypertree.py`, `lmkt/test_hypertree.py`). It was **not submitted**: +1,684,304 params (+78.6%) confounds the comparison with A. A slim version (one shared block across layers) is the option if revisited.
