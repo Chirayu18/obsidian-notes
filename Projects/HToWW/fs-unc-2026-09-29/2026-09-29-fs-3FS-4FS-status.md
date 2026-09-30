@@ -359,6 +359,11 @@ envelope (+14/−9%) and underestimates. Totals in ≥1c: Run-2 recipe ≈ 4FS s
 
 
 ### 3f. What LHCHWG-2026-007 Figs 8–11 + Table 3 already tell us (2026-09-30)
+- **Correction (2026-09-30, user):** the paper does NOT explicitly mandate NNLO normalisation. Its wording (p.20): "we stress
+  the importance of reweighting the NLO+PS integrated cross-section with the **most accurate inputs available**, ideally from
+  dedicated higher-order ... calculations or simulations, **such as** the MiNNLOPS predictions". NNLO rescaling appears
+  explicitly only as part of the stitched-sample construction (§4.4). Keeping NLO + a normalisation uncertainty covering the
+  higher-order value is compatible with this wording; the NNLO-normalised limit is a courtesy cross-check, not a requirement.
 - **Table 3 (13.6 TeV, H→γγ, fb incl. BR):** γ+c fiducial: NLO 3FS 0.0140 vs NLO 4FS 0.0226 (ratio **0.62**, the Run-2-style
   "30%"); after scheme-specific NNLO/NLO K-factors (bb̄H-derived): 3FS 0.0182 vs 4FS 0.0172 (**ratio 1.06**), MiNNLOPS 0.0165.
   ⇒ the big 3FS/4FS gap is mostly a **normalisation / perturbative-order** effect (K3 ≈ 1.31, K4 ≈ 0.76), not kinematics.
