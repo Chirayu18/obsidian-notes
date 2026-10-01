@@ -63,3 +63,16 @@ Options (user to decide): (a) add an N-jet component to the FS shape systematic,
 - GEN: `fs_unc/plots/fs_shape/` — shape_run2_GG_vs_WW_T{5,10}, shape_run3_eras_T*, shape_run3_vs_run2_{GG,WW}_T*, shape_T5_vs_T10_run3comb
 - Reco (Run 2 WW SR): `fs_unc/plots/fs_shape/reco_run2_WW/sr_*.png`
 - [CERNBox](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape)
+
+## The 20–30 GeV γγ-vs-WW bin (investigated 2026-10-01)
+Per-file, 1 GeV-binned rerun (`fs_unc/gen/perfile_chad.py`, `gen/bin2030_ana.py`, outputs `fs_unc/bin2030/`).
+- **Not a narrow spike:** in 2 GeV bins the Run-2 γγ weight is ~5–6% above WW coherently over 22–32 GeV (each bin −1.2…−2.3σ).
+- **Run 2 γγ is the outlier, not WW:** Run 3 H→γγ (22postEE, 40/60 files) gives 1.02–1.06 there, agreeing with Run 2 WW
+  (1.03–1.07) → same decay as the outlier, so **not a decay effect**. Run 3 combined 20–30: 1.052 vs WW 1.048.
+- **No bad file:** per-file χ² of the 20–30 fraction is fine (γγ 3FS 49/71, γγ 4FS 80/119); jackknife-by-file error (0.067%)
+  ≤ sum-w² error (0.085%) → errors not underestimated.
+- Run 2 γγ 3FS is the smallest sample (2M events, 40% negative weights). Look-elsewhere: P(≥1 bin at ≥2.9σ in 10) = 3.7%.
+- **Verdict:** statistical fluctuation of the Run 2 γγ 3FS sample; no impact on the Run 3 weights.
+- Side observation (cancels in w): Run 2 WW samples are ~1–3% softer than γγ in pT(H) and c-hadron pT in BOTH schemes
+  (3–4σ), identically in the WW nominal and ext1 productions (agree within 2σ). User confirms same generator setup;
+  origin not identified. It cancels in the 3FS/4FS ratio except where the 3FS fluctuation sits.
