@@ -188,24 +188,23 @@ All six era pairs compatible: **χ²/ndf = 6.2 – 10.0 / 10** → one combined 
 <div class="cols">
 <div>
 
-![w:560](img/shape_run2_GG_vs_WW_T5.png)
+![w:600](img/gg_vs_ww_run2_ratio.png)
 
 </div>
 <div>
 
-- **χ²/ndf = 18.9/10** (p ≈ 0.04)
-- driven by **one bin**: 20–30 GeV, 1.10 vs 1.05 (2.9σ)
-- bins holding most of the cross section agree within **≤ 1.7%**
-- chance of ≥1 bin at 2.9σ among 10: ~4% → a single-bin effect, no trend
-- effect on the SR yield: **~1%** (next slides)
+- ratio H→WW / H→γγ consistent with 1 within the **±1–2σ statistical bands** in 9 of 10 bins
+- bins holding most of the cross section agree within **≤ 1.6%**
+- one bin at 2.9σ (20–30 GeV); χ²/ndf = 18.9/10
+- weights applied to the 4FS H→WW sample, SR yield: γγ-derived **1.090** vs WW-derived **1.079** (~1%)
 
 <div class="key">
 
-**Verdict:** weights derived on H→γγ describe H→WW. The c-hadron cannot be touched by the decay products.
+**Verdict:** weights derived on H→γγ describe H→WW → the same procedure can be used in Run 3, where only 3FS H→γγ exists.
 
 </div>
 
-For reference, uncleaned GEN c-jets gave χ² = 81/7 in the same test.
+The 20–30 GeV bin is a fluctuation of the Run 2 H→γγ 3FS sample (backup).
 
 </div>
 </div>
@@ -364,6 +363,29 @@ SR of the Run 2 H→WW study, same inclusive cross section:
 <!-- _class: sec -->
 
 # Backup
+
+---
+
+# Backup — the 20–30 GeV bin
+
+<div class="cols">
+<div>
+
+![w:580](img/gg_vs_ww_run2_ratio_withRun3.png)
+
+</div>
+<div>
+
+- **Run 2 H→γγ is the outlier, not H→WW:** Run 3 H→γγ (same decay) gives the same ratio to Run 2 γγ as H→WW does (0.955–0.96 at 20–30 GeV) → not a decay effect
+- not a narrow spike: ~5% coherent excess of Run 2 γγ over 22–32 GeV (2 GeV bins, each ≤ 2.3σ)
+- no bad file: per-file χ² 49/71 (3FS), 80/119 (4FS); jackknife-by-file error ≤ sum-w² error
+- Run 2 γγ 3FS is the smallest sample: 2 M events, 40% negative weights
+- P(≥ 1 bin at ≥ 2.9σ among 10) = 3.7%
+
+**→ statistical fluctuation; the Run 3 weights used in the analysis agree with H→WW in this bin (1.052 vs 1.048).**
+
+</div>
+</div>
 
 ---
 

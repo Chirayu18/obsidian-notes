@@ -61,3 +61,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
 - Description: shape weights at equal inclusive σ (eras, γγ vs WW, Run 2 vs Run 3, T5 vs T10) and Run 2 UL18 H→WW SR closure vs real 3FS. Caveat: covers only the scheme difference, not NLO vs NNLO normalisation.
 - Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
+
+### H+c FS shape weights — Run 2 H→γγ vs H→WW with ratio and ±1/2σ stat bands
+- tags: [plot]
+- Date: 2026-10-01
+- Description: decay-independence plot for the FS shape systematic (justifies using Run 3 H→γγ weights for H→WW); `gg_vs_ww_run2_ratio` and `_withRun3` (shows the 20–30 GeV tension is a Run 2 γγ fluctuation).
+- Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape/gg_vs_ww_run2_ratio.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
