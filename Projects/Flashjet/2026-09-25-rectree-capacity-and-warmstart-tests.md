@@ -114,3 +114,31 @@ The proposed B2 is arm A plus an additive attention bias T[layer, head, LCA(i, j
   - The runner checks at start that B2 = A + `lca_*` params only.
   - Scheduling differs from A's paper.sub: 100 GB host memory (v1 peaked at 139 GB) and H100 NVL only.
 - **B3 (full hypergraph: hyperedge states, particle↔hyperedge messages)** was built and passed the same checks (`particletransformer_hypertree.py`, `lmkt/test_hypertree.py`). It was **not submitted**: +1,684,304 params (+78.6%) confounds the comparison with A. A slim version (one shared block across layers) is the option if revisited.
+
+## RecTree v2 final result (2026-10-01)
+
+Full JetClass test set (20,049,152 jets), best_model, logit-difference AUCs (`~/flashjet_condor/rectree_auc.py`):
+
+| | acc | Hbb | Hcc | Hgg | H4q | Zqq | Wqq | Tbqq |
+|---|---|---|---|---|---|---|---|---|
+| A (pair bias) | 86.212 | 0.99898 | 0.99465 | 0.97194 | 0.99393 | 0.97567 | 0.97899 | 0.99862 |
+| C (no pair bias) | 84.862 | 0.99881 | 0.99278 | 0.97031 | 0.99268 | 0.97253 | 0.97592 | 0.99825 |
+| v1 | 84.955 | 0.99874 | 0.99333 | 0.97039 | 0.99284 | 0.97365 | 0.97692 | 0.99817 |
+| **v2** | **85.403** | 0.99883 | 0.99384 | 0.97090 | 0.99318 | 0.97441 | 0.97769 | 0.99831 |
+
+Share of the A−C gap closed by v2: **accuracy 40%**, **Zqq 60%, Wqq 58%, Hcc 56%**, H4q 40%, Hgg 36%. v2 − v1: +0.45 accuracy points; Zqq/Wqq +7.6e-4.
+
+**Speed** (b-hive training-time counter, 1M iterations; different H100 runs at different times, so contention is not controlled):
+
+| | training h | it/s |
+|---|---|---|
+| A | 24.9 | 11.16 |
+| C | 13.4 | 20.78 |
+| v1 | 28.8 | 9.63 |
+| v2 | 28.6 | 9.72 |
+
+v2 is **slower than A** (9.72 vs 11.16 it/s). The "~18 it/s" quoted on 2026-09-30 was a wrong formula (it counted the extra train_time entry); 9.72 is the correct value. The speed comes from the v1 machinery (recursive merge, node tokens, tree context), which v2 keeps.
+
+**Reading:** the tree positional encoding is a real gain over C and v1, and it is largest exactly where the pair bias matters (Z/W/Hcc close about 56–60% of the gap). But v2 is not yet a cheaper replacement for A. Next: a lean v2 (path encoding only, without the recursive merge and node tokens) to measure the speed and accuracy of the encoding alone.
+
+**B2 stopped** (condor 9475839 removed at 220k): B2 − A validation mean +0.0003 over 11 checkpoints (7/11 ahead); train +0.0009 (8/11). No effect at the size that would count.
