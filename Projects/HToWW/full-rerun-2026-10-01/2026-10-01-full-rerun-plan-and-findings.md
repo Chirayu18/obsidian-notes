@@ -71,3 +71,27 @@ script `Projects/HToWW/lxplus-2026-07-12/train_v11_2dcats.sh`) predates this rer
 WHEN RETRAINING.** It was excluded from the July training and therefore never got a card group. Also decide then whether to use the
 `--split test` held-out events for the final fit (2022postEE backgrounds overlap the training events).
 Until then, the July model is used for inference on the new parquets.
+
+## TODO logged 2026-10-02 (user): integrate alternative-sample systematics properly into the framework
+**Now (stopgap):** the tt modelling variations (hdamp 158/418, mtop 171.5/173.5, TuneCP5 Up/Down) run in a SEPARATE
+workflow `hww_combine_full_ttsyst`, a copy of `hww_combine_full.yaml` with `object_shifts: false` and only the
+tt_hdamp/tt_mtop/tt_tune datasets. Reason: `object_shifts` is a per-WORKFLOW switch; the framework cannot run some
+datasets nominal-only. Verified 2026-10-02 that these cannot be weights: TTto2L2Nu NanoAOD has only LHEScaleWeight(9),
+LHEPdfWeight, PSWeight(4); `LHEReweightingWeight` is empty.
+**Drawback:** two yamls must be kept in sync by hand (any edit to the main workflow must be repeated or the copy regenerated).
+
+**Wanted (like hh2bbww / columnflow):** mark such datasets as *shift datasets* in the config, e.g.
+```yaml
+TTto2L2Nu_Hdamp158:
+  key: tt
+  shift_of: TTto2L2Nu        # the nominal it replaces
+  shift: tt_hdampDown       # nuisance name + direction
+  # => processed nominal-only (no object shifts), never added to the nominal tt
+```
+hh2bbww (`hbw/config/config_run2.py`) does exactly this: `tune_up/down`, `hdamp_up/down`, `mtop_up/down` are shifts flagged
+`disjoint_from_nominal` and served by dedicated datasets. Needed pieces in our framework:
+1. per-dataset object-shift switch in `base.py`/`correction_manager` (skip the shift loop for shift datasets);
+2. combine builder: build `<proc>_<shift>{Up,Down}` templates from the shift datasets (ratio to their nominal sample,
+   applied to the full process), so no wrapper script is needed;
+3. remove `hww_combine_full_ttsyst` afterwards.
+Same mechanism would also serve future alt-sample systematics (colour reconnection CR1/CR2/ERDOn, V+jets/DY alternatives).
