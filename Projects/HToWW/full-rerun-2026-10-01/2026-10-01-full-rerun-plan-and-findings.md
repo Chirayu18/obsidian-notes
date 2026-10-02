@@ -95,3 +95,24 @@ hh2bbww (`hbw/config/config_run2.py`) does exactly this: `tune_up/down`, `hdamp_
    applied to the full process), so no wrapper script is needed;
 3. remove `hww_combine_full_ttsyst` afterwards.
 Same mechanism would also serve future alt-sample systematics (colour reconnection CR1/CR2/ERDOn, V+jets/DY alternatives).
+
+## 2026-10-02 — Central signal LHE weights are broken → fixed in the framework, signal reprocessed
+First 2022preEE card: full fit HUNG; stat-only 888. Template scan showed the **central H+c** theory variations were
+nonsense: `lhe_pdf` Up ×11–14 / Down ×0.00, `scalevar_*` Up AND Down both ×1.8–3 (same side).
+Cause (Runs-tree sums, full generated sample): in the central `MuRFScaleDynX0p50` FxFx samples **every LHE variation is
+offset ~2× from the nominal** — LHEScaleSumw 1.49–2.47 (μ=1 entry = 1), LHEPdfSumw replicas mean 2.20 (H+c) / 1.88 (H+b).
+Private H+c (0.87–1.07, 1.00) and TTto2L2Nu (0.88–1.13, 1.00) are fine. Likely the variations were computed around the
+default dynamic scale while the nominal uses 0.5× it. In addition, PDF **member 0 is inconsistent with the replicas
+per event** (replicas agree to 0.5%, member 0 offset by an event-dependent factor) → Hessian sum vs member 0 gives +116%.
+**Fix (opt-in, only `lhe_renorm_datasets: [HplusCharm_4FS_HToWWTo2L2Nu, HplusBottom_5FS_HToWWTo2L2Nu]`):**
+- new `analysis/corrections/lhe_norm.py`: per-file generator means from the Runs tree (genEventSumw-weighted, cached);
+- `lhescale.py`: each scale variation divided by its generator mean (keeps acceptance/shape, removes offset);
+- `lhepdf.py`: each member divided by its generator mean, and the per-event **mean of the 100 replicas** used as centre;
+- `correction_manager.py` passes the norms for listed datasets (prefix match: jobs run as `<sample>_<partition>`);
+- `workflow_config_builder.py`: plain string lists allowed under `event_weights`.
+Backups `*.bak_pre_lhenorm_20261002`. Verified on a central H+c file: lhe_pdf **±5.0%**, scale −14…+2% (Up/Down opposite).
+Old signal outputs MOVED (not deleted) to `/eos/user/c/cgupta/higgscharm/_quarantine_lhebug_20261002/`; the two samples
+resubmitted (10 jobs). Unattended pipeline `runall/pipeline_2022.sh` (tmux pipe2022): wait → re-merge → inference →
+cards → combineCards (2022preEE+postEE) → limits; summary in `logs_runall/pipeline_2022.done`.
+Other fixes today: coffea `xrootdtimeout` 60 s → 600 s in submit.py (most first-pass failures were "Operation expired",
+395/~520 at Rutgers); tt alt-sample ratio uses the integrated ratio where a bin's MC-stat error > 10%.
