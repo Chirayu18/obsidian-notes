@@ -67,6 +67,7 @@ script `Projects/HToWW/lxplus-2026-07-12/train_v11_2dcats.sh`) predates this rer
 - MET is now the **JEC-recorrected** `events.MET` (MET, mTll, mTl2 and MET-based features shift slightly);
 - scale-weight fix changes per-event weights slightly (w4³ removed); WH now in higgsbkg;
 - jet-binned W+jets + WH in 2022preEE; 2023 eras once processed.
-Also decide then: include Wγ (`WG`) in training (it was explicitly excluded in July) and whether to use the
+**Wγ decision (user, 2026-10-02): do NOT add `WG` to the card now; ADD IT (to diboson, in training and in `process_map`)
+WHEN RETRAINING.** It was excluded from the July training and therefore never got a card group. Also decide then whether to use the
 `--split test` held-out events for the final fit (2022postEE backgrounds overlap the training events).
 Until then, the July model is used for inference on the new parquets.
