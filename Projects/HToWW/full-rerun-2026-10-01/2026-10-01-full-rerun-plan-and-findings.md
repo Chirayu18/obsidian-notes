@@ -58,3 +58,15 @@ submit.py writes parquets to `~/public/higgscharm/outputs/`.
 
 **Submitted 2022-10-01 17:00:** `hww_combine_full` + `hww_combine_full_ttsyst`, 2022preEE + 2022postEE
 (logs `/eos/user/c/cgupta/higgscharm/logs_runall/submit_hww_combine_full*_2022*.log`). 2023 waits for user OK.
+
+## TODO logged 2026-10-02 (user): RETRAIN the v11 MVA on the new production
+The current model (`hwwcom_multiclass_v11_2dcats`, trained July on the old 2dcat inputs; config `HPlusCHToWW_2dcats`,
+script `Projects/HToWW/lxplus-2026-07-12/train_v11_2dcats.sh`) predates this rerun. Retrain "at some point" on
+`hww_combine_full` once all eras are in, because the inputs changed:
+- **central** H+c signal (~1M evt/era, ~3.5× the private stats) instead of the private sample;
+- MET is now the **JEC-recorrected** `events.MET` (MET, mTll, mTl2 and MET-based features shift slightly);
+- scale-weight fix changes per-event weights slightly (w4³ removed); WH now in higgsbkg;
+- jet-binned W+jets + WH in 2022preEE; 2023 eras once processed.
+Also decide then: include Wγ (`WG`) in training (it was explicitly excluded in July) and whether to use the
+`--split test` held-out events for the final fit (2022postEE backgrounds overlap the training events).
+Until then, the July model is used for inference on the new parquets.
