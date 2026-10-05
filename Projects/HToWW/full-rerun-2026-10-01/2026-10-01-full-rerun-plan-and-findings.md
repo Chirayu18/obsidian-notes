@@ -133,3 +133,24 @@ corrected-MET inputs, 2022postEE bkg overlaps training events. Retraining logged
 (w4 = 1 for all these samples). Selected-event counts rose: W 0J/1J/2J +35/+26/+15%, DY +13%, ggH +15% → attributed to
 the JEC-re-corrected MET (MET>45 and mT cuts); to be validated with data/MC (plots: condor 9491705).
 Pipeline ran as condor job 9491687 after the interactive run was killed by the lxplus logout reaper (2 Oct 17:02).
+
+## 2026-10-05 — data/MC check, plotting hang, band decomposition, postEE slope (IN PROGRESS)
+- 2023 SUBMITTED (user OK, EOS 759 GB/1 TB): 1079 jobs (main 619 preBPix + 386 postBPix; ttsyst 44 + 30).
+  Era yamls `.bak_pre_full_*`; central H+c/H+b + tt variations (+ binned W, WH for postBPix). Script `runall/submit_full2023.sh`.
+- Plot hang: `analysis/postprocess/build_color_map.py` infinite loop once all 20 tab20 colours were used (triggered by
+  the 6 new tt_* process names). Fixed (reuse after one pass; backup `.bak_pre_infloop_20261005`). run_postprocess logs
+  go to `outputs/<wf>/<era>/output.txt`, not stdout. Plots: `outputs/hww_combine_full/<era>/base/*.png` (53/era).
+- Data/MC: 2022preEE flat ≈1.0 (MET 1.05→0.95). 2022postEE overall 0.923 with a SLOPE: MET 1.0→0.83, mTll 0.98→0.77,
+  Njets 0.93→0.80, jet η 0.93 barrel → 1.05–1.1 at |η|>2, φ flat. SAME slope in old hww_combine_2dcat (raw PuppiMET)
+  → pre-existing, not from the MET fix. top-pT IS applied in nominal (toppt.py: nom=SF, Up=2SF−1, Down=1; yaml comment wrong).
+  No jet veto maps applied in the workflow (files exist in correctionlib_files.py, unused).
+- Band decomposition (`runall/band_breakdown.py <era>` → `outputs/hww_combine_full/<era>/band_breakdown/`, plots + summary.json):
+  band = MC stat + all weight variations (no object shifts, no lnN). ~90% of the variance from 3 tt sources:
+  CMS_ctag2d_2022 (integrated 16.5% postEE / 12.2% preEE, 75–80% on tt), scalevar_muR_muF 11.7%, scalevar_muR 10.1%.
+  The tt scale normalisation is NOT in the fit (rate_tt floats, no_theory:[tt]) → plot band overstates fit uncertainty.
+- Shape diagnostic (Δχ², norm floated) postEE: MET χ² 309/19 — best fixes scalevar_muR_muF Down −97, top_pt Up −54,
+  ps_fsr Down −49; Njets 124/14 — muR_muF Down −89, ISR Up −69; mT: pileup Down −20…−23. preEE MET only 47/19.
+  Same tt sample both eras → points to an ERA-SPECIFIC jet effect (JEC/JER/pileup), not tt modelling.
+- NEXT: (a) ctag2d SF size — code read (ctag2d.py: up_Total/central ratios, candidate c-jet, flav=hadronFlavour, pt
+  clipped 20–9999) — need numeric check of up_Total vs central per category; (b) test JES/JER Down shift trees vs the
+  postEE slope; (c) pileup; (d) jet veto maps; (e) make plot band mirror the fit (drop tt normalisation theory).
