@@ -116,3 +116,20 @@ resubmitted (10 jobs). Unattended pipeline `runall/pipeline_2022.sh` (tmux pipe2
 cards → combineCards (2022preEE+postEE) → limits; summary in `logs_runall/pipeline_2022.done`.
 Other fixes today: coffea `xrootdtimeout` 60 s → 600 s in submit.py (most first-pass failures were "Operation expired",
 395/~520 at Rutgers); tt alt-sample ratio uses the integrated ratio where a bin's MC-stat error > 10%.
+
+## 🎯 2022 BASELINE (2026-10-05) — `hww_combine_full`, expected 95% CL (blind Asimov)
+| card | full | stat-only | freeze autoMCStats |
+|---|---|---|---|
+| 2022preEE (8.0 fb⁻¹) | 1549 | 888 | 1451 |
+| 2022postEE (26.7 fb⁻¹) | 1076 | 546 | 985 |
+| **2022 combined** | **905** | **463.5** | **831** |
+Cards: `outputs/combine/full/v12_hplusc_full_{2022preEE,2022postEE,2022}.txt` (combineCards, era-prefixed channels;
+lumi_13p6TeV_2022 correlated across 2022 eras; rate_tt decorrelated per era). Built by `runall/make_combine_inputs_full.py`.
+Compare old 2022postEE-only `hww_combine_2dcat`: 1034 (stat-only 641). postEE now: stat-only better (central signal,
+SR signal 0.26→0.32), full slightly worse (dead nuisances revived, MET follows JES/JER, MET-unclustered, top-pT, hdamp/mtop/UE).
+MVA = July v11_2dcats (trained on PRIVATE signal + old 2022postEE bkg) — caveats: central-signal transfer unchecked,
+corrected-MET inputs, 2022postEE bkg overlaps training events. Retraining logged.
+**postEE yield changes vs 1034 card (SR):** signal +24%, higgsbkg +19% (WH added), tt −5%, **V+jets +36%**. Not from w4³
+(w4 = 1 for all these samples). Selected-event counts rose: W 0J/1J/2J +35/+26/+15%, DY +13%, ggH +15% → attributed to
+the JEC-re-corrected MET (MET>45 and mT cuts); to be validated with data/MC (plots: condor 9491705).
+Pipeline ran as condor job 9491687 after the interactive run was killed by the lxplus logout reaper (2 Oct 17:02).
