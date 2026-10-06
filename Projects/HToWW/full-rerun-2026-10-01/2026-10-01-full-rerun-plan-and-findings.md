@@ -177,3 +177,38 @@ Pipeline ran as condor job 9491687 after the interactive run was killed by the l
   No other correction module has the toppt-style early return (pileup/ctag/e/μ/LHE/PS checked; higgs_hf nominal = 1).
 - Consequence: all MC needs reprocessing for correct CMS_res_j shapes (data unaffected): 2184 MC jobs
   (preEE 407, postEE 909, preBPix 528, postBPix 340; TT* 22/65/100/72). Awaiting user go-ahead.
+- JER fix convention verified: new `SFUncertainty` is ABSOLUTE — old explicit up SF == SF + unc to 4 digits
+  (e.g. 1.128+0.018 = 1.146). The 2026-07-15 changelog text "SF×(1±unc)" is misleading. 2023 old "down" was bounded at
+  1.0; new SF−unc can go below 1 (follows the published JSON).
+- User decision (2026-10-06, BEFORE bugs 3–6 below were found): "Finish 2023 first, rerun after".
+
+### More bugs from the systematic audit (`runall/audit_syst.py <era>`, condor `audit_job.*`, log `logs_runall/audit_<era>.log`)
+3. **Type-1 MET re-correction wrong (MAJOR, nominal AND shifts, data AND MC)** — jerc.py correctionlib path called
+   coffea `corrected_polar_met(PuppiMET, new_pt, raw_pt)`, i.e. MET_stored_type1 + Σ(new − raw). NanoAOD PuppiMET is
+   already Type-1, and coffea's formula is met + Σ(jet_pt − jet_pt_orig), so this undid Type-1 with the wrong sign
+   (validated: raw − Σ(corr − raw) rebuilds stored PuppiMET to ±1 GeV; raw + Σ gives ±35 GeV). Effects measured on 4k
+   events: tt MET median 65.9 vs Type-1 74.8, spread −28…+7 GeV; data −23…+15 GeV; and under JES Up the MET moved
+   WITH the jets (wrong direction) → "JES Down fixes the slope" in the slope study is an artifact of this.
+   Introduced effectively on 2026-10-01 when the workflow switched met field PuppiMET → events.MET (the re-corrected
+   one); July runs used stored PuppiMET (correct Type-1, no shifts) → the postEE slope there is NOT explained by this.
+   Fix: metinfo = (PuppiMET, jets.orig_pt [NanoAOD-corrected], new pt) for nominal + JES/JER shifts.
+   Verified: data re-corrected = reference (30.4 vs 30.4 GeV median), corr(ΔMET_x, Δjet_x) under JES Up = −1.000.
+   Backup `jerc.py.bak_pre_type1fix_20261006`. (Run 2 coffea path line ~199 has the same call pattern; not used.)
+4. **CMS_res_e dead** — electron_ss.py evaluated the nominal "smear" key for smear_up/smear_down (comment even
+   describes the intended max(smear−unc,0)). Fixed to "smear_up"/max("smear_down",0). Backup `.bak_pre_smearfix_20261006`.
+5. **lhe_pdf blow-up from powheg-MiNNLO WH→ττ** — per-event Hessian δ of O(100–1000) in a few events: WminusHTo2Tau
+   summed pdf Up/nom 22.8 (postEE), WplusHTo2Tau 4.5 → card higgsbkg lhe_pdf Up 6.2× (CR_diboson), 2.5× (CR_st),
+   2.0× (CR_higgsbkg). Fix: cap per-event δ_pdf, δ_αs at 0.5 (columnflow-style outlier threshold); <1% change for all
+   other samples (table in session). Backup `lhepdf.py.bak_pre_deltacap_20261006`.
+6. Minor / noted, not changed: lepton scale/res shifts do not propagate to MET (update_met imported, unused);
+   H+c central sample has no αS members (lhe_alphaS = 1); `raise (f"...")` JEC-tag sanity check in jerc.py can never
+   fire (np.all(...) == -1 precedence).
+- Card-level design points (recommendations, not bugs): scalevar_muR, _muF AND _muR_muF are three independent
+  nuisances (over-counts; usual = muR+muF or one envelope); theory nuisances share one name across all processes
+  (signal and backgrounds correlated; usually decorrelated per process); CMS_scale_j/res_j shared between preEE and
+  postEE (different JEC campaigns; usually decorrelated); plot band sums all three scale variations too.
+- Checked OK: MET filters (standard Run 3 list, data+MC), golden JSON, jet ID (Run 3 NanoV12 jetId fix), muon_ss
+  (distinct keys, res_m/scale_m move muon pT), pileup / e/μ ID / ctag shift-tree handling, higgs_hf nominal = 1.
+- Slope study (pre-fix numbers, postEE / preEE): jet veto map (leading jet) removes 1.7% / 1.3% of events in BOTH data
+  and MC → negligible for the slope; pileup Up/Down small; top-pT on is better than off (χ² 419 vs 497); per-run
+  E/F/G show the SAME MET slope → not a run-period (EE leak) effect. To be redone after the MET fix.
