@@ -212,3 +212,8 @@ Pipeline ran as condor job 9491687 after the interactive run was killed by the l
 - Slope study (pre-fix numbers, postEE / preEE): jet veto map (leading jet) removes 1.7% / 1.3% of events in BOTH data
   and MC → negligible for the slope; pileup Up/Down small; top-pT on is better than off (χ² 419 vs 497); per-run
   E/F/G show the SAME MET slope → not a run-period (EE leak) effect. To be redone after the MET fix.
+- **Smoke test PASSED (2026-10-06, full processor, 1 file each, 2022postEE, `runall/localtest_fix.sh` +
+  `runall/validate_smoke.py`)**: TT shift trees w_shift/w_nom = 1.0000 (top-pT now in); JER moves jet pT in 97% of
+  events and MET follows; CMS_res_e moves electron pT (51% = events with the electron leading), Up≠Down; JES moves MET
+  in 100%; WminusHTo2Tau lhe_pdf Up/nom 1.112 (was 22.8), αS 1.077. 2023: 993/1079 done (old/mixed code).
+  Rerun of ALL data+MC, 4 eras, awaiting user go-ahead.
