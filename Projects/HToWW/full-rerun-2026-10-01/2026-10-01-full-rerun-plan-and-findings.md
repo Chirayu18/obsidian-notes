@@ -154,3 +154,26 @@ Pipeline ran as condor job 9491687 after the interactive run was killed by the l
 - NEXT: (a) ctag2d SF size — code read (ctag2d.py: up_Total/central ratios, candidate c-jet, flav=hadronFlavour, pt
   clipped 20–9999) — need numeric check of up_Total vs central per category; (b) test JES/JER Down shift trees vs the
   postEE slope; (c) pileup; (d) jet veto maps; (e) make plot band mirror the fit (drop tt normalisation theory).
+
+## 2026-10-06 — TWO FRAMEWORK BUGS found via the slope study (fixed in code, rerun pending)
+- (a) ctag2d SF size check DROPPED — user: an expert is already checking the c-tag SF.
+- 2023 first pass: 826/1079 done; 253 failed, ~all `XRootD [FATAL] Connection error` at two dead sites
+  (cms-se0.kipt.kharkov.ua, se01.grid.nchc.org.tw) + 3 wall-time. Resubmitted all 253 via global redirector
+  (`runall/resubmit_all.py <eras>`, `completion.py <eras>` — both now take eras as args; log `logs_runall/resubmit_2023_r1.log`).
+- Slope study `runall/slope_study.py <era>` (condor `~/pipeline_condor/slope_job.{sh,sub}`, out
+  `outputs/hww_combine_full/<era>/slope_study/`): rebuilds data/MC from parquets and re-fits shapes under JES/JER/
+  MET-uncl shift trees, pileup Up/Down, top-pT off, jet veto map (leading jet), and per-run data.
+  preEE control showed JER Up == JER Down == "top-pT off" EXACTLY → two bugs:
+  1. **toppt.py returned early when `shift is not None`** → every object-shift tree (JES/JER/e/μ/MET-uncl) of tt lacked
+     the nominal top-pT SF (verified: w_shift = w_nom / SF_top exactly, +1.5% tt sumw). Every tt shape template from an
+     object shift therefore carried a spurious +1.5% + top-pT shape in BOTH Up and Down. Fix: under a shift add the
+     nominal weight only (as pileup.py does). Backup `toppt.py.bak_pre_shiftnom_20261006`.
+  2. **JER variations were a no-op**: JME JSONs on cvmfs changed 2026-06-05 ("Split JER SF nom and up/down tags"):
+     `*_ScaleFactor_AK4PFPuppi` now has inputs (JetEta, JetPt) only, with a separate absolute `*_SFUncertainty_AK4PFPuppi`.
+     jerc.py passed systematic="up"/"down" via get_corr_inputs, which silently found no `systematic` input → JER Up = Down
+     = nominal for 100% of jets (verified on 3000 tt events). Affects EVERY production since early June incl. the July
+     2dcat runs and the 2022 baseline (905). Fix: if the SF has no systematic input, JERSF = SF ± SFUncertainty.
+     Verified after fix: JER up/nom 0.95/1.001/1.03 (5/50/95%), MET moves. Backup `jerc.py.bak_pre_jersplit_20261006`.
+  No other correction module has the toppt-style early return (pileup/ctag/e/μ/LHE/PS checked; higgs_hf nominal = 1).
+- Consequence: all MC needs reprocessing for correct CMS_res_j shapes (data unaffected): 2184 MC jobs
+  (preEE 407, postEE 909, preBPix 528, postBPix 340; TT* 22/65/100/72). Awaiting user go-ahead.
