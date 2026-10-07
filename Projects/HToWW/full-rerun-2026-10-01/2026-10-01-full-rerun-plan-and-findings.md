@@ -234,3 +234,18 @@ Pipeline ran as condor job 9491687 after the interactive run was killed by the l
   2022 905). Then the fix pass: review items (preEE SingleMuon/DoubleMuon duplicates, MVA ctag one-hot inputs,
   WH xsec 0.0, MET re-correction jet selection, muon SS JSON, NNLOPS scope, jet re-sort, jet veto map, strict
   missing-column fallback; ZH/ggH xsec need user call) → full data+MC rerun of all 4 eras.
+
+## 🎯 Run 3 combined (pre-fix reference, 2026-10-07) — expected 95% CL on μ, blind Asimov
+| card | full | stat-only | freeze autoMCStats |
+|---|---|---|---|
+| 2022preEE | 1549 | 888 | 1451 |
+| 2022postEE | 1076 | 546 | 985 |
+| 2023preBPix | 1348 | 604 | 1172 |
+| 2023postBPix | 1689 | 894 | 1503 |
+| 2022 | 905 | 463.5 | 831 |
+| 2023 | 1077 | 498.5 | 943 |
+| **Run 3 (all 4 eras)** | **691** | **338.5** | **616** |
+Cards `outputs/combine/full/v12_hplusc_full_{2023,run3}.txt` (combineCards, era-prefixed; lumi per year; rate_tt per era;
+CMS_*_2022/_2023 per year; theory nuisances correlated across all eras). Resume job 9499885 rebuilt the corrupted
+2023postBPix card (all 1878 histograms readable). These numbers carry every bug in the 2026-10-06 audit + independent
+review; they are the "before fixes" reference only.
