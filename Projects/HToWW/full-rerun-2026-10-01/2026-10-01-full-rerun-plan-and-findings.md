@@ -217,3 +217,20 @@ Pipeline ran as condor job 9491687 after the interactive run was killed by the l
   events and MET follows; CMS_res_e moves electron pT (51% = events with the electron leading), Up≠Down; JES moves MET
   in 100%; WminusHTo2Tau lhe_pdf Up/nom 1.112 (was 22.8), αS 1.077. 2023: 993/1079 done (old/mixed code).
   Rerun of ALL data+MC, 4 eras, awaiting user go-ahead.
+
+## 2026-10-07 — 2023 pipeline AS IS + Run 3 combined limit (PAUSED by user, resume here)
+- User decision: run the 2023 pipeline as is (old/mixed code; 6 missing jobs accepted: preBPix EGamma1Cv2 1/2,
+  GluGluHto2Tau 1/1, Muon1Cv4 1/8; postBPix DY50 1/15, W0J 1/42, W2J 1/31), get a combined limit, THEN fix things.
+  Numbers are a pre-fix reference: they carry all 2026-10-06 bugs + review findings.
+- Condor 9498399 (`~/pipeline_condor/pipeline_2023_job.{sh,sub}`): merge/inference (main + ttsyst), cards, combineCards
+  → `outputs/combine/full/v12_hplusc_full_{2023,run3}.txt`, limits. Log `logs_runall/pipeline_2023.log`.
+- **2023preBPix: full 1348, stat-only 604, freeze autoMCStats 1172.**
+- 2023postBPix limit FAILED: one corrupted histogram (`SR_hplusc_hplusc_higgs_plus_cDown`, "unrecognized compression
+  algorithm", 1 of 1878) in `v12_hplusc_full_2023postBPix.root` — EOS write glitch. Resume job condor 9499885
+  (`pipeline_2023_resume.{sh,sub}`) rebuilds that card, checks every histogram is readable, recombines 2023 + run3, runs
+  limits 2023postBPix / 2023 / run3 → results in `logs_runall/pipeline_2023.done` (and limit_<n>.log). It was left
+  running unattended when the session paused (2026-10-07 ~16:45).
+- NEXT on resume: read pipeline_2023.done; if run3 limit is there, report the table (2022: preEE 1549, postEE 1076,
+  2022 905). Then the fix pass: review items (preEE SingleMuon/DoubleMuon duplicates, MVA ctag one-hot inputs,
+  WH xsec 0.0, MET re-correction jet selection, muon SS JSON, NNLOPS scope, jet re-sort, jet veto map, strict
+  missing-column fallback; ZH/ggH xsec need user call) → full data+MC rerun of all 4 eras.
