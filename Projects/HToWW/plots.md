@@ -68,3 +68,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
 - Description: decay-independence plot for the FS shape systematic (justifies using Run 3 H→γγ weights for H→WW); `gg_vs_ww_run2_ratio` and `_withRun3` (shows the 20–30 GeV tension is a Run 2 γγ fluctuation).
 - Path: /eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape/gg_vs_ww_run2_ratio.png
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/fs_unc/plots/fs_shape
+
+### Data/MC uncertainty-band breakdown — all four Run 3 eras (pre-fix production)
+- tags: [plot]
+- Date: 2026-10-08
+- Description: share of the plotter band variance by source (MET; same in mTll/Njets) and band half-width now vs without the tt μR/μF scale variations, which the fit does not use (rate_tt floats). tt scale 54–72%, c-tag 2D SF 15–38%, PDF/αS 7–9%. Per-era per-bin stacked plots in `<era>/band_breakdown/`.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/band_overview_allEras.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full
