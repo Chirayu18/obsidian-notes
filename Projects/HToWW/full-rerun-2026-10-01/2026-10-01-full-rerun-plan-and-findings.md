@@ -249,3 +249,13 @@ Cards `outputs/combine/full/v12_hplusc_full_{2023,run3}.txt` (combineCards, era-
 CMS_*_2022/_2023 per year; theory nuisances correlated across all eras). Resume job 9499885 rebuilt the corrupted
 2023postBPix card (all 1878 histograms readable). These numbers carry every bug in the 2026-10-06 audit + independent
 review; they are the "before fixes" reference only.
+
+### Run 3 (pre-fix) vs Run 2 (AN-23-102), 2026-10-08
+AN-23-102 expected 1POI UL (line 669, Fig. 49): Run 2 **431** @ 138 fb⁻¹ (2POI 969); per period 2018 619 (59.8 fb⁻¹),
+2017 773 (41.5), 2016postVFP 1256 (16.8), 2016preVFP 1197 (19.5). NB the "505" in June notes/papers.md was a misread PDF
+line number — corrected in papers.md.
+√L check inside Run 2 itself: 2018 619 → √(59.8/138) → 407 vs actual 431 (combination ~6% worse than pure √L).
+Ours: Run 3 **691** @ 61.9 fb⁻¹ (7.98+26.67+17.79+9.45). Scaled to 138 fb⁻¹: 691·√(61.9/138) = **463** vs 431 → ~7% worse.
+Same-lumi view: Run 2 scaled to 61.9 fb⁻¹ = 644 vs our 691; 2018 alone (59.8 fb⁻¹) = 619.
+Caveats: pre-fix numbers (JER no-op and WH xsec 0 make ours optimistic; missing MVA ctag inputs slightly pessimistic);
+our syst inflation ×2.0 vs stat-only, so √L scaling of our number is optimistic; μ is relative to SM at each √s.
