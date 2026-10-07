@@ -59,6 +59,12 @@ style: |
   img { display: block; margin: 0 auto; }
 ---
 
+> [!warning] Correction 2026-10-08 — not TMVA-exact
+> This conversion uses `BRANCH_LEQ`; TMVA sends a value EQUAL to the cut to the right (`>=`). On real 2022postEE
+> leptons it differs from TMVA by up to 3.2e-2 for 3.3% of electrons (inputs like `mvaIso` stored at low precision
+> sit exactly on cuts) and 1.4e-3 for 0.04% of muons. With `BRANCH_LT` it matches TMVA to 1e-6. The earlier
+> "exact" check only used random continuous inputs. See [[2026-10-08-framework-optimization-plan]].
+
 <!-- _class: lead -->
 
 # Lepton MVA in ONNX
