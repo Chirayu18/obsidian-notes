@@ -259,3 +259,7 @@ Ours: Run 3 **691** @ 61.9 fb⁻¹ (7.98+26.67+17.79+9.45). Scaled to 138 fb⁻�
 Same-lumi view: Run 2 scaled to 61.9 fb⁻¹ = 644 vs our 691; 2018 alone (59.8 fb⁻¹) = 619.
 Caveats: pre-fix numbers (JER no-op and WH xsec 0 make ours optimistic; missing MVA ctag inputs slightly pessimistic);
 our syst inflation ×2.0 vs stat-only, so √L scaling of our number is optimistic; μ is relative to SM at each √s.
+
+**CORRECTION (2026-10-08, user):** the reference is the PUBLISHED paper CMS-HIG-24-009 (arXiv:2508.14988): expected UL
+**506**, observed 1065 @ 138 fb⁻¹. The 431 above is from the older AN-23-102 v14 PDF in References (superseded). With 506:
+ours scaled to 138 fb⁻¹ = 463 vs 506 → **~9% better**; Run 2 scaled to 61.9 fb⁻¹ = 755 vs our 691. Same caveats apply.

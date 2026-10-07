@@ -13,7 +13,7 @@ open directly in Obsidian on the laptop.
 ### AN-23-102 (the analysis note benchmarked against)
 - **File:** [[AN-23-102.pdf]]
 - **Title:** Search for the Higgs plus charm quark production mode in the H→WW leptonic channel, full Run 2.
-- **Why:** the reference for all our combine comparisons — 1POI expected limit **431 @ 138 fb⁻¹** (2POI 969; AN line 669 + Fig. 49 — the "505" quoted in June notes was a misread PDF line number), S+B tt SF
+- **Why:** the reference for all our combine comparisons — PUBLISHED Run 2 result (CMS-HIG-24-009, arXiv:2508.14988): expected **506**, observed 1065 @ 138 fb⁻¹ (the vault's "505" ≈ this). NB the AN-23-102 v14 PDF committed here quotes an older 1POI expected 431 (2POI 969) — superseded by the paper, S+B tt SF
   (Table 17), uncertainty breakdown (Table 18: 60% statistical), systematics list (§7.1/7.2).
 - **EOS original:** `/eos/home-c/cgupta/HToWW/b-hive/docs/AN2023_102_v14 ... (1).pdf`
 
