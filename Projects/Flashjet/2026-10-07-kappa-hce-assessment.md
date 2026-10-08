@@ -65,3 +65,21 @@ Script: `flashjet/kappa_hce/probe/kappa_probe2.py`, log `kappa_probe2.log`. It i
 **No-go.**
 - Post-hoc: measured, no gain on any class. Our logit difference is already the optimal s-vs-QCD score, and eq. 11 with any fitted kappa reproduces it or comes out worse.
 - Training: the mechanisms that helped HToWW (imbalance handling, single-signal focus) are absent here or work against a 9-signal tagger. Nothing was implemented in b-hive and no condor job was submitted.
+
+## Measured A/B result (2026-10-08): NO-GO confirmed
+
+Condor cluster 9502481. Both arms warm-start from v2 best_model and train 40k iterations with identical settings. Arms: plain CE, against CE + 1.0·L_fine(Zqq) + 1.0·L_sig(Zqq) with τ = 0.3, all fixed before running. Full JetClass test set, 20.0M jets, logit-difference AUCs vs QCD (from the job logs; `compare_ab.py` bootstrap not run).
+
+| | acc | Zqq | Wqq | Hcc | Hgg | H4q | Hbb | Tbqq |
+|---|---|---|---|---|---|---|---|---|
+| v2 at iteration 0 (eval-path check) | 85.398 | 0.974400 | 0.977682 | 0.993836 | 0.970889 | 0.993182 | 0.998832 | 0.998314 |
+| CE control, 40k | 85.240 | 0.974147 | 0.977378 | 0.993698 | 0.970640 | 0.993074 | 0.998809 | 0.998272 |
+| **kappa-HCE (Zqq), 40k** | **84.286** | 0.974125 | 0.977389 | 0.993686 | 0.970649 | 0.993068 | 0.998807 | 0.998263 |
+| kappa − CE | **−0.954 pts** | −0.2e-4 | +0.1e-4 | −0.1e-4 | +0.1e-4 | −0.1e-4 | −0.0e-4 | −0.1e-4 |
+
+- **Eval-path check passes:** v2 at iteration 0 gives 85.398%, against 85.403% from b-hive inference (20.0M vs 20.05M jets).
+- **Go rule fails:** Zqq-vs-QCD AUC changes by −0.00002, where the rule required more than +0.002. Every s-vs-QCD AUC moves by at most 2e-5.
+- **10-class accuracy drops by 0.95 points.** L_sig reshapes how Zqq scores against the other classes, which moves the argmax without improving any signal-vs-QCD separation. Validation agrees: 0.8436 vs 0.8518 at 40k.
+- Both fine-tunes end slightly below v2 itself (CE 85.24 vs 85.40), as in the earlier warm-start study; the comparison is between the two arms.
+
+**Conclusion:** on balanced 10-class JetClass, kappa-HCE gives no measurable signal-vs-QCD gain and costs about 1 point of accuracy. This matches the analysis above: the method's HToWW benefit came from fixing class-imbalance collapse, which JetClass does not have.
