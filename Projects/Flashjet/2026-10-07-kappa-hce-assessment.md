@@ -83,3 +83,35 @@ Condor cluster 9502481. Both arms warm-start from v2 best_model and train 40k it
 - Both fine-tunes end slightly below v2 itself (CE 85.24 vs 85.40), as in the earlier warm-start study; the comparison is between the two arms.
 
 **Conclusion:** on balanced 10-class JetClass, kappa-HCE gives no measurable signal-vs-QCD gain and costs about 1 point of accuracy. This matches the analysis above: the method's HToWW benefit came from fixing class-imbalance collapse, which JetClass does not have.
+
+## Imbalanced-JetClass test (pre-registered 2026-10-08, before any result)
+
+Question: does kappa-HCE help once the signal is rare, which is the regime where it helped in HToWW?
+
+**Setup:**
+- Signal s = Hcc.
+- Hcc training rows are kept with probability f = 0.0045, which gives Hcc : all other classes ≈ 1 : 2000 (about 45k of 10M Hcc jets kept). All 9 other classes are kept in full.
+- The drop is a per-row mask seeded by (20261008, file index). It is identical for every arm and does not depend on read order.
+- Validation and test sets are untouched (balanced).
+
+**Training (all arms):**
+- ParT v2 (`ParticleTransformer_RecTree2_JetClass`, jet_class_ca) **from scratch**, same initial weights (seed 0), 200k iterations, batch 512.
+- Optimizer as v2's b-hive run: Ranger (RAdam + Lookahead), lr 1e-3, eps 1e-5, wd 0.
+- Schedule: 1k warmup, then cosine to 0.
+- bf16, torch.compile, gradient clip 1, the same seeded data order, BatchNorm in normal train mode.
+
+**Arms (identical except the loss):**
+1. Plain CE.
+2. Inverse-frequency weighted CE, with weights from the kept counts (max = 1). This is the baseline to beat.
+3. Full kappa-HCE for s = Hcc: L_group + 1·L_fine + 1·L_sig, tau = 0.3, alpha from the detached fc weights at every step. The semantics follow the HToWW `_kappa_hce_forward`; unit tests agree with it to within 1e-7 relative (eps = 0).
+
+**Evaluation (full balanced test set):**
+- Hcc vs QCD: AUC of the logit difference.
+- Hcc vs all backgrounds: AUC with two scores, the one-vs-rest logit z_s − logsumexp_{j≠s} z_j and the eq. 11 D score with kappa = alpha from each arm's own final fc weights. Both scores are reported for every arm.
+- Background rejection 1/ε_B at 30% and 50% Hcc efficiency.
+- The other 8 classes' vs-QCD AUCs, to catch trade-offs.
+- Accuracy is reported but treated as secondary, because it depends on the class priors.
+
+**Go rule:** kappa-HCE beats weighted CE on Hcc-vs-QCD AUC by **more than 0.002**, **and** loses no more than 0.001 on any other class vs QCD. Plain CE vs weighted CE is also reported.
+
+**Code:** `flashjet/kappa_hce/`: `finetune_imb.py`, `kappa_hce_imb.py`, tests in `test_kappa_imb.py` (`test_kappa_imb.log`), evaluation in `compare_imb.py`. Condor files: `~/flashjet_condor/imb_kappa.sub` and `run_imb_kappa.sh`.
