@@ -75,3 +75,10 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/leptonmva
 - Description: share of the plotter band variance by source (MET; same in mTll/Njets) and band half-width now vs without the tt μR/μF scale variations, which the fit does not use (rate_tt floats). tt scale 54–72%, c-tag 2D SF 15–38%, PDF/αS 7–9%. Per-era per-bin stacked plots in `<era>/band_breakdown/`.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/band_overview_allEras.png
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full
+
+### Combine plots — v12 full cards, all eras + Run 3 (pre-fix)
+tags: [plot]
+- Date: 2026-10-09
+- Description: blind Asimov results for the pre-fix v12 cards. `limits_summary.png`: expected 95% CL limit with ±1σ/±2σ bands, plus stat-only and MC-stat-frozen medians, for every era card, 2022, 2023 and Run 3 (691; stat-only 338.5 at 61.9 fb⁻¹). `impacts_run3.png`: top-30 impacts out of 55 (Asimov r=1, manual MultiDimFit --algo impact, prop_bin excluded; CMS_eff_e_reco_below20_2022 tree unreadable). tt μR/μF scale (scalevar_muR_muF, scalevar_muF) and the four rate_tt params lead. `prefit/prefit_<era>.png`: FitDiagnostics prefit MVA-score shapes per channel with the full correlated prefit band. The cards carry no real data (data_obs = background sum), so no data is drawn.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/combine_plots
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/combine_plots
