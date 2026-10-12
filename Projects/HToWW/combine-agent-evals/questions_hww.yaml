@@ -1,0 +1,329 @@
+# HToWW-derived evaluation questions for the Combine assistant.
+#
+# Same schema as maxgalli/combine-bot evals/questions.yaml (id, category,
+# source_file / topic_url, question, gold_answer, optional notes / attach),
+# so the entries can be appended there unchanged.
+#
+# Each question comes from a problem we actually hit in the H+c -> WW analysis.
+# It is phrased generically, so no CMS-internal numbers are needed to answer it.
+# Gold answers are written against the Combine docs on `main` (fetched
+# 2026-10-12). Behaviour claims marked "verified" were run on lxplus with
+# Combine v10.6.0 (CMSSW_14_1_0_pre4) using the public tutorial card
+# data/tutorials/shapes/simple-shapes-TH1.txt.
+# The `notes` field gives the HToWW provenance (curator-only; not shown to the bot).
+
+- id: mcstat-rateparam-1
+  category: usage
+  source_file:
+    - docs/part2/bin-wise-stats.md
+    - docs/part2/settinguptheanalysis.md
+  question: |
+    My expected limit is dominated by the autoMCStats nuisances
+    (`prop_bin...`) in my signal-region bins. The culprit is one background
+    whose MC is poorly populated there: only ~10 effective events per bin,
+    from an NLO sample with large event weights. Would adding a `rateParam`
+    for that background, constrained by a control region, reduce the impact
+    of these nuisances?
+  gold_answer: |
+    No. A `rateParam` is a freely floating multiplier on the process
+    normalisation; it does not change the *relative* MC-statistical
+    uncertainty of a bin, which is what the autoMCStats parameters encode.
+
+    The autoMCStats algorithm sums the per-process yields n_i and errors e_i
+    in each bin, and the docs state that n_i and e_i already include the
+    nominal effect of scaling parameters such as `rateParam`s, and that
+    e_i (and therefore e_tot) are updated automatically whenever process
+    normalisations change. Scaling a process up or down therefore scales
+    its MC-stat uncertainty with it, and the effective number of events
+    n_eff = n^2 / e^2 is unchanged. The Barlow-Beeston-lite parameter
+    still scales the bin as n_tot + nu * e_tot with a unit-Gaussian
+    constraint.
+
+    The rateParam fixes a normalisation problem; this is a template
+    statistics problem. To reduce it you need more effective MC events in
+    those bins: more or pooled MC, less weight dispersion (fewer
+    large/negative weights), or a binning where the templates are better
+    populated.
+  notes: |
+    HToWW 2022postEE: adding a V+jets rateParam shared CR<->SR moved the
+    expected r95 from 1742 to 1791 (worse), and SR autoMCStats stayed
+    dominant. Projects/HToWW/2026-06-23-automcstats-rootcause.md.
+    The "worse" direction is our measurement, not a docs claim; it is kept
+    out of the gold answer.
+
+- id: mcstat-threshold-1
+  category: usage
+  source_file: docs/part2/bin-wise-stats.md
+  question: |
+    I use `* autoMCStats 10`. In one bin, one of my backgrounds has only
+    about 2 effective MC events, while the other backgrounds in that bin
+    are well populated. Does that background get its own
+    Poisson-constrained parameter because it is below the threshold of 10,
+    or is it covered by the bin's single Barlow-Beeston-lite parameter?
+  gold_answer: |
+    The threshold is tested on the *whole bin*, not on each process.
+    For each bin Combine sums the background yields, n_tot = sum n_i, and
+    adds their errors in quadrature, e_tot = sqrt(sum e_i^2). It then
+    computes the effective number of unweighted events
+    n_tot_eff = n_tot^2 / e_tot^2, rounded to the nearest integer. Signal
+    processes are excluded from this test unless the `include-signal` flag
+    is set to 1, but their uncertainties are always included in the model.
+
+    - If n_tot_eff > threshold, a single Gaussian-constrained
+      Barlow-Beeston-lite parameter (named `prop_bin<channel>_bin<N>`) is
+      created. It scales the total bin yield as n_tot + nu * e_tot. The
+      poorly populated process just contributes its e_i to e_tot.
+    - Only if n_tot_eff <= threshold are separate per-process parameters
+      created (`prop_bin<channel>_bin<N>_<process>`). Each is
+      Poisson-constrained with lambda = n_i_eff. It becomes a Gaussian
+      instead if e_i > n_i, or if that process's own n_i_eff >= threshold.
+      Processes with n_i = 0 are skipped.
+
+    So in the case described, where the bin as a whole is well populated,
+    the process does NOT get its own parameter; it is absorbed into the
+    single bin parameter.
+  notes: |
+    Calibration point: our own notes once explained a per-process parameter
+    (prop_binCR_vjets_bin7_higgsbkg, process n_eff ~ 2.1) by that process
+    being below threshold. Per the docs, it exists only because the bin's
+    TOTAL n_eff was <= 10. A good answer must make this distinction.
+
+- id: mcstat-zero-yield-1
+  category: usage
+  source_file: docs/part2/bin-wise-stats.md
+  question: |
+    Because large positive and negative NLO event weights cancel, one of
+    my backgrounds has a nominal yield of 0.0 in one bin, but a
+    statistical uncertainty of about 40 events. How does autoMCStats
+    treat this process in that bin, and should I worry about it?
+  gold_answer: |
+    It depends on which regime the bin is in. That is set by the bin's
+    total effective event count n_tot_eff = n_tot^2 / e_tot^2 compared
+    with the threshold.
+
+    - Above threshold (one Barlow-Beeston-lite parameter per bin): the
+      process adds nothing to n_tot, but its e_i = 40 enters
+      e_tot = sqrt(sum e_i^2) in quadrature. The single bin parameter scales
+      the yield as n_tot + nu * e_tot, so this process inflates the
+      uncertainty on the whole bin while contributing no yield.
+    - At or below threshold (per-process parameters): processes with
+      n_i = 0 are skipped, so this process's uncertainty is dropped
+      entirely.
+
+    Either way it deserves attention. In the first case it can dominate
+    the bin's MC-stat uncertainty, which matters when the signal is small.
+    In the second case a real uncertainty silently disappears. The yield
+    of 0 +- 40 is a symptom of weight cancellation and should be fixed
+    upstream (more MC, or a treatment of the negative weights). This
+    recommendation goes beyond what the autoMCStats docs state.
+  notes: |
+    HToWW SR bin 6: V+jets 0.0 +- 41.0 inside a 752.3 +- 41.3 bin
+    (n_eff 332 > 10, so Barlow-Beeston-lite). V+jets was 99.2% of the bin
+    error, and prop_binSR_hplusc_bin6 was the #1 impact.
+    Projects/HToWW/2026-06-23-automcstats-rootcause.md.
+
+- id: freeze-mcstat-1
+  category: usage
+  source_file:
+    - docs/part2/settinguptheanalysis.md
+    - docs/part3/runningthetool.md
+  question: |
+    I want to quantify how much of my expected limit comes from limited MC
+    statistics (autoMCStats). How do I compute the expected limit with all
+    autoMCStats nuisances frozen, and with only those of one channel
+    (called `SR`) frozen? As far as I can tell, I can't put autoMCStats
+    parameters into a nuisance group in my datacard.
+  gold_answer: |
+    You can't add them to groups in the datacard, because autoMCStats
+    parameters are created by `text2workspace.py`. However,
+    `text2workspace.py` automatically creates a group called `autoMCStats`
+    that contains all of them. So:
+
+        combine -M AsymptoticLimits datacard.txt -t -1 \
+            --freezeNuisanceGroups autoMCStats
+
+    The equivalent with a regular expression on the parameter names is
+    `--freezeParameters 'rgx{prop_bin.*}'`.
+
+    For one channel only, use the channel name in the regex:
+
+        --freezeParameters 'rgx{prop_binSR_bin.*}'
+
+    Quote the argument so the shell does not interpret the braces.
+    Compare against the nominal limit, and against the stat-only limit
+    from `--freezeParameters allConstrainedNuisances`. Note the priority
+    ordering floatParameters < freezeParameters < freezeNuisanceGroups <
+    floatAllNuisances when mixing these options.
+  notes: |
+    Verified on simple-shapes-TH1.txt + `* autoMCStats 10` (v10.6.0, -t -1):
+    nominal 1.8438; --freezeNuisanceGroups autoMCStats 1.3320;
+    rgx{prop_bin.*} 1.3320 (identical); allConstrainedNuisances 0.9883.
+    HToWW used exactly this (1185 -> 933 all, 962 SR only):
+    strategy-2026-08-10/2026-08-11-route-to-a-better-limit.md.
+
+- id: channel-mask-sr-1
+  category: usage
+  source_file: docs/part3/nonstandard.md
+  question: |
+    My datacard has one signal region and five control regions. Before
+    unblinding, I want to fit the real data in the control regions only,
+    keeping the signal region out of the fit, so I can look at pulls and
+    post-fit agreement. How do I do this without losing the nuisance
+    parameters that also act in the signal region?
+  gold_answer: |
+    Use channel masking rather than dropping the signal-region card with
+    `combineCards.py`. Dropping the card would also lose the information
+    on the nuisance parameters and PDFs in that region.
+
+    1. Build the workspace with masking parameters:
+
+           text2workspace.py datacard.txt --channel-masks
+
+       This creates one parameter per channel, named `mask_<CHANNELNAME>`,
+       all set to 0 (unmasked) by default.
+
+    2. Fit with the signal region masked, by setting its mask to 1:
+
+           combine datacard.root -M FitDiagnostics --saveShapes \
+               --saveWithUncertainties --setParameters mask_SR=1
+
+    Re-run with `mask_SR=0` (or without the option) to compare.
+    Channel masking can be used with any method in Combine.
+
+- id: shape-only-syst-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    I have a theory systematic (the choice of flavour scheme for my signal
+    generator) that should change only the *shape* of my signal template,
+    not its normalisation. How do I implement that as a `shape` nuisance,
+    and how does Combine split a `shape` uncertainty into shape and
+    normalisation effects?
+  gold_answer: |
+    For both `shape` and `shapeN`, Combine treats shape and normalisation
+    separately:
+
+    - The shape is interpolated on the normalised templates. `shape`
+      vertically interpolates the fraction of events in each bin (the
+      histograms are normalised first). `shapeN` interpolates the logs of
+      those fractions.
+    - The total normalisation is interpolated separately with an
+      asymmetric log-normal, derived from the integrals of the Up/Down
+      templates relative to the nominal.
+
+    So to get a shape-only effect, scale your Up and Down templates to the
+    same integral as the nominal template before writing them. The
+    log-normal normalisation term is then 1 and only the shape morphing
+    remains. Enter it with a normal `shape` line (effect 1 for the signal
+    process).
+
+    (This assumes the default autoMCStats `hist-mode = 1`, where
+    normalisation is handled separately from the morphing.)
+  notes: |
+    HToWW decision 2026-09-30: the flavour-scheme uncertainty is a 3FS/4FS
+    c-hadron-pT SHAPE systematic only, replacing a 30% lnN.
+    fs-unc-2026-09-29/2026-09-30-fs-shape-systematic-validation.md.
+
+- id: shape-missing-down-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    For one shape systematic I only have an Up-shifted template; there is
+    no Down variation (it is a single "total" variation from a
+    scale-factor tool). Can I declare it as `shape` in my datacard with
+    only the Up histogram? What will happen?
+  gold_answer: |
+    No. Every shape uncertainty needs two shifted templates for each
+    affected process and channel: the shapes with the parameter shifted
+    up AND down by one standard deviation (e.g. `background_alphaUp` and
+    `background_alphaDown`). Combine uses both to build the interpolation.
+
+    If the Down histogram is missing, `text2workspace.py` fails when
+    building the PDF, with an error like:
+
+        RuntimeError: Failed to find background_alphaDown in file ...
+
+    Combine does not construct a missing variation for you. You have to
+    supply a Down template yourself. Symmetrising around the nominal
+    (Down = 2*nominal - Up, bin by bin) is a common analysis choice, but it
+    is not prescribed by the Combine docs. Watch for bins that go
+    negative; Combine truncates interpolated negative bin values at 0.
+  notes: |
+    Verified on lxplus (v10.6.0): removed background_alphaDown from the
+    tutorial input; text2workspace raised the RuntimeError above
+    (ShapeTools.py getShape). HToWW relevance: 2D c-tag SF kept as one
+    up_Total nuisance (memory hww-ctag2d-sf-total-decision).
+
+- id: combinecards-era-correlation-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    I am combining datacards from four data-taking eras with
+    `combineCards.py`. How do I control which systematic uncertainties are
+    correlated or uncorrelated across eras, and what happens to the
+    autoMCStats bin-by-bin parameters?
+  gold_answer: |
+    Correlation is controlled entirely by nuisance names.
+    - Uncertainties with the same name in different cards are 100%
+      correlated.
+    - Those with different names are uncorrelated.
+
+    So keep e.g. a common theory uncertainty under one name in all cards.
+    Give uncertainties that must be decorrelated an era-specific name
+    (e.g. a `_2022` / `_2023` suffix).
+
+    A nuisance correlated across cards must have the same PDF type
+    everywhere: all `lnN`, or all `gmN` with the same N. `shape` and `lnN`
+    can be mixed via the `shape?` directive. With parametric models,
+    parameter objects with the same name are also treated as the same
+    object, so name them differently if they represent different things.
+
+    `combineCards.py Name1=card1.txt Name2=card2.txt ...` prefixes bin
+    labels with `Name1_`, `Name2_` (for multi-bin cards; single-bin cards
+    are renamed to `Name1`, ...). The autoMCStats parameters are created
+    per channel and bin, with names built from the channel name
+    (`prop_bin<channel>_bin<N>`). They therefore end up distinct, i.e.
+    uncorrelated, across eras.
+  notes: |
+    Open HToWW issue behind this: we want to pool MC across eras to beat
+    the autoMCStats penalty. With pooled templates, the MC fluctuations
+    are really correlated across eras, which per-channel autoMCStats
+    cannot express. Use this question to probe whether the agent notices
+    that (beyond gold).
+    framework-plan-2026-10/2026-10-08-framework-optimization-plan.md.
+
+- id: agent-freeze-mcstat-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attach the tutorial card with `* autoMCStats 10`
+    appended (mcstats.txt) and simple-shapes-TH1_input.root; copies are at
+    /eos/user/c/cgupta/combine-agent-tutorial/evalgold/.
+    Gold numbers were computed with Combine v10.6.0. Re-verify on v11.1.0
+    (the remote server's version) before using them as hard thresholds.
+  attach:
+    - evals/attachments/agent-freeze-mcstat-1/mcstats.txt
+    - evals/attachments/agent-freeze-mcstat-1/simple-shapes-TH1_input.root
+  question: |
+    Using the attached datacard, compute the expected (Asimov) 95% CL upper
+    limit on r three ways: (1) nominal, (2) with all bin-by-bin
+    MC-statistics nuisances frozen, (3) statistics only. Report the three
+    median expected limits and how much of the limit is driven by MC
+    statistics.
+  gold_answer: |
+    Run AsymptoticLimits on an Asimov dataset (`-t -1`) three times:
+
+        combine -M AsymptoticLimits mcstats.txt -t -1
+        combine -M AsymptoticLimits mcstats.txt -t -1 --freezeNuisanceGroups autoMCStats
+        combine -M AsymptoticLimits mcstats.txt -t -1 --freezeParameters allConstrainedNuisances
+
+    (`--freezeParameters 'rgx{prop_bin.*}'` is equivalent to the second
+    command.)
+
+    Median expected limits:
+      nominal                  r < 1.8438
+      autoMCStats frozen       r < 1.3320
+      stat-only                r < 0.9883
+
+    Freezing the MC-statistics parameters lowers the limit from 1.84 to
+    1.33. That is 0.51 of the 0.86 gap between nominal and stat-only,
+    i.e. about 60% of the systematic degradation in this card.
