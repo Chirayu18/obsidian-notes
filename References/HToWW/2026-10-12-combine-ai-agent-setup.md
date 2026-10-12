@@ -64,10 +64,10 @@ properly only from lxplus/CERN, not the bare laptop.
   `~/CMSSW_14_1_0_pre4/bin/el9_amd64_gcc12/combine`. **No scram rebuild needed.**
 - `combine-assistant` repo (v0.5.4, official origin) now **cloned on BOTH** laptop
   (`/home/cgupta/agenthon_hacathon/combine/combine-assistant`) and lxplus (`~/combine-assistant`).
-- **`claude` CLI is NOT installed on lxplus** — the one remaining blocker for the recommended
-  (lxplus Claude Code) path. It IS on the laptop.
-- `hww_athens/.../Combine` = only PNG plots (LaTeX/beamer repo); no datacards, no workspace.
-  **No `datacard.txt` found anywhere** — needed to test the execution path.
+- ~~`claude` CLI is NOT installed on lxplus~~ **WRONG** — it is at `~/.local/bin/claude`. The
+  `bash -lc` probe dies on the zellij login-shell launcher (ENOTTY) before `command -v` runs;
+  probe with the explicit path instead. See Progress below.
+- ~~No `datacard.txt` found anywhere~~ WRONG — see Progress below.
 
 ## Next actions (for the continuing agent)
 
@@ -113,6 +113,34 @@ ssh -t lxplus 'source /cvmfs/cms.cern.ch/cmsset_default.sh && cd ~/CMSSW_14_1_0_
 Approve the two project MCP servers when prompted. Execution test: copy a card **and its
 .root** to a scratch dir (don't run in the EOS outputs dir) and ask for an expected
 AsymptoticLimit.
+
+## Tutorial run — 2026-10-12, laptop on CERN eduVPN
+
+**eduVPN fixes laptop access.** On VPN the laptop gets MCP `initialize` replies from both
+servers and `aigw.cern.ch` → 307. (Off VPN: MCP = TLS with the generic `CN=www.cern.ch` cert,
+then empty reply — intranet-only PaaS routes; aigw:443 silently dropped.) The VPN is split
+tunnel: public IPv4 stays the home ISP, only CERN ranges go through it.
+
+**Path 2 (Claude Code, laptop) — WORKING, all 3 tutorial prompts run:**
+`cd ~/agenthon_hacathon/combine/combine-assistant && source bin/setup-claude.sh` →
+run dir `/tmp/cgupta-combine-claude` (symlinked `.mcp.json`, skill, `CLAUDE.md` persona +
+generated `settings.json`). Then `cd $COMBINE_CLAUDE_DIR && claude`.
+1. `--robustFit` question → cited docs + tutorial + 2 cms-talk threads (forum corpus works
+   over VPN); honestly flagged it couldn't open `FitterAlgoBase.cc`.
+2. "Run an asymptotic limit on datacard.txt" (Combine tutorial
+   `data/tutorials/counting/realistic-counting-experiment.txt`) → no local combine, so it used
+   `combine-run-remote` (v11.1.0). **Cross-checked on lxplus with our own build: all 5 expected
+   quantiles + observed identical** (exp median r<2.3281, obs r<1.6281).
+3. FitDiagnostics covariance error → correct causes/fixes, cited forum posts, asked for the
+   command + card rather than guessing.
+
+**Path 1 (combagent + aigw, lxplus) — ready, needs the key at launch.** CVMFS setup
+`/cvmfs/cms-griddata.cern.ch/cat/sw/combine-assistant/latest/bin/setup.sh` (v0.5.4) puts
+`opencode`/`combagent` (build 0.0.0--202607211226) on PATH, config → `/tmp/cgupta-combine-assistant`
+(node-local: re-source every login). **Gotcha:** don't pipe `source setup.sh | tail` — the pipe
+runs it in a subshell and nothing lands on PATH. Tutorial card copied to
+`/eos/user/c/cgupta/combine-agent-tutorial/datacard.txt`. Key lives in vault `.keys`
+(chmod 600, git-ignored) — never commit it.
 
 ## Open questions for Galli
 
