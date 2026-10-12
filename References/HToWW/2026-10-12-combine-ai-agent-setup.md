@@ -82,12 +82,38 @@ Optional aigw/combagent path needs: join e-group `cms-combine-agent-users`, log 
 https://aigw.cern.ch, make a key at https://aigw.cern.ch/ui/api-keys (team `cms-combine-agent`),
 then `export AIGW_API_KEY=<key>` (NEVER store the key in a file).
 
+## Progress — 2026-10-12 (continuation session)
+
+- **Cloned** `~/combine-assistant` on lxplus (v0.5.4, `601e1a9`). `.claude/skills` symlink intact.
+- **MCP reachability MEASURED:** both servers (`combine-mcp-git-combine-mcp.app.cern.ch`,
+  `combine-run-mcp-git-combine-mcp.app.cern.ch`) answer MCP `initialize` **from lxplus**; from
+  the laptop both **time out**. → CERN-network only, run it on lxplus. (Answers Q2 for us.)
+- **`claude` on lxplus was broken:** `~/.local/bin/claude` → `versions/2.1.197`, which was
+  exactly 208 MiB (truncated auto-update, AFS quota at 95%) → Bun "Bus error" at startup.
+  Repointed symlink to intact `2.1.196`, deleted the truncated file (AFS now 93%).
+  Run with `DISABLE_AUTOUPDATER=1` until quota is freed, or the next update can truncate again.
+- **`claude` on lxplus is NOT logged in** (`-p` → "Not logged in · Please run /login").
+  Needs one interactive `/login` by Chirayu. **This is the only blocker.**
+- **Datacards DO exist** (the earlier "no datacard.txt anywhere" was wrong — it searched
+  `hww_athens`): `/eos/home-c/cgupta/higgscharm/outputs/combine/*.txt`, e.g.
+  `v11_hplusc_v4.txt` (6 channels, shapes in `v11_hplusc_v4.root` alongside).
+- `combine` on PATH after `cmsenv` in `~/CMSSW_14_1_0_pre4/src` — **verified**.
+
+Launch (after login):
+```bash
+ssh -t lxplus 'source /cvmfs/cms.cern.ch/cmsset_default.sh && cd ~/CMSSW_14_1_0_pre4/src && cmsenv \
+  && cd ~/combine-assistant && DISABLE_AUTOUPDATER=1 claude'
+```
+Approve the two project MCP servers when prompted. Execution test: copy a card **and its
+.root** to a scratch dir (don't run in the EOS outputs dir) and ask for an expected
+AsymptoticLimit.
+
 ## Open questions for Galli
 
 1. Claude Code vs combagent+aigw — which does he recommend?
-2. Is the public `combine-mcp` reachable off the CERN network at all, or lxplus/CERN only?
-3. An example `datacard.txt` to exercise execution (Chirayu has none locally).
-4. Is `claude` installed on lxplus where the built Combine lives?
+2. ~~Reachable off CERN network?~~ Measured: no, lxplus only (see Progress).
+3. ~~Example datacard~~ Not needed, own cards on EOS.
+4. ~~claude on lxplus?~~ Yes (2.1.196), needs /login.
 
 _Constraints honored this session: nothing installed, no keys entered, no jobs started,
 nothing under `hww_athens` modified. Track-1 areas untouched._
