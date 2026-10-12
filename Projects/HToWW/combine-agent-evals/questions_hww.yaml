@@ -13,11 +13,12 @@
   category: usage
   source_file: docs/part2/bin-wise-stats.md
   question: |
-    I use `* autoMCStats 10`. In one bin, one of my backgrounds has only
-    about 2 effective MC events, while the other backgrounds in that bin
-    are well populated. Does that background get its own
-    Poisson-constrained parameter because it is below the threshold of 10,
-    or is it covered by the bin's single Barlow-Beeston-lite parameter?
+    I use `autoMCStats` with a threshold on the effective number of MC
+    events. In one bin, one of my backgrounds has very few effective MC
+    events, well below the threshold, while the other backgrounds in that
+    bin are well populated. Does that background get its own
+    Poisson-constrained parameter because it is below the threshold, or is
+    it covered by the bin's single Barlow-Beeston-lite parameter?
   gold_answer: |
     The threshold is tested on the *whole bin*, not on each process.
     For each bin Combine sums the background yields, n_tot = sum n_i, and
@@ -84,7 +85,7 @@
   category: usage
   source_file: docs/part3/nonstandard.md
   question: |
-    My datacard has one signal region and five control regions. Before
+    My datacard has a signal region and several control regions. Before
     unblinding, I want to fit the real data in the control regions only,
     keeping the signal region out of the fit, so I can look at pulls and
     post-fit agreement. How do I do this without losing the nuisance
@@ -170,7 +171,7 @@
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
   question: |
-    I am combining datacards from four data-taking eras with
+    I am combining datacards from several data-taking eras with
     `combineCards.py`. How do I control which systematic uncertainties are
     correlated or uncorrelated across eras, and what happens to the
     autoMCStats bin-by-bin parameters?
@@ -213,11 +214,10 @@
     - evals/attachments/agent-freeze-mcstat-1/mcstats.txt
     - evals/attachments/agent-freeze-mcstat-1/simple-shapes-TH1_input.root
   question: |
-    Using the attached datacard, compute the expected (Asimov) 95% CL upper
-    limit on r three ways: (1) nominal, (2) with all bin-by-bin
-    MC-statistics nuisances frozen, (3) statistics only. Report the three
-    median expected limits and how much of the limit is driven by MC
-    statistics.
+    Using the attached datacard, compute the expected (Asimov) upper limit
+    on r nominally, with all bin-by-bin MC-statistics nuisances frozen, and
+    statistics-only. Report the median expected limits and how much of the
+    limit is driven by MC statistics.
   gold_answer: |
     Run AsymptoticLimits on an Asimov dataset (`-t -1`) three times:
 
