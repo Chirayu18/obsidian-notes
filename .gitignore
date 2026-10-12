@@ -65,3 +65,6 @@ __pycache__/
 *.vrb
 *.fls
 *.fdb_latexmk
+
+# secrets (API keys) — never commit
+.keys
