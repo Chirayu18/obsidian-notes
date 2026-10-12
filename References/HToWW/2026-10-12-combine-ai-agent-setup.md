@@ -62,7 +62,10 @@ properly only from lxplus/CERN, not the bare laptop.
   re-establish with `python3 ~/bin/lxplus-connect.py`). **Combine already BUILT:** source at
   `~/CMSSW_14_1_0_pre4/src/HiggsAnalysis/CombinedLimit`, binary at
   `~/CMSSW_14_1_0_pre4/bin/el9_amd64_gcc12/combine`. **No scram rebuild needed.**
-- `combine-assistant` repo **not yet cloned** on lxplus.
+- `combine-assistant` repo (v0.5.4, official origin) now **cloned on BOTH** laptop
+  (`/home/cgupta/agenthon_hacathon/combine/combine-assistant`) and lxplus (`~/combine-assistant`).
+- **`claude` CLI is NOT installed on lxplus** — the one remaining blocker for the recommended
+  (lxplus Claude Code) path. It IS on the laptop.
 - `hww_athens/.../Combine` = only PNG plots (LaTeX/beamer repo); no datacards, no workspace.
   **No `datacard.txt` found anywhere** — needed to test the execution path.
 
@@ -71,7 +74,10 @@ properly only from lxplus/CERN, not the bare laptop.
 Recommended: run Claude Code on lxplus so it sees the built Combine + real files.
 
 1. Confirm lxplus up: `ssh lxplus 'echo ok; which git'` (if fail: `python3 ~/bin/lxplus-connect.py`).
-2. Clone repo on lxplus: `ssh lxplus 'cd ~ && git clone https://github.com/maxgalli/combine-assistant.git'`.
+2. ~~Clone repo on lxplus~~ DONE — `~/combine-assistant` already present (also cloned on laptop).
+   **BLOCKER:** `claude` is NOT installed on lxplus — install Claude Code there, OR run `claude`
+   on the laptop in the laptop clone (retrieval-only, likely docs/code/paper since forum + remote
+   exec are CERN-gated).
 3. Check `claude` is installed ON lxplus: `ssh lxplus 'bash -lc "command -v claude || echo NO-CLAUDE"'`.
 4. Launch: `ssh -t lxplus 'cd ~/CMSSW_14_1_0_pre4/src && cmsenv && cd ~/combine-assistant && claude'`.
 5. First test (retrieval, no datacard needed): ask "How do I compute an expected
