@@ -1,55 +1,13 @@
-# HToWW-derived evaluation questions for the Combine assistant.
+# General-usage evaluation questions for the Combine assistant.
 #
 # Same schema as maxgalli/combine-bot evals/questions.yaml (id, category,
 # source_file / topic_url, question, gold_answer, optional notes / attach),
 # so the entries can be appended there unchanged.
 #
-# Each question comes from a problem we actually hit in the H+c -> WW analysis.
-# It is phrased generically, so no CMS-internal numbers are needed to answer it.
 # Gold answers are written against the Combine docs on `main` (fetched
-# 2026-10-12). Behaviour claims marked "verified" were run on lxplus with
-# Combine v10.6.0 (CMSSW_14_1_0_pre4) using the public tutorial card
+# 2026-10-12). Behaviour claims marked "verified" were run with Combine
+# v10.6.0 (CMSSW_14_1_0_pre4) on the public tutorial card
 # data/tutorials/shapes/simple-shapes-TH1.txt.
-# The `notes` field gives the HToWW provenance (curator-only; not shown to the bot).
-
-- id: mcstat-rateparam-1
-  category: usage
-  source_file:
-    - docs/part2/bin-wise-stats.md
-    - docs/part2/settinguptheanalysis.md
-  question: |
-    My expected limit is dominated by the autoMCStats nuisances
-    (`prop_bin...`) in my signal-region bins. The culprit is one background
-    whose MC is poorly populated there: only ~10 effective events per bin,
-    from an NLO sample with large event weights. Would adding a `rateParam`
-    for that background, constrained by a control region, reduce the impact
-    of these nuisances?
-  gold_answer: |
-    No. A `rateParam` is a freely floating multiplier on the process
-    normalisation; it does not change the *relative* MC-statistical
-    uncertainty of a bin, which is what the autoMCStats parameters encode.
-
-    The autoMCStats algorithm sums the per-process yields n_i and errors e_i
-    in each bin, and the docs state that n_i and e_i already include the
-    nominal effect of scaling parameters such as `rateParam`s, and that
-    e_i (and therefore e_tot) are updated automatically whenever process
-    normalisations change. Scaling a process up or down therefore scales
-    its MC-stat uncertainty with it, and the effective number of events
-    n_eff = n^2 / e^2 is unchanged. The Barlow-Beeston-lite parameter
-    still scales the bin as n_tot + nu * e_tot with a unit-Gaussian
-    constraint.
-
-    The rateParam fixes a normalisation problem; this is a template
-    statistics problem. To reduce it you need more effective MC events in
-    those bins: more or pooled MC, less weight dispersion (fewer
-    large/negative weights), or a binning where the templates are better
-    populated.
-  notes: |
-    HToWW 2022postEE: adding a V+jets rateParam shared CR<->SR moved the
-    expected r95 from 1742 to 1791 (worse), and SR autoMCStats stayed
-    dominant. Projects/HToWW/2026-06-23-automcstats-rootcause.md.
-    The "worse" direction is our measurement, not a docs claim; it is kept
-    out of the gold answer.
 
 - id: mcstat-threshold-1
   category: usage
@@ -83,44 +41,7 @@
     the process does NOT get its own parameter; it is absorbed into the
     single bin parameter.
   notes: |
-    Calibration point: our own notes once explained a per-process parameter
-    (prop_binCR_vjets_bin7_higgsbkg, process n_eff ~ 2.1) by that process
-    being below threshold. Per the docs, it exists only because the bin's
-    TOTAL n_eff was <= 10. A good answer must make this distinction.
-
-- id: mcstat-zero-yield-1
-  category: usage
-  source_file: docs/part2/bin-wise-stats.md
-  question: |
-    Because large positive and negative NLO event weights cancel, one of
-    my backgrounds has a nominal yield of 0.0 in one bin, but a
-    statistical uncertainty of about 40 events. How does autoMCStats
-    treat this process in that bin, and should I worry about it?
-  gold_answer: |
-    It depends on which regime the bin is in. That is set by the bin's
-    total effective event count n_tot_eff = n_tot^2 / e_tot^2 compared
-    with the threshold.
-
-    - Above threshold (one Barlow-Beeston-lite parameter per bin): the
-      process adds nothing to n_tot, but its e_i = 40 enters
-      e_tot = sqrt(sum e_i^2) in quadrature. The single bin parameter scales
-      the yield as n_tot + nu * e_tot, so this process inflates the
-      uncertainty on the whole bin while contributing no yield.
-    - At or below threshold (per-process parameters): processes with
-      n_i = 0 are skipped, so this process's uncertainty is dropped
-      entirely.
-
-    Either way it deserves attention. In the first case it can dominate
-    the bin's MC-stat uncertainty, which matters when the signal is small.
-    In the second case a real uncertainty silently disappears. The yield
-    of 0 +- 40 is a symptom of weight cancellation and should be fixed
-    upstream (more MC, or a treatment of the negative weights). This
-    recommendation goes beyond what the autoMCStats docs state.
-  notes: |
-    HToWW SR bin 6: V+jets 0.0 +- 41.0 inside a 752.3 +- 41.3 bin
-    (n_eff 332 > 10, so Barlow-Beeston-lite). V+jets was 99.2% of the bin
-    error, and prop_binSR_hplusc_bin6 was the #1 impact.
-    Projects/HToWW/2026-06-23-automcstats-rootcause.md.
+    Key point to grade: the threshold applies to the bin total, not per process.
 
 - id: freeze-mcstat-1
   category: usage
@@ -158,8 +79,6 @@
     Verified on simple-shapes-TH1.txt + `* autoMCStats 10` (v10.6.0, -t -1):
     nominal 1.8438; --freezeNuisanceGroups autoMCStats 1.3320;
     rgx{prop_bin.*} 1.3320 (identical); allConstrainedNuisances 0.9883.
-    HToWW used exactly this (1185 -> 933 all, 962 SR only):
-    strategy-2026-08-10/2026-08-11-route-to-a-better-limit.md.
 
 - id: channel-mask-sr-1
   category: usage
@@ -194,8 +113,7 @@
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
   question: |
-    I have a theory systematic (the choice of flavour scheme for my signal
-    generator) that should change only the *shape* of my signal template,
+    I have a theory systematic that should change only the *shape* of my signal template,
     not its normalisation. How do I implement that as a `shape` nuisance,
     and how does Combine split a `shape` uncertainty into shape and
     normalisation effects?
@@ -219,18 +137,13 @@
 
     (This assumes the default autoMCStats `hist-mode = 1`, where
     normalisation is handled separately from the morphing.)
-  notes: |
-    HToWW decision 2026-09-30: the flavour-scheme uncertainty is a 3FS/4FS
-    c-hadron-pT SHAPE systematic only, replacing a 30% lnN.
-    fs-unc-2026-09-29/2026-09-30-fs-shape-systematic-validation.md.
 
 - id: shape-missing-down-1
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
   question: |
     For one shape systematic I only have an Up-shifted template; there is
-    no Down variation (it is a single "total" variation from a
-    scale-factor tool). Can I declare it as `shape` in my datacard with
+    no Down variation. Can I declare it as `shape` in my datacard with
     only the Up histogram? What will happen?
   gold_answer: |
     No. Every shape uncertainty needs two shifted templates for each
@@ -251,8 +164,7 @@
   notes: |
     Verified on lxplus (v10.6.0): removed background_alphaDown from the
     tutorial input; text2workspace raised the RuntimeError above
-    (ShapeTools.py getShape). HToWW relevance: 2D c-tag SF kept as one
-    up_Total nuisance (memory hww-ctag2d-sf-total-decision).
+    (ShapeTools.py getShape).
 
 - id: combinecards-era-correlation-1
   category: usage
@@ -285,19 +197,16 @@
     (`prop_bin<channel>_bin<N>`). They therefore end up distinct, i.e.
     uncorrelated, across eras.
   notes: |
-    Open HToWW issue behind this: we want to pool MC across eras to beat
-    the autoMCStats penalty. With pooled templates, the MC fluctuations
-    are really correlated across eras, which per-channel autoMCStats
-    cannot express. Use this question to probe whether the agent notices
-    that (beyond gold).
-    framework-plan-2026-10/2026-10-08-framework-optimization-plan.md.
+    Bonus (beyond gold): if the same MC events feed several eras' templates,
+    their statistical fluctuations are correlated across eras, which
+    per-channel autoMCStats cannot express.
 
 - id: agent-freeze-mcstat-1
   category: agent-debug
   notes: |
     Agent-mode question. Attach the tutorial card with `* autoMCStats 10`
-    appended (mcstats.txt) and simple-shapes-TH1_input.root; copies are at
-    /eos/user/c/cgupta/combine-agent-tutorial/evalgold/.
+    appended (mcstats.txt) and simple-shapes-TH1_input.root, both from
+    data/tutorials/shapes/ in the Combine repo.
     Gold numbers were computed with Combine v10.6.0. Re-verify on v11.1.0
     (the remote server's version) before using them as hard thresholds.
   attach:
