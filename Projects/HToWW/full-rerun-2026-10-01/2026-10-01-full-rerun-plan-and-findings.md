@@ -371,3 +371,13 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
 - **No central GEN-SIM / LHE / AOD exists** for the WW sample (DAS, incl. invalid): only MiniAOD and NanoAOD; the chain was wmLHEGS → DRPremixNoOutput.
 - **`LHE_AlphaS` (AQCDUP) is NOT the weights' μR**: it varies inside identical-weight clusters.
 - **Plots:** `outputs/hww_lhe_fix/scale_shape_vs_gg_{higgs_pt,npnlo,cjet_pt,summary}.png` (`runall/plot_shapes.py`).
+- **Where the residual lives (S/H × NpNLO split, `runall/sh_classes.py`).**
+  - **The sample's Born is c c̄ → H** (FxFx 0j + 1j). S-events have NpNLO outgoing partons; H-events have NpNLO+1.
+  - **Raw per-class means, WW-fixed vs γγ-clean:**
+    - NpNLO=0 S (61% of events): agree to ≤0.3%.
+    - NpNLO=0 H (19%): ≤1%.
+    - NpNLO=1 S (16%): 1–3%.
+    - **NpNLO=1 H (5%): off.** (0.5,0.5) 1.75 vs 2.24, μR0.5 1.83 vs 2.35, μR2 0.62 vs 0.57, (2,2) 0.63 vs 0.57; μF fine.
+  - **Why:** the real emission and its counterterms have different FxFx clustering scales, so a single per-event factor cannot correct them.
+  - **In the ≥1 gen c-jet region** the class shares become 16 / 20 / 47 / **17%**, so the bad class is 17% of the signal-like region.
+- **Composition differs between the samples (flag).** The WW sample has fewer NpNLO=1 events than γγ (20% vs 27% inclusive). Different gridpacks (MG 2.9.18 vs 2.9.9): check whether the nominal merging differs too.
