@@ -428,3 +428,33 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
 - **Next:**
   1. Compare the NOMINAL distributions (Higgs pT, c-jet pT, NpNLO) of our WW vs γγ vs Run 2.
   2. Run a quick private LHE-only test, with identical cards under MG 2.9.9 vs 2.9.18, to pin the version effect.
+
+### 2026-10-13 (evening): spike events = MG's 1 GeV scale floor; fix extended; edge-case audit
+- **What the spike events are:** one-jet H-events whose renormalisation scale is clamped at **exactly 1 GeV** in MadGraph.
+  - The patch's own running at μ = 1.000 GeV gives F = 2.085, F(μ/2) = 6.406, F(2μ) = 1.288.
+  - Measured: 1/r = 2.085, and clean/raw = 6.404 / 1.289.
+  - Clean samples therefore show the constant ratios 6.199 / 0.308.
+- **Our sample has them too.** The raw weights show a constant cluster 0.968 / 0.239 (133 events, 0.8% of one-jet H-events). These sat below the table edge (1.5 GeV), so the fallback multiplied them by a flat 2.08, giving 2.02 / 0.50.
+- **Fix updated** in `lhe_yukawa_fix.py` and `analysis/data/lhe_yukawa/`:
+  - The tables start at 1 GeV (`tab.f`).
+  - A 0.5% tolerance at the edge absorbs replica-mean noise. Floor events now give **6.1986 / 0.3078**.
+  - Events with F(μ0) above F(1 GeV) (only near-total cancellations; 7 events, one had 1/r = 62 and a ×(−103) variation) now get no variation, like r ≤ 0.
+  - `build.sh` path bug fixed: it ran in the CMSSW src dir. Its stray files there were removed.
+  - Old tables backed up at `/tmp/cgupta_gp/low/*.bak_1p5` (node-local).
+- **Edge-case audit** (`runall/edge_audit.py`, 142k ours / 133k γγ / 300k Run 2; `outputs/hww_lhe_fix/edge_audit*.txt`):
+
+  | category | events | weight share |
+  |---|---|---|
+  | normal | 142,153 | 99.89% |
+  | 1 GeV floor | 133 | 0.09% |
+  | r ≤ 0 | 5 | 0.004% |
+  | off-table high | 7 | 0.005% |
+  | off-table low | 6 | 0.004% |
+
+  - No member0 = 0 or non-finite weights. No other constant-value clusters in any class or sample, apart from the common S-event scale clusters, which agree across all three samples.
+  - Per-class quantiles: 0j S ≤0.6%, 0j H ≤2%, 1j S ≤2%; 1j H medians fine, tails differ (floor-event deficit).
+- **Remaining difference vs the two clean samples** (γγ and Run 2 agree with each other):
+  - One-jet H: muR0.5 2.01 vs 2.35, muR2 0.613 vs 0.570.
+  - Inclusive: muR0.5 1.017 vs 1.048–1.052; (0.5,0.5) 1.009 vs 1.044; muR2 0.970 vs 0.961; (2,2) 1.025 vs 1.013; μF within 0.3–0.5%.
+  - Cause: our sample has fewer one-jet events (20% vs 27%), half as many floor events (0.8% vs 1.7% of 1j H) and fewer low-kT one-jet events. This is a nominal-generation difference that the weight fix cannot add back. Per-scale-bin medians agree to 0.3%.
+- **Plots:** `scale_shape_v2_{higgs_pt,class,cjet_pt}.png`, `scale_norm_v2_inclusive.png` (`runall/plot_shapes3.py`). Higgs-pT shapes agree with both references within ~0.04, about as well as the two references agree with each other.

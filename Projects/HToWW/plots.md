@@ -107,3 +107,10 @@ tags: [plot]
 - Description: same as `scale_shape_vs_gg_*`, with the 233 γγ constant-ratio events removed (grey open circles = old reference including them). The per-event fix agrees within ≲5%. NOTE: the clean Run 2 UL18 WW sample shows the same spike, so the spike is standard behaviour of the older MG versions; our MG 2.9.18 WW sample is the outlier (see the main log).
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/scale_shape_vs_gg_nospike_higgs_pt.png
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/scale_shape_vs_gg_nospike_higgs_pt.png
+
+### H+c LHE fix v2 — ours vs Run 3 γγ and Run 2 WW (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: normalised scale-variation shapes vs Higgs pT, class (0j/1j × S/H) and gen c-jet pT, plus the inclusive normalisation of each variation. Ours uses the updated per-event fix (tables down to MG's 1 GeV scale floor; floor events exact). References: the clean Run 3 γγ (MG 2.9.9) and Run 2 UL18 WW (MG 2.6.5) samples, which agree with each other. Shapes agree within ~0.04. The one-jet H class and the inclusive muR-down (1.017 vs 1.048) differ because our sample has fewer one-jet and floor events (a generation difference).
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
