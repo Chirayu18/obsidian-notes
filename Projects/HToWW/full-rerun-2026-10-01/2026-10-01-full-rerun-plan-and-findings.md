@@ -471,3 +471,13 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
   - Mixed large-ratio events (muR×0.5 in 3–6.1): 1.2% (5.1%) vs 2.3–2.5% (10.2%).
   - These are visible in our RAW weights (the exact cluster), so this is a property of the sample, not the fix. It explains the one-jet H mean gap (2.01 vs 2.33–2.36) almost entirely.
 - **Conclusion:** the per-event fix reproduces the clean samples wherever the events are comparable. Every remaining difference traces to our sample containing fewer low-scale one-jet configurations: fewer 1-jet events below 30 GeV, more 0-jet events above 30 GeV, and half the 1 GeV floor events. Proposed next test: LHE-only generation from our gridpack vs the γγ gridpack, to see whether this already happens before Pythia.
+
+### 2026-10-13 (late night): ROOT CAUSE of the event-mix difference = Pythia fragment missing 3 JetMatching settings
+- **Full Pythia-settings diff** (MiniAOD provenance) between ours, γγ and Run 2: ours LACKS `JetMatching:jetAlgorithm = 2`, `JetMatching:etaJetMax = 999.` and `JetMatching:coneRadius = 1.`. Both clean samples, CMSSW's standard FxFx hadronizer cff and arXiv:2608.26863 (App. B.4) all have them.
+- **Pythia defaults** apply instead: jetAlgorithm 1 (CellJet), etaJetMax **2.5**, coneRadius **0.7**. The doc: "For the Madgraph scheme, only particles within etaJetMax are used". So the FxFx veto ignores |η| > 2.5.
+- **Confirmed in the data** (`runall/eta_test.py`):
+  - One-jet events with leading parton |η| > 2.5: ours 0.98% vs 6.8% (γγ) / 6.6% (Run 2).
+  - Central one-jet events: 19.3% vs 20.4 / 19.6%.
+  - Zero-jet H-events with a parton pT > 30 at |η| > 2.5: ours 1.9% vs 0.16 / 0.19%.
+- **Consequence:** the event mix is fixed at the shower step. Vetoed events are gone, so reweighting cannot recover them. The weights are fixable (per-event Yukawa fix); the event content is not. A correct sample needs re-production with BOTH the gridpack fix (reweight in-code, no systematics module) AND the fragment fix (the three JetMatching lines).
+- Other diffs: TauDecays:externalMode (irrelevant). `TimeShower:nPartonsInBorn = 0` is also in Run 2, which agrees with γγ, so it is not the cause.
