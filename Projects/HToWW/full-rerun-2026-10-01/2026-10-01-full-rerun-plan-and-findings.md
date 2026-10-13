@@ -313,3 +313,24 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
   - **H+b, 22EE:** same pattern. μF ours −8.8% / −2.4% vs exact −0.5% / +5.0%.
   - **Result.** The current fix biases every scale variation by **−6 to −10%** in the selected region, so both directions go down: a fake one-sided effect. It plausibly explains the one-sided `scalevar_muR` impact in the Run 3 fit. The μF columns are model-independent; the μR columns use 1-loop running.
   - **Verdict.** Replace with the per-event correction. PDF handling and the nominal are fine. Other samples are untouched (`lhe_renorm_datasets` lists only these two).
+- **Per-event fix implemented (2026-10-13; repo uncommitted; backups `*.bak_pre_yukawafix_20261013`).**
+  - **New module `analysis/corrections/lhe_yukawa_fix.py`.**
+    - Measures F(μ0) = 1/r per event, with r = mean(PDF members 1–100)/member 0.
+    - Inverts F to μ0 using the gridpack's own running, then multiplies each scale weight by F(k·μ0; μ0).
+    - Has a dataset→table map. It raises if a `lhe_renorm_datasets` entry has no table, and refuses samples without the offset (median r < 1.2).
+  - **Tables in `analysis/data/lhe_yukawa/`.**
+    - Produced by `tab.f`, the patched `rwgt_muR_dep_fac` compiled with the `runalpha`/`runmass` routines from MG5_aMC v2.9.10 `reweight_xsec.f`. The patch applies with the identical offset as in the gridpack build log.
+    - Inputs are the param-card values and α_s(M_Z) from LHAPDF: 0.11266 for 325500 (nf4, H+c), 0.11800 for 325300 (H+b).
+    - H+c: y_c = 0.986 at 3 GeV, nf = 4. H+b: y_b = 4.18 at m_b, nf = 5.
+  - **`lhescale.py`** uses the module via `yukawa_table`. `correction_manager.py` passes `table_for_dataset(dataset)`. PDF handling is unchanged.
+  - **Results (corrected means vs Run 2 UL18):**
+    - H+c 22EE: [1.007 1.008 0.970 0.947 1 1.021 0.888 0.971 1.023] vs [1.045 1.051 1.018 0.946 1 1.021 0.879 0.961 1.013].
+    - H+c 23: same to 0.5%.
+    - H+b: [0.971 0.952 0.841 0.912 1 1.016 0.853 0.999 1.088] vs [1.018 1.019 0.930 0.909 1 1.023 0.835 0.979 1.067].
+    - μF-only and μR=2 entries agree to ≤1%; μR=0.5 entries are ~4% (H+c) to 7–9% (H+b) lower than Run 2. Run 2 differs in √s and MG version, so it is not an exact reference.
+  - **Off-table events:** ~0.16%, all NpNLO=1, implied μ0 < 1.5 GeV. They get the measured factor only. ~1e-5 of events (r ≤ 0) keep ratio 1.
+  - **Exactness:**
+    - Exact: F(μ) itself (same code and inputs).
+    - Approximate: μ0 from the replica mean, ±0.1% per event (clean Run 2 sample: replicas/member0 = 1.000 ± 0.001, 1–99% within 0.999–1.005).
+    - Assumed, not proven in code: the stored variations carry F = 1, i.e. they miss the factor entirely. The 2.9.10 source does call `rwgt_muR_dep_fac` for the variations, so why it is ineffective there is unexplained.
+    - Definitive closure would need running the gridpack with a debug print of F per event.
