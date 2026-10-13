@@ -121,3 +121,14 @@ tags: [plot]
 - Description: `scale_shape_jk_{higgs_pt,cls,cjet_pt}.png`: ours (2.94M, fixed) vs Run 3 γγ (3.06M) vs Run 2 WW (3.9M), with jackknife stat errors and pulls. `scale_shape_jk_mixmatched_{hpt,cls}.png`: the references reweighted to our class × Higgs-pT mix; μF agrees within ≤1% and everything above 60 GeV agrees. The residual is in the one-jet H class / Higgs pT 20–60 GeV, from our sample having half as many 1 GeV scale-floor events. Pull panels are clipped at ±8.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+
+### GEN ticket figures — H+c/H+b → WW production issues (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: figures for the GEN ticket draft (`full-rerun-2026-10-01/2026-10-13-GEN-ticket-draft-HplusC-HplusB-WW.md`).
+  - fig1: broken LHE weights (PDF replicas/central ≈ 2.26; scale variations ≈ ×2).
+  - fig2: the FxFx veto only acts at |η| < 2.5 (missing JetMatching lines).
+  - fig3–5: impact on the scale shapes and the nominal mix.
+  - `mcm_fragments/`: the official fragments of all requests.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket
