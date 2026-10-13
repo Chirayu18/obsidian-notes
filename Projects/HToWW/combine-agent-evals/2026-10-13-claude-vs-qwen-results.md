@@ -33,7 +33,7 @@ No LLM judge. Correctness was graded by hand against the gold answers.
 | `gmn-control-region-1` | correct | 3 no answer |
 | `shape-question-mark-1` | correct | 1 correct, 1 wrong (plain `shape` line), 1 timeout |
 | `gof-saturated-1` | correct | 2 correct, 1 partial (no frequentist toys) |
-| `agent-missing-down-1` | correct diagnosis, did not run | 3 no answer (run on the original file, before the fix) |
+| `agent-missing-down-1` | correct diagnosis, did not run | 3 stopped before answering (2 ran `text2workspace.py` and reproduced the crash first) |
 | `agent-undefined-group-1` | correct, reproduced on combine-run | 1 correct, 1 stopped before answering, 1 no answer |
 | `agent-shape-counting-1` | correct, reproduced on combine-run | 3 no answer |
 | `agent-mask-ignored-1` | correct | 2 stopped before answering, 1 no answer |
@@ -51,4 +51,4 @@ Galli's Claude setup denies Bash, so on a machine without Combine Claude cannot 
 
 `run_agent.py` does not detach stdin; `claude -p` appends piped stdin to the prompt. Run it with `< /dev/null`.
 
-`agent-missing-down-1` was rerun for Claude after its ROOT file was rebuilt (the old one's internal name gave the answer away). The Qwen rerun was still running when this was written.
+`agent-missing-down-1` was rerun for both agents after its ROOT file was rebuilt (the old one's internal name gave the answer away); the table shows the reruns.
