@@ -381,3 +381,29 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
   - **Why:** the real emission and its counterterms have different FxFx clustering scales, so a single per-event factor cannot correct them.
   - **In the ≥1 gen c-jet region** the class shares become 16 / 20 / 47 / **17%**, so the bad class is 17% of the signal-like region.
 - **Composition differs between the samples (flag).** The WW sample has fewer NpNLO=1 events than γγ (20% vs 27% inclusive). Different gridpacks (MG 2.9.18 vs 2.9.9): check whether the nominal merging differs too.
+
+### 2026-10-13 (late): the NpNLO=1 H "residual" is mostly the γγ reference, not the fix
+Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ files).
+
+- **MG5_aMC source (v2.9.10 `fks_singular.f`, `setscales.f`, `reweight_xsec.f`):**
+  - The running factor is applied **per contribution**: `rwgt_muR_dep_fac(sqrt(mu2_r(kr)), sqrt(scales2(2,i)))`.
+  - In an H-event, the real emission takes its FxFx scales from the n+1 momenta (`setclscales(p)`, "mohdr"). The FKS/MC counterterms in the same event take them from the n-body counter-event momenta (`setclscales(p1_cnt(0,1,0))`, "izero").
+  - The FxFx μR (ickkw=3) is mT(colourless)/2 for the 0-jet Born and the **jet kT clustering scale**/2 for the 1-jet Born.
+  - S-events: every piece is n-body, so there is one scale.
+- **The scale can be rebuilt from the LHE partons.** Comparing μ0 from r with the prediction:
+  - NpNLO=0 S: median 0.9962 vs 0.5·mT(H).
+  - NpNLO=1 S: median 0.9957 vs 0.5·pT(parton).
+  - The 0.4% offset is the known 0.07% F offset seen in μ. So S-events behave exactly as the code says.
+  - NpNLO=1 H vs the real-emission scale: correlation 0.6 only. These are two-scale events: μ(real)/μ(counterterm) median 1.55, 16–84% between 0.9 and 4.9.
+- **Two-piece un-mixing (exact model for H-events).** Per event:
+  - r = bR + bC; 1 = bR·F(μR) + bC·F(μC); stored broken S_k = bR·aR(k) + bC·aC(k), with a = α_s ratio².
+  - μR comes from the partons; μC from the FKS-mapping candidates or a scan.
+  - Closure against the stored muR-only weights: |Δ| median 0.07–0.1%, 92–96% of events < 0.5%.
+  - **Result: the class mean moves only 1.831 → 1.849 (μR0.5) and 0.622 → 0.618 (μR2).** F runs slowly, so the two-scale effect on the weights is ~1%.
+  - Caveat: the closure is weakly sensitive to μC, but so is the result.
+- **Same-scale comparison with γγ (bins of the real-emission μR):** medians agree to ≤0.3% in every bin; μR0.5 [20,30) gives 1.614 vs 1.615.
+- **The class-mean gap comes from the γγ sample:**
+  - (a) 1.7% of γγ NpNLO=1 H-events (**7% of the class weight**, all genW>0) have **constant** ratios μR0.5 = 6.198 and μR2 = 0.308, independent of kinematics. That means one piece sits at a fixed, very low scale (around a GeV). There are **zero** such events in WW, before or after the fix (the broken ratio would be ~12).
+  - (b) The scale spectrum differs: WW has no events with μ(real) < 15 GeV, γγ has 6%; NpNLO=1 is 20% vs 27%. This is a different merging setup between the MG 2.9.18 and 2.9.9 gridpacks.
+  - Removing (a) and matching (b): μR0.5 is 1.831 (WW fix) vs 1.953 (γγ), μR2 0.622 vs 0.609. That is down from 1.83 vs 2.33.
+- **Verdict:** the per-event fix is good to ~1% even for NpNLO=1 H-events. The remaining ≤6% gap in that 5% class (~0.3% inclusive) cannot be attributed to the fix, since the reference sample differs in generator setup. A private sample with both weight sets (option 3) is now only the final proof, not a necessity.
