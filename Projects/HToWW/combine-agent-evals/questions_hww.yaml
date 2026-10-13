@@ -3,7 +3,9 @@
 # Same schema and philosophy as maxgalli/combine-bot evals/questions.yaml:
 # conceptual/usage questions phrased as a user would ask, and a gold answer
 # that a cited source (docs page, solved forum thread, paper or code) states.
-# No derived recipes and no answers based only on running Combine.
+# No derived recipes. Agent-debug questions follow agent-setparam-range-1:
+# a failing command on public tutorial cards, gold = the real error (verified
+# on the remote combine-run server, v11.1.0) + the documented fix.
 # Gold answers were checked against the Combine docs on `main` (fetched 2026-10-12).
 
 - id: mcstat-threshold-1
@@ -141,3 +143,330 @@
     Bonus (beyond gold): if the same MC events feed several eras' templates,
     their statistical fluctuations are correlated across eras, which
     per-channel autoMCStats cannot express.
+
+- id: shape-only-syst-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    I have a theory systematic that should change only the *shape* of my signal template,
+    not its normalisation. How do I implement that as a `shape` nuisance,
+    and how does Combine split a `shape` uncertainty into shape and
+    normalisation effects?
+  gold_answer: |
+    For both `shape` and `shapeN`, Combine treats shape and normalisation
+    separately:
+
+    - The shape is interpolated on the normalised templates. `shape`
+      vertically interpolates the fraction of events in each bin (the
+      histograms are normalised first). `shapeN` interpolates the logs of
+      those fractions.
+    - The total normalisation is interpolated separately with an
+      asymmetric log-normal, derived from the integrals of the Up/Down
+      templates relative to the nominal.
+
+    So to get a shape-only effect, scale your Up and Down templates to the
+    same integral as the nominal template before writing them. The
+    log-normal normalisation term is then 1 and only the shape morphing
+    remains. Enter it with a normal `shape` line (effect 1 for the signal
+    process).
+
+    (This assumes the default autoMCStats `hist-mode = 1`, where
+    normalisation is handled separately from the morphing.)
+  notes: |
+    Restored 2026-10-13 at the curator's request: Qwen (aigw qwen3.8-27b)
+    answered it correctly in the 2026-10-12 run. Caveat: the docs state the
+    shape/normalisation split; the "rescale to the nominal integral"
+    recipe follows from it but is not written out in any source.
+
+- id: asymptotic-blind-1
+  category: usage
+  source_file: docs/part3/commonstatsmethods.md
+  question: |
+    My expected limit from `AsymptoticLimits` changes when I change the
+    observed data in my datacard. I thought an expected limit should not
+    depend on the data at all. Why does this happen, and how do I get a
+    fully blind expected limit?
+  gold_answer: |
+    `AsymptoticLimits` follows the frequentist paradigm for expected
+    limits. It first fits the observed data, conditionally for a fixed
+    value of r, and sets the nuisance parameters to the values from that
+    fit when generating the Asimov data set. The default expected limit is
+    therefore the **post-fit (a-posteriori)** expected limit, which depends
+    on the data.
+
+    - For the **pre-fit (a-priori)** expected limit, add `--noFitAsimov`
+      (or `--bypassFrequentistFit`).
+    - To blind the result completely, i.e. not use the data at all, use
+      `--run blind`.
+
+    You *can* get blind limits with `-t -1` if the right options are
+    passed, but the docs strongly recommend `--run blind` instead.
+
+- id: lnn-asymmetric-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    Does a single-valued `lnN` uncertainty in my datacard shift the yield
+    down at minus one sigma by the same fraction as it shifts it up at plus
+    one sigma? And how do I specify an asymmetric log-normal uncertainty?
+  gold_answer: |
+    No. With a single value kappa = 1 + dx/x, the yield is multiplied by
+    kappa^theta: by kappa at theta = +1 sigma, and by 1/kappa (not
+    2 - kappa) at theta = -1 sigma. For example, `1.2` gives x1.2 up but
+    x0.8333 down, not x0.8.
+
+    For an asymmetric log-normal, write the entry as `kappa_down/kappa_up`.
+    Here kappa_down is the ratio of the yield to the nominal at -1 sigma,
+    and kappa_up the ratio at +1 sigma (e.g. `0.8/1.2`). The docs note it
+    may be desirable to encode large uncertainties that have a symmetric
+    effect on the yield as asymmetric log-normals for this reason.
+
+- id: gmn-control-region-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    One of my backgrounds is estimated from the number of events observed
+    in a control region, multiplied by an extrapolation factor into the
+    signal region. Which uncertainty type should I use in the datacard for
+    its statistical uncertainty, and how do I write it?
+  gold_answer: |
+    Use `gmN` (Gamma distribution). It is the recommended choice for the
+    statistical uncertainty of a background determined from the number of
+    events in a control region, or from an MC sample of limited size.
+
+    If the control region contains N events and the extrapolation factor
+    is alpha, put N right after the `gmN` keyword, and alpha in the
+    (bin, process) column. The yield in the `rate` line for that
+    (bin, process) must equal N * alpha. Example from the docs:
+
+        WW_norm gmN 4    -   0.16    -     -
+
+    Here 4 sideband events times 0.16 gives a WW estimate of 0.64, with a
+    ~50% statistical uncertainty.
+
+- id: shape-question-mark-1
+  category: usage
+  source_file: docs/part2/settinguptheanalysis.md
+  question: |
+    One systematic source changes the shape of some of my processes but
+    only the normalisation of others. Do I need two separate nuisance lines
+    in the datacard, one `shape` and one `lnN`?
+  gold_answer: |
+    No. Use a single line with the type `shape?`. Combine then first looks
+    for Up/Down templates for each process. If it does not find them for a
+    process, it interprets the number in that column as an `lnN`. Using one
+    line keeps it a single, fully correlated nuisance parameter. (The docs
+    also note that `shape` and `lnN` can be interchanged across cards via
+    `shape?` when combining.)
+
+- id: gof-saturated-1
+  category: usage
+  source_file: docs/part3/commonstatsmethods.md
+  question: |
+    How do I run a goodness-of-fit test with the saturated model and turn
+    the result into a p-value? Which kind of toys should I use for it?
+  gold_answer: |
+    Run `GoodnessOfFit` once on the observed data, then on many toys to get
+    the distribution of the test statistic:
+
+        combine -M GoodnessOfFit datacard.txt --algo=saturated
+        combine -M GoodnessOfFit datacard.txt --algo=saturated -t <ntoys> -s <seed> --toysFrequentist
+
+    For the saturated model the docs recommend frequentist toys
+    (`--toysFreq` / `--toysFrequentist`); the default toys are recommended
+    for the `KS` and `AD` tests. The `limit` branch of the output tree holds
+    the test statistic. With t0 the value on data and f(t) the toy
+    distribution, the p-value is the fraction of toys with t >= t0. By
+    default the signal strength floats in the fit; use
+    `--fixedSignalStrength=<value>` to fix it.
+
+- id: agent-missing-down-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attachments: the simple-shapes-TH1 tutorial card
+    pointing at shapes.root, which is the tutorial input with
+    `background_alphaDown` removed. Error text verified on the remote
+    combine-run server (v11.1.0) on 2026-10-13.
+  attach:
+    - evals/attachments/agent-missing-down-1/datacard.txt
+    - evals/attachments/agent-missing-down-1/shapes.root
+  question: |
+    I am trying to build a workspace from the attached datacard with
+
+        text2workspace.py datacard.txt -o ws.root
+
+    but it crashes with a Python traceback. Can you run it and tell me what
+    is wrong?
+  gold_answer: |
+    `text2workspace.py` fails while building the PDF for the `background`
+    process with:
+
+        RuntimeError: Failed to find background_alphaDown in file shapes.root
+        (from pattern $PROCESS_$SYSTEMATIC, shapes.root)
+
+    The datacard declares `alpha` as a `shape` uncertainty on
+    `background`. For every shape uncertainty and every process/channel
+    it affects, two shifted templates must be provided: `<process>_<syst>Up`
+    and `<process>_<syst>Down`. `shapes.root` contains
+    `background_alphaUp` but not `background_alphaDown`.
+
+    The fix is to add the missing `background_alphaDown` histogram to the
+    file (or drop `alpha` from `background` if it shouldn't apply). Combine
+    does not construct a missing variation for you.
+
+- id: agent-undefined-group-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attachment: data/tutorials/counting/
+    realistic-counting-experiment.txt. Verified on combine-run (v11.1.0):
+    the command fails with rc 185. With `theory group = xs_ggH xs_ggWW`
+    appended, it runs and gives a median expected limit of r < 2.2578
+    (vs r < 2.3281 with nothing frozen). Grade on the mechanism (groups
+    must be declared in the card); which nuisances count as "theory" is
+    the user's choice.
+  attach:
+    - evals/attachments/agent-undefined-group-1/realistic-counting-experiment.txt
+  question: |
+    I want to see how my limit changes when I freeze my theory
+    uncertainties, so I ran
+
+        combine -M AsymptoticLimits realistic-counting-experiment.txt --freezeNuisanceGroups theory
+
+    on the attached datacard, but it fails. Can you run it and tell me what
+    is wrong?
+  gold_answer: |
+    Combine stops with:
+
+        Unknown nuisance group: theory
+        Error when running the combination:
+            Unknown nuisance group name
+
+    `--freezeNuisanceGroups` only works with groups that are defined in
+    the datacard, and this card defines none. Declare the group in the
+    datacard, for example with the theory cross-section nuisances in this
+    card:
+
+        theory group = xs_ggH xs_ggWW
+
+    and re-run the same command. Alternatively, freeze the parameters by
+    name, `--freezeParameters xs_ggH,xs_ggWW` (or a regex such as
+    `'rgx{xs_.*}'`). The only group Combine creates automatically is
+    `autoMCStats`.
+
+- id: agent-shape-counting-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attachments: data/tutorials/shapes/
+    simple-shapes-TH1.txt + simple-shapes-TH1_input.root and
+    data/tutorials/counting/realistic-counting-experiment.txt.
+    Verified on combine-run (v11.1.0). Note: the docs say combineCards.py
+    itself fails, but in v11.1.0 the combination step succeeds and the
+    failure appears when the workspace is built. With `-S` the card gets
+    `shapes * counting FAKE` and FitDiagnostics runs.
+  attach:
+    - evals/attachments/agent-shape-counting-1/simple-shapes-TH1.txt
+    - evals/attachments/agent-shape-counting-1/simple-shapes-TH1_input.root
+    - evals/attachments/agent-shape-counting-1/realistic-counting-experiment.txt
+  question: |
+    I combined the two attached datacards with
+
+        combineCards.py shapes=simple-shapes-TH1.txt counting=realistic-counting-experiment.txt > combined.txt
+
+    That worked, but running `combine -M FitDiagnostics combined.txt` on
+    the result fails. Can you reproduce it and tell me what is wrong?
+  gold_answer: |
+    Building the workspace from `combined.txt` fails with:
+
+        KeyError: "Shape map has no entry for channel 'counting'"
+        Error when running the combination:
+            Failed to convert the input datacard from LandS to RooStats format.
+
+    `simple-shapes-TH1.txt` is a shape datacard, while
+    `realistic-counting-experiment.txt` is a counting datacard with no
+    `shapes` line. The combined card's `shapes` line only covers the
+    `shapes` channel, so the `counting` channel has no shape mapping.
+    Shape and counting datacards can't be combined as they are.
+
+    Fix it either way:
+    - Add `-S` to `combineCards.py`, which converts counting cards to
+      shape form while combining:
+
+          combineCards.py -S shapes=simple-shapes-TH1.txt counting=realistic-counting-experiment.txt > combined.txt
+
+    - Or add a line `shapes * * FAKE` to the counting datacard after the
+      `imax`/`jmax`/`kmax` section.
+
+    The combined card then has `shapes * counting FAKE`, and
+    `combine -M FitDiagnostics combined.txt` runs.
+
+- id: agent-mask-ignored-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attachments: combined.txt (combineCards.py -S of
+    the simple-shapes-TH1 and realistic-counting-experiment tutorial
+    cards) and simple-shapes-TH1_input.root. The warning and the
+    identical result were verified on combine-run (v11.1.0); `combine`
+    rejects `--channel-masks` ("unrecognised option"). The two-step fix
+    was verified with v10.6.0: best fit r goes from ~0 (+0.349) unmasked
+    to 0.177 (-0.177/+0.550) with mask_counting=1.
+  attach:
+    - evals/attachments/agent-mask-ignored-1/combined.txt
+    - evals/attachments/agent-mask-ignored-1/simple-shapes-TH1_input.root
+  question: |
+    I want to fit only the `shapes` channel of the attached datacard, so I
+    masked the other channel with
+
+        combine -M FitDiagnostics combined.txt --setParameters mask_counting=1
+
+    The fit runs, but the result is identical to the fit without the mask.
+    Can you check what is wrong?
+  gold_answer: |
+    The mask is silently ignored. The output contains:
+
+        Warning: Did not find a parameter with name mask_counting
+
+    The `mask_<CHANNEL>` parameters only exist if the workspace was built
+    with channel masking enabled. Running `combine` directly on the text
+    datacard builds the workspace without them, and `combine` itself does
+    not accept `--channel-masks`. Build the workspace first, then fit it
+    with the mask:
+
+        text2workspace.py combined.txt --channel-masks -o combined.root
+        combine -M FitDiagnostics combined.root --setParameters mask_counting=1
+
+    The masked fit now differs from the unmasked one: only the `shapes`
+    channel's data enter the likelihood, while the `counting` channel's
+    nuisance parameters stay in the model.
+
+- id: agent-expected-significance-1
+  category: agent-debug
+  notes: |
+    Agent-mode question. Attachment: data/tutorials/counting/
+    realistic-counting-experiment.txt. Verified on combine-run (v11.1.0):
+    -t -1 gives 0.153114; -t -1 --expectSignal 1 gives 1.28367.
+    `--expectSignal` defaults to 0 (combine --help: "If set to non-zero,
+    generate *signal* toys instead of background ones").
+  attach:
+    - evals/attachments/agent-expected-significance-1/realistic-counting-experiment.txt
+  question: |
+    I am computing the expected significance of my analysis on the attached
+    datacard with
+
+        combine -M Significance realistic-counting-experiment.txt -t -1
+
+    and the value I get is much smaller than I expect. Can you run it and
+    tell me what is wrong?
+  gold_answer: |
+    The command returns `Significance: 0.153114`. With `-t -1`, Combine
+    builds an Asimov data set, but `--expectSignal` defaults to 0, so the
+    Asimov data are background-only. The significance of a signal in
+    background-only pseudo-data is naturally close to zero.
+
+    The a-priori expected significance is computed from a signal+background
+    Asimov data set:
+
+        combine -M Significance realistic-counting-experiment.txt -t -1 --expectSignal=1
+
+    which gives `Significance: 1.28367` for this card. Add
+    `--toysFrequentist` for the a-posteriori version, which depends on the
+    observed data.

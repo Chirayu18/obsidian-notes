@@ -1,0 +1,24 @@
+Combination of shapes=simple-shapes-TH1.txt  counting=realistic-counting-experiment.txt
+imax 2 number of bins
+jmax 5 number of processes minus 1
+kmax 8 number of nuisance parameters
+----------------------------------------------------------------------------------------------------------------------------------
+shapes *         counting  FAKE
+shapes *         shapes    simple-shapes-TH1_input.root $PROCESS $PROCESS_$SYSTEMATIC
+----------------------------------------------------------------------------------------------------------------------------------
+bin          shapes    counting
+observation  85        0       
+----------------------------------------------------------------------------------------------------------------------------------
+bin                                shapes      shapes      counting    counting    counting    counting  
+process                            signal      background  ggH         qqWW        ggWW        others    
+process                            -1          1           0           2           3           4         
+rate                               10          100         1.47        0.64        0.06        0.22      
+----------------------------------------------------------------------------------------------------------------------------------
+WW_norm                 gmN  4     -           -           -           0.16        -           -         
+alpha                   shape      -           1.0         -           -           -           -         
+bg_others               lnN        -           -           -           -           -           1.3       
+bgnorm                  lnN        1.0         1.3         -           -           -           -         
+lumi                    lnN        1.1         1.0         1.11        -           1.11        -         
+sigma                   shape      0.5         -           -           -           -           -         
+xs_ggH                  lnN        -           -           1.16        -           -           -         
+xs_ggWW                 lnN        -           -           -           -           1.5         -         
