@@ -89,3 +89,14 @@ tags: [plot]
 - Description: normalised LHE scale-variation shapes (each variation / nominal per bin, normalised to its integral, so any common factor cancels) vs Higgs pT, LHE NpNLO and leading gen c-jet pT. Compares our central H+c→WW 4FS FxFx sample, with a common factor (= the old global-division fix) and with the new per-event running-Yukawa fix, against the CLEAN γγ 4FS FxFx sample (22EE, ~140k events each). The per-event fix matches γγ within ≲2–4% for μF and the up variations; the down family is off up to ~10% in sparse tails (high Higgs pT, NpNLO=1). The common factor is off 10–35%. `scale_shape_vs_gg_summary.png` shows the max deviation per panel (stat errors not included).
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+
+### H+c LHE fix — one-jet H-events: scale rebuild, unmixing, γγ spike (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: four plots for NpNLO=1 H-events (22EE, 3 WW vs 3 γγ files; `runall/plot_unmix.py`, arrays in `*_arrays.npz`).
+  - `scale_from_partons.png`: the scale implied by the weights (from r) vs MadGraph's FxFx rule computed from LHEPart. S-events peak at 1; one-jet H-events are a two-scale mixture.
+  - `npnlo1H_vs_gg_by_scale.png`: median and genW-mean of μR×0.5 / μR×2 in bins of the real-emission scale, for the WW per-event fix, the WW two-piece unmixing and clean γγ (with and without the constant-ratio events). Medians agree to ≤0.3%. The lowest bin (10–15 GeV) holds 0.2% of WW events and is driven by single events.
+  - `gg_constant_ratio_events.png`: the γγ spike at 6.198 / 0.308 (297 events, 7.1% of the class weight), which is independent of kinematics and absent in WW.
+  - `unmix_closure.png`: the two-piece model predicts the stored broken weights to ~0.05–0.5%.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
