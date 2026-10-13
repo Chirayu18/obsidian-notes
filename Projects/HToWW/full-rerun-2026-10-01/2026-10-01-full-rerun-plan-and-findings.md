@@ -263,3 +263,23 @@ our syst inflation ×2.0 vs stat-only, so √L scaling of our number is optimist
 **CORRECTION (2026-10-08, user):** the reference is the PUBLISHED paper CMS-HIG-24-009 (arXiv:2508.14988): expected UL
 **506**, observed 1065 @ 138 fb⁻¹. The 431 above is from the older AN-23-102 v14 PDF in References (superseded). With 506:
 ours scaled to 138 fb⁻¹ = 463 vs 506 → **~9% better**; Run 2 scaled to 61.9 fb⁻¹ = 755 vs our 691. Same caveats apply.
+
+## 2026-10-13 — Cross-check of the central H+c LHE-weight fix (scale fix only partial)
+Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a DYto2L-2Jets amcatnloFXFX control file.
+- **Control is clean:** DY scale means 0.94–1.03, PDF replicas 1.000, member0/replicas 1.000 per event. So our reading of
+  NanoAOD is right and the **H+c sample's variation weights are broken**.
+- **H+c:** originalXWGTUP/genWeight = 1 (nominal consistent). Scale [4] (1,1) and PDF member 0 are exactly 1 (copies of
+  the nominal); **every computed variation is ~2× high**: scale 1.83–2.52 (both directions up), the 100 nf_4 replicas
+  (LHA 325500–325600) 2.10–2.23 with only 0.6% spread per event. A real scale variation cannot go the same way by 2×, and
+  replicas must scatter around member 0. The cause is unknown; the earlier "0.5× dynamic scale" explanation is a guess,
+  and its direction is doubtful (a higher scale lowers this cross section).
+- **The offset is not one global factor; it depends on the event category** (FxFx multiplicity):
+  replicas 2.26 (NpNLO=0) vs 1.80 (NpNLO=1); scale (2,2) 2.67 vs 1.93; LHE_Njets=2 replicas 1.61.
+- **PDF fix: correct.** It uses the per-event mean of the replicas as centre, which removes any per-event offset.
+- **Scale fix: partial.** Dividing by the global mean leaves a fake shape across multiplicities:
+  H+c (0.5,0.5) 1.02 / 0.91 and (2,2) 1.06 / 0.77 for NpNLO=0 / 1, i.e. **both directions down** for 1-parton events.
+  DY control (genuine): 0.98 / 1.06 and 1.02 / 0.96, opposite directions. The "−14…+2%" signal scale effect quoted on
+  10-02 is therefore probably mostly this artefact (the c-jet selection favours real-emission events).
+- **To do:** (1) don't trust the signal scalevar shapes. Use acceptance ratios from the private H+c sample (sane weights),
+  or normalisation from the xsec table with no signal scale shape. (2) Report to GEN / the sample requestor with the
+  McM gridpack run_card (scalefact, systematics settings). H+b shows the same pattern (replicas 1.88).
