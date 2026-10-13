@@ -492,3 +492,20 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
   - `Pythia8aMCatNLOSettings_cfi` (12_4_25, 13_0_24) sets no JetMatching parameters.
   - Current central FxFx fragments keep all three lines: DYto2L-2Jets GEN-Run3Summer22EEwmLHEGS-00046, and GluGluHto2G FxFx HIG-Run3Summer22EEwmLHEGS-02416 (same release as ours).
   - Fragments in `runall/mcm_fragments_other/`.
+
+### 2026-10-13: scale variations in the analysis-like region (≥1 gen c-jet pT>20, |η|<2.4)
+Scripts `runall/shapes_reg.py` and `plot_reg.py`; plots in `outputs/hww_lhe_fix/region/`. Region holds 0.86M ours, 0.91M γγ and 1.51M Run 2 events.
+- **Higgs-pT shapes:** ours vs γγ within ~1–2%, up to 4% at 200–400 GeV (≲3σ). γγ vs Run 2 differ by about as much (grey pulls up to ~5σ, from 13 vs 13.6 TeV). So inside the region ours sits within the spread of the two clean references. The big inclusive discrepancy disappears.
+- **c-jet pT and n-jet:** use Run 2 as the reference; γγ GenJets cluster the H→γγ photons, so they are not comparable. vs Run 2: c-jet pT within 1–3% (muR), n-jet within 1–3.6%; μF ≤1%.
+- **Acceptance of each variation** (region/inclusive, relative to nominal):
+
+  | variation | ours | γγ | Run 2 |
+  |---|---|---|---|
+  | μR×0.5 | 1.1205 | 1.1066 | 1.1112 |
+  | μR=μF×0.5 | 1.108 | 1.096 | 1.102 |
+  | μR×2 | 0.912 | 0.919 | 0.914 |
+  | μR=μF×2 | 0.913 | 0.920 | 0.914 |
+  | μF | within 0.2% | | |
+
+  Ours muR-down is ~1 percentage point above both, i.e. a ~10% relative overestimate of a ~11% effect. The muR-up variations sit within the reference spread.
+- **Verdict:** for the analysis selection, the scale uncertainties from the corrected central samples agree with the clean samples to about 1–2% in shape and about 1 point in acceptance. That is small compared with the ~10% variations themselves. The FxFx fragment issue mainly affects forward jets, which the selection removes.

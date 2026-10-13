@@ -132,3 +132,10 @@ tags: [plot]
   - `mcm_fragments/`: the official fragments of all requests.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket
+
+### H+c scale variations in the analysis-like region (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: scale-variation shapes (Higgs pT, c-jet pT, n-jets, class) and the acceptance per variation for ≥1 gen c-jet (pT>20, |η|<2.4). Ours (per-event fix) vs Run 3 γγ and Run 2 WW, 0.9–1.5M region events each, jackknife errors. Inside the region ours agrees with the references at the 1–2% level, within the spread between the two references. muR-down acceptance is about 1 point high. γγ is not usable for the c-jet/n-jet axes because GenJets include the photons.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/region
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/region
