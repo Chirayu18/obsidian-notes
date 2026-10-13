@@ -82,3 +82,10 @@ tags: [plot]
 - Description: blind Asimov results for the pre-fix v12 cards. `limits_summary.png`: expected 95% CL limit with ±1σ/±2σ bands, plus stat-only and MC-stat-frozen medians, for every era card, 2022, 2023 and Run 3 (691; stat-only 338.5 at 61.9 fb⁻¹). `impacts_run3.png`: top-30 impacts out of 55 (Asimov r=1, manual MultiDimFit --algo impact, prop_bin excluded; CMS_eff_e_reco_below20_2022 tree unreadable). tt μR/μF scale (scalevar_muR_muF, scalevar_muF) and the four rate_tt params lead. `prefit/prefit_<era>.png`: FitDiagnostics prefit MVA-score shapes per channel with the full correlated prefit band. The cards carry no real data (data_obs = background sum), so no data is drawn.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/combine_plots
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/combine_plots
+
+### H+c LHE scale-weight fix — WW vs clean γγ shapes (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: normalised LHE scale-variation shapes (each variation / nominal per bin, normalised to its integral, so any common factor cancels) vs Higgs pT, LHE NpNLO and leading gen c-jet pT. Compares our central H+c→WW 4FS FxFx sample, with a common factor (= the old global-division fix) and with the new per-event running-Yukawa fix, against the CLEAN γγ 4FS FxFx sample (22EE, ~140k events each). The per-event fix matches γγ within ≲2–4% for μF and the up variations; the down family is off up to ~10% in sparse tails (high Higgs pT, NpNLO=1). The common factor is off 10–35%. `scale_shape_vs_gg_summary.png` shows the max deviation per panel (stat errors not included).
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix

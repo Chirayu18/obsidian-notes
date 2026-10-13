@@ -367,3 +367,7 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
   - **Common factor:** fails (residual shape 10–35%).
   - **Per-event fix:** μF and μR-up are good to ≲2–4%; the μR-down family is off up to 7–11%, mostly in NpNLO=1 and high-pT tails. This is the per-contribution limitation.
   - The gen-jet multiplicity axis is not comparable: GenJets cluster the H→γγ photons.
+- **Exactness test for single-scale events.** Events with weights identical to 6 digits (clusters, all NpNLO=0, i.e. one common central scale) have 1/r = 0.442196–0.442201 (spread 1e-6). The gridpack-code table gives F(62.5 GeV) = 0.441895, i.e. μ0 = 62.26 GeV (0.07%: the replica-mean offset or the exact scale). So the per-event fix reproduces the patch to <0.1% for single-scale events; the residual is entirely the multi-contribution NpNLO=1 events.
+- **No central GEN-SIM / LHE / AOD exists** for the WW sample (DAS, incl. invalid): only MiniAOD and NanoAOD; the chain was wmLHEGS → DRPremixNoOutput.
+- **`LHE_AlphaS` (AQCDUP) is NOT the weights' μR**: it varies inside identical-weight clusters.
+- **Plots:** `outputs/hww_lhe_fix/scale_shape_vs_gg_{higgs_pt,npnlo,cjet_pt,summary}.png` (`runall/plot_shapes.py`).
