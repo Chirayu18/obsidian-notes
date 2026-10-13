@@ -14,22 +14,26 @@ as of 2026-10-12): `id`, `category`, `source_file`, `question`, `gold_answer`, `
 They are general-usage questions only, with no analysis-specific inputs, so they can go upstream as-is.
 Setup context: [[2026-10-12-combine-ai-agent-setup]].
 
-| id | what it tests |
-|---|---|
-| `mcstat-threshold-1` | autoMCStats threshold is tested on the bin TOTAL n_eff, not per process |
-| `freeze-mcstat-1` | `--freezeNuisanceGroups autoMCStats` / `rgx{prop_bin<ch>_bin.*}` |
-| `channel-mask-sr-1` | CR-only fit with `--channel-masks` + `mask_SR=1` |
-| `shape-only-syst-1` | `shape` normalises templates; norm via asym lnN → equalise integrals |
-| `shape-missing-down-1` | Down template is mandatory; t2w RuntimeError (verified) |
-| `combinecards-era-correlation-1` | correlation by name; autoMCStats becomes per-era |
-| `agent-freeze-mcstat-1` | agent run on the tutorial card: 1.8438 / 1.3320 / 0.9883 (v10.6.0) |
+| id | what it tests | source |
+|---|---|---|
+| `mcstat-threshold-1` | autoMCStats threshold is tested on the bin TOTAL n_eff, not per process | `docs/part2/bin-wise-stats.md` |
+| `freeze-mcstat-1` | `--freezeNuisanceGroups autoMCStats` / `rgx{prop_bin<ch>_bin.*}` | `docs/part2/settinguptheanalysis.md`, `part3/runningthetool.md` |
+| `channel-mask-sr-1` | CR-only fit with `--channel-masks` + `mask_SR=1` | `docs/part3/nonstandard.md` |
+| `combinecards-era-correlation-1` | correlation by name; autoMCStats becomes per-era | `docs/part2/settinguptheanalysis.md` |
 
-**How the gold answers were checked:**
-- Every gold answer is written against the Combine docs on `main` (fetched 2026-10-12).
-- Behaviour claims were run on the public tutorial card `simple-shapes-TH1` (v10.6.0).
-- Re-check the agent item's numbers on v11.1.0, the remote server's version.
+**Rule (matches Galli's examples):**
+- The question is a conceptual or usage question, phrased as a user would ask it.
+- The gold answer is stated by a cited source: a docs page, a solved forum thread, the paper or the code.
+- Agent questions are "run my failing command and diagnose it".
 
-**Removed as too analysis-specific (2026-10-12):**
+**How the gold answers were checked:** every gold answer is written against the Combine docs on `main` (fetched 2026-10-12).
+
+**Removed 2026-10-13 for not matching the examples' philosophy:**
+- `shape-only-syst-1`: the "rescale Up/Down to the nominal integral" recipe is an inference, not stated by any source.
+- `shape-missing-down-1`: the docs only say both templates are needed. The failure behaviour came from our own test run, and the forum thread (cms-talk 2199) is unsolved and contested.
+- `agent-freeze-mcstat-1`: a "compute this for me" task, not a "debug my failing command" question.
+
+**Removed 2026-10-12 as too analysis-specific:**
 - `mcstat-rateparam-1` (rateParam vs autoMCStats on a starved NLO background)
 - `mcstat-zero-yield-1` (0 ± 40 bin from weight cancellation)
 

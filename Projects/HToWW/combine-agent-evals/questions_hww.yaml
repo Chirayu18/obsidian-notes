@@ -1,13 +1,10 @@
 # General-usage evaluation questions for the Combine assistant.
 #
-# Same schema as maxgalli/combine-bot evals/questions.yaml (id, category,
-# source_file / topic_url, question, gold_answer, optional notes / attach),
-# so the entries can be appended there unchanged.
-#
-# Gold answers are written against the Combine docs on `main` (fetched
-# 2026-10-12). Behaviour claims marked "verified" were run with Combine
-# v10.6.0 (CMSSW_14_1_0_pre4) on the public tutorial card
-# data/tutorials/shapes/simple-shapes-TH1.txt.
+# Same schema and philosophy as maxgalli/combine-bot evals/questions.yaml:
+# conceptual/usage questions phrased as a user would ask, and a gold answer
+# that a cited source (docs page, solved forum thread, paper or code) states.
+# No derived recipes and no answers based only on running Combine.
+# Gold answers were checked against the Combine docs on `main` (fetched 2026-10-12).
 
 - id: mcstat-threshold-1
   category: usage
@@ -110,63 +107,6 @@
     Re-run with `mask_SR=0` (or without the option) to compare.
     Channel masking can be used with any method in Combine.
 
-- id: shape-only-syst-1
-  category: usage
-  source_file: docs/part2/settinguptheanalysis.md
-  question: |
-    I have a theory systematic that should change only the *shape* of my signal template,
-    not its normalisation. How do I implement that as a `shape` nuisance,
-    and how does Combine split a `shape` uncertainty into shape and
-    normalisation effects?
-  gold_answer: |
-    For both `shape` and `shapeN`, Combine treats shape and normalisation
-    separately:
-
-    - The shape is interpolated on the normalised templates. `shape`
-      vertically interpolates the fraction of events in each bin (the
-      histograms are normalised first). `shapeN` interpolates the logs of
-      those fractions.
-    - The total normalisation is interpolated separately with an
-      asymmetric log-normal, derived from the integrals of the Up/Down
-      templates relative to the nominal.
-
-    So to get a shape-only effect, scale your Up and Down templates to the
-    same integral as the nominal template before writing them. The
-    log-normal normalisation term is then 1 and only the shape morphing
-    remains. Enter it with a normal `shape` line (effect 1 for the signal
-    process).
-
-    (This assumes the default autoMCStats `hist-mode = 1`, where
-    normalisation is handled separately from the morphing.)
-
-- id: shape-missing-down-1
-  category: usage
-  source_file: docs/part2/settinguptheanalysis.md
-  question: |
-    For one shape systematic I only have an Up-shifted template; there is
-    no Down variation. Can I declare it as `shape` in my datacard with
-    only the Up histogram? What will happen?
-  gold_answer: |
-    No. Every shape uncertainty needs two shifted templates for each
-    affected process and channel: the shapes with the parameter shifted
-    up AND down by one standard deviation (e.g. `background_alphaUp` and
-    `background_alphaDown`). Combine uses both to build the interpolation.
-
-    If the Down histogram is missing, `text2workspace.py` fails when
-    building the PDF, with an error like:
-
-        RuntimeError: Failed to find background_alphaDown in file ...
-
-    Combine does not construct a missing variation for you. You have to
-    supply a Down template yourself. Symmetrising around the nominal
-    (Down = 2*nominal - Up, bin by bin) is a common analysis choice, but it
-    is not prescribed by the Combine docs. Watch for bins that go
-    negative; Combine truncates interpolated negative bin values at 0.
-  notes: |
-    Verified on lxplus (v10.6.0): removed background_alphaDown from the
-    tutorial input; text2workspace raised the RuntimeError above
-    (ShapeTools.py getShape).
-
 - id: combinecards-era-correlation-1
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
@@ -201,38 +141,3 @@
     Bonus (beyond gold): if the same MC events feed several eras' templates,
     their statistical fluctuations are correlated across eras, which
     per-channel autoMCStats cannot express.
-
-- id: agent-freeze-mcstat-1
-  category: agent-debug
-  notes: |
-    Agent-mode question. Attach the tutorial card with `* autoMCStats 10`
-    appended (mcstats.txt) and simple-shapes-TH1_input.root, both from
-    data/tutorials/shapes/ in the Combine repo.
-    Gold numbers were computed with Combine v10.6.0. Re-verify on v11.1.0
-    (the remote server's version) before using them as hard thresholds.
-  attach:
-    - evals/attachments/agent-freeze-mcstat-1/mcstats.txt
-    - evals/attachments/agent-freeze-mcstat-1/simple-shapes-TH1_input.root
-  question: |
-    Using the attached datacard, compute the expected (Asimov) upper limit
-    on r nominally, with all bin-by-bin MC-statistics nuisances frozen, and
-    statistics-only. Report the median expected limits and how much of the
-    limit is driven by MC statistics.
-  gold_answer: |
-    Run AsymptoticLimits on an Asimov dataset (`-t -1`) three times:
-
-        combine -M AsymptoticLimits mcstats.txt -t -1
-        combine -M AsymptoticLimits mcstats.txt -t -1 --freezeNuisanceGroups autoMCStats
-        combine -M AsymptoticLimits mcstats.txt -t -1 --freezeParameters allConstrainedNuisances
-
-    (`--freezeParameters 'rgx{prop_bin.*}'` is equivalent to the second
-    command.)
-
-    Median expected limits:
-      nominal                  r < 1.8438
-      autoMCStats frozen       r < 1.3320
-      stat-only                r < 0.9883
-
-    Freezing the MC-statistics parameters lowers the limit from 1.84 to
-    1.33. That is 0.51 of the 0.86 gap between nominal and stat-only,
-    i.e. about 60% of the systematic degradation in this card.
