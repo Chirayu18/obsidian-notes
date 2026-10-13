@@ -41,8 +41,6 @@
     So in the case described, where the bin as a whole is well populated,
     the process does NOT get its own parameter; it is absorbed into the
     single bin parameter.
-  notes: |
-    Key point to grade: the threshold applies to the bin total, not per process.
 
 - id: freeze-mcstat-1
   category: usage
@@ -76,10 +74,6 @@
     from `--freezeParameters allConstrainedNuisances`. Note the priority
     ordering floatParameters < freezeParameters < freezeNuisanceGroups <
     floatAllNuisances when mixing these options.
-  notes: |
-    Verified on simple-shapes-TH1.txt + `* autoMCStats 10` (v10.6.0, -t -1):
-    nominal 1.8438; --freezeNuisanceGroups autoMCStats 1.3320;
-    rgx{prop_bin.*} 1.3320 (identical); allConstrainedNuisances 0.9883.
 
 - id: channel-mask-sr-1
   category: usage
@@ -139,10 +133,6 @@
     per channel and bin, with names built from the channel name
     (`prop_bin<channel>_bin<N>`). They therefore end up distinct, i.e.
     uncorrelated, across eras.
-  notes: |
-    Bonus (beyond gold): if the same MC events feed several eras' templates,
-    their statistical fluctuations are correlated across eras, which
-    per-channel autoMCStats cannot express.
 
 - id: shape-only-syst-1
   category: usage
@@ -171,11 +161,6 @@
 
     (This assumes the default autoMCStats `hist-mode = 1`, where
     normalisation is handled separately from the morphing.)
-  notes: |
-    Restored 2026-10-13 at the curator's request: Qwen (aigw qwen3.8-27b)
-    answered it correctly in the 2026-10-12 run. Caveat: the docs state the
-    shape/normalisation split; the "rescale to the nominal integral"
-    recipe follows from it but is not written out in any source.
 
 - id: asymptotic-blind-1
   category: usage
