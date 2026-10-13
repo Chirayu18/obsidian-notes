@@ -283,3 +283,16 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
 - **To do:** (1) don't trust the signal scalevar shapes. Use acceptance ratios from the private H+c sample (sane weights),
   or normalisation from the xsec table with no signal scale shape. (2) Report to GEN / the sample requestor with the
   McM gridpack run_card (scalefact, systematics settings). H+b shows the same pattern (replicas 1.88).
+- **Run 2 comparison (same check, one file each, 60k events): all Run 2 signal samples are clean.**
+
+  | sample (RunIISummer20UL…NanoAODv9) | scale means | PDF replicas / member 0 |
+  |---|---|---|
+  | UL18 H+c 4FS amcatnloFXFX | 0.88–1.05 | 0.999 / 1.000 per event |
+  | UL18 H+c 4FS amcatnlo | 0.84–1.02 | 0.999 / 1.000 |
+  | UL17 H+c 3FS amcatnlo | 0.77–1.24 (opposite directions) | no PDF weights stored |
+  | UL18 H+b 5FS amcatnloFXFX | 0.84–1.07 | 1.000 / 1.000 |
+  | UL18 H+b 5FS amcatnlo | 0.73–1.06 | 1.000 / 1.000 |
+  | **Run3Summer23 H+c 4FS amcatnloFXFX** | **1.82–2.52** | **2.17 / 0.44–0.71 per event** (same as 22EE) |
+
+  Same generator configuration, clean in Run 2, broken in Run 3 → a Run 3 production problem (gridpack / MG version /
+  systematics settings), not the physics setup. Strong evidence for the GEN report.
