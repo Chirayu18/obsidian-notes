@@ -334,3 +334,20 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
     - Approximate: μ0 from the replica mean, ±0.1% per event (clean Run 2 sample: replicas/member0 = 1.000 ± 0.001, 1–99% within 0.999–1.005).
     - Assumed, not proven in code: the stored variations carry F = 1, i.e. they miss the factor entirely. The 2.9.10 source does call `rwgt_muR_dep_fac` for the variations, so why it is ineffective there is unexplained.
     - Definitive closure would need running the gridpack with a debug print of F per event.
+
+## 2026-10-13 (later) — TRUE root cause: the WW gridpack runs the Python systematics module (γγ gridpack skips it)
+- **Provenance** (edmProvDump on MiniAOD):
+  - **WW** used `/cvmfs/cms-griddata.cern.ch/phys_generator/gridpacks_tarball/pp/13p6TeV/madgraph/HPlusHF/HPlusCharm/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_..._el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz`. It is MG **2.9.18**, built Feb 2026 from `/eos/home-c/cgupta/HToWW/mcm_grid/genproductions_scripts/...` (our own build).
+  - **γγ FxFx** used the slc7 MG 2.9.9 HToGG gridpack: the one dissected earlier, built by `bevila_t`.
+- **Difference:**
+  - The γγ gridpack's `runcmsgrid.sh` has a SAMPLE-SPECIFIC CHANGE ("Skipping execution of ./bin/aMCatNLO systematics") and keeps `reweight_scale/PDF = True`. The weights therefore come from the Fortran, which includes the patched running Yukawa.
+  - Our gridpack has the standard genproductions additions (`reweight_scale/PDF = False`, `store_rwgt_info = True`) and runs the Python `systematics` module. That module recomputes every variation per contribution WITHOUT F(μR); the nominal still comes from the Fortran, so it is correct.
+  - **This is the "missing patch".** The custom Fortran patch is present in both gridpacks.
+- **The γγ 4FS FxFx sample is CLEAN** (22EE NanoAODv13): replicas/member0 = 0.999; stored scale means [1.048 1.052 1.014 0.947 1 1.019 0.879 0.960 1.011].
+- **Our per-event fix vs γγ:**
+  - μF-only: exact to 0.2% (0.948 / 1.021 vs 0.947 / 1.019).
+  - μR entries: 1–4% off; NpNLO=1 (0.5,0.5): 1.185 vs 1.304.
+  - Reason: the missing F is per contribution (each with its own μR) and cannot be undone with one per-event factor.
+  - Caveat: the WW and γγ gridpacks differ (2.9.18 vs 2.9.9, NpNLO=1 share 32% vs 41%), so γγ is the right physics reference but not an identical sample.
+- **MiniAOD LHEEventProduct** keeps 566 weights but no comment lines (rwgt info stripped), so an exact per-contribution recomputation from existing files is impossible.
+- **Exact options:** (1) fix the gridpack (copy the γγ runcmsgrid change, in-code reweighting) and request a new production or extension; (2) private LHE-level generation with the fixed gridpack to derive the scale weights; (3) use the clean γγ FxFx sample's scale response at generator level as the reference.
