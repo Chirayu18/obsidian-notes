@@ -47,7 +47,6 @@
   source_file:
     - docs/part2/settinguptheanalysis.md
     - docs/part3/runningthetool.md
-  topic_url: https://cms-talk.web.cern.ch/t/20047
   question: |
     I want to quantify how much of my expected limit comes from limited MC
     statistics (autoMCStats). How do I compute the expected limit with all
@@ -81,7 +80,6 @@
   source_file:
     - docs/part2/settinguptheanalysis.md
     - scripts/combineCards.py
-  topic_url: https://cms-talk.web.cern.ch/t/30374
   question: |
     I am combining datacards from several data-taking eras with
     `combineCards.py`. How do I control which systematic uncertainties are
@@ -177,7 +175,6 @@
 - id: shape-question-mark-1
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
-  topic_url: https://cms-talk.web.cern.ch/t/122712
   question: |
     One systematic source changes the shape of some of my processes but
     only the normalisation of others. Do I need two separate nuisance lines
