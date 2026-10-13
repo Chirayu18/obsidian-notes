@@ -100,3 +100,10 @@ tags: [plot]
   - `unmix_closure.png`: the two-piece model predicts the stored broken weights to ~0.05–0.5%.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+
+### H+c LHE fix — scale shapes vs γγ with the spike events removed (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: same as `scale_shape_vs_gg_*`, with the 233 γγ constant-ratio events removed (grey open circles = old reference including them). The per-event fix agrees within ≲5%. NOTE: the clean Run 2 UL18 WW sample shows the same spike, so the spike is standard behaviour of the older MG versions; our MG 2.9.18 WW sample is the outlier (see the main log).
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/scale_shape_vs_gg_nospike_higgs_pt.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/scale_shape_vs_gg_nospike_higgs_pt.png

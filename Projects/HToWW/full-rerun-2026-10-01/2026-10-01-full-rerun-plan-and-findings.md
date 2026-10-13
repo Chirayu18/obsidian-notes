@@ -407,3 +407,24 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
   - (b) The scale spectrum differs: WW has no events with μ(real) < 15 GeV, γγ has 6%; NpNLO=1 is 20% vs 27%. This is a different merging setup between the MG 2.9.18 and 2.9.9 gridpacks.
   - Removing (a) and matching (b): μR0.5 is 1.831 (WW fix) vs 1.953 (γγ), μR2 0.622 vs 0.609. That is down from 1.83 vs 2.33.
 - **Verdict:** the per-event fix is good to ~1% even for NpNLO=1 H-events. The remaining ≤6% gap in that 5% class (~0.3% inclusive) cannot be attributed to the fix, since the reference sample differs in generator setup. A private sample with both weight sets (option 3) is now only the final proof, not a necessity.
+
+### 2026-10-13 (later still): CORRECTION — γγ is not odd; our WW sample is. Independent check vs Run 2 UL18 WW
+- **Run 2 UL18 H+c→WW 4FS FxFx** (clean Fortran weights; 3 NanoAODv9 files, 29k NpNLO=1 H-events) vs our Run 3 WW, using `runall/unmix.py` with TAG=run2:
+  - **It has the same constant-ratio "spike":** 1.7% of NpNLO=1 H-events, 7.2% of the class weight, 6.199 / 0.308.
+  - The same low-scale population: 6.5% of these events have μ(real) < 15 GeV (γγ 6%, our WW 0.2%).
+  - The same class means: μR0.5 2.339, μR2 0.572 (γγ 2.332 / 0.573; our WW fix 1.831 / 0.622).
+  - Per scale bin, its medians again match our fixed WW to ≤0.3%.
+- **So two independent clean central samples (MG 2.6.5 WW, MG 2.9.9 γγ) agree, and our MG 2.9.18 WW sample is the outlier.** The per-event fix is right for the events we have. But our sample (a) has no spike-type weights and (b) has almost no one-jet events with a jet clustering scale below 30 GeV (= qCut), which is a NOMINAL kinematics difference. NpNLO=1 is 20% vs 27%.
+- **Identical between the three gridpacks:**
+  - proc_card (`p p > h [QCD] @0; p p > h j [QCD] @1`, model loop_sm_MSbar_yb_yc-yc4FS);
+  - param_card (same md5);
+  - run_card (apart from beam energy and our systematics flags);
+  - Pythia FxFx settings from the MiniAOD provenance: qCut 30, qCutME 10, nJetMax 1 in all three.
+- **Remaining differences:** the MG version (2.9.18 vs 2.9.9 / 2.6.5) and the Python systematics module. (b) is nominal-level, so it must be the MG version or the generation itself. (a) could be either.
+- **Impact if the older samples are right:**
+  - μR-down for one-jet H-events is ~20% low in our sample. That class is 5% inclusive (~1–2% on the inclusive μR-down) and 17% of the c-jet region (~3–4%).
+  - The nominal one-jet composition also differs, which is a signal-modelling question beyond the weights.
+- **Higgs-pT shape plot without the γγ spike events** (`outputs/hww_lhe_fix/scale_shape_vs_gg_nospike_*.png`, `runall/plot_shapes_nospike.py`): the spike is only 233/105k events (0.4% of the weight) inclusively, so removing it barely moves the normalised shapes. The per-event fix agrees with γγ within ≲5%, i.e. within the statistical errors.
+- **Next:**
+  1. Compare the NOMINAL distributions (Higgs pT, c-jet pT, NpNLO) of our WW vs γγ vs Run 2.
+  2. Run a quick private LHE-only test, with identical cards under MG 2.9.9 vs 2.9.18, to pin the version effect.
