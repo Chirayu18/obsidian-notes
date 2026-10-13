@@ -351,3 +351,19 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
   - Caveat: the WW and γγ gridpacks differ (2.9.18 vs 2.9.9, NpNLO=1 share 32% vs 41%), so γγ is the right physics reference but not an identical sample.
 - **MiniAOD LHEEventProduct** keeps 566 weights but no comment lines (rwgt info stripped), so an exact per-contribution recomputation from existing files is impossible.
 - **Exact options:** (1) fix the gridpack (copy the γγ runcmsgrid change, in-code reweighting) and request a new production or extension; (2) private LHE-level generation with the fixed gridpack to derive the scale weights; (3) use the clean γγ FxFx sample's scale response at generator level as the reference.
+- **Shape test vs the clean γγ 4FS FxFx sample** (`runall/shape_compare.py`, 22EE, 118k WW / 126k γγ events). Each variation's shape is normalised to its own integral, so any common factor cancels; max |deviation| from γγ is shown.
+
+  | variable | variation | common factor | per-event fix |
+  |---|---|---|---|
+  | NpNLO | (0.5,0.5) | 0.33 (wrong direction: 1.02 / 0.92 vs 0.91 / 1.25) | 0.075 |
+  | NpNLO | μR0.5 | 0.35 | 0.11 |
+  | NpNLO | μR2, (2,2), μF | 0.11–0.17 | 0.010–0.022 |
+  | Higgs pT | (0.5,0.5) | 0.27 | 0.064 |
+  | Higgs pT | μR0.5 | 0.30 | 0.11 (top bins) |
+  | Higgs pT | (2,2) | 0.09 | 0.023 |
+  | Higgs pT | μF | 0.13–0.16 | 0.023–0.029 |
+  | gen c-jet pT | all | 0.12–0.21 | 0.035–0.087 |
+
+  - **Common factor:** fails (residual shape 10–35%).
+  - **Per-event fix:** μF and μR-up are good to ≲2–4%; the μR-down family is off up to 7–11%, mostly in NpNLO=1 and high-pT tails. This is the per-contribution limitation.
+  - The gen-jet multiplicity axis is not comparable: GenJets cluster the H→γγ photons.
