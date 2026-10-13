@@ -305,3 +305,11 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
     - μR-varied weights also need ×(m_c(kμ0)/m_c(μ0))², which takes a running model (1-loop, nf=4). They come out at 0.97–1.05 vs Run 2 0.88–1.05. Approximate.
     - The multiplicity dependence now has opposite-direction variations, like DY.
     - PDF (replica-centred) was already exact. The global-mean `lhe_norm.py` scale fix must be replaced.
+- **Current fix (global Runs-mean renorm) vs exact per-event correction** (`runall/fix_compare.py`): acceptance effect in an analysis-like gen region (2 dressed leptons pT>10 + ≥1 gen c/b-jet pT>20, |η|<2.5).
+  - **H+c, 22EE (6 files, 112k events):**
+    - μF 0.5 / 2: ours −8.0% / −5.9% vs exact −0.1% / +1.6%.
+    - μR 0.5 / 2: ours +0.5% / −14.3% vs exact +9.3% / −7.8%.
+    - (0.5,0.5) / (2,2): ours −1.6% / −13.9% vs exact +7.9% / −7.6%.
+  - **H+b, 22EE:** same pattern. μF ours −8.8% / −2.4% vs exact −0.5% / +5.0%.
+  - **Result.** The current fix biases every scale variation by **−6 to −10%** in the selected region, so both directions go down: a fake one-sided effect. It plausibly explains the one-sided `scalevar_muR` impact in the Run 3 fit. The μF columns are model-independent; the μR columns use 1-loop running.
+  - **Verdict.** Replace with the per-event correction. PDF handling and the nominal are fine. Other samples are untouched (`lhe_renorm_datasets` lists only these two).
