@@ -27,15 +27,16 @@
     processes are excluded from this test unless the `include-signal` flag
     is set to 1, but their uncertainties are always included in the model.
 
-    - If n_tot_eff > threshold, a single Gaussian-constrained
-      Barlow-Beeston-lite parameter (named `prop_bin<channel>_bin<N>`) is
-      created. It scales the total bin yield as n_tot + nu * e_tot. The
-      poorly populated process just contributes its e_i to e_tot.
-    - Only if n_tot_eff <= threshold are separate per-process parameters
-      created (`prop_bin<channel>_bin<N>_<process>`). Each is
-      Poisson-constrained with lambda = n_i_eff. It becomes a Gaussian
-      instead if e_i > n_i, or if that process's own n_i_eff >= threshold.
-      Processes with n_i = 0 are skipped.
+    If n_tot_eff > threshold, a single Gaussian-constrained
+    Barlow-Beeston-lite parameter (named `prop_bin<channel>_bin<N>`) is
+    created. It scales the total bin yield as n_tot + nu * e_tot, and the
+    poorly populated process just contributes its e_i to e_tot.
+
+    Only if n_tot_eff <= threshold are separate per-process parameters
+    created (`prop_bin<channel>_bin<N>_<process>`). Each is
+    Poisson-constrained with lambda = n_i_eff. It becomes a Gaussian
+    instead if e_i > n_i, or if that process's own n_i_eff >= threshold.
+    Processes with n_i = 0 are skipped.
 
     So in the case described, where the bin as a whole is well populated,
     the process does NOT get its own parameter; it is absorbed into the
@@ -119,9 +120,8 @@
     autoMCStats bin-by-bin parameters?
   gold_answer: |
     Correlation is controlled entirely by nuisance names.
-    - Uncertainties with the same name in different cards are 100%
-      correlated.
-    - Those with different names are uncorrelated.
+    Uncertainties with the same name in different cards are 100%
+    correlated, and those with different names are uncorrelated.
 
     So keep e.g. a common theory uncertainty under one name in all cards.
     Give uncertainties that must be decorrelated an era-specific name
@@ -156,13 +156,12 @@
     For both `shape` and `shapeN`, Combine treats shape and normalisation
     separately:
 
-    - The shape is interpolated on the normalised templates. `shape`
-      vertically interpolates the fraction of events in each bin (the
-      histograms are normalised first). `shapeN` interpolates the logs of
-      those fractions.
-    - The total normalisation is interpolated separately with an
-      asymmetric log-normal, derived from the integrals of the Up/Down
-      templates relative to the nominal.
+    The shape is interpolated on the normalised templates: `shape`
+    vertically interpolates the fraction of events in each bin (the
+    histograms are normalised first), and `shapeN` interpolates the logs of
+    those fractions. The total normalisation is interpolated separately
+    with an asymmetric log-normal, derived from the integrals of the
+    Up/Down templates relative to the nominal.
 
     So to get a shape-only effect, scale your Up and Down templates to the
     same integral as the nominal template before writing them. The
@@ -194,10 +193,9 @@
     therefore the **post-fit (a-posteriori)** expected limit, which depends
     on the data.
 
-    - For the **pre-fit (a-priori)** expected limit, add `--noFitAsimov`
-      (or `--bypassFrequentistFit`).
-    - To blind the result completely, i.e. not use the data at all, use
-      `--run blind`.
+    For the **pre-fit (a-priori)** expected limit, add `--noFitAsimov`
+    (or `--bypassFrequentistFit`). To blind the result completely, i.e.
+    not use the data at all, use `--run blind`.
 
     You *can* get blind limits with `-t -1` if the right options are
     passed, but the docs strongly recommend `--run blind` instead.
@@ -387,14 +385,13 @@
     `shapes` channel, so the `counting` channel has no shape mapping.
     Shape and counting datacards can't be combined as they are.
 
-    Fix it either way:
-    - Add `-S` to `combineCards.py`, which converts counting cards to
-      shape form while combining:
+    To fix it, either add `-S` to `combineCards.py`, which converts counting cards to
+    shape form while combining:
 
           combineCards.py -S shapes=simple-shapes-TH1.txt counting=realistic-counting-experiment.txt > combined.txt
 
-    - Or add a line `shapes * * FAKE` to the counting datacard after the
-      `imax`/`jmax`/`kmax` section.
+    or add a line `shapes * * FAKE` to the counting datacard after the
+    `imax`/`jmax`/`kmax` section.
 
     The combined card then has `shapes * counting FAKE`, and
     `combine -M FitDiagnostics combined.txt` runs.
