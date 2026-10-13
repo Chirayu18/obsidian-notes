@@ -66,7 +66,8 @@ Reference (correct) sample: HIG-Run3Summer22EEwmLHEGS-01159 (HPlusCharm_4FS…HT
     'JetMatching:coneRadius = 1.',
     ```
 
-  - Without them Pythia uses its defaults: CellJet, etaJetMax = 2.5, coneRadius = 0.7. For the MadGraph scheme only particles within etaJetMax enter the merging, so the FxFx veto acts only on the central region.
+  - In Pythia's `JetMatchingMadgraph` (the FxFx path), `jetAlgorithm` is forced to 2 (kT), so that line is redundant. But the merging jets are built as `SlowJet(slowJetPower, coneRadius, eTjetMin, etaJetMax, …)`, so `coneRadius` and `etaJetMax` are used. Their Pythia defaults are 0.7 and 2.5 (checked in Pythia 8.311 `JetMatching.h` and `JetMatching.xml` as shipped in CMSSW), so the FxFx veto acts only within |η| < 2.5 and with R = 0.7.
+  - The shared `Pythia8aMCatNLOSettings_cfi` block (CMSSW_12_4_25, 13_0_24) sets no JetMatching parameters, so nothing else supplies them. Current central FxFx fragments in the same campaigns keep all three lines: DYto2L-2Jets (GEN-Run3Summer22EEwmLHEGS-00046) and GluGluHto2G FxFx (HIG-Run3Summer22EEwmLHEGS-02416, same CMSSW_12_4_25).
   - Confirmed in the MiniAOD provenance of all three H+c eras and in the McM fragments of all seven requests (decoded copies in `ticket/mcm_fragments/`).
   - All other merging and shower settings are identical to the γγ sample (qCut 30, qCutME 10, nJetMax 1, nQmatch, pTmaxMatch, global recoil, …).
 - **Proposed fix:** add the three lines to the fragments.

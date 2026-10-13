@@ -487,3 +487,8 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
   - The γγ request HIG-Run3Summer22EEwmLHEGS-01159 has them. The Run 2 UL18 WW provenance also has them.
   - Other WW vs γγ fragment differences are harmless: `TimeShower:nPartonsInBorn = 0` (also in Run 2), the decay settings, block order, the nEvents per job, and the gridpack path.
   - The WW fragment header still links to the Run 2 13 TeV datacards.
+- **Are those lines meant to be dropped? No.**
+  - In Pythia 8.311 `JetMatching.h`, `JetMatchingMadgraph` forces jetAlgorithm = 2 (kT), so that line is redundant. It does build its SlowJets with `coneRadius` and `etaJetMax`, whose defaults are 0.7 and 2.5. So **two** of the three settings matter (correction: earlier I wrote "CellJet").
+  - `Pythia8aMCatNLOSettings_cfi` (12_4_25, 13_0_24) sets no JetMatching parameters.
+  - Current central FxFx fragments keep all three lines: DYto2L-2Jets GEN-Run3Summer22EEwmLHEGS-00046, and GluGluHto2G FxFx HIG-Run3Summer22EEwmLHEGS-02416 (same release as ours).
+  - Fragments in `runall/mcm_fragments_other/`.
