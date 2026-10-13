@@ -296,3 +296,12 @@ Script `runall/lhe_xcheck.py`, one 2022postEE central H+c file (60k events) vs a
 
   Same generator configuration, clean in Run 2, broken in Run 3 → a Run 3 production problem (gridpack / MG version /
   systematics settings), not the physics setup. Strong evidence for the GEN report.
+- **Root cause found (2026-10-13, gridpack on CVMFS).**
+  - **The setup.** The Run 3 gridpack (MG 2.9.9) applies a custom `_mg5amc.patch`. It sets `runfac=1` and `cpower=2`, and adds a running charm Yukawa to `rwgt_muR_dep_fac`. The param card has `ymc = 0.986 # ymc(3 GeV), only to be used with proper MG5 patch`. The same patch exists in the Run 2 gridpack (MG 2.6.5).
+  - **Nominal is OK.** Nominal σ from the weights: Run 2 UL18 FxFx 0.2636 pb, Run 3 22EE 0.2979 pb, Run 3 23 0.2982 pb. The ratio of 1.13 is roughly the energy scaling.
+  - **The variations are what's broken.** They carry y_c(3 GeV) instead of y_c(μ), i.e. they miss the factor (m_c(μ)/m_c(3 GeV))² ≈ 0.44 per event. The patch evidently doesn't reach the 2.9.9 variation-weight code.
+  - **Per-event correction validated** (`runall/percorr_test.py`). r = mean(replicas)/member0 measures the missing factor per event.
+    - μF-only weights divided by r: **0.942 / 1.026 vs Run 2 0.946 / 1.021**. Exact, with no running model needed.
+    - μR-varied weights also need ×(m_c(kμ0)/m_c(μ0))², which takes a running model (1-loop, nf=4). They come out at 0.97–1.05 vs Run 2 0.88–1.05. Approximate.
+    - The multiplicity dependence now has opposite-direction variations, like DY.
+    - PDF (replica-centred) was already exact. The global-mean `lhe_norm.py` scale fix must be replaced.
