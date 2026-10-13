@@ -435,7 +435,7 @@ Pass B regenerates everything, so "R" here says what is *wrong in the existing o
 | P0-1 | **preEE SingleMuon/DoubleMuon not recognised**: 6.0% duplicate data rows; masks fall back to the MC OR (review A1) | `analysis/selections/trigger.py:125` (`dataset_masks.get(dataset_name, all_combined_mask)`); `analysis/filesets/utils.py:81-86` | Map `SingleMuon` → `Muon` logic. Give `DoubleMuon` a zero mask, or drop it from the fileset. **Raise** on an unknown data PD; the MC path uses an explicit `is_mc` branch. | data 2022C |
 | P0-2 | **c-tag one-hots never computed**, so the MVA saw zeros (A2) | `analysis/postprocess/inference.py:137-144` (missing → 0 with a warning); `:146-151` (NaN → 0) | `features/hww.py` computes them in the processor. Inference raises on any missing feature; NaN is allowed only for listed features. | none (inference) |
 | P0-3 | **WH→WW xsec 0.0** for `WminusH_WtoLNu_Hto2Wto2L2Nu`, `WplusH_Wto2Q_Hto2Wto2L2Nu` (A3) | `2022postEE_nanov12.yaml:544,550`; `2022preEE:549,555`; `2023preBPix:566,572`; `2023postBPix:548,554`; silent at `scripts/combine/make_combine_inputs.py:85` | Set 0.004214 / 0.013708 pb from the YAML's own decomposition (review A3). Better: take them from the LHCHWG table with the user. `read_scale` raises on `xsec ≤ 0`; config validation as well. | none |
-| P0-4 | **Already fixed in code, not yet reprocessed:** JER split-tag no-op; top-pT missing in shift trees; Type-1 sign/double counting; dead `CMS_res_e`; WH→ττ PDF blow-up (cap); central-signal LHE renorm; lhescale w4³ | `jerc.py`, `toppt.py`, `electron_ss.py`, `lhepdf.py`, `lhe_norm.py`, `lhescale.py` (see the log) | Commit them (the branch is uncommitted, with only `.bak` files) and tag the commit used for Pass A/B. | all |
+| P0-4 | **Already fixed in code, not yet reprocessed:** JER split-tag no-op; top-pT missing in shift trees; Type-1 sign/double counting; dead `CMS_res_e`; WH→ττ PDF blow-up (cap); central-signal LHE renorm (PDF part only; the scale part is superseded by P0-15); lhescale w4³ | `jerc.py`, `toppt.py`, `electron_ss.py`, `lhepdf.py`, `lhe_norm.py`, `lhescale.py` (see the log) | Commit them (the branch is uncommitted, with only `.bak` files) and tag the commit used for Pass A/B. | all |
 | P0-5 | **Type-1 MET sums over all jets**, including lepton-dominated and EM jets; JER smearing of the lepton energy leaks into MC MET (A4) | `analysis/corrections/jerc.py:393` (nominal metinfo), `:442-455` (JES), `:496-509` (JER) | Restrict Σ(nano − new) to jets with new pT > 15, (chEmEF + neEmEF) < 0.9 and no overlap with a PF muon (or muon-subtracted pT). **Decide with the user** whether JER smearing propagates to MET at all. Validate against stored PuppiMET in data, where the difference should be ~0. | all |
 | P0-6 | **Jets not re-sorted after JEC/JER**; `jet_pt/eta/phi` = first, not leading (B6) | `analysis/selections/object_selections.py:589-590` (sorted `jets` overwritten by `ak.pad_none(self.objects['jets'])`) | Sort `objects['jets']` once after selection and use it everywhere. | all |
 | P0-7 | **Jet veto map not applied**; mandatory for 2022EE/2023BPix (B11) | `hww_combine_full.yaml:174-177` (no `jetveto`); the implementation exists in `correction_manager.py:67-75` and `jetvetomaps.py` | Enable it. Before enabling, check `jetvetomaps.py` against the Run 3 rule: the PF-muon overlap ΔR < 0.2 term is missing there, and the PU-ID term should be a no-op for Puppi. Apply to data and MC. | all |
@@ -446,6 +446,8 @@ Pass B regenerates everything, so "R" here says what is *wrong in the existing o
 | P0-12 | **Wγ overlap** with jet-binned W+jets, needed when WG enters training/card (C3) | `analysis/selections/event_selections.py:59` `get_stitching_mask` (unused) | Gen-prompt-photon (pT > 10) overlap removal on W+jets. It must exist in Pass A because WG enters the training. | MC (W, WG) |
 | P0-13 | **Fail-loud sweep** | `toppt.py:72` (catch-all except), `partonshower.py:25` (bare except), `lhescale.py` (print on non-9 vectors), `event_selections.py:54` (skips missing MET-filter flags), `jerc.py:298` (`raise (f"...")` can never fire; precedence), `jerc.py:274` (`Path.exists` without `()`), missing `import warnings` in `jerc.py` | Raise everywhere. Keep an explicit allow-list (e.g. PSWeight absent in diboson → declared). | none by itself |
 | P0-14 | **Completeness by events**, not jobs | `jobs_status.py` | Per-job check that processed entries == file entries (sum of chunk ranges vs the uproot entry count). Flag xrootd-truncated files. | none |
+| P0-15 | **Central H+c/H+b→WW LHE scale weights miss the running-Yukawa factor** (added 2026-10-13; [[2026-10-13-central-signal-lhe-and-fxfx-issue]]). The old global division (`lhe_norm.py`) leaves a 10–35% fake shape. | `analysis/corrections/lhe_yukawa_fix.py` (new), `analysis/data/lhe_yukawa/` (tables down to MG's 1 GeV scale floor, `tab.f`, `build.sh`), `lhescale.py` (`yukawa_table`), `correction_manager.py` (`table_for_dataset`) | **Commit** with P0-4. Unit test: floor events → 6.1986 / 0.3078; a clean sample raises; per-chunk fallback count ≤ max(10, 1e-3·n). Keep `lhe_norm` for PDF only (exact). | MC (signal) |
+| P0-16 | **H+b correction not yet validated** | same code, `hplusbottom_5fs` table | Compare against the clean Run 2 UL H+b 5FS FxFx sample with the H+c method (`runall/shapes_reg.py`, `edge_audit.py`). Inspect the H+b gridpack runcmsgrid/run_card first. Without it, H+b keeps the fix but gets a note in the AN. | none (validation) |
 
 ### P1: should be in before Pass B; cheap, or affects the result
 
@@ -461,6 +463,7 @@ Pass B regenerates everything, so "R" here says what is *wrong in the existing o
 | P1-8 | 2022postEE muon ISO SF 0.74–0.80 at low pT, barrel (C4) | official JSON | One question to MUO; no code change. | none |
 | P1-perf | **Parquet writer 447× hotspot** (§1.2); correctionlib re-parsed 109×/chunk; jobs over-using CPU | `analysis/utils/parquet_writer.py:41-52`; correction modules call `CorrectionSet.from_file` per pass; `submit.py:105` (workers=2) vs request 1 CPU | (a) `ak.to_numpy` / `ak.fill_none(…, nan)` per column before `from_pydict`, with an explicit schema and a test that the output schema is identical; (b) module-level `lru_cache` on `from_file`; (c) `request_cpus = 2` (or workers=1); (d) partition TT into ≤ 30 chunks per job to cut tail latency (5 h jobs today); (e) gen/LHE columns only for negrw datasets. | none |
 | P1-xrd | First-pass failures 25–34% (dead sites); no replica failover | `submit.py` / `partitions.json` | At job start, `xrdfs stat` the replica, with fallback to the global redirector and other Rucio replicas. Keep `xrootdtimeout=600`. | none |
+| P1-9 | **Signal re-production** (added 2026-10-13): the GEN ticket asks for gridpacks without the python systematics step, plus fragments with `JetMatching:jetAlgorithm=2 / etaJetMax=999. / coneRadius=1.` (the current fragments merge only within \|η\|<2.5, R=0.7; ~1–2% effect in the c-jet selection) | `DATASET_TABLE` in `lhe_yukawa_fix.py`; `lhe_renorm_datasets` in the workflow YAMLs; filesets | When the new samples exist: give them new dataset keys **without** the Yukawa fix (the guard would raise on them), validate (r≈1, 1-jet share ≈27%, forward 1-jet ≈6.7%, floor events ≈1.4% of 1j-H) and swap in. Until then: current samples + P0-15. Also check whether `lhe_njets` (MVA input) and the negrw gen features shift with the 0/1-jet mix. | MC (signal), when available |
 
 ### P2: card and design level (no reprocessing), before the final fit
 
@@ -502,7 +505,9 @@ Needed from the user:
 
 ### Phase 1: correctness and fail-loud in the current framework (3–5 days)
 
-Scope: P0-1 … P0-14, P1-1 … P1-5, P1-perf (a, b, c, e), P1-xrd, and the config validator (§2.6).
+Scope: P0-1 … P0-16, P1-1 … P1-5, P1-perf (a, b, c, e), P1-xrd, and the config validator (§2.6).
+
+**Signal LHE (P0-15/16), added 2026-10-13:** the scale-variation check of the signal in the analysis region (ours vs clean γγ and Run 2: shapes within ~1–2%, acceptance within ~1 pt) becomes a standing validation plot, `runall/shapes_reg.py` + `plot_reg.py`. Re-run it on any new signal sample or change to `lhescale.py`.
 
 **Validation:**
 1. Unit tests:
@@ -592,7 +597,7 @@ Run mode, all 4 eras, with the slim ntuple safety net. Then cards, combineCards,
 
 | before Pass A | before Pass B | after Pass B |
 |---|---|---|
-| Phase 0 decisions; all P0 code fixes; validator; writer fix; WG overlap; ttH-MVA (if adopted); feature module + train mode | v12 trained and frozen; run mode closure-validated; shift datasets; P1-1…5; P2-4 and P2-6 if they change the processor | card-level P2; P1-7/P1-8 numbers (normalisation only); cleanup; further speed work |
+| Phase 0 decisions; all P0 code fixes (incl. P0-15 signal Yukawa fix, P0-16 H+b validation); validator; writer fix; WG overlap; ttH-MVA (if adopted); feature module + train mode | v12 trained and frozen; run mode closure-validated; shift datasets; P1-1…5; P2-4 and P2-6 if they change the processor | card-level P2; P1-7/P1-8 numbers (normalisation only); cleanup; further speed work |
 
 ### Expected end state [E]
 
