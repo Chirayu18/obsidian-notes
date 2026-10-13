@@ -7,6 +7,8 @@ source: laptop
 
 # Combine agent: Claude vs Qwen on the 13 new eval questions
 
+**Submitted 2026-10-13:** [combine-assistant-evals!2](https://gitlab.cern.ch/cms-analysis/general/combine-assistant-evals/-/merge_requests/2) (13 questions + results PDF; Galli notified). Harness improvements MR to follow.
+
 Questions: [questions_hww.yaml](questions_hww.yaml), submitted to Galli's `combine-assistant-evals` (fork branch `add-usage-and-agent-debug-questions`).
 
 ## Setup

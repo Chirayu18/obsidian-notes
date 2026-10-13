@@ -7,6 +7,8 @@ source: laptop
 
 # Combine-agent eval questions
 
+**Submitted 2026-10-13:** [combine-assistant-evals!2](https://gitlab.cern.ch/cms-analysis/general/combine-assistant-evals/-/merge_requests/2) (13 questions + results PDF; Galli notified). Harness improvements MR to follow.
+
 The questions with gold answers are in
 [`combine-agent-evals/questions_hww.yaml`](combine-agent-evals/questions_hww.yaml).
 They use the schema of Galli's eval set (`maxgalli/combine-bot` → `evals/questions.yaml`, 8 entries

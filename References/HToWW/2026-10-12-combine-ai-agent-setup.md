@@ -7,6 +7,8 @@ source: lxplus
 
 # CMS Combine "AI agent" (combine-assistant) — setup handoff
 
+**Submitted 2026-10-13:** [combine-assistant-evals!2](https://gitlab.cern.ch/cms-analysis/general/combine-assistant-evals/-/merge_requests/2) (13 questions + results PDF; Galli notified). Harness improvements MR to follow.
+
 Handoff note so a fresh agent can continue setting up Galli's Combine AI assistant.
 Full machine-specific plan lives at
 `/home/cgupta/agenthon_hacathon/combine/SETUP_PLAN.md` (laptop). This note is the
