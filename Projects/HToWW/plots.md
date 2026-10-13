@@ -114,3 +114,10 @@ tags: [plot]
 - Description: normalised scale-variation shapes vs Higgs pT, class (0j/1j × S/H) and gen c-jet pT, plus the inclusive normalisation of each variation. Ours uses the updated per-event fix (tables down to MG's 1 GeV scale floor; floor events exact). References: the clean Run 3 γγ (MG 2.9.9) and Run 2 UL18 WW (MG 2.6.5) samples, which agree with each other. Shapes agree within ~0.04. The one-jet H class and the inclusive muR-down (1.017 vs 1.048) differ because our sample has fewer one-jet and floor events (a generation difference).
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+
+### H+c LHE fix — high-stat jackknife comparison, raw and mix-matched (2026-10-13)
+tags: [plot]
+- Date: 2026-10-13
+- Description: `scale_shape_jk_{higgs_pt,cls,cjet_pt}.png`: ours (2.94M, fixed) vs Run 3 γγ (3.06M) vs Run 2 WW (3.9M), with jackknife stat errors and pulls. `scale_shape_jk_mixmatched_{hpt,cls}.png`: the references reweighted to our class × Higgs-pT mix; μF agrees within ≤1% and everything above 60 GeV agrees. The residual is in the one-jet H class / Higgs pT 20–60 GeV, from our sample having half as many 1 GeV scale-floor events. Pull panels are clipped at ±8.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix

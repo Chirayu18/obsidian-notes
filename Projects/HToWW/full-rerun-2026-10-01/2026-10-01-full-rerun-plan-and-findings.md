@@ -458,3 +458,16 @@ Scripts: `runall/scale_pred.py`, `runall/unmix.py` (22EE, 3 WW files vs 3 γγ f
   - Inclusive: muR0.5 1.017 vs 1.048–1.052; (0.5,0.5) 1.009 vs 1.044; muR2 0.970 vs 0.961; (2,2) 1.025 vs 1.013; μF within 0.3–0.5%.
   - Cause: our sample has fewer one-jet events (20% vs 27%), half as many floor events (0.8% vs 1.7% of 1j H) and fewer low-kT one-jet events. This is a nominal-generation difference that the weight fix cannot add back. Per-scale-bin medians agree to 0.3%.
 - **Plots:** `scale_shape_v2_{higgs_pt,class,cjet_pt}.png`, `scale_norm_v2_inclusive.png` (`runall/plot_shapes3.py`). Higgs-pT shapes agree with both references within ~0.04, about as well as the two references agree with each other.
+
+### 2026-10-13 (night): high-stat comparison with jackknife errors; mix-matched test
+- **Inputs:** `runall/shapes_jk.py` (streaming, 50 jackknife groups, incl. normalisation correlation), `plot_jk.py`, `plot_jk_mix.py`, `floor_frac.py`. Events: ours 2.94M (22EE + 22 + 23BPix), γγ 3.06M, Run 2 5.30M. All three are 4FS FxFx.
+- **Raw comparison:** γγ and Run 2 agree within ~2σ. Ours differs by 1–5% (3–20σ). So the differences are real, not statistical.
+- **Mix-matched** (references reweighted to our nominal yield per class × Higgs-pT cell):
+  - μF variations agree within ≤1%.
+  - Higgs pT > 60 GeV: all variations agree within ~2σ.
+  - The remaining difference sits at Higgs pT 20–60 GeV (muR×0.5 −2.4% / −3.0%) and is concentrated in the one-jet H class: muR×0.5 −9.4%, muR×2 +4.6%. The other classes are within ~2%.
+- **Cause of the one-jet H residual:** our sample has HALF as many events with a piece at MG's 1 GeV scale floor.
+  - Exact-floor events: 0.73% of 1jH (3.1% of the weight) vs 1.38–1.42% (5.8–6.2%).
+  - Mixed large-ratio events (muR×0.5 in 3–6.1): 1.2% (5.1%) vs 2.3–2.5% (10.2%).
+  - These are visible in our RAW weights (the exact cluster), so this is a property of the sample, not the fix. It explains the one-jet H mean gap (2.01 vs 2.33–2.36) almost entirely.
+- **Conclusion:** the per-event fix reproduces the clean samples wherever the events are comparable. Every remaining difference traces to our sample containing fewer low-scale one-jet configurations: fewer 1-jet events below 30 GeV, more 0-jet events above 30 GeV, and half the 1 GeV floor events. Proposed next test: LHE-only generation from our gridpack vs the γγ gridpack, to see whether this already happens before Pythia.
