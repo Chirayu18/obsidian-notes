@@ -47,6 +47,7 @@
   source_file:
     - docs/part2/settinguptheanalysis.md
     - docs/part3/runningthetool.md
+  topic_url: https://cms-talk.web.cern.ch/t/20047
   question: |
     I want to quantify how much of my expected limit comes from limited MC
     statistics (autoMCStats). How do I compute the expected limit with all
@@ -75,38 +76,12 @@
     ordering floatParameters < freezeParameters < freezeNuisanceGroups <
     floatAllNuisances when mixing these options.
 
-- id: channel-mask-sr-1
-  category: usage
-  source_file: docs/part3/nonstandard.md
-  question: |
-    My datacard has a signal region and several control regions. Before
-    unblinding, I want to fit the real data in the control regions only,
-    keeping the signal region out of the fit, so I can look at pulls and
-    post-fit agreement. How do I do this without losing the nuisance
-    parameters that also act in the signal region?
-  gold_answer: |
-    Use channel masking rather than dropping the signal-region card with
-    `combineCards.py`. Dropping the card would also lose the information
-    on the nuisance parameters and PDFs in that region.
-
-    1. Build the workspace with masking parameters:
-
-           text2workspace.py datacard.txt --channel-masks
-
-       This creates one parameter per channel, named `mask_<CHANNELNAME>`,
-       all set to 0 (unmasked) by default.
-
-    2. Fit with the signal region masked, by setting its mask to 1:
-
-           combine datacard.root -M FitDiagnostics --saveShapes \
-               --saveWithUncertainties --setParameters mask_SR=1
-
-    Re-run with `mask_SR=0` (or without the option) to compare.
-    Channel masking can be used with any method in Combine.
-
 - id: combinecards-era-correlation-1
   category: usage
-  source_file: docs/part2/settinguptheanalysis.md
+  source_file:
+    - docs/part2/settinguptheanalysis.md
+    - scripts/combineCards.py
+  topic_url: https://cms-talk.web.cern.ch/t/30374
   question: |
     I am combining datacards from several data-taking eras with
     `combineCards.py`. How do I control which systematic uncertainties are
@@ -133,34 +108,6 @@
     per channel and bin, with names built from the channel name
     (`prop_bin<channel>_bin<N>`). They therefore end up distinct, i.e.
     uncorrelated, across eras.
-
-- id: shape-only-syst-1
-  category: usage
-  source_file: docs/part2/settinguptheanalysis.md
-  question: |
-    I have a theory systematic that should change only the *shape* of my signal template,
-    not its normalisation. How do I implement that as a `shape` nuisance,
-    and how does Combine split a `shape` uncertainty into shape and
-    normalisation effects?
-  gold_answer: |
-    For both `shape` and `shapeN`, Combine treats shape and normalisation
-    separately:
-
-    The shape is interpolated on the normalised templates: `shape`
-    vertically interpolates the fraction of events in each bin (the
-    histograms are normalised first), and `shapeN` interpolates the logs of
-    those fractions. The total normalisation is interpolated separately
-    with an asymmetric log-normal, derived from the integrals of the
-    Up/Down templates relative to the nominal.
-
-    So to get a shape-only effect, scale your Up and Down templates to the
-    same integral as the nominal template before writing them. The
-    log-normal normalisation term is then 1 and only the shape morphing
-    remains. Enter it with a normal `shape` line (effect 1 for the signal
-    process).
-
-    (This assumes the default autoMCStats `hist-mode = 1`, where
-    normalisation is handled separately from the morphing.)
 
 - id: asymptotic-blind-1
   category: usage
@@ -230,6 +177,7 @@
 - id: shape-question-mark-1
   category: usage
   source_file: docs/part2/settinguptheanalysis.md
+  topic_url: https://cms-talk.web.cern.ch/t/122712
   question: |
     One systematic source changes the shape of some of my processes but
     only the normalisation of others. Do I need two separate nuisance lines
