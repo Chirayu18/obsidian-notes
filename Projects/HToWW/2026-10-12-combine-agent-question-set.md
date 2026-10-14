@@ -9,6 +9,8 @@ source: laptop
 
 **Submitted 2026-10-13:** [combine-assistant-evals!2](https://gitlab.cern.ch/cms-analysis/general/combine-assistant-evals/-/merge_requests/2) (13 questions + results PDF; Galli notified). Harness improvements MR to follow.
 
+**Submitted 2026-10-14:** [combine-assistant-evals!3](https://gitlab.cern.ch/cms-analysis/general/combine-assistant-evals/-/merge_requests/3) (only `gmn-control-region-1` and `agent-shape-counting-1`, split out of !2 at Galli's request so the Qwen failures can be debugged one question at a time; !2 stays open).
+
 The questions with gold answers are in
 [`combine-agent-evals/questions_hww.yaml`](combine-agent-evals/questions_hww.yaml).
 They use the schema of Galli's eval set (`maxgalli/combine-bot` → `evals/questions.yaml`, 8 entries
