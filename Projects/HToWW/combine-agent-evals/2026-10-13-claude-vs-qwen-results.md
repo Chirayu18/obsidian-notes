@@ -30,11 +30,11 @@ No LLM judge. Correctness was graded by hand against the gold answers.
 | `mcstat-threshold-1` | correct | 1 correct, 2 wrong (said the sparse process gets its own parameter) |
 | `freeze-mcstat-1` | correct | 3 partial: group right, per-channel regex wrong (`prop_bincat_SR_…`, copied from the docs example) |
 | `combinecards-era-correlation-1` | correct | 1 correct, 2 no answer |
-| `asymptotic-blind-1` | correct | 1 correct, 1 partial (`--noFitAsimov` called fully blind), 1 no answer |
+| `asymptotic-blind-1` | correct | 2 correct, 1 no answer |
 | `lnn-asymmetric-1` | correct | 1 partial (1/κ right, syntax wrong), 1 wrong (`0.93 1.10` instead of `0.93/1.10`), 1 no answer |
 | `gmn-control-region-1` | correct | 3 no answer |
 | `shape-question-mark-1` | correct | 1 correct, 1 wrong (plain `shape` line), 1 timeout |
-| `gof-saturated-1` | correct | 2 correct, 1 partial (no frequentist toys) |
+| `gof-saturated-1` | correct | 3 correct |
 | `agent-missing-down-1` | correct diagnosis, did not run | 3 stopped before answering (2 ran `text2workspace.py` and reproduced the crash first) |
 | `agent-undefined-group-1` | correct, reproduced on combine-run | 1 correct, 1 stopped before answering, 1 no answer |
 | `agent-shape-counting-1` | correct, reproduced on combine-run | 3 no answer |
@@ -43,7 +43,7 @@ No LLM judge. Correctness was graded by hand against the gold answers.
 
 Claude: 13/13 correct. Trajectory: tools used and no tool errors on all 13; `doc_hit` on all 8 usage questions; `exec_hit` false on `agent-missing-down-1`.
 
-Qwen, 36 runs on the 12 questions that ran (`agent-missing-down-1` excluded): 7 correct, 8 partial, 4 wrong, 17 with no final answer (empty, a timeout, or stopped after announcing the next step). Retrieval itself is fine: `source_hit` and `doc_hit` are 24/24 on the usage runs. The weakness is finishing an answer, and on the conceptual questions applying the docs correctly (threshold, lnN syntax, `shape?`).
+Qwen, 36 runs on the 12 questions that ran (`agent-missing-down-1` excluded): 9 correct, 6 partial, 4 wrong, 17 with no final answer (empty, a timeout, or stopped after announcing the next step). Retrieval itself is fine: `source_hit` and `doc_hit` are 24/24 on the usage runs. The weakness is finishing an answer, and on the conceptual questions applying the docs correctly (threshold, lnN syntax, `shape?`).
 
 Every Qwen run that attaches a `.root` file logs `Cannot read binary file` from combagent's `--file`. It is not necessarily fatal: on Galli's `agent-run-asymptotic-1` Qwen still found the file in the repo, ran Combine and reported the right limits. On our three questions with a ROOT attachment, none of the 9 runs gave a final answer, but this test does not separate the attachment error from Qwen stopping early.
 
