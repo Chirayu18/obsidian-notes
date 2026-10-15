@@ -82,3 +82,28 @@ All 7 `\pubref` URLs return HTTP 200. All arXiv/journal/CMS-ID mappings on the r
 Mean content 3.08, mean readability 2.67, coherence 4/5. Lowest scores: S7 (2/2, the "tightest" claim), S19 and S21 (2/2). Readability 2 on S4, S5, S6, S7, S10, S13, S17, S19 to S23 is driven by small plots and the c̄ glyph. The S21 "blocker" (γH not shown) is downgraded to minor: HIG-23-011 is the γH paper, but its caption should say so.
 
 Full per-page output: `higgs2026_higgs_charm.ppteval.json` (next to the deck).
+
+## Content vs. abstract (Indico 1668640)
+
+Abstract: discovery + 3rd-gen couplings; 2nd-gen is harder; "With the Run3 data collected by the CMS experiment, a lot of progress has been made to constrain this coupling"; latest direct and indirect results; prospects.
+
+- **Gap:** the abstract promises Run 3 progress, but every κc number is Run 2 (no Run 3 Hcc result is public; the Athens numbers stay out). Fix: say it on S3 ("all κc results are Run 2; Run 3 has delivered the tools and background measurements"), and give S13 that story (HLT ttH(cc) trigger gain + first tt+cc̄ cross section, the main ttH(cc) background), with a take-away line in place of "Run 3 analyses are under way". Add one Run 3 bullet to S15.
+- **Place in the day (28 Oct):** this talk is first (09:20), before Tarek (off-shell, 14:00), Cabrera Urban (H+c, 16:30), D'Eramo (H→cc, 17:00) and Davighi (Higgs and flavour, 18:00). S12 is the reference table for the day, so it is the slide most worth getting right.
+- **Title vs. content:** S2's question is never answered (answer it on S15: reach ~3×SM now, ~1.5× at HL-LHC). S4 has two topics and no boosted figure. S7 overclaims (see finding 2). S11 has no message about what off-shell adds, and its γH label is misleading. S13 has two figures with no link to κc. S14's figure does not show its number. Backup S19 "more figures" is not a message, and S21 promises γH without labelling it.
+- The abstract says the discovery was "ten years ago" (it was 14); the slide already says 2012, fine.
+
+## Fix list agreed with Chirayu (for whoever applies it)
+
+He agreed to all items under "Correctness and CMS" and to the content section above. Presentation exception: this is a review talk of others' work, so dense slides are acceptable, and only the terms the story needs get defined (μ on S3, κc on S2 as a bullet, "flat direction" on S8), not every term.
+
+1. Macros (tex:19, 22): `\mathrm{c}\overline{\mathrm{c}}`, `\mathrm{t}\overline{\mathrm{t}}` (also `\ttH`, `\ttZ`, `\Hbb` and the inline `c$\bar{\mathrm{c}}$` at tex:114, 146, 218, 342, 344, 500); zoom-check one title.
+2. "Most stringent **direct**; best expected sensitivity" on S7 title (185), S12 (327), S15 (383); one line on why ttH alone beats the combination on observed (VH upward fluctuation, μ = 7.7).
+3. S7 tex:200: ~20% → "26% better than VH alone (36% than ttH)".
+4. S2 tex:64: drop "vector-like quarks".
+5. S12 table: direct rows "κb = 1, SM production, no BSM decays"; cH "flat direction, from μ limit"; add the off-shell |κV|≤1 row [−3.3, 2.8] ([−3.5, 2.9]); fuller indirect assumptions; footnote that the rows are not directly comparable. S3 tex:97 range starts at [−3.3, 2.8].
+6. S15 tex:385: J/ψγ out of "|κc| ~ 3"; merge bullets 4 and 5; answer S2's question; add a Run 3 bullet.
+7. S5 tex:153 caption: "(b+c vs. light, b vs. c) plane". S21 tex:467: "γγ, ZZ, resolved ττ"; label γH.
+8. S14: swap in the HIG-25-002 figure, or caption the current one as the old CMS-only projection; "expected |κc| < 1.5"; cite HIG-18-031 for "~37"; rephrase the closing box.
+9. Take-away lines on S5, S6, S9, S10, S11, S13; "→ backup" pointers on S4, S6, S10, S11, S13 (S21 from S11/S12).
+10. Merges: S9+S10 into one cH slide, S5+S6 into one ttH slide (tagging plane to backup).
+11. Minor items 13 to 18 above (95% CL labels, S4 excess note, S11 wording/caption, pubref links, backup captions); S13 crop the BTV figure to the ttH(cc) panel.
