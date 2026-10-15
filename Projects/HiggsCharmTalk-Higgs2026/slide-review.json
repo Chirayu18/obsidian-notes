@@ -3,13 +3,34 @@
   "mode": "public",
   "audience": "Higgs 2026 conference (Louvain-la-Neuve): theorists and experimentalists from ATLAS/CMS/pheno, not CMS-internal; H+c flavour-scheme talk follows, rare-Higgs talks cover J/psi gamma",
   "talk_minutes": 15,
-  "focus": ["all"],
+  "focus": [
+    "all"
+  ],
   "backend": "claude",
   "forbidden_patterns": [
-    "HIG-25-001", "HIG-25-017", "HIG-26-003",
-    "\\bmu\\s*<\\s*6\\.9", "\\b6\\.9\\s*\\(", "\\b14\\.3\\b", "scouting",
-    "Novak", "private work",
-    "fs_ratio_", "R\\s*=\\s*0\\.789", "3FS/4FS"
+    "HIG-25-001",
+    "HIG-25-017",
+    "HIG-26-003",
+    "\\bmu\\s*<\\s*6\\.9",
+    "\\b6\\.9\\s*\\(",
+    "\\b14\\.3\\b",
+    "scouting",
+    "Novak",
+    "private work",
+    "fs_ratio_",
+    "R\\s*=\\s*0\\.789",
+    "3FS/4FS"
   ],
-  "max_words_per_slide": 110
+  "max_words_per_slide": 110,
+  "title": "Constraints on Higgs-charm couplings at CMS",
+  "slot": "Higgs 2026, Louvain-la-Neuve, Wed 28 Oct 2026 09:20, 15+5 min (Indico 1668640), parallel session; rehearsal 22 Oct, CINCO final draft due 18 Oct",
+  "abstract": "The discovery of the Higgs boson ten years ago and successful measurement of the Higgs boson couplings to third generation fermions by ATLAS and CMS mark great milestones for HEP. The much weaker coupling to the second generation quarks predicted by the SM makes the measurement of the Higgs-charm coupling much more challenging. With the Run3 data collected by the CMS experiment, a lot of progress has been made to constrain this coupling. In this talk, we present the latest results of direct and indirect measurements of the HIggs-charm coupling by the CMS experiment. Prospects for future improvements are also given.",
+  "context": {
+    "session_neighbours": "Same parallel session: before = off-shell ttbar+tW NLOPS (Hurley, 09:00); after = Bevilacqua 'Simulations and flavour-scheme studies for H+c' (09:40, 3FS/4FS vs 4FS/5FS, stitching, NNLO MiNNLO ccH), then Gavardi bbH predictions (10:00)",
+    "same_day_plenaries": "Tarek precision Higgs incl. off-shell (14:00); Cabrera Urban rare Higgs production incl. H+c (16:30); D'Eramo rare decays incl. cc (17:00); Davighi Higgs and flavour (18:00)",
+    "next_day": "Bierkens 'Searches for rare Higgs processes with CMS' (29 Oct 09:00) covers H->J/psi gamma; ATLAS rare Higgs (Lin, 09:20)",
+    "scope": "public CMS results only (papers, PAS, DP); no Run 3 H->cc physics result is public as of 2026-10-15, so all kappa_c numbers are Run 2 while the abstract promises Run 3 progress; Run 3 slide uses BTV-25-002 and TOP-26-003; H+c covered here in detail (agreed with Bierkens), J/psi gamma one line",
+    "first_talk_of_the_day_on_charm": "the summary kappa_c table is the reference for later plenaries that day",
+    "sources": "2026-10-15-higgs2026-talk-README.md (scope decisions, number checks), previous review 2026-10-15-slide-review.md"
+  }
 }
