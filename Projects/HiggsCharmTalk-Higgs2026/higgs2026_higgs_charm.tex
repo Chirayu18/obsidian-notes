@@ -26,7 +26,7 @@
 \newcommand{\ttbar}{\ensuremath{\qbar{t}}}
 \newcommand{\ttZ}{\ensuremath{\qbar{t}\mathrm{Z}}}
 \newcommand{\fbinv}{\ensuremath{\,\mathrm{fb}^{-1}}}
-\newcommand{\pubref}[2]{{\hfill\tiny\href{#2}{\color{cmsblue}#1}}}
+\newcommand{\pubref}[2]{{\hfill\scriptsize\href{#2}{\color{cmsblue}#1}}}
 \newcommand{\src}[1]{\vfill{\hfill\tiny\color{cmsgrey}#1}}
 \newcommand{\new}{{\color{cmsorange}\textbf{\scriptsize NEW}}}
 \newcommand{\obsexp}[2]{#1\,{\color{cmsgrey}(#2)}}
@@ -43,6 +43,10 @@
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east,inner sep=0pt] at ([xshift=-0.6cm,yshift=-0.5cm]current page.north east)
+      {\includegraphics[height=1.7cm]{CMSlogo_color.png}};
+  \end{tikzpicture}
   \vspace{2em}
   \begin{center}
     {\color{cmsblue}\Large\bfseries\inserttitle}\\[2.2em]
@@ -74,7 +78,7 @@
     \column{0.40\textwidth}
     \centering
     \includegraphics[height=5.9cm]{HIG-21-018_Figure-aux_011.pdf}\\
-    {\tiny CMS, Rep.\ Prog.\ Phys.\ 89 (2026) 087801 (supplementary)}
+    {\scriptsize CMS, Rep.\ Prog.\ Phys.\ 89 (2026) 087801 (supplementary)}
   \end{columns}
 \end{frame}
 
@@ -84,39 +88,40 @@
   \begin{tikzpicture}[
       box/.style={draw=cmsblue,thick,rounded corners,fill=cmslight,text width=6.55cm,minimum height=2.45cm,align=left,anchor=north west,inner sep=5pt}]
     \node[box] (d) at (0,0) {%
-      {\color{cmsblue}\bfseries Direct \Hcc} {\footnotesize(rate $\propto \kc^2/\Gamma_\mathrm{H}$)} \hfill{\scriptsize\color{cmsgrey}slides 4--6}\\[0.3ex]
+      {\color{cmsblue}\bfseries Direct \Hcc} {\footnotesize(rate $\propto \kc^2/\Gamma_\mathrm{H}$)} \hfill{\scriptsize\color{cmsgrey}slides 4--7}\\[0.3ex]
       \footnotesize VH(\Hcc) \hfill {\tiny PRL 131 (2023) 061801}\\
       \footnotesize \ttH(\Hcc) + VH comb. \hfill {\tiny PRL 136 (2026) 011801}\\
       \footnotesize Boosted \Hcc\ (mostly ggH) \hfill {\tiny PRL 131 (2023) 041801}\\[0.4ex]
       \small\textbf{best: $|\kc|<3.5$ (2.7 exp.)}};
     \node[box] (c) at (7.3,0) {%
-      {\color{cmsblue}\bfseries H + charm production} {\footnotesize(cg $\to$ cH)} \hfill{\scriptsize\color{cmsgrey}slides 7--8}\\[0.3ex]
+      {\color{cmsblue}\bfseries H + charm production} {\footnotesize(cg $\to$ cH)} \hfill{\scriptsize\color{cmsgrey}slides 8--10}\\[0.3ex]
       \footnotesize cH(H$\to\gamma\gamma$) \hfill {\tiny JHEP 11 (2025) 060}\\
       \footnotesize cH(H$\to$WW) + comb. \hfill {\tiny JHEP 08 (2026) 051}\\[1.6ex]
       \small\textbf{best: $|\kc|<47$ (51 exp.)}};
     \node[box] (i) at (0,-2.75) {%
-      {\color{cmsblue}\bfseries Indirect: H rates and width} \hfill{\scriptsize\color{cmsgrey}slide 9}\\[0.3ex]
+      {\color{cmsblue}\bfseries Indirect: H rates and width} \hfill{\scriptsize\color{cmsgrey}slide 11}\\[0.3ex]
       \footnotesize On-shell H$\to4\ell$ ($\gamma$H paper) \hfill {\tiny PRD 112 (2025) 112001}\\
       \footnotesize Off-shell + on-shell H$\to4\ell$ \new\ \hfill {\tiny arXiv:2607.23352}\\[0.4ex]
       \small\textbf{$\kc\in[-3.3,2.8]$ to $[-8.6,7.5]$} {\scriptsize(by assumptions)}};
     \node[box] (r) at (7.3,-2.75) {%
-      {\color{cmsblue}\bfseries Rare exclusive decays} \hfill{\scriptsize\color{cmsgrey}slide 9}\\[0.3ex]
+      {\color{cmsblue}\bfseries Rare exclusive decays} \hfill{\scriptsize\color{cmsgrey}slide 11}\\[0.3ex]
       \footnotesize H$\to$J/$\psi\gamma$, $\psi$(2S)$\gamma$ \hfill {\tiny PLB 865 (2025) 139462}\\
       \footnotesize sensitive to the \emph{sign} of \kc; see J.~Bierkens' talk\\[0.6ex]
       \small\textbf{$-166<\kc<208$}};
   \end{tikzpicture}\\[0.5em]
   {\footnotesize $\mu = \sigma\mathcal{B}/(\sigma\mathcal{B})_\mathrm{SM}$, \ $\Gamma_\mathrm{H}$ = total Higgs width, \ limits at 95\% CL: obs.\ (exp.)}\\[0.3ex]
-  {\footnotesize All \kc\ results use \textbf{Run 2} data (13\,TeV, 138\fbinv); Run 3 has delivered the tools (slide 11); \new\ = public in 2026}
+  {\footnotesize All \kc\ results: \textbf{Run 2} data (13\,TeV, 138\fbinv); Run 3 delivered the tools (slide 13). \new: public in 2026}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Direct \Hcc: VH and boosted H}
-  {\hfill\tiny\href{\pubHIG{HIG-21-008}}{\color{cmsblue}PRL 131 (2023) 061801}; \href{\pubHIG{HIG-21-012}}{\color{cmsblue}PRL 131 (2023) 041801}}
+\begin{frame}{Direct \Hcc: VH(\Hcc)}
+  \pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}{\pubHIG{HIG-21-008}}
   \begin{columns}[T]
-    \column{0.31\textwidth}
+    \column{0.32\textwidth}
     \begin{itemize}\small
-      \item \textbf{VH}: leptonic W/Z; resolved + merged jets, ParticleNet c tagging
-      \item VZ(Z$\to\ccbar$) seen at 5.7$\sigma$
+      \item Leptonic W/Z decays: 0, 1, 2 leptons
+      \item Resolved (two small-radius c jets) and merged-jet (one large-radius jet) topologies; ParticleNet c tagging
+      \item VZ(Z$\to\ccbar$) observed at 5.7$\sigma$: validates the method
     \end{itemize}
     \begin{block}{VH(\Hcc)}
       {\scriptsize 95\% CL obs.\ (exp.)}\\
@@ -124,19 +129,37 @@
       $1.1 < |\kc| < 5.5$ \ {\color{cmsgrey}($<3.4$)}\\
       {\scriptsize obs.\ excludes $\kc=1$: upward fluctuation, $\hat\mu = 7.7$ \tobackup}
     \end{block}
-    \begin{block}{Boosted \Hcc}
-      \small $\mu < \obsexp{47}{39}$ {\scriptsize($p_\mathrm{T}>450$\,GeV, mostly ggH)}
-    \end{block}
-    \column{0.35\textwidth}
+    \column{0.33\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-21-008_Figure_003.pdf}\\
+    {\scriptsize Merged-jet $m(\mathrm{H_{cand}})$, events weighted by S/(S+B)}
+    \column{0.33\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_004.pdf}\\
-    {\tiny VH: $\mu$ limits per channel}
-    \column{0.32\textwidth}
-    \centering
-    \includegraphics[width=\linewidth,trim=0 0 219 0,clip]{HIG-21-012_Figure_002.pdf}\\
-    {\tiny Boosted: jet mass, passing region (peak: Z$\to\ccbar$)}
+    {\scriptsize $\mu$ limits per channel}
   \end{columns}
-  \takeaway{VH carries the Run 2 sensitivity; boosted ggH adds an independent high-$p_\mathrm{T}$ handle}
+  \takeaway{The most sensitive single channel of Run 2 (expected $\mu < 7.6$)}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Direct \Hcc: boosted H}
+  \pubref{PRL 131 (2023) 041801, CMS-HIG-21-012}{\pubHIG{HIG-21-012}}
+  \begin{columns}[T]
+    \column{0.32\textwidth}
+    \begin{itemize}\small
+      \item $p_\mathrm{T}^\mathrm{H}>450$\,GeV, mostly ggH; \Hcc\ in one large-radius jet
+      \item Double-charm DNN tagger (DeepDoubleX); jet-mass fit
+      \item \textbf{Z$\to\ccbar$ observed} in Z+jets at high $p_\mathrm{T}$, first time: $\mu_\mathrm{Z} = 1.00^{+0.17}_{-0.14}$ (syst), $>5\sigma$
+    \end{itemize}
+    \begin{block}{Boosted \Hcc}
+      \small $\mu < \obsexp{47}{39}$ {\scriptsize 95\% CL}
+    \end{block}
+    \column{0.66\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-21-012_Figure_002.pdf}\\
+    {\scriptsize Jet mass in the c-tag passing (left) and failing (right) regions; the peak is Z$\to\ccbar$}
+  \end{columns}
+  \takeaway{An independent, high-$p_\mathrm{T}$ handle dominated by ggH}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -160,11 +183,11 @@
     \end{block}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-018_Figure_003.pdf}\\
-    {\tiny $\mu_{\ttH(\ccbar)}$ limits per channel}
+    {\scriptsize $\mu_{\ttH(\ccbar)}$ limits per channel}
     \column{0.30\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-018_Figure_B11.pdf}\\
-    {\tiny $-2\Delta\ln L$ vs.\ $|\kc|$, \kb\ fixed or fitted from \ttH(\bbbar)}
+    {\scriptsize $-2\Delta\ln L$ vs.\ $|\kc|$, \kb\ fixed or fitted from \ttH(\bbbar)}
   \end{columns}
   \takeaway{A second direct channel, with expected sensitivity comparable to VH}
 \end{frame}
@@ -208,39 +231,57 @@
   \vspace{0.3em}
   \centering
   \includegraphics[width=0.68\linewidth]{HIG-23-010_Figure_001.pdf}\\
-  {\tiny LO diagrams for cH production; \kc\ enters at the marked vertices}
+  {\scriptsize LO diagrams for cH production; \kc\ enters at the marked vertices}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{cH production: H$\to\gamma\gamma$, H$\to$WW and combination}
-  {\hfill\tiny\href{\pubHIG{HIG-23-010}}{\color{cmsblue}JHEP 11 (2025) 060}; \href{\pubHIG{HIG-24-009}}{\color{cmsblue}JHEP 08 (2026) 051}}
+\begin{frame}{cH(H$\to\gamma\gamma$)}
+  \pubref{JHEP 11 (2025) 060, CMS-HIG-23-010}{\pubHIG{HIG-23-010}}
   \begin{columns}[T]
-    \column{0.44\textwidth}
+    \column{0.50\textwidth}
     \begin{itemize}\small
-      \item \textbf{H$\to\gamma\gamma$}: BDTs vs.\ ggH and vs.\ $\gamma\gamma$+jets (no c-tag inputs), 27 categories, fit to $m_{\gamma\gamma}$\\
-        $\mu_\mathrm{cH} < \obsexp{243}{355}$, \ $|\kc| < \obsexp{38}{73}$
-      \item \textbf{H$\to$WW$\to$e$\nu\mu\nu$} + c jet: BDTs vs.\ non-H and other-H backgrounds, signal and control regions\\
-        $\mu_\mathrm{cH} < \obsexp{1065}{506}$, \ $|\kc| < \obsexp{211}{95}$
-      \item H+c background fixed to SM; floating it \tobackup
+      \item First search for cH with H$\to\gamma\gamma$, 138\fbinv
+      \item Two BDTs, trained without c-tag inputs: cH vs.\ ggH (largest resonant background), cH vs.\ continuum $\gamma\gamma$+jets
+      \item 9 categories per year (27 in total); signal from fits to $m_{\gamma\gamma}$
     \end{itemize}
-    \begin{block}{$\gamma\gamma$ + WW combination (95\% CL)}
+    \begin{block}{cH(H$\to\gamma\gamma$)}
+      {\scriptsize 95\% CL obs.\ (exp.)}\\
+      \small $\mu_{\mathrm{cH}} < \obsexp{243}{355}$, \ $|\kc| < \obsexp{38}{73}$
+    \end{block}
+    \column{0.46\textwidth}
+    \centering
+    \includegraphics[height=5.3cm]{HIG-23-010_Figure_006.pdf}\\
+    {\scriptsize $m_{\gamma\gamma}$, all categories, weighted by S/(S+B)}
+  \end{columns}
+  \takeaway{$|\kc|\lesssim 40$, not $\sim$3: $\sigma\mathcal{B}\approx0.2$\,fb, and ggH H+c mimics the signal}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{cH(H$\to$WW) and the $\gamma\gamma$ + WW combination}
+  \pubref{JHEP 08 (2026) 051, CMS-HIG-24-009}{\pubHIG{HIG-24-009}}
+  \begin{columns}[T]
+    \column{0.50\textwidth}
+    \begin{itemize}\small
+      \item H$\to$WW$\to$e$\nu\mu\nu$ + c jet; signal regions with 1 or $>$1 c jet, control regions for \ttbar\ and high $m_{\ell\ell}$
+      \item Two BDTs: vs.\ non-H backgrounds and vs.\ other H processes
+      \item \kc-independent H+c background fixed to SM (1 POI); floating it \tobackup
+      \item WW alone: $\mu_\mathrm{cH} < \obsexp{1065}{506}$, $|\kc| < \obsexp{211}{95}$
+    \end{itemize}
+    \begin{block}{$\gamma\gamma$ + WW combination}
+      {\scriptsize 95\% CL obs.\ (exp.)}\\
       \small $\mu_\mathrm{cH} < \obsexp{257}{281}$, \ $|\kc| < \obsexp{47}{51}$
     \end{block}
-    \column{0.27\textwidth}
+    \column{0.46\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{HIG-23-010_Figure_006.pdf}\\
-    {\tiny $\gamma\gamma$: $m_{\gamma\gamma}$, all categories, weighted by S/(S+B)}
-    \column{0.27\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-24-009_Figure_008.pdf}\\
-    {\tiny $\mu_\mathrm{cH}$ limits: $\gamma\gamma$, WW, combined}
+    \includegraphics[height=5.3cm]{HIG-24-009_Figure_008.pdf}\\
+    {\scriptsize $\mu_\mathrm{cH}$ limits: $\gamma\gamma$, WW, combined}
   \end{columns}
-  \takeaway{$|\kc|\lesssim 50$, not $\sim$3: $\sigma\mathcal{B}$ is tiny and ggH H+c mimics the signal; statistics-limited}
+  \takeaway{\kc\ from production alone: statistics-limited, independent of the \Hcc\ decay}
 \end{frame}
 
 % -------------------------------------------------------------------
 \begin{frame}{Indirect constraints on \kc}
-  {\hfill\tiny\href{\pubHIG{HIG-23-011}}{\color{cmsblue}PRD 112 (2025) 112001}; \href{\pubHIG{HIG-25-003}}{\color{cmsblue}arXiv:2607.23352}; \href{\pubHIG{SMP-22-012}}{\color{cmsblue}PLB 865 (2025) 139462}}
+  {\hfill\scriptsize\href{\pubHIG{HIG-23-011}}{\color{cmsblue}PRD 112 (2025) 112001}; \href{\pubHIG{HIG-25-003}}{\color{cmsblue}arXiv:2607.23352}; \href{\pubHIG{SMP-22-012}}{\color{cmsblue}PLB 865 (2025) 139462}}
   \begin{columns}[T]
     \column{0.55\textwidth}
     \begin{itemize}\small
@@ -257,7 +298,7 @@
     \column{0.42\textwidth}
     \centering
     \includegraphics[width=0.92\linewidth]{HIG-25-003_Figure_008-d.pdf}\\
-    {\tiny \kc\ scans, solid = observed, dashed = expected}
+    {\scriptsize \kc\ scans, solid = observed, dashed = expected}
   \end{columns}
   \takeaway{With $|\kappa_V|\le1$, H$\to4\ell$ matches the direct searches, under different assumptions \ \tobackup}
 \end{frame}
@@ -296,15 +337,15 @@
     \column{0.50\textwidth}
     \centering
     {\small\bfseries\color{cmsblue}ML b/c tagging at the HLT}\\[0.3ex]
-    \includegraphics[height=4.1cm,trim=200 0 0 0,clip]{BTV-25-002_Figure_022.pdf}\\
-    {\tiny arXiv:2608.18331: \ttH(\Hcc) trigger efficiency, Run 2 (2018) vs.\ Run 3 (2022--24)}
+    \includegraphics[height=3.9cm,trim=200 0 0 0,clip]{BTV-25-002_Figure_022.pdf}\\
+    {\scriptsize arXiv:2608.18331: \ttH(\Hcc) trigger efficiency, Run 2 (2018) vs.\ Run 3 (2022--24)}
     \column{0.46\textwidth}
     \centering
     {\small\bfseries\color{cmsblue}Main \ttH(\Hcc) background measured}\\[0.3ex]
-    \includegraphics[height=4.1cm]{PAS-TOP-26-003_Figure_009.pdf}\\
-    {\tiny CMS-PAS-TOP-26-003 \new: $\sigma_{\ttbar\ccbar} = 680^{+130}_{-100}\,(\mathrm{syst})\pm40\,(\mathrm{stat})$\,fb}
+    \includegraphics[height=3.9cm]{PAS-TOP-26-003_Figure_009.pdf}\\
+    {\scriptsize CMS-PAS-TOP-26-003 \new: $\sigma_{\ttbar\ccbar} = 680^{+130}_{-100}\,(\mathrm{syst})\pm40\,(\mathrm{stat})$\,fb}
   \end{columns}
-  \vspace{0.4em}
+  \vspace{0.3em}
   \begin{itemize}\small
     \item 13.6\,TeV; new HLT taggers (see J.~Daniel's talk), parking and scouting for hadronic final states \tobackup
   \end{itemize}
@@ -331,7 +372,7 @@
     \column{0.44\textwidth}
     \centering
     \includegraphics[width=0.95\linewidth]{HIG-21-008_Figure-aux_050.pdf}\\
-    {\tiny \textbf{Previous} CMS-only projection (HIG-21-008 supplementary): expected $\pm1\sigma$/$\pm2\sigma$ (\kb, \kc) contours, 3000\fbinv, 14\,TeV, extrapolated from Run 2 VH(\Hcc)}
+    {\scriptsize \textbf{Previous} CMS-only projection (HIG-21-008 suppl.): expected $\pm1\sigma$/$\pm2\sigma$ (\kb, \kc) contours, 3000\fbinv, 14\,TeV}
   \end{columns}
 \end{frame}
 
@@ -362,32 +403,26 @@
     \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_001.pdf}\\
-    {\tiny ParticleNet merged-jet \Hcc\ tagging}
+    {\scriptsize ParticleNet merged-jet \Hcc\ tagging}
     \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_002-b.pdf}\\
-    {\tiny Events vs.\ $\log_{10}(S/B)$}
+    {\scriptsize Events vs.\ $\log_{10}(S/B)$}
     \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure-aux_001.pdf}\\
-    {\tiny $|\kc|$ scan (supplementary)}
+    {\scriptsize $|\kc|$ scan (supplementary)}
   \end{columns}
   \vspace{0.3em}
   {\small Best fit $\mu = 7.7^{+3.8}_{-3.5}$; merged $\mu=8.7^{+4.6}_{-4.0}$, resolved $\mu=-9.5\pm9.6$. $\sigma\mathcal{B}<0.94$ (0.50) pb.\\
   $\mu$ limits with CLs; \kc\ intervals from profile-likelihood scans.}
 \end{frame}
 
-\begin{frame}{VH(\Hcc) merged jets and \ttH(\Hcc) yields}
-  \begin{columns}[T]
-    \column{0.42\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-21-008_Figure_003.pdf}\\
-    {\tiny PRL 131 (2023) 061801: VH merged-jet $m(\mathrm{H_{cand}})$, events weighted by S/(S+B)}
-    \column{0.54\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-24-018_Figure_002.pdf}\\
-    {\tiny PRL 136 (2026) 011801: event yields vs.\ $\log_{10}(S/B)$; the \ttH(\ccbar) panel shows the published best fit $\hat\mu = -1.6\pm4.5$}
-  \end{columns}
+\begin{frame}{\ttH(\Hcc): event yields}
+  \pubref{PRL 136 (2026) 011801}{\pubHIG{HIG-24-018}}
+  \centering
+  \includegraphics[height=5.6cm]{HIG-24-018_Figure_002.pdf}\\
+  {\scriptsize Event yields vs.\ $\log_{10}(S/B)$; the \ttH(\ccbar) panel shows the published best fit $\hat\mu = -1.6\pm4.5$}
 \end{frame}
 
 \begin{frame}{\ttH(\Hcc): flavour tagging and by-products}
@@ -403,7 +438,7 @@
     \column{0.52\textwidth}
     \centering
     \includegraphics[height=5.6cm]{HIG-24-018_Figure_001.pdf}\\
-    {\tiny b, c, light jets in the ParticleNet (b+c vs.\ light, b vs.\ c) plane and the 2D tagging categories}
+    {\scriptsize b, c, light jets in the ParticleNet (b+c vs.\ light, b vs.\ c) plane and the 2D tagging categories}
   \end{columns}
 \end{frame}
 
@@ -413,7 +448,7 @@
     \column{0.5\textwidth}
     \centering
     \includegraphics[width=0.9\linewidth]{HIG-24-018_Figure_004.pdf}\\
-    {\tiny orange: observed, blue: expected; dashed 68\%, solid 95\% CL}
+    {\scriptsize orange: observed, blue: expected; dashed 68\%, solid 95\% CL}
     \column{0.45\textwidth}
     \begin{itemize}\small
       \item Simultaneous \ttH(\Hbb) + \ttH(\Hcc) fit constrains both Yukawas
@@ -428,11 +463,11 @@
     \column{0.60\textwidth}
     \centering
     \includegraphics[height=5.8cm]{HIG-24-009_Figure_005.pdf}\\
-    {\tiny 1-POI post-fit distributions of the BDT discriminants}
+    {\scriptsize 1-POI post-fit distributions of the BDT discriminants}
     \column{0.36\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-009_Figure_006.pdf}\\
-    {\tiny $\mu_\mathrm{cH}$ limits per data-taking period, 1 and 2 POI}
+    {\scriptsize $\mu_\mathrm{cH}$ limits per data-taking period, 1 and 2 POI}
   \end{columns}
   {\scriptsize Best fit (1 POI): $\mu_\mathrm{cH} = 390^{+380}_{-270}$, compatible with SM within 1.5$\sigma$; limited by data statistics, then flavour-scheme and ggH heavy-flavour modelling.}
 \end{frame}
@@ -450,7 +485,7 @@
     \column{0.50\textwidth}
     \centering
     \includegraphics[width=0.9\linewidth]{HIG-24-009_Figure_007.pdf}\\
-    {\tiny WW: $\mu_\mathrm{cH}$ vs.\ $\mu_{\mathrm{H+c\,bkg}}$}
+    {\scriptsize WW: $\mu_\mathrm{cH}$ vs.\ $\mu_{\mathrm{H+c\,bkg}}$}
   \end{columns}
 \end{frame}
 
@@ -459,11 +494,11 @@
     \column{0.55\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-23-013_Figure_006.pdf}\\
-    {\tiny JHEP 04 (2026) 093: (\kb, \kc) from the Run 2 $p_\mathrm{T}^\mathrm{H}$ combination ($\gamma\gamma$, ZZ, resolved $\tau\tau$); left $\mathcal{B}$ coupling-dependent, right $\mathcal{B}$ unconstrained; 2D contours only}
+    {\scriptsize JHEP 04 (2026) 093: (\kb, \kc) from the Run 2 $p_\mathrm{T}^\mathrm{H}$ combination ($\gamma\gamma$, ZZ, resolved $\tau\tau$); left $\mathcal{B}$ coupling-dependent, right $\mathcal{B}$ unconstrained; 2D contours only}
     \column{0.42\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-23-011_Figure_009.pdf}\\
-    {\tiny PRD 112 (2025) 112001 ($\gamma$H + on-shell H$\to4\ell$): light-quark $\kappa$ scans}
+    {\scriptsize PRD 112 (2025) 112001 ($\gamma$H + on-shell H$\to4\ell$): light-quark $\kappa$ scans}
   \end{columns}
 \end{frame}
 
@@ -479,7 +514,7 @@
     \column{0.45\textwidth}
     \centering
     \includegraphics[width=0.9\linewidth]{SMP-22-012_Figure_005.pdf}\\
-    {\tiny 95\% CL upper limits on $\mathcal{B}$(Z, H$\to\psi(n\mathrm{S})\gamma$), obs.\ and exp.}
+    {\scriptsize 95\% CL upper limits on $\mathcal{B}$(Z, H$\to\psi(n\mathrm{S})\gamma$), obs.\ and exp.}
   \end{columns}
 \end{frame}
 
@@ -489,16 +524,29 @@
     \column{0.48\textwidth}
     \centering
     \includegraphics[width=0.75\linewidth]{BTV-25-002_Figure_005.pdf}\\
-    {\tiny HLT tagger misidentification vs.\ efficiency}
+    {\scriptsize HLT tagger misidentification vs.\ efficiency}
     \column{0.48\textwidth}
     \centering
     \includegraphics[width=0.75\linewidth]{BTV-25-002_Figure_023.pdf}\\
-    {\tiny VBF H$\to\ccbar$ trigger efficiency}
+    {\scriptsize VBF H$\to\ccbar$ trigger efficiency}
   \end{columns}
   \vspace{0.5em}
   \centering
   \includegraphics[width=0.6\linewidth]{BTV-25-002_Figure_022.pdf}\\
-  {\tiny \ttH(\Hbb) (left) and \ttH(\Hcc) (right) trigger efficiency, Run 2 vs.\ Run 3}
+  {\scriptsize \ttH(\Hbb) (left) and \ttH(\Hcc) (right) trigger efficiency, Run 2 vs.\ Run 3}
+\end{frame}
+
+%
+
+\begin{frame}{Likely questions}
+  \small
+  \begin{itemize}
+    \item \textbf{How large is the VH excess?} Best fit $\mu_\mathrm{VH} = 7.7^{+3.8}_{-3.5}$, about 2 standard deviations above the SM. This is why VH alone excludes $|\kc|<1.1$ and why \ttH\ alone (3.0) beats the combination (3.5) on observed
+    \item \textbf{What limits the direct searches?} Statistics first. \ttH(\ccbar): statistical 74\% of the total uncertainty, then \ttbar+c and \ttbar+light modelling ($\approx$32\%, $\approx$29\%). VH(\ccbar): simulation sample size ($\approx$37\%), c-tagging efficiency ($\approx$23\%), theory ($\approx$22\%)
+    \item \textbf{And ATLAS?} VBF + VH(\Hcc) combination (arXiv:2511.21911): $|\kc| < 4.7$ (3.9 exp.)
+    \item \textbf{Why is cH an order of magnitude weaker than \Hcc?} cH $\sigma\mathcal{B}$ is tiny ($\approx$0.2\,fb in $\gamma\gamma$) and ggH produces the same H+c final state independently of \kc; in \Hcc, \kc\ changes the branching fraction of Higgs bosons from much larger production modes (VH, \ttH)
+    \item \textbf{What is fixed in each \kc\ number?} See the assumptions column of the summary table (slide 12)
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{References}
@@ -516,6 +564,7 @@
     \item H$\to$J/$\psi\gamma$: CMS, PLB 865 (2025) 139462, arXiv:2411.15000 (SMP-22-012)
     \item HLT flavour tagging: CMS, arXiv:2608.18331 (BTV-25-002)
     \item \ttbar+b/c cross sections: CMS-PAS-TOP-26-003
+    \item ATLAS VBF + VH(\Hcc) (backup): ATLAS, arXiv:2511.21911
     \item HL-LHC: ATLAS and CMS, arXiv:2504.00672 (HIG-25-002)
     \item Higgs combination (motivation figure): CMS, Rep. Prog. Phys. 89 (2026) 087801, arXiv:2602.18611 (HIG-21-018)
     \item Spontaneous flavour violation (motivation): arXiv:2410.05236

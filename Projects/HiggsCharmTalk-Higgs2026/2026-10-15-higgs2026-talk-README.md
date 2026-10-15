@@ -16,7 +16,7 @@ Rehearsal: Indico event 1738114, **Thu 22 Oct 2026, 14:30** (30 min slot; chairs
 ## Files
 - `higgs2026_higgs_charm.tex` with theme `beamerthemecmstalk.sty`; build with `latexmk -pdf higgs2026_higgs_charm.tex`
 - `figures/` is gitignored; `./fetch_figures.sh` re-downloads all 39 public figures and crops them to their bounding box
-- 13 main slides including the title (12 content slides after the 2026-10-15 review fixes: ttH and cH each merged into one results slide), plus 10 backup slides. Review and fix list: [[2026-10-15-slide-review]]. Earlier layout: H+c has 3 slides (production, γγ, WW + combination): Jas Bierkens confirmed H+c is covered here, not in his rare processes talk. Condensed on 15 Oct to follow Zucchetta LP2025 plus post-LP2025 results; dropped the tagging slide, HIG-17-028, HIG-21-009, TOP-26-002 and DP-2025-081; HIG-23-013 is backup only
+- 15 main slides including the title (14 content slides: VH, boosted, ttH, combination, H+c production, cH(γγ), cH(WW)+comb., indirect, table, Run 3, HL-LHC), plus 12 backup slides including a likely-questions slide. Backup pages are numbered separately (appendixnumberbeamer). CMS logo from CMS DocDB 3045 (`fetch_figures.sh`; needs the CERN CA, so fetch it via lxplus if the curl fails). Review and fix list: [[2026-10-15-slide-review]]. Earlier layout: H+c has 3 slides (production, γγ, WW + combination): Jas Bierkens confirmed H+c is covered here, not in his rare processes talk. Condensed on 15 Oct to follow Zucchetta LP2025 plus post-LP2025 results; dropped the tagging slide, HIG-17-028, HIG-21-009, TOP-26-002 and DP-2025-081; HIG-23-013 is backup only
 
 ## Scope decisions
 - Only public CMS results (papers, PAS, DP notes). No Run 3 Higgs-charm physics result was public on 2026-10-15:

@@ -1,5 +1,6 @@
 % Minimal CMS-flavoured beamer theme for the Higgs 2026 talk
 \mode<presentation>
+\RequirePackage{appendixnumberbeamer}
 \usepackage{tikz}
 \definecolor{cmsblue}{RGB}{0,51,153}
 \definecolor{cmslight}{RGB}{225,232,247}
@@ -20,12 +21,16 @@
 \setbeamertemplate{blocks}[rounded][shadow=false]
 \setbeamertemplate{frametitle}{%
   \nointerlineskip
-  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.3ex,leftskip=1em]{frametitle}
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.3ex,leftskip=1em,rightskip=1.6em]{frametitle}
     \usebeamerfont{frametitle}\insertframetitle
-  \end{beamercolorbox}\vspace{0.3ex}}
+  \end{beamercolorbox}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east,inner sep=0pt] at ([xshift=-0.3em,yshift=-0.25em]current page.north east)
+      {\includegraphics[height=3.2ex]{CMSlogo_white.png}};
+  \end{tikzpicture}\vspace{0.3ex}}
 \setbeamertemplate{footline}{%
   \begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1ex]{}
-    \hspace{1em}{\color{cmsgrey}\tiny\insertshortauthor\ \ |\ \ \insertshorttitle\ \ |\ \ Higgs 2026, Louvain-la-Neuve}%
-    \hfill{\color{cmsblue}\tiny\bfseries\insertframenumber/\inserttotalframenumber}\hspace{1em}
+    \hspace{1em}{\color{cmsgrey}\scriptsize\insertshortauthor\ \ |\ \ \insertshorttitle\ \ |\ \ Higgs 2026}%
+    \hfill{\color{cmsblue}\scriptsize\bfseries\insertframenumber/\inserttotalframenumber}\hspace{1em}
   \end{beamercolorbox}}
 \mode<all>

@@ -111,3 +111,5 @@ He agreed to all items under "Correctness and CMS" and to the content section ab
 ## Status (2026-10-15, evening)
 
 Fix list items 1 to 11 applied to `higgs2026_higgs_charm.tex`; deck is now 13 main + 10 backup pages. Not done: the logo (PPTEval only, optional), the three unanswered questions (Q&A prep, not slide content), and HIG-25-002 has no κc figure, so S12 keeps the HIG-21-008 projection captioned as the previous CMS-only one. Only one warning remains, a 6.5 pt overfull line on S3.
+
+Later the same evening, with the optional items also applied: the CMS logo is on the title page and the frame bar, the footer is larger, captions went from \tiny to \scriptsize, and there is a backup "likely questions" slide (VH excess about 2σ, leading uncertainties, ATLAS |κc| < 4.7 (3.9), cH vs. H→cc, assumptions). Chirayu allowed about 3 extra slides, so VH/boosted, cH γγ/WW and Run 3/HL-LHC are separate slides; the ttH merge stays. Main talk: 14 content slides.

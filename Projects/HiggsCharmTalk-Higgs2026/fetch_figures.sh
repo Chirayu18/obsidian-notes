@@ -48,3 +48,10 @@ for f in *.pdf; do
   read -r w h ox oy < <(gs -q -dNOPAUSE -dBATCH -sDEVICE=bbox "$f" 2>&1 | awk '/HiRes/{x0=$2-2;y0=$3-2;x1=$4+2;y1=$5+2; printf "%.2f %.2f %.2f %.2f\n", x1-x0, y1-y0, -x0, -y0; exit}')
   gs -q -o "$f.tmp" -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS="$w" -dDEVICEHEIGHTPOINTS="$h" -dFIXEDMEDIA -c "<</PageOffset [$ox $oy]>> setpagedevice" -f "$f" && mv "$f.tmp" "$f"
 done
+
+# Official CMS logo (CMS DocDB 3045). cms-docdb needs the CERN CA, so this fetch may fail
+# off-site; if it does, run the same curl on lxplus and scp the files into figures/.
+for c in color white; do
+  curl -sfL -o "CMSlogo_${c}.png" "https://cms-docdb.cern.ch/cgi-bin/PublicDocDB/RetrieveFile?docid=3045&filename=CMSlogo_${c}_nolabel_1024_May2014.png" \
+    || echo "WARNING: CMS logo ($c) not fetched; get it from lxplus (see comment above)"
+done
