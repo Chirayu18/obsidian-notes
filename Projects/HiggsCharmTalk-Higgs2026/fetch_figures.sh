@@ -55,3 +55,6 @@ for c in color white; do
   curl -sfL -o "CMSlogo_${c}.png" "https://cms-docdb.cern.ch/cgi-bin/PublicDocDB/RetrieveFile?docid=3045&filename=CMSlogo_${c}_nolabel_1024_May2014.png" \
     || echo "WARNING: CMS logo ($c) not fetched; get it from lxplus (see comment above)"
 done
+# VUB logo (Wikimedia Commons, File:VUB_RGB.png)
+curl -sfL -A "Mozilla/5.0" -o VUB_logo.png "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/VUB_RGB.png/1280px-VUB_RGB.png" \
+  || echo "WARNING: VUB logo not fetched"

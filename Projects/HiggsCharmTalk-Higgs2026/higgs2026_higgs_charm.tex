@@ -36,18 +36,14 @@
 
 \title[Constraints on Higgs-charm couplings]{Constraints on Higgs-charm couplings at CMS}
 \author[C. Gupta]{Chirayu Gupta\\[0.3ex]{\small on behalf of the CMS Collaboration}}
-\institute{IIHE, Vrije Universiteit Brussel (VUB)}
+\institute{Vrije Universiteit Brussel}
 \date{Higgs 2026, Louvain-la-Neuve, 28 October 2026}
 
 \begin{document}
 
 % -------------------------------------------------------------------
 \begin{frame}[plain]
-  \begin{tikzpicture}[remember picture,overlay]
-    \node[anchor=north east,inner sep=0pt] at ([xshift=-0.6cm,yshift=-0.5cm]current page.north east)
-      {\includegraphics[height=1.7cm]{CMSlogo_color.png}};
-  \end{tikzpicture}
-  \vspace{2em}
+  \vspace{1.2em}
   \begin{center}
     {\color{cmsblue}\Large\bfseries\inserttitle}\\[2.2em]
     {\large\insertauthor}\\[1em]
@@ -57,6 +53,10 @@
   \vfill
   \begin{tikzpicture}[remember picture,overlay]
     \fill[cmsblue] (current page.south west) rectangle ([yshift=0.5cm]current page.south east);
+    \node[anchor=south,inner sep=0pt] (cmslogo) at ([xshift=-1.6cm,yshift=0.9cm]current page.south)
+      {\includegraphics[height=1.5cm]{CMSlogo_color.png}};
+    \node[anchor=south west,inner sep=0pt] at ([xshift=-0.4cm,yshift=0.9cm]current page.south)
+      {\includegraphics[height=1.5cm]{VUB_logo.png}};
   \end{tikzpicture}
 \end{frame}
 
