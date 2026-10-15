@@ -26,7 +26,7 @@ For my Higgs 2026 talk "Constraints on Higgs-charm couplings at CMS" (28 Oct, 15
 
 Is this list fine, or should I add anything? In particular, will any Run 3 H→cc result become public before the conference?
 
-I will upload the draft to CINCO before the rehearsal on 19 Oct.
+I will upload the draft to CINCO by 19 Oct, ahead of the rehearsal on 22 Oct.
 
 Best regards,
 Chirayu
