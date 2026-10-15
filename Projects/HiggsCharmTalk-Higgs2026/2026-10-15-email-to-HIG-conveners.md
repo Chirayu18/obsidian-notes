@@ -29,11 +29,6 @@ Indirect constraints
 - Off-shell + on-shell H→4ℓ, HIG-25-003
 - H→J/ψγ, SMP-22-012 (one line only, details left to Jas's rare processes talk)
 
-Run 3 and prospects
-- HLT heavy-flavour tagging, BTV-25-002
-- tt+b/c cross sections, TOP-26-003
-- HL-LHC projection, HIG-25-002
-
 Is this list fine, or should I add anything? In particular, will any Run 3 H→cc result become public before the conference?
 
 The draft is uploaded to CINCO, ahead of the rehearsal on 22 Oct.
