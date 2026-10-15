@@ -8,8 +8,9 @@ source: laptop
 # Higgs 2026 talk: "Constraints on Higgs-charm couplings at CMS"
 
 Higgs 2026, Louvain-la-Neuve, **Wed 28 Oct 2026, 09:20, 15+5 min** (Indico event 1668640).
-CINCO: upload the final draft at least one week before the conference starts (26 Oct), so by **19 Oct**,
-and enter the bibliography on the presentation page (cid=4235, pid=33256).
+CINCO: a reminder on 15 Oct asks for the **Final Draft within three days, i.e. by Sun 18 Oct**, at
+https://cms-mgt-conferences.web.cern.ch/conferences/pres_upload.aspx?cid=4235&pid=33256 ;
+also enter the bibliography on the presentation page.
 Rehearsal: Indico event 1738114, **Thu 22 Oct 2026, 14:30** (30 min slot; chairs M. Schroeder, M. Donega). Errico (mass/width) and Daniel (exp. methods) rehearse on 21 Oct.
 
 ## Files
