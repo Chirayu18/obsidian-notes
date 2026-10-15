@@ -10,7 +10,7 @@ source: laptop
 Higgs 2026, Louvain-la-Neuve, **Wed 28 Oct 2026, 09:20, 15+5 min** (Indico event 1668640).
 CINCO: upload the final draft at least one week before the conference starts (26 Oct), so by **19 Oct**,
 and enter the bibliography on the presentation page (cid=4235, pid=33256).
-Rehearsal is listed in Indico event 1738114 on 22 Oct.
+Rehearsal: Indico event 1738114, **19 Oct 2026** (chairs M. Schroeder, M. Donega).
 
 ## Files
 - `higgs2026_higgs_charm.tex` with theme `beamerthemecmstalk.sty`; build with `latexmk -pdf higgs2026_higgs_charm.tex`
