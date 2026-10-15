@@ -107,3 +107,7 @@ He agreed to all items under "Correctness and CMS" and to the content section ab
 9. Take-away lines on S5, S6, S9, S10, S11, S13; "→ backup" pointers on S4, S6, S10, S11, S13 (S21 from S11/S12).
 10. Merges: S9+S10 into one cH slide, S5+S6 into one ttH slide (tagging plane to backup).
 11. Minor items 13 to 18 above (95% CL labels, S4 excess note, S11 wording/caption, pubref links, backup captions); S13 crop the BTV figure to the ttH(cc) panel.
+
+## Status (2026-10-15, evening)
+
+Fix list items 1 to 11 applied to `higgs2026_higgs_charm.tex`; deck is now 13 main + 10 backup pages. Not done: the logo (PPTEval only, optional), the three unanswered questions (Q&A prep, not slide content), and HIG-25-002 has no κc figure, so S12 keeps the HIG-21-008 projection captioned as the previous CMS-only one. Only one warning remains, a 6.5 pt overfull line on S3.

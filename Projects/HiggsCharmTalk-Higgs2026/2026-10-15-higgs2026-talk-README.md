@@ -16,7 +16,7 @@ Rehearsal: Indico event 1738114, **Thu 22 Oct 2026, 14:30** (30 min slot; chairs
 ## Files
 - `higgs2026_higgs_charm.tex` with theme `beamerthemecmstalk.sty`; build with `latexmk -pdf higgs2026_higgs_charm.tex`
 - `figures/` is gitignored; `./fetch_figures.sh` re-downloads all 39 public figures and crops them to their bounding box
-- 15 main slides including the title, plus 8 backup slides. H+c has 3 slides (production, γγ, WW + combination): Jas Bierkens confirmed H+c is covered here, not in his rare processes talk. Condensed on 15 Oct to follow Zucchetta LP2025 plus post-LP2025 results; dropped the tagging slide, HIG-17-028, HIG-21-009, TOP-26-002 and DP-2025-081; HIG-23-013 is backup only
+- 13 main slides including the title (12 content slides after the 2026-10-15 review fixes: ttH and cH each merged into one results slide), plus 10 backup slides. Review and fix list: [[2026-10-15-slide-review]]. Earlier layout: H+c has 3 slides (production, γγ, WW + combination): Jas Bierkens confirmed H+c is covered here, not in his rare processes talk. Condensed on 15 Oct to follow Zucchetta LP2025 plus post-LP2025 results; dropped the tagging slide, HIG-17-028, HIG-21-009, TOP-26-002 and DP-2025-081; HIG-23-013 is backup only
 
 ## Scope decisions
 - Only public CMS results (papers, PAS, DP notes). No Run 3 Higgs-charm physics result was public on 2026-10-15:
@@ -28,7 +28,7 @@ Rehearsal: Indico event 1738114, **Thu 22 Oct 2026, 14:30** (30 min slot; chairs
 - Novak's Athens projections and waterfall are "CMS+ATLAS private work": not used. Monti's ICHEP HL-LHC significance
   curve has no public reference, so it was not used either; HL-LHC slide uses arXiv:2504.00672 (|κc| < 1.5) and
   HIG-21-008 supplementary Fig. 50.
-- H+c gets one slide: T. Bevilacqua's flavour-scheme talk is right after this one (09:40), and the rare-Higgs talks
+- (Superseded: H+c now has two slides, production + cH results.) Originally H+c got one slide: T. Bevilacqua's flavour-scheme talk is right after this one (09:40), and the rare-Higgs talks
   (Cabrera Urban, D'Eramo, Bierkens) cover H+c and J/ψγ in more detail.
 
 ## Number checks (against the papers, 2026-10-15)
