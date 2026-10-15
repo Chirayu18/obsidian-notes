@@ -22,8 +22,9 @@ Rehearsal: Indico event 1738114, **Thu 22 Oct 2026, 14:30** (30 min slot; chairs
 - Only public CMS results (papers, PAS, DP notes). No Run 3 Higgs-charm physics result was public on 2026-10-15:
   HIG-25-001, HIG-25-017 and HIG-26-003 all returned 404 on the public-results pages. The Athens workshop numbers for
   these (boosted VH 6.9, resolved VH 9.0, VBF ~40/16, ggH 14.3, scouting 27) are internal and must not appear.
-- Run 3 slide uses only public material: BTV-25-002 (arXiv:2608.18331), PAS TOP-26-003 (tt+b/c) and PAS TOP-26-002
-  (Vcb at 13.6 TeV with UParT), both released 2026-10-06, and DP-2025-081.
+- Run 3 slide uses only public material: BTV-25-002 (arXiv:2608.18331) and PAS TOP-26-003 (tt+b/c, released 2026-10-06).
+- H→J/ψγ is one line on the indirect slide plus the summary table and a backup slide: J. Bierkens' rare Higgs
+  processes talk (29 Oct) covers it.
 - Novak's Athens projections and waterfall are "CMS+ATLAS private work": not used. Monti's ICHEP HL-LHC significance
   curve has no public reference, so it was not used either; HL-LHC slide uses arXiv:2504.00672 (|κc| < 1.5) and
   HIG-21-008 supplementary Fig. 50.

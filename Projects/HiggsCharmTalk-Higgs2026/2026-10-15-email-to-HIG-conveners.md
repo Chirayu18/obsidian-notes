@@ -27,7 +27,7 @@ H+c production
 Indirect constraints
 - γH + H→4ℓ light Yukawas, HIG-23-011
 - Off-shell + on-shell H→4ℓ, HIG-25-003
-- H→J/ψγ, SMP-22-012
+- H→J/ψγ, SMP-22-012 (one line only, details left to Jas's rare processes talk)
 
 Run 3 and prospects
 - HLT heavy-flavour tagging, BTV-25-002
