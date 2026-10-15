@@ -20,7 +20,7 @@ Direct H→cc searches
 - ttH(H→cc) and its combination with VH, HIG-24-018
 - Boosted H→cc, HIG-21-012
 
-H+c production
+H+c production (covered in detail here, as agreed with Jas)
 - H+c with H→γγ, HIG-23-010
 - H+c with H→WW and the γγ+WW combination, HIG-24-009
 

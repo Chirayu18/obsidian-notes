@@ -215,39 +215,77 @@
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{H + charm associated production}
+\begin{frame}{H + charm production: \kc\ in production}
   \pubref{JHEP 11 (2025) 060; JHEP 08 (2026) 051}{https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-009/}
   \begin{columns}[T]
-    \column{0.44\textwidth}
+    \column{0.55\textwidth}
     \begin{itemize}\small
-      \item cg$\to$cH: \kc\ enters \emph{production}, independent of \Hcc\ decay
-      \item Targets clean decays: \textbf{H$\to\gamma\gamma$} and \textbf{H$\to$WW$\to$e$\nu\mu\nu$}
-      \item Challenges:
+      \item \kc\ enters the \textbf{production} vertex: independent of \Hcc\ decay; clean H decays + a c-tagged jet
+      \item $\sigma_{\mathrm{cH}} = 90$\,fb: $\sigma\mathcal{B}\approx 0.2$\,fb ($\gamma\gamma$), $\approx 20$\,fb (WW)
+      \item Challenges
       \begin{itemize}
-        \item small \kc-dependent rate; H+c also produced via $\mathrm{g}\to\mathrm{c\bar{c}}$ splitting, independent of $y_\mathrm{c}$
-        \item soft c-jets; flavour-scheme modelling\\
-          {\scriptsize $\to$ T.~Bevilacqua's talk, next}
+        \item H+c also arises from g$\to$c$\bar{\mathrm{c}}$ splitting in ggH: \textbf{\kc-independent}, nearly identical final state
+        \item soft, often forward c-jets
+        \item flavour-scheme modelling of cH ($\to$ T.~Bevilacqua, next talk)
       \end{itemize}
+      \item \kc\ from ``flat direction'': other H rates kept SM-like
     \end{itemize}
-    \vspace{0.2em}
-    {\small
-    \begin{tabular}{lcc}
-      \toprule
-      95\% CL & $\mu_{\mathrm{cH}}$ & $|\kc|$ \\
-      \midrule
-      H$\to\gamma\gamma$ & \obsexp{243}{355} & \obsexp{38.1}{72.5}\\
-      H$\to$WW & \obsexp{1065}{506} & \obsexp{211}{95}\\
-      \textbf{Combined} & \obsexp{257}{281} & \textbf{\obsexp{47}{51}}\\
-      \bottomrule
-    \end{tabular}}
-    \column{0.27\textwidth}
+    \column{0.42\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-23-010_Figure_001.pdf}\\
+    {\tiny LO diagrams for cH production; \kc\ enters at the marked vertices}
+  \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{cH(H$\to\gamma\gamma$)}
+  \pubref{JHEP 11 (2025) 060, CMS-HIG-23-010}{https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-23-010/}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \begin{itemize}\small
+      \item First search for cH with H$\to\gamma\gamma$, 138\fbinv
+      \item Two BDTs, trained without c-tag inputs:
+      \begin{itemize}
+        \item BDT1: cH vs.\ ggH (largest resonant background)
+        \item BDT2: cH vs.\ continuum $\gamma\gamma$+jets
+      \end{itemize}
+      \item 9 categories per year (27 in total); signal from fits to $m_{\gamma\gamma}$
+    \end{itemize}
+    \begin{block}{Result, 95\% CL}
+      \small $\mu_{\mathrm{cH}} < \obsexp{243}{355}$\\
+      $|\kc| < \obsexp{38.1}{72.5}$
+    \end{block}
+    \column{0.50\textwidth}
+    \centering
+    \includegraphics[height=6.1cm]{HIG-23-010_Figure_006.pdf}\\
+    {\tiny $m_{\gamma\gamma}$, all categories, S/(S+B) weighted}
+  \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{cH(H$\to$WW) and combination}
+  \pubref{JHEP 08 (2026) 051, CMS-HIG-24-009}{https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-009/}
+  \begin{columns}[T]
+    \column{0.40\textwidth}
+    \begin{itemize}\small
+      \item H$\to$WW$\to$e$\nu\mu\nu$ + c-jet; SRs with 1 or $>$1 c-jet, CRs for \ttbar\ and high $m_{\ell\ell}$
+      \item Two BDTs: vs.\ non-H backgrounds and vs.\ other H processes
+      \item H+c background (\kc-independent) split by jet flavour; correlation with cH: $-87\%$
+      \item 1-POI fit: $\mu_\mathrm{cH} < \obsexp{1065}{506}$, $|\kc| < \obsexp{211}{95}$\\
+        {\scriptsize 2-POI (H+c bkg floating): $<\obsexp{1804}{1097}$}
+    \end{itemize}
+    \begin{block}{$\gamma\gamma$ + WW combination}
+      \small $\mu_\mathrm{cH} < \obsexp{257}{281}$\\
+      $|\kc| < \obsexp{47}{51}$
+    \end{block}
+    \column{0.29\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-009_Figure_008.pdf}\\
-    {\tiny $\mu_\mathrm{cH}$ limits, $\gamma\gamma$ + WW}
-    \column{0.27\textwidth}
+    {\tiny $\mu_\mathrm{cH}$ limits: $\gamma\gamma$, WW, combined}
+    \column{0.29\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-009_Figure_007.pdf}\\
-    {\tiny H$\to$WW: $\mu_\mathrm{cH}$ vs.\ $\mu_{\mathrm{H+c\,bkg}}$}
+    {\tiny WW: $\mu_\mathrm{cH}$ vs.\ $\mu_{\mathrm{H+c\,bkg}}$}
   \end{columns}
 \end{frame}
 
@@ -352,7 +390,7 @@
     \item The charm Yukawa is the most accessible 2\textsuperscript{nd}-generation quark coupling, and CMS probes it in many complementary ways
     \item Direct searches: \ttH(\Hcc) combined with VH(\Hcc)\\
       $\Rightarrow$ \textbf{$|\kc| < 3.5$ (2.7 exp.)}, the most stringent constraint to date
-    \item H+c production with $\gamma\gamma$ and WW: $|\kc|<47$ (51 exp.)
+    \item H+c production probes \kc\ independently of \Hcc: $\gamma\gamma$ + WW give $|\kc|<47$ (51 exp.)
     \item Indirect probes ($\gamma$H, on/off-shell H$\to4\ell$, H$\to$J/$\psi\gamma$) reach $|\kc|\sim3$ under different assumptions; off-shell H$\to4\ell$ removes the assumption on $\kappa_\mathrm{Z,W}$
     \item Sensitivity is now reaching the BSM-motivated region $|\kc|\sim3$
     \item Run 3: new HLT tagging and a measured \ttbar+c$\bar{\mathrm{c}}$ background; HL-LHC projects $|\kc|<1.5$
@@ -415,23 +453,19 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{H+c: H$\to\gamma\gamma$ and H$\to$WW}
-  \pubref{JHEP 11 (2025) 060; JHEP 08 (2026) 051}{https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-23-010/}
+\begin{frame}{cH(H$\to$WW): post-fit distributions and per-period limits}
+  \pubref{JHEP 08 (2026) 051}{https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-009/}
   \begin{columns}[T]
-    \column{0.32\textwidth}
+    \column{0.60\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{HIG-23-010_Figure_001.pdf}\\
-    {\tiny LO diagrams for cH production}
-    \column{0.32\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-23-010_Figure_006.pdf}\\
-    {\tiny cH($\gamma\gamma$): $m_{\gamma\gamma}$, all categories}
-    \column{0.32\textwidth}
+    \includegraphics[height=5.8cm]{HIG-24-009_Figure_005.pdf}\\
+    {\tiny 1-POI post-fit distributions of the BDT discriminants}
+    \column{0.36\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-009_Figure_006.pdf}\\
-    {\tiny cH(WW): $\mu_\mathrm{cH}$ limits per period, 1 and 2 POI}
+    {\tiny $\mu_\mathrm{cH}$ limits per data-taking period, 1 and 2 POI}
   \end{columns}
-  {\scriptsize cH(WW) 2-POI fit (H+c background floating): $\mu_\mathrm{cH}<1804$ (1097 exp.).}
+  {\scriptsize Best fit (1 POI): $\mu_\mathrm{cH} = 390^{+380}_{-270}$, compatible with SM within 1.5$\sigma$; limited by data statistics, then flavour-scheme and ggH heavy-flavour modelling.}
 \end{frame}
 
 \begin{frame}{Indirect: Higgs \texorpdfstring{$p_\mathrm{T}$}{pT} spectrum and $\gamma$H}
