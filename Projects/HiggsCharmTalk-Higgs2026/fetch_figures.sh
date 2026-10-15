@@ -42,6 +42,7 @@ PAS-TOP-26-002_Figure_001.pdf https://cms-results.web.cern.ch/cms-results/public
 PAS-TOP-26-002_Figure_008.pdf https://cms-results.web.cern.ch/cms-results/public-results/preliminary-results/TOP-26-002/CMS-PAS-TOP-26-002_Figure_008.pdf
 PAS-TOP-26-003_Figure_009.pdf https://cms-results.web.cern.ch/cms-results/public-results/preliminary-results/TOP-26-003/CMS-PAS-TOP-26-003_Figure_009.pdf
 SMP-22-012_Figure_005.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/SMP-22-012/CMS-SMP-22-012_Figure_005.pdf
+HIG-21-018_Figure-aux_011.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-018/CMS-HIG-21-018_Figure-aux_011.pdf
 EOF
 for f in *.pdf; do
   read -r w h ox oy < <(gs -q -dNOPAUSE -dBATCH -sDEVICE=bbox "$f" 2>&1 | awk '/HiRes/{x0=$2-2;y0=$3-2;x1=$4+2;y1=$5+2; printf "%.2f %.2f %.2f %.2f\n", x1-x0, y1-y0, -x0, -y0; exit}')
