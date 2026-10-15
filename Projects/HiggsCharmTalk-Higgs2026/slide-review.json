@@ -1,0 +1,15 @@
+{
+  "deck": "higgs2026_higgs_charm.tex",
+  "mode": "public",
+  "audience": "Higgs 2026 conference (Louvain-la-Neuve): theorists and experimentalists from ATLAS/CMS/pheno, not CMS-internal; H+c flavour-scheme talk follows, rare-Higgs talks cover J/psi gamma",
+  "talk_minutes": 15,
+  "focus": ["all"],
+  "backend": "claude",
+  "forbidden_patterns": [
+    "HIG-25-001", "HIG-25-017", "HIG-26-003",
+    "\\bmu\\s*<\\s*6\\.9", "\\b6\\.9\\s*\\(", "\\b14\\.3\\b", "scouting",
+    "Novak", "private work",
+    "fs_ratio_", "R\\s*=\\s*0\\.789", "3FS/4FS"
+  ],
+  "max_words_per_slide": 110
+}

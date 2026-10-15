@@ -213,3 +213,53 @@ dropped or kept behind `GPU_DEBUG`.
 - Is B worth writing, or should A be validated directly against the CPU
   `SiPixelDigiMorphing` plus a synthetic unit test?
 - Phase-2 duplicate removal: include it, or leave it for a separate PR?
+
+## Update 2026-10-15: Tracker DPG workshop (indico.cern.ch/event/1707530)
+
+**Shared memory budget, decided.** Asked A. Bocci after his Alpaka talk: Phase-2 HLT
+kernels stay within **48 KB of static shared memory, same as Run 3**. Dynamic shared
+memory above that is not the plan.
+
+**Module sizes, from the geometry XML.** Bartosik (Geometry talk, slide 12) shows
+`pixelStructureTopology.xml` for the next baseline geometry T40: `PixelROCRows=672`,
+`PixelROCCols=216` per ROC, sensor pixels 25×100 µm.
+
+| Module | Rows × cols | Pixels | Image + temp bitmaps |
+|---|---|---|---|
+| one ROC | 672 × 216 | 145,152 | 36 KB |
+| dual (1×2) | 672 × 432 | 290,304 | 73 KB |
+| quad (2×2) | 1344 × 432 | 580,608 | 145 KB |
+
+672 rows is 21 words of 32 bits, and 432 columns is below `clusterBinning = 1000`.
+
+**Consequence.** No whole-module bitmap fits, and not even one ROC, because the
+FindClus histogram already takes roughly 16 to 21 KB of the 48 KB (estimate from the
+`HistoContainer` sizes, not measured). Option B (dense bitmap) is out for production.
+The remaining choices are option A (sparse, on the column histogram, no extra shared
+memory) or a tiled bitmap of at most about half a ROC (18 KB) per pass. With L1 at
+about 580 hits per module spread over the module, most tiles would be occupied, so
+tiling means 4 to 8 passes per module. **Option A is the plan.** A bitmap version can
+still serve as a debug reference using global memory.
+
+**Big pixels exist in T40**, validated for the IT: 87.5 µm in x (normal 25), 225 µm in
+y (normal 100), at ROC boundaries. One index each, so index-space morphing works as in
+Phase 1. The Alpaka Phase-2 topology still has `isBigPixX/Y = false`; Musich (HLT reco,
+slide 14) lists "handling of edge/big pixels" as a known HLT vs offline difference.
+
+**Occupancy.** Magherini (IT calibration, slide 11): TBPX L1 about 2×10⁻³ hits/pixel/BX,
+so about 580 hits per L1 dual module. Consistent with the all-module digi histogram
+(mean 242, tail to ~1000).
+
+**Physics motivation.** Magherini, slide 9: higher thresholds mean "edge pixels lost,
+clusters break"; after 1×10¹⁶ the L1 3D signal drops to about 5 ke against a ~1 ke
+threshold. Dutta (digitizer): Aug 2025 test beam saw cluster splitting. Roguljic (Run-3
+pixel): Phase-1 morphing deployed in 2025. **First region: TBPX L1 3D.**
+
+**Input.** Phase-2 HLT clustering still runs on simulated digis; the IT RAW unpacker is
+due end of 2026 (Musich, slide 11).
+
+**Still to read:** Mersi "Dataformats" and Grutta/Schulz "HLT Tracking: Phase-2 changes"
+(16 Oct), for digi ordering and the clustering time budget.
+
+Talk PDFs are in `References/DigiMorphing/tkdpg-workshop-2026-10/`, not committed
+because the event is CERN-restricted.

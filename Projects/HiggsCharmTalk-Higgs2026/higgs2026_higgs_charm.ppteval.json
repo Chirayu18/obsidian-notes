@@ -1,0 +1,1217 @@
+{
+  "pdf": "higgs2026_higgs_charm.pdf",
+  "backend": "claude",
+  "model": null,
+  "judge": null,
+  "audience": "Higgs 2026 conference: theorists and experimentalists, not CMS-internal; 15+5 min public CMS talk",
+  "slides": {
+    "1": {
+      "description": "1. **Message.** This is the title slide. It gives the talk title \"Constraints on Higgs-charm couplings at CMS\", the speaker, the affiliation, and the conference. It is not meant to make a physics point, so there is no take-away line, and none is expected on a title slide.\n\n2. **Text.** There are five short lines: the title, \"Chirayu Gupta\", \"on behalf of the CMS Collaboration\", \"IIHE, Vrije Universiteit Brussel (VUB)\", and \"Higgs 2026, Louvain-la-Neuve, 28 October 2026\". The wording is minimal. CMS and IIHE are not spelled out. That is normal for this audience. VUB is expanded in the line itself. I found no grammar problems.\n\n3. **Figures.** There are none: no plots, no logos, no images. That means there is no CMS label, luminosity or energy to check.\n\n4. **Layout.** All text is centred horizontally and sits in the upper two thirds of the slide. The title is large, bold and dark blue. The name is medium-sized black text. The \"on behalf of\" line and the affiliation are smaller black text. The conference/date line is grey, so it has lower contrast than the rest, but it should still be readable when projected. A solid dark-blue bar runs along the bottom edge and holds no text. The lower third of the slide is empty white space. Nothing overlaps or is clipped, no text is too small to read, and the slide uses no red/green distinctions.\n",
+      "content": {
+        "score": 5,
+        "reason": "A title slide does not need a physics take-away. It has the title, speaker, 'on behalf of the CMS Collaboration', affiliation, conference, venue and date, and nothing else. CMS and IIHE are well known to this audience and VUB is expanded. Nothing is missing and nothing is extra."
+      },
+      "readability": {
+        "score": 4,
+        "reason": "All five lines are centred, nothing is clipped or overlapping, and every font size should be legible from the back of the room. One small problem: the conference/date line is grey, so it has less contrast than the other lines and may look washed out on a weak projector. The text block also sits in the upper two thirds, which leaves the lower third empty and makes the slide look top-heavy. That is a looks issue and does not stop anyone reading it."
+      },
+      "issues": [
+        {
+          "severity": "minor",
+          "description": "The conference/date line ('Higgs 2026, Louvain-la-Neuve, 28 October 2026') is grey on white. It has the lowest contrast on the slide and may fade on a dim or washed-out projector.",
+          "suggested_fix": "Use dark grey (#404040 or darker) or black at the current small size."
+        },
+        {
+          "severity": "minor",
+          "description": "The text block sits in the upper two thirds and the lower third above the blue bar is empty, so the slide looks top-heavy.",
+          "suggested_fix": "Move the text block down so it is centred vertically between the top edge and the blue bar, or make the title a bit larger to fill the space."
+        },
+        {
+          "severity": "minor",
+          "description": "The slide has no CMS logo. Public CMS talks usually show one, and it tells a non-CMS audience at a glance whose result this is. This is optional and the 'on behalf of' line already covers it.",
+          "suggested_fix": "If you want one, add a small official CMS logo in a corner or on the blue bar, plus the VUB/IIHE logo if you like. Keep them small so they do not compete with the title."
+        }
+      ]
+    },
+    "2": {
+      "description": "**Slide 2/24: \"Why the Higgs-charm coupling?\"**\n\n**1. Message**\n- The point is that the Higgs-charm coupling is the most accessible open question among second-generation Yukawa couplings, and current sensitivity is reaching the region where BSM models predict deviations.\n- The title is a question. The nearest thing to a take-away line is \"\u21d2 current sensitivity is now entering this region\", with \"now entering\" in orange. The closing bullet asks whether the Higgs mechanism also gives mass to second-generation quarks.\n\n**2. Text**\n- There are four main bullets, two sub-bullets, a smaller-font \"e.g.\" line with an arXiv reference, and an arrow line. That is a moderate-to-heavy amount of text for a motivation slide. The first bullet runs to three lines.\n- Symbols and acronyms:\n  - \u03ba_c is defined at the bottom right: \u03ba_c = y_c/y_c^SM (SM: \u03ba_c = 1).\n  - SM, BSM, QCD and the branching-ratio symbol \ud835\udcd1 are not defined.\n  - On the plot y-axis, \u03ba_F and \u03ba_V are not defined on the slide.\n  - The legend term \"p_SM\" is not explained.\n- In the rendered image the branching-ratio expression looks like \"H \u2192 ee\". The text layer gives H \u2192 cc\u0304, so the image is a rendering artefact of the c-bar glyph.\n- There are no clear grammar problems. \"about 20\u00d7 below H \u2192 bb\u0304\" has no verb, which is acceptable in bullet style.\n\n**3. Figure**\n- **Upper panel:** coupling-modifier-scaled values (\u03ba_F\u00b7m/v or \u221a\u03ba_V\u00b7m/v) against particle mass in GeV, on log\u2013log axes. It shows points for \u03bc, c, \u03c4, b, W, Z and t, with the SM prediction drawn as a red line.\n- **Lower panel:** the ratio to the SM, from 0.5 to 1.5, with an inset zooming into the W/Z/t region (0.9 to 1.1).\n- **Legend:** Observed, arXiv:2509.22535 (star marker), 68% and 95% CL (stat \u2295 syst), and SM prediction. There are also annotations \"All \u03ba_i \u2265 0\", \"m_H = 125.38 GeV\" and \"p_SM = 0.12\", plus a coloured particle table.\n- **Label:** \"CMS Supplementary, 138 fb\u207b\u00b9 (13 TeV)\".\n- **Source:** the caption cites Rep. Prog. Phys. 89 (2026) 087801 (supplementary), with \u03ba_c taken from PRL 136 (2026) 011801.\n- **Readability:** the figure fills roughly the right 40% of the slide. The legend text, the annotations and the particle table are very small and would likely be hard to read when projected.\n- **Caption versus plot:**\n  - The charm point's error bar runs off the ratio-panel range at both ends.\n  - The plot does not mark a |\u03ba_c| \u2248 3 region, so the claim that sensitivity is \"now entering this region\" is not directly shown on the figure.\n  - The y-axis shows \u03ba\u00b7m/v rather than \u03ba_c itself.\n\n**4. Layout**\n- The caption below the figure is in small font, and its PRL reference wraps onto a second, centred line.\n- The \"e.g.\" line and the arXiv reference are in a noticeably smaller font than the bullets.\n- There is no visible overlap or clipping.\n- The orange highlight on white has moderate contrast.\n- In the plot, the particle-table colours (orange, red, purple, blue, grey) are used as category labels. Nothing depends only on a red/green distinction.\n",
+      "content": {
+        "score": 3,
+        "reason": "The message is clear: charm is the most accessible open second-generation Yukawa coupling, and sensitivity is reaching the region where BSM models predict deviations. It is buried, though. The title is a question, and the take-away is an arrow line partway down a fairly text-heavy slide. The figure does not directly back the main claim. It plots \u03ba\u00b7m/v against mass, with no marked |\u03ba_c| \u2248 3 or BSM band, so 'now entering this region' can't be seen on the plot. The charm error bar runs off the ratio panel at both ends, so the charm constraint can't be read off the figure. \u03ba_F, \u03ba_V and p_SM appear on the plot but are not defined on the slide. \u03ba_c is defined, but only in a corner."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "The bullet text is readable. The figure takes only about 40% of the width, and its legend, annotations (p_SM, m_H, All \u03ba_i \u2265 0) and particle table are too small to read when projected. The caption and the 'e.g.' arXiv line are in a small font. The text competes with the figure for space. Nothing is clipped or overlapping."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The take-away 'current sensitivity is now entering this region' is not shown on the figure: no BSM-predicted region or |\u03ba_c| \u2248 3 marker is drawn, and the charm point's error bar runs off the ratio panel.",
+          "suggested_fix": "Shade the BSM-motivated \u03ba_c range on the ratio panel, or extend its range to cover the charm interval. Otherwise, state the \u03ba_c limit as a number next to the plot, for example 'CMS: |\u03ba_c| < X at 95% CL'."
+        },
+        {
+          "severity": "major",
+          "description": "The figure is too small for its importance. The legend, annotations and particle table can't be read from the back of the room.",
+          "suggested_fix": "Make the figure at least 55-60% of the slide width and cut the text to match. Crop the particle table, or mention it in speech instead."
+        },
+        {
+          "severity": "major",
+          "description": "There is too much text for a motivation slide: four bullets, two sub-bullets, an 'e.g.' line and an arrow line, with the first bullet running to three lines.",
+          "suggested_fix": "Cut to three short bullets: y_c is the most accessible second-generation Yukawa coupling; BSM models predict deviations of order a few; current sensitivity is now reaching that range. Say the closing question aloud or move it to the title."
+        },
+        {
+          "severity": "minor",
+          "description": "The title is a question, and the take-away line does not stand out.",
+          "suggested_fix": "Use a statement as the title, for example 'Higgs-charm: the accessible second-generation Yukawa, now within reach of BSM-relevant sensitivity', or put the take-away in a box at the bottom."
+        },
+        {
+          "severity": "minor",
+          "description": "\u03ba_F, \u03ba_V and p_SM appear on the plot but are not defined. \u03ba_c is defined only in a corner.",
+          "suggested_fix": "Add a short note such as '\u03ba_F, \u03ba_V: fermion and vector coupling modifiers'. Move the \u03ba_c definition up into the first bullet that uses it."
+        },
+        {
+          "severity": "minor",
+          "description": "The rendered image may show 'H \u2192 ee' instead of H \u2192 cc\u0304 because of the c-bar glyph.",
+          "suggested_fix": "Check the PDF render. Use \\bar{c} in math mode, or swap to a font with a correct c-bar glyph."
+        },
+        {
+          "severity": "minor",
+          "description": "The caption is in a small font, and its PRL reference wraps onto a centred second line. The 'e.g.' arXiv line is also in a small font.",
+          "suggested_fix": "Shorten the caption to one line, for example 'CMS, Rep. Prog. Phys. 89 (2026) 087801; \u03ba_c: PRL 136 (2026) 011801'."
+        },
+        {
+          "severity": "minor",
+          "description": "The orange highlight on 'now entering' has only moderate contrast on white.",
+          "suggested_fix": "Use a darker orange or bold black for the highlight."
+        }
+      ]
+    },
+    "3": {
+      "description": "**Slide 3/24: \"How CMS probes \u03bac\"**\n\n**1. Message**\n- The slide gives an overview of four ways CMS constrains \u03bac: direct H\u2192cc\u0304, H+charm production, indirect constraints from H production and width, and rare exclusive decays. Each box ends with its best constraint.\n- No take-away line says which approach is most sensitive or how they compare. The reader has to compare the numbers in the four boxes.\n- The title names the topic but makes no claim.\n\n**2. Text**\n- Moderate amount. Each box has a heading, two or three lines of channel plus reference, and one result line. Below the boxes is a footnote: \"All results with 13 TeV Run 2 data, up to 138 fb\u207b\u00b9. NEW = public in 2026.\"\n- The text is terse and in list style. Several items are abbreviated: \"comb.\", \"exp.\", \"(by assumptions)\".\n- Undefined symbols or acronyms: \u03bac itself, \u0393_H, VH, tt\u0304H, ggH, cg, \u03b3H. Most of this audience would know them.\n- \"\u03bac \u2208 [\u22123.7, 3.2] to [\u22128.6, 7.5] (by assumptions)\" is vague about which assumptions give which range.\n- The rare-decay box says the channel is \"sensitive to the sign of \u03bac\", and the result shown is an asymmetric interval (\u2212166 < \u03bac < 208).\n- \"(rate \u221d \u03bac\u00b2/\u0393_H)\" is set smaller than the box heading.\n- No grammar errors.\n- The mathematical symbols (cc\u0304, \u03bac, \u0393_H) are typeset in a serif math font, while the surrounding text is sans-serif. The mixed fonts are visible in the headings and channel lines.\n\n**3. Figures**\n- The slide has no plots or images. It is text only, so there are no axes, legends, CMS labels or captions to check.\n\n**4. Layout**\n- Four rounded, light-blue boxes in a 2\u00d72 grid under a dark-blue title bar.\n- The body text inside the boxes is small: the channel and reference lines are roughly footnote size. Journal references are right-aligned in each box.\n- About the bottom fifth of the slide is empty, between the footnote and the footer.\n- There is no overlap or clipping. Contrast is good, with dark text on light blue.\n- \"NEW\" is highlighted in orange in the bottom-left box and in the footnote. No red/green-only distinctions.\n- The footer (author, talk title, conference, page number) is very small.\n",
+      "content": {
+        "score": 3,
+        "reason": "Clear overview of the four ways CMS probes \u03bac, each with its best constraint, but there is no stated take-away comparing their sensitivity and the title states a topic rather than a claim. The indirect box's range '[\u22123.7, 3.2] to [\u22128.6, 7.5] (by assumptions)' doesn't say which assumption gives which range. The rare-decay box claims sensitivity to the sign of \u03bac, but the interval shown (\u2212166 < \u03bac < 208) can't demonstrate that. The audience has to compare numbers across boxes that differ by orders of magnitude to work out the message."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "Contrast is good and nothing is clipped or overlapping, but the channel and reference lines are about footnote size, which is hard to read from the back of a conference room. The bottom fifth of the slide is empty and could hold larger text. The proportionality note and the footer are smaller still. Serif math mixed with sans-serif text looks inconsistent but doesn't hurt legibility."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "No take-away line. The audience must compare four numbers spanning very different scales (O(1) to O(100)) to see which approach is most sensitive.",
+          "suggested_fix": "Add a one-line conclusion in the empty bottom area, e.g. 'Indirect fits give the tightest \u03bac bounds, but only under assumptions; direct H\u2192cc\u0304 is the most model-independent.' Or make the title a claim."
+        },
+        {
+          "severity": "major",
+          "description": "Body text (channel/reference lines) is roughly footnote size and will not be readable when projected; the bottom ~20% of the slide is unused.",
+          "suggested_fix": "Use the empty space to enlarge the boxes and raise body text to at least 18\u201320 pt. Shorten references to e.g. 'PRL 131 (2023)' or move them to a backup slide."
+        },
+        {
+          "severity": "major",
+          "description": "'\u03bac \u2208 [\u22123.7, 3.2] to [\u22128.6, 7.5] (by assumptions)' is vague: the audience can't tell which assumption gives which interval.",
+          "suggested_fix": "Name the assumptions explicitly, e.g. '[\u22123.7, 3.2] (no BSM in width) / [\u22128.6, 7.5] (\u0393_H free)', or show only the most model-independent interval with a footnote."
+        },
+        {
+          "severity": "minor",
+          "description": "The rare-decay box claims sensitivity to the sign of \u03bac, but the result shown (\u2212166 < \u03bac < 208) doesn't show sign sensitivity and invites a 'so what' from theorists.",
+          "suggested_fix": "Either reword to 'interference makes it sign-sensitive in principle; current limit \u2212166 < \u03bac < 208', or drop the sign claim from this overview slide."
+        },
+        {
+          "severity": "minor",
+          "description": "Abbreviations 'comb.', 'exp.' and the undefined \u03bac (on its first appearance in the talk, if not defined earlier) plus \u03b3H and cg production labels.",
+          "suggested_fix": "Spell out 'combination' and 'expected', and define \u03bac = y_c/y_c^SM once, either here or on the previous slide."
+        },
+        {
+          "severity": "minor",
+          "description": "'(rate \u221d \u03bac\u00b2/\u0393_H)' is smaller than its box heading even though it explains the indirect sensitivity.",
+          "suggested_fix": "Set it at body-text size, or integrate it into the box's main line."
+        },
+        {
+          "severity": "minor",
+          "description": "Footer (author, title, conference, page number) is very small.",
+          "suggested_fix": "Increase the footer font slightly, or keep only the page number and a short talk tag."
+        },
+        {
+          "severity": "minor",
+          "description": "Serif math (\u03bac, cc\u0304, \u0393_H) mixed with sans-serif body text looks inconsistent.",
+          "suggested_fix": "Use a sans-serif math font (e.g. \\usefonttheme{professionalfonts} with sansmathfonts, or \\mathsf for symbols) to match the body text."
+        }
+      ]
+    },
+    "4": {
+      "description": "## Slide 4/24: \"Direct H \u2192 cc\u0304: VH and boosted H\"\n\n**1. Message**\n- The slide summarises the direct CMS searches for H \u2192 cc\u0304, in both the VH and the boosted-H channels. The title names the topic but makes no claim.\n- There is no separate take-away line. The two shaded boxes on the left act as the result summary:\n  - VH(H \u2192 cc\u0304), 138 fb\u207b\u00b9: \u03bc < 14 (7.6), 1.1 < |\u03ba_c| < 5.5 (|\u03ba_c| < 3.4 exp.)\n  - Boosted H \u2192 cc\u0304, p_T > 450 GeV: \u03bc < 47 (39), \"(mostly ggH)\"\n\n**2. Text**\n- Text is light: two bullets plus the two boxes.\n  - Bullet 1: VH with leptonic W/Z, resolved + merged-jet (ParticleNet) topologies\n  - Bullet 2: VZ(Z\u2192cc\u0304) observed, 5.7\u03c3\n- Undefined symbols and acronyms:\n  - \u03bc, \u03ba_c, ggH and ParticleNet are not defined.\n  - The numbers in parentheses are not labelled as expected limits. Only the \u03ba_c line says \"exp.\", and only for its own value.\n  - \"exp.\" is itself an abbreviation.\n- Grammar: no grammatical problems. These are fragments in bullet style.\n- The two references (PRL 131 (2023) 061801; PRL 131 (2023) 041801) appear in small blue text above the right plot.\n\n**3. Figures**\n- **Left plot:** the VH merged-jet distribution, with the caption \"VH merged-jet: m(H_cand), S/(S+B) weighted\".\n  - x-axis: \"Higgs boson candidate mass [GeV]\", from about 60 to 200.\n  - y-axis: \"S/(S+B) weighted events\".\n  - Lower panel: \"B subtracted\".\n  - Labels: \"CMS\", \"Merged-jet / All categories / S/(S+B) weighted\", and 138 fb\u207b\u00b9 (13 TeV).\n  - Legend: about 12 entries in two columns, including Observed, VH(H\u2192cc\u0304) \u03bc = 7.7, Z+jets, W+jets, tt\u0304, single top, VV(other), VZ(Z\u2192cc\u0304), VZ(Z\u2192bb\u0304), VH(H\u2192bb\u0304) and B uncertainty. The legend text is very small.\n  - The caption matches what the plot shows.\n- **Right plot:** the caption is \"VH: \u03bc limits per channel\".\n  - x-axis: \"95% CL limit on \u03bc_VH(H\u2192cc\u0304)\", from 0 to 40.\n  - Rows: Combined, Merged-jet, Resolved-jet, 0L, 1L and 2L. Each row has tiny expected/observed numbers, for example Combined: Expected 7.60, Observed 14.4.\n  - Legend: Observed, Median expected, 68% expected (green) and 95% expected (yellow).\n  - A red vertical line marks \u03bc = 1.\n  - Labels: \"CMS\" and 138 fb\u207b\u00b9 (13 TeV).\n  - The caption matches what the plot shows.\n- **Claims with no figure:** neither plot shows the 5.7\u03c3 VZ significance. There is also no figure for the boosted-H result.\n- **Size:** both plots take up roughly a quarter of the slide width each. Their axis labels, legends and per-row numbers are small for projection.\n\n**4. Layout**\n- The smallest text is in the plot legends and the right plot's row annotations. It is likely unreadable when projected.\n- The reference line is small.\n- There is no overlap or clipping.\n- Contrast is adequate.\n- The colour bands are green/yellow, not red/green. The left plot has many fill colours, some of them pastel.\n- The bottom third under the plots is empty apart from the short captions.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear and the numbers in the summary boxes are correct and supported by the right plot (combined: observed 14.4, expected 7.60). However, the slide makes no claim, so the take-away is buried. A non-CMS audience needs mu, kappa_c, ggH and ParticleNet defined, and they are not. The numbers in parentheses are not labelled as expected limits, except on the kappa_c line. Two claims have no figure: the 5.7 sigma VZ(Z->cc) result and the whole boosted-H result. The left plot also shows the fitted mu = 7.7, which can confuse readers next to the limit of 14."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Each plot takes only about a quarter of the slide width, while the bottom third is empty. As a result, the key content is hard to read when projected: the left legend has about 12 tiny entries, and the expected/observed numbers on each row of the right plot are tiny. The axis labels are small and the reference line is small. There is no clipping and contrast is fine, but the figures do not dominate the slide."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The plots are about a quarter of the slide width each, and the bottom third is empty. The legends, per-row limit numbers and axis labels will not be readable from the back of the room.",
+          "suggested_fix": "Enlarge both plots to fill the lower two thirds of the slide, or drop the left plot and show only the limit summary at full size. Move the text boxes above or beside the plots."
+        },
+        {
+          "severity": "major",
+          "description": "The title states a topic, not a claim, and there is no take-away line.",
+          "suggested_fix": "Use a conclusion title or a bottom line, for example: 'Direct H->cc: mu < 14 (7.6 exp.); strongest direct constraint |kappa_c| < 5.5; the method is validated by observing VZ(Z->cc) at 5.7 sigma'."
+        },
+        {
+          "severity": "major",
+          "description": "mu, kappa_c, ggH and ParticleNet are undefined for a non-CMS audience, and the values in parentheses are not labelled as expected.",
+          "suggested_fix": "Add a short legend line: 'mu = sigma x BR / SM; kappa_c = Hcc coupling modifier; observed (expected) 95% CL'. Spell out 'ggH' as gluon fusion and describe ParticleNet as a 'graph-NN jet tagger'."
+        },
+        {
+          "severity": "major",
+          "description": "The 5.7 sigma VZ(Z->cc) observation and the boosted-H limit (mu < 47) have no supporting figure on the slide.",
+          "suggested_fix": "Add a small boosted-H mass plot, or a limit/significance summary, or state explicitly that these figures are in the cited papers. Alternatively, move the boosted result to its own slide."
+        },
+        {
+          "severity": "minor",
+          "description": "The left plot's legend shows VH(H->cc) mu = 7.7, a fitted value that the audience may confuse with the limits quoted in the boxes.",
+          "suggested_fix": "Say in the caption that the signal is shown at its best-fit mu, or use the right plot alone."
+        },
+        {
+          "severity": "minor",
+          "description": "The references are in small blue text and are only associated with the right plot.",
+          "suggested_fix": "Put both references in a footer at readable size, each next to the result it supports (VH: PRL 131 061801; boosted: PRL 131 041801)."
+        },
+        {
+          "severity": "minor",
+          "description": "'exp.' is abbreviated and applied inconsistently.",
+          "suggested_fix": "Use the uniform format 'obs. (exp.)', defined once on the slide."
+        }
+      ]
+    },
+    "5": {
+      "description": "## Slide 5/24: \"tt\u0304H(H \u2192 cc\u0304): a new channel\"\n\n**1. Message**\n- The slide introduces tt\u0304H(H \u2192 cc\u0304) as a new search channel and summarises how the analysis is done and what it found. The title says the channel is \"new\". There is no separate take-away line. The main numbers sit in the last bullets: the tt\u0304Z(Z\u2192cc\u0304) candle at \u03bc = 1.0 \u00b1 0.8, and the tt\u0304H(H \u2192 bb\u0304) by-product at \u03bc = 0.91 +0.26/\u22120.22, 4.4\u03c3 (4.5 exp.).\n- The reference \"PRL 136 (2026) 011801, CMS-HIG-24-018\" appears in small blue text at the top right.\n\n**2. Text**\n- The left half has 5 main bullets and 2 sub-bullets, roughly 70 words. The bullets are mostly fragments in a telegraphic style, for example \"First search for H \u2192 cc\u0304 in tt\u0304H; 0, 1, 2 lepton tt\u0304 decays\".\n- These terms are not defined on the slide: ParticleNet, ParT, HF (heavy flavour), \u03bc (signal strength), \u03c3, and \"exp.\" (expected significance).\n- \"2D categories\" and \"Simultaneous\" are in bold.\n- In the rendered image, the overlined c in cc\u0304 looks like \"ee\" (in the title, the first bullet and the fourth bullet). The text layer confirms the symbol is c\u0304.\n- The sub-bullets mix notation: \"tt\u0304+cc/bb\" and \"Z\u2192bb/cc\" have no overlines, while \"Z\u2192cc\u0304\" in the next sub-bullet does.\n\n**3. Figure** (one 2D plot, right half)\n- **What it shows:** b-, c- and light-jet distributions from simulated tt\u0304H(H\u2192cc\u0304) events, drawn as shaded contours. Lines divide the plane into tagging categories L0, C0\u2013C4 and B0\u2013B4. Each category lists per-flavour efficiencies in %, for example B4: 39% / 0.1% / 0.01%.\n- **Axes:** x is \"ParticleNet discriminant p_B+C\" and y is \"ParticleNet discriminant p_BvsC\", both from 0 to 1. Both are dimensionless, so no units are shown.\n- **Legend:** b jets in red, c jets in blue, light jets in orange, each \"& efficiencies (%)\". It also gives the selection: pT > 25 GeV, |\u03b7| < 2.4.\n- **Label:** \"CMS Simulation\" and \"13 TeV\". No luminosity is shown.\n- **Caption:** \"b, c, light jets in the ParticleNet (b vs. light, c vs. light) plane and the 2D tagging categories\". The plot's axes are p_B+C and p_BvsC, not b-vs-light and c-vs-light, so the caption does not match the axis labels.\n- **Size:** The plot fills about half the slide width. The category labels and efficiency numbers are much smaller than the axis labels.\n\n**4. Layout**\n- The efficiency numbers inside the plot are very small. The C3 and C4 rows at the bottom right are crowded, and the C4 values overlap the boundary line, so they look struck through and are partly unreadable.\n- The light-jet efficiencies are orange or yellow text on a light background, which is low contrast.\n- Flavours are told apart by red, blue and orange. The b-jet (red) and light-jet (orange) contours are both warm shades.\n- The caption, reference line and footer are in small font.\n- Nothing is clipped at the slide edges.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear: ttH(H\u2192cc\u0304) is presented as a first search, with its method and results. The take-away is buried, though. There is no conclusion line, and the headline numbers (ttZ(cc\u0304) candle \u03bc = 1.0 \u00b1 0.8 and the ttH(bb\u0304) by-product at 4.4\u03c3) sit in the last telegraphic bullets. The ttH(cc\u0304) result itself is not stated. A non-CMS audience needs ParticleNet, ParT, HF, \u03bc, \u03c3 and 'exp.' explained, and none of these is defined on the slide. The caption describes the axes as b vs. light and c vs. light, but the plot is labelled p_B+C and p_BvsC, so the caption contradicts the figure."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Axis labels and bullets are readable. The content that carries the plot's message is not. The per-category efficiency numbers are far smaller than the axis labels, and C3/C4 are crowded. The C4 values overlap the boundary line, so they look struck through. Light-jet efficiencies are orange or yellow on a light background, which has low contrast. Red b-jet and orange light-jet contours are hard to tell apart. The figure takes only half the width even though it is the main visual. The caption, reference and footer are small."
+      },
+      "issues": [
+        {
+          "severity": "blocker",
+          "description": "In the rendered slide, cc\u0304 shows up as 'ee' in the title and two bullets. The text layer is correct, so this is a font or overline rendering problem. Projected, it would read as H\u2192ee.",
+          "suggested_fix": "Typeset c\u0304 with \\bar{c} in math mode, or embed the font properly. Check the actual PDF that will be projected, not only the text layer."
+        },
+        {
+          "severity": "major",
+          "description": "There is no take-away line, the ttH(cc\u0304) result itself (limit or \u03bc) is not given, and the key numbers are buried in the final bullets.",
+          "suggested_fix": "Add a boxed conclusion at the bottom with the ttH(cc\u0304) result, the ttZ(cc\u0304) validation and the ttH(bb\u0304) 4.4\u03c3 (4.5 exp.). Cut the method bullets down to match."
+        },
+        {
+          "severity": "major",
+          "description": "The caption says (b vs. light, c vs. light), but the axes are p_B+C and p_BvsC.",
+          "suggested_fix": "Change the caption to say the axes are heavy-flavour vs. light (p_B+C) and b vs. c (p_BvsC)."
+        },
+        {
+          "severity": "major",
+          "description": "The C4 efficiency values overlap the boundary line and are partly unreadable. All the in-plot efficiency numbers are too small to project.",
+          "suggested_fix": "Enlarge the figure to about 60% of the slide width, or replace the in-plot numbers with a short side table that gives efficiencies for a few key categories (e.g. B4, C4)."
+        },
+        {
+          "severity": "major",
+          "description": "Terms are undefined for a non-CMS audience: ParticleNet, ParT, HF, \u03bc, \u03c3, exp.",
+          "suggested_fix": "Gloss them inline, e.g. 'ParticleNet / ParT (graph and transformer jet taggers)', '\u03bc = \u03c3/\u03c3_SM', 'obs. (exp.) significance'. Drop the ones the slide does not need."
+        },
+        {
+          "severity": "minor",
+          "description": "Light-jet text in orange or yellow has low contrast, and the red and orange contours are hard to tell apart (also a colour-vision issue).",
+          "suggested_fix": "Use a dark colour such as dark green or grey for light jets, or use different line styles per flavour."
+        },
+        {
+          "severity": "minor",
+          "description": "Notation is inconsistent: 'tt\u0304+cc/bb' and 'Z\u2192bb/cc' have no overlines, while 'Z\u2192cc\u0304' does.",
+          "suggested_fix": "Use cc\u0304 and bb\u0304 everywhere."
+        },
+        {
+          "severity": "minor",
+          "description": "The reference (PRL 136 (2026) 011801, CMS-HIG-24-018) and the caption are in small font.",
+          "suggested_fix": "Increase the size slightly. The reference matters to an external audience looking up the paper."
+        }
+      ]
+    },
+    "6": {
+      "description": "**1. Message**\n\nThe slide reports the CMS t\u0304tH(H\u2192cc\u0304) results (PRL 136 (2026) 011801, CMS-HIG-24-018): upper limits on the signal strength and constraints on |\u03bac|. The title is \"t\u0304tH(H\u2192cc\u0304): results\". It names the topic but states no conclusion. The two bullets serve as take-aways: sensitivity is comparable to VH(H\u2192cc\u0304), and a simultaneous bb/cc fit constrains \u03bab and \u03bac together.\n\n**2. Text**\n\n- **Amount:** moderate. A highlighted box holds four result lines and there are two short bullets.\n  - \u03bc_t\u0304tH(cc) < 7.8 (8.7)\n  - \u03c3B < 0.11 (0.13) pb\n  - |\u03bac| < 3.0 (3.3), \u03bab = 1\n  - |\u03bac| < 4.2 obs., \u03bab floating\n- **Undefined conventions:**\n  - The slide never says that the grey numbers in parentheses are expected values.\n  - Only the last line is labelled \"obs.\", and it gives no expected value even though the plot has one.\n  - \u03c3B is not defined. The reader has to infer it means \u03c3 \u00d7 B(H\u2192cc\u0304).\n  - The box header gives 138 fb\u207b\u00b9 but no \u221as. The plots show 13 TeV.\n- **Rendering:** at slide resolution the c\u0304 glyph looks like \"e\", so \"H\u2192cc\u0304\" in the title, the box header and the first bullet reads as \"H\u2192ee\".\n- **Claims without support on this slide:**\n  - The VH(H\u2192cc\u0304) comparison gives no number, so the reader can't check it here.\n  - The \"constrains \u03bab and \u03bac together\" bullet is not backed by a \u03bab constraint on the slide. The scan shows only |\u03bac|, with \u03bab fixed or floating.\n- **Grammar:** no problems.\n\n**3. Figures**\n\n- **Left plot (per-channel limits):**\n  - It shows 95% CL upper limits on \u03bc_t\u0304tH(H\u2192cc\u0304) for four rows: All (Exp. 8.7, Obs. 7.8), 0L (Exp. 13, Obs. 14), 1L (Exp. 12, Obs. 6.6) and 2L (Exp. 23, Obs. 35).\n  - Each row has the observed limit as a point, the median expected limit as a dashed line, and yellow (68%) and blue (95%) expected bands. A thin red vertical line sits near \u03bc = 1.\n  - The x axis reads \"95% CL upper limit on \u03bc_t\u0304tH(H\u2192cc\u0304)\". It is unitless, which is appropriate here.\n  - The legend is present. The plot carries the \"CMS\" label and \"138 fb\u207b\u00b9 (13 TeV)\".\n  - The caption \"\u03bc_t\u0304tH(cc) limits per channel\" matches the content.\n- **Right plot (|\u03bac| likelihood scan):**\n  - The y axis is \u22122\u0394ln(L) and the x axis is |\u03bac|, running from 0 to about 7.5. Both are unitless.\n  - Red curves have \u03bab fixed and blue curves have \u03bab floating. Solid lines are observed and dashed lines are expected.\n  - Horizontal dotted reference lines sit at 1 and about 3.84.\n  - The in-plot legend states |\u03bac| < 3.0 and < 4.2 at 95% CL, observed.\n  - The label is \"CMS Supplementary\" with \"138 fb\u207b\u00b9 (13 TeV)\".\n  - The caption \"|\u03bac| scan, \u03bab fixed / floating\" matches the plot.\n  - The observed crossings at 3.84 are consistent with the 3.0 and 4.2 values in the text box.\n- **Size:** each plot takes up roughly a quarter to a third of the slide width. Several elements are very small and probably unreadable when projected:\n  - the per-channel Exp./Obs. labels\n  - the legend entries in both plots\n  - the axis tick labels\n  - the in-plot \u03bac limit legend on the right plot\n\n**4. Layout**\n\n- The figure fonts are much smaller than the slide text.\n- There is a large empty band between the title bar and the content, plus empty space below the plots.\n- Nothing overlaps or is clipped.\n- The colour coding is red vs blue (and yellow vs blue bands), not red vs green. Fixed vs floating is also distinguished by colour alone, while observed vs expected uses line style.\n- Contrast is adequate. The grey expected-value numbers in the box are lighter than the surrounding text.\n",
+      "content": {
+        "score": 3,
+        "reason": "The results are clear and the box numbers agree with both plots (7.8/8.7, |\u03bac| < 3.0 and < 4.2). The message is buried, though. The title states no conclusion. The parenthesised numbers are never identified as expected values. \u03c3B is undefined, the box gives no \u221as, and the \u03bab-floating line has no expected value. Neither bullet is supported on the slide: the VH(H\u2192cc\u0304) comparison has no number, and the slide shows no \u03bab constraint even though a bullet says \u03bab and \u03bac are constrained together."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Each plot fills only a quarter to a third of the slide width. Their tick labels, legends, per-channel Exp./Obs. labels and the in-plot \u03bac legend are far smaller than the slide text and won't be readable when projected. Space that could hold larger figures is wasted in a big empty band under the title and more empty space below the plots. The c\u0304 glyph renders like 'e', so 'H\u2192cc\u0304' reads as 'H\u2192ee' in the title, the box and the bullet. The grey expected values are low in contrast."
+      },
+      "issues": [
+        {
+          "severity": "blocker",
+          "description": "The c\u0304 glyph renders like 'e', so the title, box header and first bullet read 'H\u2192ee'. A non-CMS audience will misread the decay channel.",
+          "suggested_fix": "Typeset it as $\\mathrm{H}\\to\\mathrm{c}\\bar{\\mathrm{c}}$ in a font where the bar is clearly visible, or write 'H\u2192cc\u0304' with a larger bar, and check the result at projection resolution."
+        },
+        {
+          "severity": "major",
+          "description": "The plot text (tick labels, legends, per-channel Exp./Obs. numbers, the \u03bac limit legend) is far too small to read when projected.",
+          "suggested_fix": "Enlarge both plots so together they fill most of the slide width and height. Use the empty band below the title and the space under the plots. If they still don't fit, shrink the text box or move it beside a single dominant plot."
+        },
+        {
+          "severity": "major",
+          "description": "The grey numbers in parentheses are never identified as expected limits. Only the last line says 'obs.', and that line gives no expected value even though the plot has one.",
+          "suggested_fix": "Add a header such as 'observed (expected), 95% CL' to the box and give the expected value for the \u03bab-floating |\u03bac| limit, read from the dashed blue crossing."
+        },
+        {
+          "severity": "major",
+          "description": "The bullet saying \u03bab and \u03bac are constrained together has no \u03bab result on the slide. The scan only shows \u03bab fixed or floating.",
+          "suggested_fix": "Either show the 2D \u03bab\u2013\u03bac contour from the paper, or reword the bullet to '\u03bac limit with \u03bab profiled: |\u03bac| < 4.2'."
+        },
+        {
+          "severity": "major",
+          "description": "The comparison 'comparable to VH(H\u2192cc\u0304)' gives no number.",
+          "suggested_fix": "Quote the CMS VH(H\u2192cc\u0304) expected \u03bc or |\u03bac| limit next to the ttH value, e.g. 'expected |\u03bac| < 3.3 vs X for VH', with its reference."
+        },
+        {
+          "severity": "minor",
+          "description": "The title only names the topic and states no conclusion.",
+          "suggested_fix": "Make the title the take-away, e.g. 'ttH(H\u2192cc\u0304): |\u03bac| < 3.0 (3.3 exp.), sensitivity comparable to VH'."
+        },
+        {
+          "severity": "minor",
+          "description": "\u03c3B is not defined, and the box header gives 138 fb\u207b\u00b9 without \u221as.",
+          "suggested_fix": "Write '\u03c3(ttH)\u00b7B(H\u2192cc\u0304) < 0.11 (0.13) pb' and '138 fb\u207b\u00b9, 13 TeV'."
+        },
+        {
+          "severity": "minor",
+          "description": "Fixed vs floating \u03bab is shown by red vs blue colour alone, and the grey expected numbers are low in contrast.",
+          "suggested_fix": "Label the curves directly on the plot or use different markers. Use a darker grey or black for the expected values."
+        }
+      ]
+    },
+    "7": {
+      "description": "## Slide 7/24: \"Combination of ttH and VH: tightest constraint on \u03bac\"\n\n**1. Message**\nThe slide says that combining the ttH(H\u2192cc\u0304) and VH(H\u2192cc\u0304) channels gives the strongest direct constraint on \u03bac. The title states this, and so does the take-away line at the bottom: \"Most stringent direct constraint on \u03bac to date; expected reach now below the BSM-motivated |\u03bac| \u223c 3\". The source is cited at top right: PRL 136 (2026) 011801, CMS-HIG-24-018.\n\n**2. Text**\nThere is little text. A side box gives \u03bc_H\u2192cc\u0304 < 9.3 (5.6 exp.) and |\u03bac| < 3.5 (2.7 exp.). Below it is a short note: \"Expected limit improves by \u223c20% over the best single channel\". The text has no grammar problems. Several symbols and acronyms are never defined on the slide: \u03bac, \u03bc, ttH, VH, CL, BSM, \"Comb.\", and the \u22122\u0394ln(L) axis label. In the image, the \u03bc subscript in the side box looks like \"H\u2192ee\". The text layer shows it as H\u2192cc\u0304.\n\n**3. Figures**\n- **Left plot:** horizontal bars giving the 95% CL upper limit on \u03bc_H\u2192cc\u0304 for three cases. Combined: Exp. 5.6, Obs. 9.3. ttH: Exp. 8.7, Obs. 7.8. VH: Exp. 7.6, Obs. 14. Each bar has yellow 68% and blue 95% expected bands, a dashed median expected line and an observed marker. The x axis is labelled and runs from 0 to 17.5. \u03bc has no units, which is correct. It carries the \"CMS Supplementary\" label and 138 fb\u207b\u00b9 (13 TeV). A red vertical line at \u03bc = 1 has no label. The plot is small. The per-channel numbers and axis labels are in very small type and are unlikely to be readable when projected.\n- **Right plot:** \u22122\u0394ln(L) against |\u03bac| from 0 to about 3.7 for ttH (red), VH (blue) and the combination (black). Solid lines are observed and dashed lines are expected. Grey dotted horizontal reference lines sit at about 1 and 3.84 and are not labelled. The combined observed curve has its minimum near |\u03bac| \u2248 2.2 and the VH observed minimum is near 3.1. The legend gives |\u03bac|obs ttH(H\u2192cc\u0304) < 3.0 @95% CL and |\u03bac|obs Comb. < 3.5 @95% CL. It carries \"CMS Supplementary\" and 138 fb\u207b\u00b9 (13 TeV). This plot is larger and readable, although the legend text is small and partly in red.\n- **Claims compared with the plots:**\n  - The title says the combination is the \"tightest constraint\". For observed limits, the plots show ttH alone as tighter: |\u03bac| < 3.0 against 3.5 for the combination, and \u03bc < 7.8 against 9.3. The combination is tighter only in the expected limits.\n  - The note says the expected limit improves by \"\u223c20%\". For \u03bc, going from the best single-channel expected limit (7.6) to the combined one (5.6) is about a 26% improvement. The single-channel expected limits on \u03bac are not shown, so the claim can't be checked against the \u03bac plot.\n  - \"Most stringent \u2026 to date\" is a comparison with other results, and neither plot shows any.\n\n**4. Layout**\n- Nothing overlaps or is clipped.\n- The left figure's labels and numbers are the main legibility problem.\n- The grey \"(5.6 exp.)\" and \"(2.7 exp.)\" text in the side box has fairly low contrast against its light blue background.\n- Orange highlight text appears in the take-away line.\n- Colours are told apart as red, blue, black, yellow and light blue, together with solid versus dashed lines. Nothing relies on a red/green-only distinction.\n",
+      "content": {
+        "score": 2,
+        "reason": "The message is clear: combining ttH and VH H\u2192cc\u0304 improves the \u03bac constraint. But the title's 'tightest constraint' is contradicted by the slide's own numbers for observed limits: ttH alone gives |\u03bac| < 3.0 and \u03bc < 7.8, while the combination gives 3.5 and 9.3. The combination is only tighter in expected sensitivity. The take-away line says 'expected reach' correctly, so this is a framing error rather than a wrong result, which keeps it at 2 rather than 1. The '\u223c20%' figure doesn't match the \u03bc numbers shown (7.6\u21925.6 is about 26%), and the single-channel expected \u03bac limits aren't shown, so it can't be checked. 'Most stringent to date' has no comparison on the slide. For a non-CMS audience, \u03bac, \u03bc and \u22122\u0394ln L are undefined, the 1 and 3.84 reference lines aren't explained, and the red \u03bc=1 line has no label. Theorists will notice that the observed combined limit is weaker than ttH alone and ask why. The slide doesn't answer that (the VH observed excess pulls the combination up)."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "The left \u03bc summary plot is small, and its per-channel numbers and axis labels are too small to read when projected. That plot carries half the quantitative claims. The right \u03bac plot is readable, but its legend is small and partly in red. The grey '(exp.)' values in the side box have low contrast on light blue. There is no clipping or overlap, and the text load is light."
+      },
+      "issues": [
+        {
+          "severity": "blocker",
+          "description": "The title claims the combination gives the 'tightest constraint on \u03bac', but the observed limits on the slide show ttH alone is tighter (|\u03bac| < 3.0 vs 3.5; \u03bc < 7.8 vs 9.3). The combination is tighter only in expected sensitivity.",
+          "suggested_fix": "Retitle along the lines of 'ttH + VH combination: best expected sensitivity to \u03bac'. In the side box, show the ttH-only observed result next to the combined one and add one line explaining it, e.g. 'observed combination weakened by an upward fluctuation in VH (obs. \u03bc < 14 vs 7.6 exp.)'."
+        },
+        {
+          "severity": "major",
+          "description": "The '\u223c20%' expected improvement doesn't match the \u03bc numbers shown (best single-channel 7.6 \u2192 combined 5.6 is about 26%). The single-channel expected \u03bac limits aren't shown, so the claim can't be checked for \u03bac either.",
+          "suggested_fix": "Quote the exact improvement and say which quantity it refers to, e.g. 'expected \u03bc limit improves 26% over the best single channel (VH)'. Otherwise add the per-channel expected \u03bac limits to the side box."
+        },
+        {
+          "severity": "major",
+          "description": "The left \u03bc limit plot is too small. The per-channel values and axis labels won't be readable when projected.",
+          "suggested_fix": "Enlarge it to roughly half the slide width at full height, or replace it with a three-row table (Comb./ttH/VH, exp./obs.) in large type and keep only the \u03bac scan as the figure."
+        },
+        {
+          "severity": "major",
+          "description": "Key symbols are undefined for a non-CMS audience: \u03bac, \u03bc, \u22122\u0394ln L, and the dotted reference lines at 1 and 3.84.",
+          "suggested_fix": "Add a one-line footnote: '\u03bac = charm Yukawa coupling modifier (SM = 1); \u03bc = \u03c3\u00d7B relative to SM'. Label the dotted lines on the plot as '68% CL' and '95% CL'."
+        },
+        {
+          "severity": "minor",
+          "description": "'Most stringent direct constraint to date' has no comparison on the slide.",
+          "suggested_fix": "Add the previous best result in small text (e.g. the CMS VH(cc\u0304) |\u03bac| limit with its reference), or drop 'to date'."
+        },
+        {
+          "severity": "minor",
+          "description": "The red vertical line at \u03bc = 1 has no label.",
+          "suggested_fix": "Label it 'SM' or explain it in the caption."
+        },
+        {
+          "severity": "minor",
+          "description": "The grey '(5.6 exp.)' and '(2.7 exp.)' text has low contrast on the light blue box. Since the expected values carry the real message, they are the least readable part of the box.",
+          "suggested_fix": "Set the expected values in black at the same weight as the observed ones."
+        },
+        {
+          "severity": "minor",
+          "description": "In the rendered image, the \u03bc subscript reads 'H\u2192ee' instead of 'H\u2192cc\u0304'.",
+          "suggested_fix": "Check how the font renders c\u0304 (use \\bar{c} in math mode or a font with a proper combining macron) and confirm it on the projected PDF."
+        },
+        {
+          "severity": "minor",
+          "description": "The \u03bac legend text is small and partly red, which is hard to read projected.",
+          "suggested_fix": "Enlarge the legend or move the limit values into the side box, which already carries them."
+        }
+      ]
+    },
+    "8": {
+      "description": "## Slide 8/24: \"H + charm production: \u03bac in production\"\n\n**1. Message**\n- The slide argues that H+c production probes \u03bac at the production vertex, so the measurement does not depend on H \u2192 cc\u0304 decay. It then lists the challenges.\n- The title names the topic but doesn't state a conclusion. There is no take-away line. The last bullet (\"\u03bac from 'flat direction': other H rates kept SM-like\") is the nearest thing to a closing statement.\n\n**2. Text**\n- There is a moderate amount of text: four main bullets, one of which has three sub-bullets. The bullets are written as fragments, not full sentences.\n- **Undefined symbols and acronyms:**\n  - \u03bac is not defined on this slide.\n  - \u03c3\u212c: the \u212c (branching fraction) is not spelled out.\n  - ggH is not expanded.\n  - \"flat direction\" is in quotes but not explained.\n  - \u03c3cH = 90 fb is given without a centre-of-mass energy.\n  - \"\u2248 20 fb (WW)\" doesn't say which W decay modes are included.\n- **Rendering:** the \"cc\u0304\" in \"H \u2192 cc\u0304 decay\" is drawn in a small font, and in the image it looks close to \"ee\". The text layer confirms it is c c\u0304. It is also joined to \"decay\" by a hyphen or dash.\n- **Grammar and line breaks:** \"clean H decays + a c-tagged jet\" is a fragment joined by a plus sign. The cross-reference \"(\u2192 T. Bevilacqua, next talk)\" breaks across two lines right after the arrow.\n\n**3. Figures**\n- There are two leading-order Feynman diagrams of gc \u2192 cH:\n  - Left: s-channel, gc \u2192 c* \u2192 cH.\n  - Right: t-channel, with a charm quark exchanged.\n- Each Hcc vertex is marked with a red dot and a red \u03bac label.\n- These are diagrams, not plots, so they have no axes, units, legend, CMS label, luminosity or energy.\n- The caption (\"LO diagrams for cH production; \u03bac enters at the marked vertices\") matches what the diagrams show.\n- A small blue reference line sits above the diagrams: \"JHEP 11 (2025) 060; JHEP 08 (2026) 051\".\n- The diagrams take up about the right 40% of the slide width but are short. The particle labels (g, c, H, \u03bac), the caption and the reference are very small and may be hard to read when projected.\n\n**4. Layout**\n- There is a large empty band between the title bar and the content, and another at the bottom. All the content sits in the middle third of the slide's height.\n- The caption, the reference line and the \u03bac labels on the diagrams use the smallest fonts on the slide.\n- Nothing overlaps or is clipped.\n- The text is dark on white, and the title bar is white on dark blue.\n- The only colour coding is red for the \u03bac vertices and orange for the sub-bullet dashes. No meaning depends on telling red from green.\n",
+      "content": {
+        "score": 3,
+        "reason": "The message (H+c probes \u03bac at the production vertex, independent of H\u2192cc\u0304 decay) is clear, and the diagrams support it with the \u03bac vertices marked. But no take-away is stated: the title names the topic without a conclusion, and the closing 'flat direction' bullet is not explained. The numbers are underspecified: \u03c3cH = 90 fb has no \u221as, and '\u2248 20 fb (WW)' does not say which W decays are included. Theorists will know \u03bac, \u03c3\u212c and ggH, but undefined jargon and unqualified numbers move this from 'clear' to 'buried'."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "Dark text on white with no clipping or overlap. However, the diagrams are short and take only about 40% of the width, and their particle labels, \u03bac labels, caption and reference line are the smallest text on the slide, likely unreadable from the back. cc\u0304 renders so small it reads as 'ee'. Large empty bands above and below squeeze all the content into the middle third, so the space that could enlarge the figure is wasted."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "No stated take-away. The title is a topic label, and the slide never says why the audience should care about \u03bac at production versus decay.",
+          "suggested_fix": "Retitle as a conclusion, e.g. 'H+c measures \u03bac at production, independent of H\u2192cc\u0304 decay', or add a one-line boxed take-away at the bottom."
+        },
+        {
+          "severity": "major",
+          "description": "Diagram labels (g, c, H, \u03bac), caption and reference line are too small to read when projected, and the diagrams are short relative to the empty space available.",
+          "suggested_fix": "Use the empty bands at the top and bottom to scale the diagrams up at least 1.5x vertically. Set label and caption fonts to at least 16 to 18 pt equivalent, and move the references to a footer at a readable size."
+        },
+        {
+          "severity": "major",
+          "description": "'cc\u0304' in 'H \u2192 cc\u0304 decay' renders in a tiny font, looks like 'ee', and is joined to 'decay' by a dash. This misreads the slide's central contrast.",
+          "suggested_fix": "Typeset H \u2192 cc\u0304 at full body size in math mode, separated from 'decay' by a space."
+        },
+        {
+          "severity": "major",
+          "description": "Cross-sections are given without context: \u03c3cH = 90 fb has no \u221as, and '\u2248 20 fb (WW)' does not specify the W decay modes.",
+          "suggested_fix": "Write '\u03c3(cH) \u2248 90 fb at \u221as = 13.6 TeV' (or whichever energy applies), and '\u03c3\u212c(H\u2192WW\u2192\u2113\u03bd\u2113\u03bd) \u2248 20 fb' or the exact final state used."
+        },
+        {
+          "severity": "minor",
+          "description": "'Flat direction' appears in quotes but is never explained, so the closing bullet is opaque to experimentalists.",
+          "suggested_fix": "Replace it with a plain statement, e.g. '\u03bac fit with all other Higgs couplings fixed to SM values', or add a short parenthetical definition."
+        },
+        {
+          "severity": "minor",
+          "description": "\u03bac, \u212c and ggH are not defined on the slide. Most of the audience knows them, but a non-CMS public audience benefits from a one-time gloss.",
+          "suggested_fix": "Define \u03bac on first use, e.g. '\u03bac = y_c / y_c^SM'. Write 'branching fraction \u212c' once, and expand ggH as 'gluon fusion (ggH)'."
+        },
+        {
+          "severity": "minor",
+          "description": "'(\u2192 T. Bevilacqua, next talk)' wraps right after the arrow, and 'clean H decays + a c-tagged jet' is a fragment joined by a plus sign.",
+          "suggested_fix": "Keep the cross-reference on one line, e.g. with a non-breaking space or by shortening it to 'see next talk (T. Bevilacqua)'. Rewrite the fragment as 'clean H decay plus a c-tagged jet'."
+        }
+      ]
+    },
+    "9": {
+      "description": "**Slide 9/24: \"cH(H\u2192\u03b3\u03b3)\"**\n\n1. **Message.** The slide summarises the first CMS search for Higgs production with a charm quark (cH) in the H\u2192\u03b3\u03b3 channel, and gives its 95% CL upper limits on \u03bc_cH and |\u03ba_c|. The title only names the channel and there is no separate take-away sentence. The \"Result, 95% CL\" box at the bottom left is the nearest thing to one. The source is cited at the top right: JHEP 11 (2025) 060, CMS-HIG-23-010.\n\n2. **Text.**\n   - There is not much text: three main bullets, two sub-bullets and a two-line result box. It reads clearly and I found no grammar problems.\n   - Several acronyms and symbols are not defined on the slide. BDT, ggH and \u03ba_c may be familiar to this audience. The numbers in parentheses, (355) and (72.5), are not labelled; they are presumably the expected limits, with observed values first.\n   - The plot shows a best fit of \u03bc_cH = \u2212230 (+170/\u2212251), but the slide text never mentions it.\n   - The figure legend contains the typo \"S fit compoment\". It comes from the original CMS figure, not from the slide text.\n\n3. **Figure.** There is one figure on the right with three stacked panels, all against m_\u03b3\u03b3 (GeV) from 100 to 180.\n   - **Top panel:** S/(S+B)-weighted events per GeV for all categories combined. It shows data points, the S+B fit (red), the S fit component, all background (solid) and continuous background (dotted), with green \u00b11\u03c3 and yellow \u00b12\u03c3 bands. The panel is labelled \"H\u2192\u03b3\u03b3, m_H = 125.38 GeV\" and \"\u03bc_cH = \u2212230 (+170/\u2212251)\".\n   - **Middle panel:** continuous background subtracted. A peak is visible near 125 GeV.\n   - **Bottom panel:** all background subtracted, with no clear peak.\n   - **Axes:** the lower two panels have no y-axis label.\n   - **CMS label and luminosity:** the figure carries a plain \"CMS\" label (not Preliminary) and \"138 fb\u207b\u00b9 (13 TeV)\", which matches the published paper.\n   - **Size:** the figure fills about the right 30% of the slide. The legend text, the \u03bc_cH annotation and the tick labels of the lower panels are very small and would probably be hard to read when projected.\n   - **Caption:** \"m_\u03b3\u03b3, all categories, S/(S+B) weighted\" matches what the plot shows.\n\n4. **Layout.**\n   - The figure's internal text is the smallest on the slide. The footer is also small but conventional.\n   - There is no overlap or clipping.\n   - The grey expected-limit values in the result box have lower contrast than the black observed values.\n   - The uncertainty bands are told apart by green versus yellow, the standard CMS style. The S+B fit (red) and S fit component (magenta) lines are also close in colour at this size.\n",
+      "content": {
+        "score": 3,
+        "reason": "The slide clearly presents the first CMS cH(H\u2192\u03b3\u03b3) search with 95% CL limits on \u03bc_cH and |\u03ba_c|, and it cites the published source. The message is buried, though. There is no take-away sentence and the title names only the channel. The expected limits in parentheses are not labelled. The best fit \u03bc_cH = \u2212230 (+170/\u2212251) appears only in the tiny plot annotation and is never discussed. A non-CMS audience is also not told why |\u03ba_c| is weaker than \u03bc_cH would suggest, or how the limit compares with SM expectations."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "The text and the result box are readable and nothing is clipped. However, the only figure, which is the evidence for the result, takes up just about 30% of the slide width. Its legend, the \u03bc_cH annotation and the tick labels of the lower panels will not be readable when projected. The lower panels have no y-axis labels. The grey expected values in the result box have lower contrast than the observed values, and the red S+B and magenta S-component lines are hard to tell apart at this size."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "There is no explicit take-away. The title 'cH(H\u2192\u03b3\u03b3)' does not state the result.",
+          "suggested_fix": "Make the title or a closing line the message, e.g. 'First direct cH(\u03b3\u03b3) search: |\u03ba_c| < X obs (72.5 exp) at 95% CL'."
+        },
+        {
+          "severity": "major",
+          "description": "The figure is too small for its importance. The legend, the \u03bc_cH annotation and the lower-panel tick labels will be unreadable when projected.",
+          "suggested_fix": "Enlarge the figure to at least 50\u201360% of the slide width, or crop it to the top panel and move the key numbers into slide text."
+        },
+        {
+          "severity": "major",
+          "description": "The numbers in parentheses (355) and (72.5) are not labelled as expected limits.",
+          "suggested_fix": "Write the limits as 'obs. X (exp. 355)' or use a small two-column table with Observed and Expected headers."
+        },
+        {
+          "severity": "minor",
+          "description": "The best-fit \u03bc_cH = \u2212230 (+170/\u2212251) is in the plot but never mentioned, which leaves the audience to interpret a large negative value without help.",
+          "suggested_fix": "Add one line: 'Best fit \u03bc_cH = \u2212230 (+170/\u2212251), compatible with SM within ~1.4\u03c3' (check the significance against the paper), or say it aloud and enlarge the annotation."
+        },
+        {
+          "severity": "minor",
+          "description": "BDT, ggH and \u03ba_c are undefined for a mixed theory/experiment audience.",
+          "suggested_fix": "Define \u03ba_c once (it is probably on an earlier motivation slide; refer back to it there) and spell out or drop BDT."
+        },
+        {
+          "severity": "minor",
+          "description": "The grey expected values have lower contrast than the black observed values.",
+          "suggested_fix": "Use dark grey or black for the expected values and separate them by label rather than by colour."
+        },
+        {
+          "severity": "minor",
+          "description": "The lower two plot panels have no y-axis label, and the red and magenta fit lines are hard to tell apart when small.",
+          "suggested_fix": "Keep the official figure as published, but if it stays small, show only the top panel, or note in the caption that the middle and bottom panels are background-subtracted."
+        },
+        {
+          "severity": "minor",
+          "description": "The legend typo 'S fit compoment' comes from the published CMS figure.",
+          "suggested_fix": "Leave the official figure unchanged. The typo will not be visible if the figure stays small, and it is minor if enlarged."
+        }
+      ]
+    },
+    "10": {
+      "description": "## Slide 10/24: \"cH(H\u2192WW) and combination\"\n\n**1. Message**\n- The slide gives the cH limits from the H\u2192WW channel and from the \u03b3\u03b3 + WW combination.\n- The title only names the topic; it does not state a conclusion.\n- The closest thing to a take-away is the blue \"\u03b3\u03b3 + WW combination\" box at the lower left: \u03bc_cH < 257 (281), |\u03ba_c| < 47 (51).\n\n**2. Text**\n- About four bullets plus a sub-line and the result box. The amount is moderate and the bullets are terse.\n- These terms are not defined on the slide: SRs, CRs, BDTs, POI, cH, \u03bc_cH, \u03ba_c, m_\u2113\u2113.\n- Each limit is written as one number followed by a grey number in parentheses. The slide never says which is observed and which is expected. Comparing with the left plot, the first is observed and the bracketed one is expected.\n- \"correlation with cH: \u221287%\" does not say which two quantities are correlated. The right plot suggests it is \u03bc_H+c-bkg versus \u03bc_cH.\n- \"2-POI (H+c bkg floating): < 1804 (1097)\" does not name the quantity being limited.\n- In the rendered image, \"tt\u0304\" runs into \"and\" with no visible space.\n- No other grammar problems.\n\n**3. Figures**\n- **Left plot:** 95% CL upper limits on \u03bc_cH for three rows: H\u2192\u03b3\u03b3, H\u2192WW and Combination.\n  - The x axis is logarithmic, from 10\u00b2 to 10\u00b3, labelled \"\u03bc_cH @95%CL\".\n  - The legend shows the 95% expected band (pink), the 68% expected band (lavender), the expected limit (blue dot) and the observed limit (black dot).\n  - Two columns of numbers on the right (355/243, 506/1065, 281/257) have no column headings. Only their colour (blue or grey) tells expected from observed.\n  - Label: \"CMS\", 138 fb\u207b\u00b9 (13 TeV).\n  - The plot takes up roughly a quarter of the slide. Its row labels, legend and numbers are very small and would be hard to read when projected.\n  - The caption \"\u03bc_cH limits: \u03b3\u03b3, WW, combined\" matches the plot.\n- **Right plot:** a 2D scan of \u22122\u0394ln L, with \u03bc_cH on the y axis (about \u22121500 to 1300) and \u03bc_H+c-bkg on the x axis (\u221215 to 15).\n  - The colour scale runs from 0 to 25, and yellow saturates over the lower-left region.\n  - It shows the 68% CL contour (solid), the 95% CL contour (dotted), the best fit (black cross) and the SM point (red diamond).\n  - The contours form a band that runs diagonally, which fits the \u221287% correlation quoted in the text.\n  - Label: \"CMS\", 138 fb\u207b\u00b9 (13TeV), with no space in \"13TeV\".\n  - The legend sits inside the plot at the lower left. Its text, the tick labels and the colour-bar title are small.\n  - The caption \"WW: \u03bc_cH vs. \u03bc_H+c bkg\" matches the plot.\n- **Reference line:** \"JHEP 08 (2026) 051, CMS-HIG-24-009\" appears in small blue text above the right plot only. The slide does not say whether it also applies to the left plot.\n\n**4. Layout**\n- There is a lot of empty space below both plots and to the right of the result box, while the plots themselves are small.\n- The text inside the plots, the captions and the reference line are the smallest fonts on the slide.\n- The grey numbers in parentheses have lower contrast than the black text.\n- The pink and lavender bands are pale and close in tone.\n- There is no overlap or clipping.\n- No information depends only on a red/green distinction. The red SM diamond is set against blue and yellow.\n",
+      "content": {
+        "score": 3,
+        "reason": "The result is clear: the \u03b3\u03b3+WW combination gives \u03bc_cH < 257 (281) and |\u03ba_c| < 47 (51). But the take-away sits in a box at the lower left and the title only names the topic. Observed and expected are never labelled. Several symbols the audience needs are left undefined: \u03bc_cH, \u03ba_c, POI, SRs/CRs. The \u221287% correlation does not say which two quantities it refers to, and the 2-POI limit does not name what it limits. A non-CMS audience has to work these out from the plots."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Each plot takes up about a quarter of the slide or less, while a lot of space is left empty below them. The plot row labels, legend, number columns, tick labels and colour-bar title are all too small to read when projected. The grey bracketed numbers and the pale pink/lavender bands have low contrast. The reference line and captions use the smallest font on the slide."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "Limits are given as 'X (Y)' and the slide never says which number is observed and which is expected, both in the text and in the unlabelled number columns of the left plot.",
+          "suggested_fix": "Write 'obs. 257 (exp. 281)' once, or add a note '(expected in parentheses)'. Add 'Obs./Exp.' headings to the plot's number columns."
+        },
+        {
+          "severity": "major",
+          "description": "The plots are small and their internal text (row labels, legend, ticks, colour-bar title, the 355/243-type numbers) cannot be read from the back of the room, even though there is a lot of unused space.",
+          "suggested_fix": "Make both plots about 1.5 to 2 times larger to fill the empty space below them. Shorten the bullets so the figures dominate the slide."
+        },
+        {
+          "severity": "major",
+          "description": "The title only names the topic; the take-away appears only in the lower-left box.",
+          "suggested_fix": "Use a conclusion as the title, for example '\u03b3\u03b3+WW combination: |\u03ba_c| < 47 (51 exp.) at 95% CL'."
+        },
+        {
+          "severity": "major",
+          "description": "Symbols are not defined for a non-CMS audience: \u03bc_cH, \u03ba_c, POI, SRs/CRs, BDTs, m_\u2113\u2113.",
+          "suggested_fix": "Add one line defining \u03bc_cH (signal strength of cH production) and \u03ba_c (charm Yukawa modifier). Drop the SR/CR/BDT/POI jargon or spell it out."
+        },
+        {
+          "severity": "minor",
+          "description": "'correlation with cH: \u221287%' does not name the two quantities, and '2-POI (H+c bkg floating): < 1804 (1097)' does not name the limited quantity.",
+          "suggested_fix": "Write '\u03bc_H+c(bkg) and \u03bc_cH correlated at \u221287%' and '2-POI fit (\u03bc_H+c bkg floating): \u03bc_cH < 1804 (1097 exp.)'."
+        },
+        {
+          "severity": "minor",
+          "description": "The reference 'JHEP 08 (2026) 051, CMS-HIG-24-009' appears only above the right plot, so it is unclear whether it also covers the left plot.",
+          "suggested_fix": "Put a single reference line at the bottom of the slide that covers both figures, or cite the source of each plot."
+        },
+        {
+          "severity": "minor",
+          "description": "The pink (95%) and lavender (68%) bands are pale and close in tone. The grey bracketed numbers have low contrast.",
+          "suggested_fix": "Use the standard green/yellow Brazil-band colours or a stronger tonal contrast, and set the expected numbers in a darker grey."
+        },
+        {
+          "severity": "minor",
+          "description": "Typesetting: 'tt\u0304' runs into 'and' with no space, and the right plot reads '13TeV' with no space.",
+          "suggested_fix": "Add the missing space after tt\u0304. '13TeV' is in the published figure, so leave it."
+        }
+      ]
+    },
+    "11": {
+      "description": "Here is a description of slide 11/24.\n\n**1. Message**\n- **Point:** The slide collects indirect bounds on \u03bac from Higgs production and width. It covers \u03b3H plus on-shell H\u21924\u2113, the new off-shell plus on-shell H\u21924\u2113 result, and H\u2192J/\u03c8\u03b3.\n- **Stated?** The title \"Indirect constraints on \u03bac\" names the topic only. There is no take-away line, so no single conclusion (which bound is tightest, or what the off-shell data adds) is spelled out.\n\n**2. Text**\n- **Amount:** Moderate to dense, about 90 words. There are four main bullets and three sub-bullets, with many numerical intervals.\n- **Bracketed intervals:** Values like ([\u22123.8, 3.3]) follow each result. The slide never says what they are (presumably expected limits).\n- **Undefined symbols:** \u0393H, \u03baV, \u03baZ, \u03baW and \u2113 are not defined on the slide. \u03baV is used in \"|\u03baV| \u2264 1\" but never introduced.\n- **Line wrapping:** \"\u03bac \u2208 [\u22128.6, 7.5]\" is split across two lines, with \"\u2208\" starting the second line.\n- **Small asides:** \"other light Yukawas floating, |\u03baV| \u2264 1\", \"(see J. Bierkens' talk)\" and \"width measurement: see F. Errico's talk\" are in a smaller font.\n- **\"NEW\":** This tag is in orange.\n- **Grammar:** No clear grammar errors.\n\n**3. Figure** (one plot, right side)\n- **Content:** Likelihood scans of \u22122\u0394lnL against \u03bac, with x from \u221210 to 10 and y from 0 to 9.\n- **Axes:** Both are labelled. \u03bac is dimensionless, so no units are needed.\n- **Reference lines:** Dashed horizontal lines are labelled 68% CL (at 1) and 95% CL (at about 3.84).\n- **Legend:** Four entries:\n  - On-shell, |\u03baZ = \u03baW| \u2264 1 (blue)\n  - On-shell, \u03baZ \u2260 \u03baW (green)\n  - On/off-shell, |\u03baZ = \u03baW| \u2264 1 (red)\n  - On/off-shell, \u03baZ \u2260 \u03baW (black)\n- **Solid vs dashed:** Each curve appears in both styles. The legend doesn't say what the two styles mean (presumably observed and expected).\n- **Overlaps:** The blue and red curves almost lie on top of each other. The green curve stays nearly flat, so on-shell alone with \u03baZ \u2260 \u03baW gives no constraint in this range.\n- **Label:** It carries \"CMS\" and \"138 fb\u207b\u00b9 (13 TeV)\". There is no \"Preliminary\" tag.\n- **Size:** The plot takes roughly the right 40% of the slide. The axis numbers are readable, but the legend text is very small and probably unreadable when projected.\n- **Caption:** \"arXiv:2607.23352: \u03bac scans, on-shell and on+off-shell, with and without |\u03baV| \u2264 1\". This matches the legend.\n  - The \"|\u03baV| \u2264 1\" ending wraps onto its own centred line, detached from the rest of the caption.\n- **Mismatch with the bullets:** The first result bullet (\u03b3H + on-shell, [\u22123.7, 3.2]) comes from a different reference, not from the plotted paper. The slide doesn't say which curve, if any, matches each quoted interval.\n\n**4. Layout**\n- **Reference line:** The citations above the plot (PRD 112 (2025) 112001; arXiv:2607.23352; PLB 865 (2025) 139462) are in very small blue text.\n- **Smallest text:** The plot legend and caption are also very small.\n- **Overlap and clipping:** None seen.\n- **Colour:** The curves are told apart by blue, green, red and black. Red vs green is not the only distinction. However, blue and red overlap so closely that they are hard to separate.\n- **Contrast:** Fine (dark text on white).\n- **Footer:** \"C. Gupta | Constraints on Higgs-charm couplings | Higgs 2026, Louvain-la-Neuve\", with page number 11/24.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear and the numbers are given, but there is no take-away. The slide never says which bound is tightest or what the off-shell data adds. The bracketed intervals are never explained (presumably expected limits). \u0393H, \u03baV, \u03baZ and \u03baW are undefined for a non-CMS audience. Solid vs dashed curves are not explained, and no quoted interval is tied to a plotted curve. The first bullet (\u03b3H + on-shell) comes from a different paper than the one plotted."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "Text is readable and contrast is fine. The plot takes only about 40% of the slide while about 90 words of bullets compete with it. The legend, caption and citation line are very small and probably unreadable when projected. The blue and red curves nearly overlap. One interval is split across lines with '\u2208' starting the second line, and the end of the caption is orphaned on its own line."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "No take-away statement. The audience is not told which constraint is tightest or what the off-shell data adds.",
+          "suggested_fix": "Add a one-line conclusion box, e.g. 'Adding off-shell H\u21924\u2113 constrains \u03bac even without the |\u03baV| \u2264 1 assumption: [x, y] at 95% CL'."
+        },
+        {
+          "severity": "major",
+          "description": "Bracketed intervals after each result are undefined, and solid vs dashed curves in the plot are not explained.",
+          "suggested_fix": "State once, e.g. '95% CL observed (expected)'. Add 'solid: observed, dashed: expected' to the legend or caption."
+        },
+        {
+          "severity": "major",
+          "description": "The plot legend is too small to read when projected, and the plot is undersized for the main evidence on the slide.",
+          "suggested_fix": "Enlarge the plot to about 55-60% of the slide width and trim the bullets. If the original legend can't be enlarged, overlay a larger hand-made legend."
+        },
+        {
+          "severity": "major",
+          "description": "Symbols \u0393H, \u03baV, \u03baZ, \u03baW and \u2113 are undefined. \u03baV appears in '|\u03baV| \u2264 1' with no introduction.",
+          "suggested_fix": "Add a short definition line: '\u03baV = \u03baZ = \u03baW: Higgs\u2013vector boson coupling modifiers; \u0393H: total Higgs width'. Or drop \u03baV and use the notation from the plot."
+        },
+        {
+          "severity": "minor",
+          "description": "The quoted intervals are not mapped to the plotted curves, and the \u03b3H + on-shell result comes from a different paper than the plot.",
+          "suggested_fix": "Colour-code each off-shell bullet to match its curve. Mark the \u03b3H bullet as coming from PRD 112 (2025) 112001 so it isn't read as coming from the plot."
+        },
+        {
+          "severity": "minor",
+          "description": "Blue and red curves almost overlap, and the green curve is flat across the range, adding clutter without information.",
+          "suggested_fix": "Say on the slide that the off-shell data barely changes the bound when |\u03baV| \u2264 1, and that on-shell alone with \u03baZ \u2260 \u03baW gives no constraint. Or drop the redundant curves if a custom plot is possible."
+        },
+        {
+          "severity": "minor",
+          "description": "Line break splits '\u03bac \u2208 [\u22128.6, 7.5]' with '\u2208' starting the second line, and the end of the caption ('|\u03baV| \u2264 1') sits on its own centred line.",
+          "suggested_fix": "Wrap the interval in an mbox or shorten the bullet. Shorten the caption so it fits on one line."
+        },
+        {
+          "severity": "minor",
+          "description": "The citation line above the plot is in very small blue text, and the asides are in reduced font.",
+          "suggested_fix": "Raise the citation size to footnotesize and attach each reference to its own bullet instead of grouping them above the plot."
+        }
+      ]
+    },
+    "12": {
+      "description": "**1. Message**\nThe slide summarises current CMS 95% CL limits on \u03bac from seven analyses, both direct and indirect. The title, \"Where we stand: CMS constraints on \u03bac\", states the topic. The two bullets below the table give the takeaways: direct H\u2192cc\u0304 searches have the best sensitivity, indirect probes can say something about the sign of \u03bac, and several probes now reach |\u03bac| \u223c 3.\n\n**2. Text**\n- **Amount:** a 7-row \u00d7 4-column table plus two one- or two-line bullets. The density is moderate.\n- **Undefined symbols:** \u03bac, \u03bab, \u03ba\u03b3, \u03baV and \u03baZ,W are not defined on the slide. \"SM-like width\", \"flavour-compatible BSM scenarios\", \"On+off-shell\" and \"cH\" are also used without explanation.\n- **Mixed notation:** the assumptions column uses \u03baV in one row and \u03baZ,W in another.\n- **Uneven limit formats:**\n  - Some rows give upper limits on |\u03bac| (< 3.5, < 3.0, < 47).\n  - Some give a two-sided interval on |\u03bac| (1.1 < |\u03bac| < 5.5).\n  - Some give signed intervals ([\u22123.7, 3.2]).\n  - The VH row pairs an observed interval with a single expected number, (3.4).\n  - The H\u2192J/\u03c8\u03b3 row has no expected value.\n  - The cH row has an empty assumptions cell.\n- **\"\u03b3H + H\u21924\u2113\":** the production label \"\u03b3H\" in this row is unusual.\n- **Grammar:** in the first bullet, \"add sensitivity to the sign of \u03bac and different model assumptions\" is not quite parallel. It reads as if \"different model assumptions\" is something that sensitivity is added to.\n\n**3. Figures**\nThere are no plots, so CMS label, axis and legend checks don't apply. The only graphic element is the table. The first row (ttH + VH combined) has a light-blue highlight. Expected values are in grey, and the column header explains this with \"obs. (exp.)\".\n\n**4. Layout**\n- **Size:** the table and bullet text are a normal size and should be readable when projected. The footer is very small, which is typical for footers.\n- **Contrast:** the grey expected values are lower contrast than the black observed values.\n- **Rendering:** at this size the overbar in H\u2192cc\u0304 makes \"cc\" look like \"ee\" in the table and the first bullet. In the bullet, the bar also seems to run into the hyphen before \"searches\", so it looks like strikethrough text.\n- **Spacing:** there is a large empty band between the bullets and the footer.\n- **Other:** no overlap or clipping, and no colour coding that relies on red versus green.\n",
+      "content": {
+        "score": 3,
+        "reason": "The message is clear: the slide shows where CMS \u03bac limits stand, says direct H\u2192cc\u0304 searches lead, says indirect probes add sign information, and says several probes reach |\u03bac|~3. The table supports this. But a non-CMS audience has to work too hard to read it. \u03bac, \u03bab, \u03ba\u03b3, \u03baV and \u03baZ,W are never defined. Terms like 'SM-like width', 'flavour-compatible BSM scenarios', 'On+off-shell' and 'cH' are not explained. The limit formats change from row to row (one-sided upper limits, two-sided intervals on |\u03bac|, signed intervals), so the rows are hard to compare. The VH row and the J/\u03c8\u03b3 row handle expected values inconsistently. Without a common format or a summary plot, the reader has to put the comparison together themselves."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "The table and bullets are a normal size and should be readable when projected, and nothing is clipped. Three things hurt it. The grey expected values have low contrast. At this size the overbar in H\u2192cc\u0304 makes 'cc' look like 'ee', and in the bullet the bar runs into the hyphen so it reads as strikethrough. A dense 7\u00d74 table carries the whole slide, and a large empty band sits below the bullets that could be used to make the table bigger."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "\u03bac and the other coupling modifiers (\u03bab, \u03ba\u03b3, \u03baV, \u03baZ,W) are not defined. A theory-heavy conference audience needs to know the \u03ba-framework convention and which other couplings are free or fixed.",
+          "suggested_fix": "Add a one-line definition, e.g. '\u03bac = yc/yc,SM (\u03ba framework)', and briefly say what '\u03baV free' / 'SM-like width' mean, or move the assumptions column into a footnote legend."
+        },
+        {
+          "severity": "major",
+          "description": "The limit formats are mixed across rows (|\u03bac| < X, 1.1 < |\u03bac| < 5.5, signed intervals [\u22123.7, 3.2]), so the rows cannot be compared at a glance.",
+          "suggested_fix": "Use one format: give every result as a 95% CL interval on \u03bac (signed where available), or replace the table with a horizontal-bar summary plot of the intervals on a common \u03bac axis, marking SM \u03bac=1."
+        },
+        {
+          "severity": "major",
+          "description": "The overbar in H\u2192cc\u0304 renders so that 'cc' reads as 'ee', and in the bullet it merges with the hyphen and looks like strikethrough.",
+          "suggested_fix": "Use proper math typesetting (\\mathrm{c}\\bar{\\mathrm{c}}) at a larger size, or write 'H\u2192cc' without the bar in plain text; put a thin space before the hyphen or reword to 'direct H\u2192cc\u0304 searches'."
+        },
+        {
+          "severity": "minor",
+          "description": "Expected values are handled inconsistently: the VH row pairs an observed interval with a single expected number, and the H\u2192J/\u03c8\u03b3 row has no expected value.",
+          "suggested_fix": "Quote expected values in the same form as the observed ones, and put '\u2014' or 'n/a' where no expected value is published."
+        },
+        {
+          "severity": "minor",
+          "description": "The assumptions column uses mixed notation (\u03baV in one row, \u03baZ,W in another), and the cH row has an empty assumptions cell.",
+          "suggested_fix": "Harmonise the notation (say \u03baZ,W = \u03baV if they are the same thing) and fill the empty cell or mark it '\u2014'."
+        },
+        {
+          "severity": "minor",
+          "description": "The jargon 'On+off-shell', 'cH', 'flavour-compatible BSM scenarios' and the unusual '\u03b3H' production label are not explained.",
+          "suggested_fix": "Spell out 'cH' as 'H+c production', write 'H\u21924\u2113 on-shell + off-shell (width)', and check the '\u03b3H' label (probably meant to be 'H+\u03b3' or a typo)."
+        },
+        {
+          "severity": "minor",
+          "description": "The grey expected values have low contrast when projected.",
+          "suggested_fix": "Use a darker grey or keep black text and put the expected values in parentheses only."
+        },
+        {
+          "severity": "minor",
+          "description": "The first bullet is not grammatically parallel ('add sensitivity to the sign of \u03bac and different model assumptions').",
+          "suggested_fix": "Reword to 'Indirect probes are sensitive to the sign of \u03bac and test different model assumptions'."
+        },
+        {
+          "severity": "minor",
+          "description": "There is a large empty band between the bullets and the footer.",
+          "suggested_fix": "Enlarge the table font, or add a one-line boxed take-away such as 'Best direct limit: |\u03bac| < 3.0 (obs.)'."
+        }
+      ]
+    },
+    "13": {
+      "description": "**Slide 13/24, \"Toward Run 3: tools already in place\"**\n\n**1. Message**\n- The slide argues that the tools for Run 3 Higgs\u2011charm analyses already exist: better heavy\u2011flavour triggers and a measured tt\u0304+cc\u0304 background.\n- The title states the topic. The bullets serve as the take\u2011away. There is no single summary line.\n- The slide makes two claims that none of the figures show: \"dataset already larger than Run 2\" and \"Run 3 analyses are under way in all channels\".\n\n**2. Text**\n- **Amount:** moderate. There are two sub\u2011headings, a two\u2011line caption under the trigger plots, a reference line with \"NEW\" in orange, one cross\u2011section formula, and two bullets (the first wraps onto two lines).\n- **Formula:** \u03c3_tt\u0304cc\u0304 = 680 +130 \u2212100 (syst) \u00b1 40 (stat) fb. At this resolution the subscript and the caption's \"ttH(H \u2192 cc\u0304)\" look like \"ttee\" and \"H \u2192 ee\". The c\u0304 glyph is easy to misread this way, so these are most likely cc\u0304.\n- **Undefined acronyms and symbols:** UParT, GloParT, HLT, ML, PP8, DPS, \u03bc_F, H_T, \"parton\u2011tt\u0304\", and the trigger rates in Hz.\n- **Layout of the caption:** it wraps so that its second line (\"efficiency, Run 2 vs. 2022\u201324\") sits centred on its own, apart from the first line.\n- **Grammar:** no errors.\n\n**3. Figures**\n- **Left and centre: trigger efficiency, tt\u0304(H\u2192bb\u0304) and tt\u0304(H\u2192cc\u0304)**\n  - Labels: \"CMS Simulation\", \"(13 TeV, 13.6 TeV)\". There is no luminosity label, which is normal for simulation.\n  - Axes: y is \"Trigger efficiency\" (0 to 1.2). x is \"Generator\u2011level H_T (GeV)\" (200 to 2000).\n  - Legend: Run 2: 2018 (10 Hz), and Run 3: 2022 (60 Hz), 2023 (115 Hz), 2024 (170 Hz). These are drawn in red, blue, orange and purple. A cyan filled histogram shows the \"Distribution before trigger requirements\", and a dashed vertical line marks about 500 GeV.\n  - Both plots are about a third of the slide width. The axis numbers and legend text are small.\n- **Right: cross\u2011section summary, \"tt\u0304+cc\u0304 background measured\"**\n  - Labels: \"CMS Preliminary\", \"138 fb\u207b\u00b9 (13 TeV)\", \"parton\u2011tt\u0304\".\n  - Content: four rows (tt\u0304cc\u0304, tt\u0304c, tt\u0304bb\u0304, tt\u0304b). The left panel shows \"Cross section [fb]\" on a log scale. The right panel shows \"Prediction/Data\" from 0.75 to 1.25.\n  - Legend: tt\u0304@NLO (PP8), plus ttbb@NLO (PP8) with \u03bc_F = H_T/2 and H_T/4, each with and without DPS. Also Total unc., Stat. unc., Data.\n  - The legend entries and the \u03c3 values inside each row are tiny and would not be readable when projected.\n  - Source given below: CMS\u2011PAS\u2011TOP\u201126\u2011003.\n- **Reference:** the trigger plots cite arXiv:2608.18331 (CMS\u2011BTV\u201125\u2011002).\n- **Captions:** they match what the plots show. The sub\u2011heading says \"background\", while the plot itself is a cross\u2011section measurement.\n\n**4. Layout**\n- The three plots share the top half of the slide and the bullets fill the lower part.\n- The smallest text is the right plot's legend and in\u2011plot numbers, then the trigger plot axes and legends, then the caption.\n- Nothing overlaps or is clipped.\n- The trigger plots tell the eras apart only by colour: red, blue, orange and purple, with similar small markers. Red and orange are close in hue.\n- The orange \"NEW\" on white has moderate contrast.\n- The two halves of the slide use different energy labels: 13/13.6 TeV on the left and 13 TeV on the right.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear: triggers have improved and the ttcc background has been measured. But there is no single stated take-away. Two claims have no support on the slide: 'dataset already larger than Run 2' and 'Run 3 analyses under way in all channels'. Many acronyms that a non-CMS audience needs are never defined (UParT, GloParT, PP8, DPS, mu_F, H_T, parton-tt). The trigger rates in Hz appear with no explanation of why higher rate means better acceptance. The right plot is called 'background', but it is a cross-section measurement, and the slide never says why this measurement matters for H to cc."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Each of the three plots gets about a third of the top half, so none of them dominates. The right plot's legend and the sigma values inside its rows cannot be read when projected. The trigger plots have small axis numbers and legends, and the four eras differ only by colour, with red and orange close in hue. The cc-bar glyphs in the formula and caption read as 'ee'. The caption's second line sits apart from the first, and the orange 'NEW' has only moderate contrast."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The legend and in-row cross-section values of the ttcc summary plot are unreadable when projected.",
+          "suggested_fix": "Crop or remake the plot to show only the ttcc and ttbb rows, or drop the plot and keep only the large-font sigma_ttcc number with its reference."
+        },
+        {
+          "severity": "major",
+          "description": "'Dataset already larger than Run 2' and 'Run 3 analyses under way in all channels' are not backed by any figure or number on the slide.",
+          "suggested_fix": "Give the Run 3 integrated luminosity next to 138 fb^-1, and make the second claim a plain public-safe statement or remove it."
+        },
+        {
+          "severity": "major",
+          "description": "Acronyms and symbols are undefined for a non-CMS audience: UParT, GloParT, HLT, PP8, DPS, mu_F, H_T, parton-tt, and the Hz rates.",
+          "suggested_fix": "Define in a few words on the slide: 'UParT/GloParT: transformer-based jet taggers used in the HLT', and 'HLT rate: bandwidth allotted to the trigger'. Drop PP8, DPS and mu_F by simplifying the right plot."
+        },
+        {
+          "severity": "major",
+          "description": "There is no take-away line, and the bullets carry the message only implicitly.",
+          "suggested_fix": "Add a single bold bottom line, e.g. 'ttH(cc) trigger efficiency up about X times at low H_T; ttcc background now measured to about 20%'."
+        },
+        {
+          "severity": "minor",
+          "description": "The cc-bar glyphs render like 'ee' in the formula and the caption.",
+          "suggested_fix": "Use a font or size where the overbar on c is clearly visible, or write 'c c-bar' explicitly."
+        },
+        {
+          "severity": "minor",
+          "description": "Eras in the trigger plots are told apart by colour only, and red and orange are hard to separate.",
+          "suggested_fix": "Use distinct marker shapes or line styles, enlarge the legend, or show only 2018 and 2024 for contrast."
+        },
+        {
+          "severity": "minor",
+          "description": "The sub-heading says 'background' while the plot shows a cross-section measurement, and the energy labels differ (13/13.6 TeV vs 13 TeV) with no comment.",
+          "suggested_fix": "Retitle as 'ttcc cross section measured (13 TeV, key background for ttH(cc))'."
+        },
+        {
+          "severity": "minor",
+          "description": "The caption wraps badly, leaving its second line isolated, and the orange 'NEW' has low contrast.",
+          "suggested_fix": "Shorten the caption to one line and use a darker colour or bold black for 'NEW'."
+        }
+      ]
+    },
+    "14": {
+      "description": "## Slide 14/24: \"Prospects at the HL-LHC\"\n\n**1. Message**\nThe slide says that HL-LHC data should give a modest VH(H\u2192cc\u0304) sensitivity of about 1.6\u03c3 and constrain |\u03bac| at the O(1) level. The take-away box at the bottom states this as a question and answer: \"Is H\u2192cc\u0304 evidence reachable at the HL-LHC? Determining |\u03bac| at O(1) is.\" The title is only a topic label, so the point appears only in the box.\n\n**2. Text**\n- **Amount:** Moderate to heavy. There are three main bullets, two sub-bullets, two smaller-font explanatory lines, and the boxed take-away.\n- **Undefined symbols:**\n  - \u03bac and \u03bab (probably defined on earlier slides).\n  - \u00b5 (signal strength) in \"expected \u00b5 H\u2192cc\u0304 limit\".\n  - ML. CL and VH are standard.\n- **Grammar and phrasing:**\n  - \"far faster than luminosity alone: taggers, new channels, analysis techniques\" is a fragment.\n  - \"Determining |\u03bac| at O(1) is.\" is an elliptical inverted sentence and reads cryptically.\n  - \"3 ab\u207b\u00b9 per experiment:\" is split over a line break in the small font.\n- **Numbers on the slide:** \u22481.6\u03c3; |\u03bac| < 1.5 at 95% CL, 30% better than previous projections; expected limit improved from \u223c37 (2016 data) to 5.6 (Run 2 VH+tt\u0304H).\n- **Font mixing:** The physics symbols (H\u2192cc\u0304, tt\u0304H) are in a different, math-style font from the sans-serif body. They render small, and the cc\u0304 glyphs are hard to tell apart in the image.\n\n**3. Figure**\n- **Content:** A 2D plot of \u03bac (y, about \u22123 to 4) against \u03bab (x, \u22122 to 2). It shows expected \u00b11\u03c3 contours (solid blue) and \u00b12\u03c3 contours (dashed blue), with the SM point as a diamond at (1, 1). There are two mirror-image closed contour pairs near \u03bab \u2248 \u22121 and \u03bab \u2248 +1, from the sign degeneracy in \u03bab. Each spans roughly \u03bac \u2248 \u22122 to 2 at 2\u03c3.\n- **Labels:** \"CMS Phase-2 Projection Preliminary\" and \"3000 fb\u207b\u00b9 (14 TeV)\". The axes are labelled \u03bac and \u03bab. They have no units, which is fine since the couplings are dimensionless. The legend lists SM, \u00b11\u03c3 and \u00b12\u03c3.\n- **Size:** The plot fills about the upper-right third of the slide. Tick labels, legend and header text are small and may be hard to read when projected.\n- **Caption:** \"CMS-HIG-21-008 (supplementary): expected (\u03bab, \u03bac) contours at 3000 fb\u207b\u00b9, 14 TeV, extrapolated from the Run 2 VH(H\u2192cc\u0304) analysis\". It is set in a very small font.\n- **Caption and bullets against the plot:** The caption claims nothing the plot fails to show. However, the bullet numbers (\u22481.6\u03c3, |\u03bac| < 1.5) come from a different source (arXiv:2504.00672 / CMS-HIG-25-002). The figure does not show them: its 2\u03c3 contours reach about |\u03bac| \u2248 2, not 1.5.\n\n**4. Layout**\n- **Small text:** The two smaller-font explanatory lines, the caption and the plot annotations are near the lower limit of readability.\n- **Whitespace:** There is a large empty area below the figure caption on the right half.\n- **No problems found with:** overlap, clipping, contrast (dark text on white, and a light-blue take-away box with good contrast), or red/green-only distinctions (the plot uses only blue, with solid and dashed line styles).\n",
+      "content": {
+        "score": 3,
+        "reason": "The message, a modest VH(H\u2192cc\u0304) sensitivity of about 1.6\u03c3 and |\u03bac| constrained at O(1), only appears in a cryptically worded take-away box. The title is just a topic label. The headline numbers (\u22481.6\u03c3, |\u03bac| < 1.5 at 95% CL) come from arXiv:2504.00672 / CMS-HIG-25-002, but the plot comes from CMS-HIG-21-008. Its 2\u03c3 contours reach about |\u03bac| \u2248 2, so the figure does not support the bullets and a careful listener will see the mismatch. \u00b5 is used without definition, and the bullets include fragments."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "The body text is readable. The figure, the only visual evidence, fills about a third of the slide, and its tick labels, legend and CMS header are small for projection. The two small-font explanatory lines and the caption are near the lower limit of readability. Physics symbols in a math font render small, and cc\u0304 is hard to tell apart. A large empty area below the caption could be used to enlarge the plot."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The bullet numbers (\u22481.6\u03c3, |\u03bac| < 1.5 at 95% CL) come from CMS-HIG-25-002, but the figure is the older CMS-HIG-21-008 projection, whose 2\u03c3 contours reach about |\u03bac| \u2248 2. The figure appears to contradict the stated limit.",
+          "suggested_fix": "Replace the figure with the HIG-25-002 projection plot showing the |\u03bac| < 1.5 result. If you keep the HIG-21-008 plot, label it explicitly as the earlier projection that the 30% improvement is measured against."
+        },
+        {
+          "severity": "major",
+          "description": "The take-away 'Is H\u2192cc\u0304 evidence reachable at the HL-LHC? Determining |\u03bac| at O(1) is.' is elliptical and reads cryptically. The title carries no message.",
+          "suggested_fix": "Make the title the message, e.g. 'HL-LHC: ~1.6\u03c3 VH(H\u2192cc\u0304), |\u03bac| < 1.5 at 95% CL'. Rewrite the box as a plain sentence: 'Evidence for H\u2192cc\u0304 is out of reach at the HL-LHC, but |\u03bac| will be constrained at O(1).'"
+        },
+        {
+          "severity": "major",
+          "description": "The plot is too small for its importance. Tick labels, legend and the CMS header will be hard to read when projected, while a large area below the caption sits empty.",
+          "suggested_fix": "Enlarge the plot to fill the right half vertically, using the empty space, and shorten the left-hand text so it does not compete."
+        },
+        {
+          "severity": "minor",
+          "description": "\u00b5 in 'expected \u00b5 H\u2192cc\u0304 limit' is undefined for a non-CMS audience. ML is used without definition.",
+          "suggested_fix": "Write 'expected limit on the signal strength \u00b5 = \u03c3/\u03c3_SM' and 'machine learning (ML)', or drop the abbreviation."
+        },
+        {
+          "severity": "minor",
+          "description": "Text is moderately heavy. 'far faster than luminosity alone: taggers, new channels, analysis techniques' is a fragment, and '3 ab\u207b\u00b9 per experiment:' breaks across lines in the small font.",
+          "suggested_fix": "Cut to two bullets with full sentences, merge the small-font lines into the main bullets or drop them, and keep '3 ab\u207b\u00b9' on one line."
+        },
+        {
+          "severity": "minor",
+          "description": "Physics symbols are set in a different, smaller math font than the sans-serif body. The cc\u0304 glyphs are hard to tell apart.",
+          "suggested_fix": "Use a sans-serif math font consistently (e.g. the sansmath package or matching Unicode) and match the body text size."
+        },
+        {
+          "severity": "minor",
+          "description": "The caption is in a very small font.",
+          "suggested_fix": "Raise the caption to at least about 14 pt equivalent, or shorten it to the reference plus '3000 fb\u207b\u00b9, 14 TeV'."
+        }
+      ]
+    },
+    "15": {
+      "description": "**1. Message.** This is the closing summary slide, page 15 of 24. The title is just \"Summary\". There is no single takeaway line. The closest is \"Sensitivity is now reaching the BSM-motivated region |\u03bac| \u223c 3\". The main number, |\u03bac| < 3.5 (2.7 exp.) from the tt\u0304H(H\u2192cc\u0304) + VH(H\u2192cc\u0304) combination, sits in the second bullet. Its expected value \"(2.7 exp.)\" is the only bold text on the slide. A blue \"Thank you!\" sits under the bullets, though 9 more slides follow (presumably backup).\n\n**2. Text.**\n- **Amount:** six bullets, four of them running onto a second line. That is a moderate amount for a summary slide.\n- **Repetition:** \"|\u03bac| \u223c 3\" appears twice, in the indirect-probes bullet and again in the BSM-region bullet.\n- **Undefined terms on this slide:** \u03bac, \u03baZ,W, BSM, HLT, HL-LHC, \u03b3H, and \"exp.\" for expected. They may be defined earlier in the talk.\n- **Grammar:**\n  - The Run 3 bullet is a fragment: \"new HLT tagging and a measured tt\u0304+cc\u0304 background\".\n  - \"\u03b3\u03b3 + WW give\" uses a plural verb, which works if read as two channels.\n  - \"on/off-shell H\u2192 4\u2113\" has uneven spacing around the arrow.\n  - \"2nd-generation\" uses a superscript \"nd\".\n- **Mixed fonts:** some physics expressions are set in a serif maths font: tt\u0304H, H \u2192 cc\u0304 and \u03bac. Others are in the sans body font: \"VH\", \"H+c\", \"H\u2192 4\u2113\", \"J/\u03c8\u03b3\". In the rendered image, the serif cc\u0304 in \"H \u2192 cc\u0304\" is small and looks like \"ee\". It appears this way three times, in bullets 2 and 3. The text layer confirms it is cc\u0304, but projected it may be misread.\n\n**3. Figures.** None. The slide is text only, so there are no axes, legends, CMS labels or luminosity/energy labels to assess.\n\n**4. Layout.**\n- **Font size:** body text is a normal Beamer size and readable. The footer (author, title, conference, page number) is very small, as is usual.\n- **Overlap and clipping:** none.\n- **Space:** about the bottom quarter of the slide is empty below \"Thank you!\".\n- **Contrast and colour:** dark text on white, a white title on a blue bar, and \"Thank you!\" in blue. There is no red/green-only distinction.\n",
+      "content": {
+        "score": 3,
+        "reason": "The headline result, |\u03bac| < 3.5 (2.7 exp.) from the ttH(H\u2192cc\u0304)+VH(H\u2192cc\u0304) combination, and the 'reaching |\u03bac| \u223c 3' message are both there. But they sit in bullets 2 and 6 under a generic 'Summary' title, with no stated takeaway. The only bold text is the expected value, not the observed limit. '|\u03bac| \u223c 3' appears twice. The Run 3 bullet is a sentence fragment. \u03bac, \u03baZ,W, BSM, HLT, HL-LHC, \u03b3H and 'exp.' are never defined on this slide, and a non-CMS audience needs at least \u03bac and HLT. The summary covers the right ground, but the message is buried in six bullets of roughly equal weight."
+      },
+      "readability": {
+        "score": 4,
+        "reason": "The body text is at normal Beamer size, with dark text on white, no clipping and no overlap. One real legibility problem: the small serif cc\u0304 in 'H \u2192 cc\u0304' looks like 'ee' when rendered, and it does so three times, in the most important expressions on the slide. Serif and sans fonts are mixed for physics symbols. The bottom quarter of the slide is empty while four bullets wrap onto a second line, so the space is poorly used. Text-only is fine for a summary."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The serif cc\u0304 in 'H \u2192 cc\u0304' renders small and reads as 'ee' (3 occurrences, bullets 2 and 3). When projected, the audience may misread the channel name in the main result.",
+          "suggested_fix": "Typeset every physics expression the same way, e.g. $\\mathrm{H}\\to\\mathrm{c}\\bar{\\mathrm{c}}$ in upright/sans maths (\\usepackage{sansmath} or \\mathsf), at body size. Check it on the projected render."
+        },
+        {
+          "severity": "major",
+          "description": "There is no takeaway line. The headline limit is buried in bullet 2, and only the expected value is bold.",
+          "suggested_fix": "Add a boxed or bold top line such as 'ttH+VH(H\u2192cc\u0304): |\u03bac| < 3.5 obs. (2.7 exp.) at 95% CL, now probing the BSM-motivated |\u03bac| \u223c 3 region'. Bold the observed limit together with the expected one, or bold neither."
+        },
+        {
+          "severity": "minor",
+          "description": "'|\u03bac| \u223c 3' is repeated in the indirect-probes bullet and the BSM-region bullet.",
+          "suggested_fix": "Merge the BSM-region statement into the new headline line and drop the repeat from the bullets."
+        },
+        {
+          "severity": "minor",
+          "description": "Several symbols are undefined for a mixed theory/experiment audience: \u03bac, \u03baZ,W, HLT, HL-LHC, \u03b3H, 'exp.'.",
+          "suggested_fix": "Spell out on first use here or in a short parenthesis: '\u03bac (charm Yukawa modifier)', 'trigger (HLT)', 'expected'. \u03b3H needs a gloss such as 'Higgs width \u0393H' if that is what is meant."
+        },
+        {
+          "severity": "minor",
+          "description": "The Run 3 bullet is a fragment: 'new HLT tagging and a measured tt\u0304+cc\u0304 background'.",
+          "suggested_fix": "Make it a sentence, e.g. 'Run 3 adds charm tagging at trigger level and a measured tt\u0304+cc\u0304 background.'"
+        },
+        {
+          "severity": "minor",
+          "description": "'Thank you!' appears on slide 15 of 24, and the bottom quarter of the slide is empty.",
+          "suggested_fix": "Keep 'Thank you!' but add a 'Backup' divider slide before slide 16. Use the freed space to shorten the wrapping bullets or enlarge the headline line."
+        },
+        {
+          "severity": "minor",
+          "description": "Typographic inconsistencies: uneven spacing in 'H\u2192 4\u2113', a superscript 'nd' in '2nd-generation', and mixed serif/sans for VH, H+c and J/\u03c8\u03b3.",
+          "suggested_fix": "Normalise spacing around arrows, write 'second-generation', and use one maths font style throughout."
+        }
+      ]
+    },
+    "16": {
+      "description": "This is a section divider marking where the backup slides start. The only text on it is \"Backup\", which matches the extracted text layer.\n\n1. **Message:** It has no content of its own and isn't trying to make a physics point. The single word \"Backup\" tells the audience the main talk is over.\n2. **Text:** It has one word, so there's nothing wordy, no symbols or acronyms to define, and no grammar problems.\n3. **Figures:** There are none. That means no plots, axes, legends, CMS label, or luminosity/energy label.\n4. **Layout:** \"Backup\" is in a mid-sized blue sans-serif font on a white background. It is centred left to right and sits a little above the middle. Contrast is good, and nothing overlaps or gets cut off. Colour isn't used to tell anything apart. There's no page number, footer, or logo.\n",
+      "content": {
+        "score": 5,
+        "reason": "Section divider with a single word, 'Backup'. It isn't meant to carry a physics message, and it does its one job of marking the end of the main talk with nothing extra. None of the content criteria for figures or numbers apply."
+      },
+      "readability": {
+        "score": 5,
+        "reason": "One word in a mid-sized blue sans-serif font on white, with good contrast. Nothing is clipped or overlapping, and it can be read from the back of the room. No figure is expected on a divider."
+      },
+      "issues": [
+        {
+          "severity": "minor",
+          "description": "There is no page number. If someone in the Q&A refers to a backup slide by number, there is nothing to count from, and this divider is where the numbering of the backup section would start.",
+          "suggested_fix": "Add page numbers to every slide (for example the beamer footline or \\insertframenumber) so slides can be referred to during questions. Optionally use \\appendix so the backup slides don't change the main-talk count."
+        },
+        {
+          "severity": "minor",
+          "description": "\"Backup\" sits slightly above the vertical centre. This is harmless, but it may look inconsistent if other section dividers in the deck are placed differently.",
+          "suggested_fix": "Use the same divider template as any other section breaks in the deck so placement matches. No change is needed if this is the only divider."
+        }
+      ]
+    },
+    "17": {
+      "description": "**1. Message**\nThe slide shows the CMS VH(H\u2192cc\u0304) result (PRL 131 (2023) 061801): how the merged-jet tagger performs, the event distribution ordered by S/B, and the |\u03ba_c| constraint. The title names the topic (\"event categories and sensitivity\") but does not state a conclusion. A results line at the bottom gives the numbers: best fit \u03bc = 7.7 +3.8/\u22123.5, merged \u03bc = 8.7 +4.6/\u22124.0, resolved \u03bc = \u22129.5 \u00b1 9.6, \u03c3B < 0.94 (0.50) pb. The slide does not say which value is observed and which is expected.\n\n**2. Text**\nThere is little text: a title, three short captions under the plots, one results line, and the reference. These terms are not defined on the slide: \u03bc, \u03c3B, \u03ba_c, S/B, DeepAK15, ParticleNet, and \"merged/resolved\". In the title and in the left caption, the H\u2192cc\u0304 is set in a serif math font, which differs from the bold sans-serif used for the rest of the title. At this rendering it is hard to read as cc\u0304. There are no grammar problems.\n\n**3. Figures**\n- **Left (ROC curves):** background efficiency (log scale, about 10\u207b\u00b3 to 1) against signal efficiency (0 to 1). It is labelled \"CMS Simulation\" and \"(13 TeV)\". The selection is anti-k_T R = 1.5 jets, p_T > 300 GeV, |\u03b7| < 2.4. Two taggers (DeepAK15 and ParticleNet) are compared for H\u2192cc\u0304 vs H\u2192bb\u0304 (dotted lines) and H\u2192cc\u0304 vs V+jets (solid lines). The curves are orange and blue, but the legend shows a grey line for DeepAK15 and red markers for ParticleNet. So the colour-to-tagger mapping is not stated explicitly. The axes have no units, which is fine because efficiencies are dimensionless.\n- **Middle (S/B distribution):** Events (log scale, 1 to 10\u2078) against log\u2081\u2080(S/B) from \u22126 to 0. It is labelled \"CMS\" with \"138 fb\u207b\u00b9 (13 TeV)\" and has the in-plot tag VH(H\u2192cc\u0304). The legend lists Data, the signal at \u03bc = 7.7, Z+jets, W+jets, tt\u0304, single top, VV(other), VZ(Z\u2192cc\u0304), VZ(Z\u2192bb\u0304), VH(H\u2192bb\u0304) and the background uncertainty, all in very small type. The ratio panel shows Data/Background from 0.8 to 1.4, with an \"Expected (\u03bc = 1)\" line.\n- **Right (likelihood scan):** q against |\u03ba_c| from 0 to 7, labelled \"CMS Supplementary\". It shows the observed curve (solid black) and the SM expected curve (dotted red). A dashed horizontal line sits at about q \u2248 3.84, but it has no label. The plot carries no luminosity or energy label. Its caption reads \"|\u03ba_c| scan (supplementary)\".\n- No caption claims more than its plot shows.\n\n**4. Layout**\nEach of the three plots takes up about a third of the slide width. The legend in the middle plot and the selection text in the left plot are probably too small to read when projected. There is a large empty band between the title and the plots. The red-vs-black and orange-vs-blue colour pairs are also separated by line style (dotted vs solid), so the distinctions do not rely only on red/green. There is no overlap or clipping.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear and the three plots back it up, but the slide never states its conclusion. The title names the subject and not the result. The results line lists \u03bc values and \u03c3B < 0.94 (0.50) pb without saying which is observed and which is expected. It also never states the key takeaway, the observed |\u03ba_c| bound. For a non-CMS audience, \u03bc, \u03c3B, \u03ba_c, S/B, DeepAK15/ParticleNet and merged/resolved are all undefined. The ROC plot needs a spoken explanation because its colours do not match its legend, and the dashed 95% CL line on the \u03ba_c scan has no label."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Three plots are squeezed into thirds of the slide width while a large empty band sits under the title. As a result, the S/B legend (10 entries) and the ROC selection text are probably unreadable when projected. The serif H\u2192cc\u0304 in the title and caption is hard to read at this size. Line-style coding means colour-blind viewers can still tell the curves apart, but the plot labels are too small."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The title states a topic, not a conclusion, and the slide has no takeaway line. The audience is never told the observed |\u03ba_c| constraint, which is the main physics message.",
+          "suggested_fix": "Rewrite the title as a result, e.g. 'CMS VH(H\u2192cc\u0304): \u03bc < 14 (7.6 exp.), 1.1 < |\u03ba_c| < 5.5 at 95% CL'. Check the exact values against PRL 131 (2023) 061801. Put the |\u03ba_c| interval in a highlighted box."
+        },
+        {
+          "severity": "major",
+          "description": "The results line mixes observed and expected values without saying which is which: \u03c3B < 0.94 (0.50) pb, and \u03bc values with no limit stated.",
+          "suggested_fix": "Label it explicitly: 'Observed (expected) 95% CL: \u03c3B < 0.94 (0.50) pb'. Show the \u03bc limit as obs/exp too. Consider dropping the resolved \u03bc = \u22129.5 \u00b1 9.6 or explaining it in one phrase."
+        },
+        {
+          "severity": "major",
+          "description": "Symbols the audience needs are not defined: \u03bc, \u03c3B, \u03ba_c, S/B, merged/resolved, DeepAK15/ParticleNet.",
+          "suggested_fix": "Add a short definition line: '\u03bc = \u03c3/\u03c3_SM; \u03ba_c = charm Yukawa coupling modifier; merged = one large-R jet (R=1.5) holding both c quarks, resolved = two small-R jets'. Name the taggers simply as 'graph-NN jet taggers'."
+        },
+        {
+          "severity": "major",
+          "description": "The three plots each take a third of the width, so the S/B legend and the ROC selection text are too small to read when projected. Meanwhile a large empty band sits below the title.",
+          "suggested_fix": "Remove the empty band and enlarge the plots vertically. Better still, drop the ROC (or move it to backup) and give the S/B and \u03ba_c plots half the width each. If you keep the S/B plot, crop it or note that the legend is grouped."
+        },
+        {
+          "severity": "minor",
+          "description": "In the ROC plot the legend uses grey/red markers while the curves are orange/blue, so the colour-to-tagger mapping is unclear.",
+          "suggested_fix": "Annotate the curves directly on the slide ('ParticleNet' next to the blue curve, 'DeepAK15' next to orange), or add a small key: 'solid: vs V+jets, dotted: vs H\u2192bb\u0304'."
+        },
+        {
+          "severity": "minor",
+          "description": "The dashed horizontal line on the \u03ba_c scan (q \u2248 3.84) has no label. The plot also lacks luminosity/energy labels.",
+          "suggested_fix": "Add '95% CL' next to the dashed line and '138 fb\u207b\u00b9 (13 TeV)' in the caption."
+        },
+        {
+          "severity": "minor",
+          "description": "The serif math H\u2192cc\u0304 in the title and caption clashes with the sans-serif title and is hard to read as cc\u0304.",
+          "suggested_fix": "Typeset it in the same sans font as the title (e.g. \\mathsf, or the sansmath package), making sure the overline on the second c is visible."
+        }
+      ]
+    },
+    "18": {
+      "description": "Slide 18 shows the CMS ttH(H\u2192cc\u0304/bb\u0304) result as a (\u03ba_b, \u03ba_c) likelihood plot with two bullets next to it.\n\n**1. Message**\n- The slide is about joint constraints on the b and c Yukawa couplings from a simultaneous ttH(H\u2192bb\u0304) + ttH(H\u2192cc\u0304) fit.\n- The title only names the topic: \"ttH(H\u2192cc\u0304/H\u2192bb\u0304): (\u03ba_b, \u03ba_c) plane\". It has no take-away line.\n- The first bullet comes closest to a take-away: \"fit constrains both Yukawas\". It does not give a numerical \u03ba_c range.\n\n**2. Text**\n- There are two bullets, about 30 words in total. The second bullet is a dense run of four signal strengths, separated by semicolons with asymmetric errors:\n  - ttH(bb) 0.91 +0.26/\u22120.22\n  - ttH(cc) \u22121.6 \u00b1 4.5\n  - ttZ(bb) 1.47 +0.45/\u22120.41\n  - ttZ(cc) 1.02 +0.79/\u22120.84\n- Undefined or implicit terms:\n  - \u03ba_b and \u03ba_c are not defined on the slide.\n  - \"Signal strength\" is written out, but \u03bc is never used.\n  - ttZ appears with no explanation of why it is in the fit.\n  - \"Yukawas\" is informal shorthand.\n- The decay labels are shortened in the second bullet: \"(bb)\" and \"(cc)\" have no bars or arrows, while the title and first bullet use the full H\u2192bb\u0304 form.\n- There are no grammatical errors. The bullets are sentence fragments, which is normal for slides.\n- The citation \"PRL 136 (2026) 011801\" sits at the top right in small blue text.\n\n**3. Figure**\n- There is one plot. The x-axis is \u03ba_b (\u22124 to 4) and the y-axis is \u03ba_c (\u221220 to 20). Both are dimensionless, so no units are needed.\n- Legend:\n  - an orange star for Observed\n  - a blue diamond for Expected\n  - dashed lines for 68% CL\n  - solid lines for 95% CL\n  - the process label \"tt\u0304H(H\u2192cc\u0304/bb\u0304)\"\n- The legend does not say that orange means observed and blue means expected for the contours. You can only infer it from the colours of the markers.\n- Contours:\n  - The 68% contours are closed islands near \u03ba_b \u2248 \u00b11 and \u03ba_c \u2248 0.\n  - The 95% contours are hyperbola-like bands that leave the plot area at the edges, so they look open within the plotted range.\n  - The plot is symmetric in the sign of \u03ba_b.\n- Labels: it carries \"CMS\" with no \"Preliminary\", and \"138 fb\u207b\u00b9 (13 TeV)\".\n- Size: the plot takes up about 45% of the slide width, in the left half. Tick labels, axis titles and legend text are small and may be hard to read when projected.\n- Caption vs plot:\n  - The ttZ(bb) and ttZ(cc) signal strengths in the bullets are not shown in the plot.\n  - The ttH signal strengths are also not shown directly, because the plot is in \u03ba space.\n  - \"Constrains both Yukawas\" fits the plot, but the 95% \u03ba_c region extends past the plotted range.\n\n**4. Layout**\n- There is a lot of empty space above the plot, below it, and under the bullets.\n- The bullet text is a reasonable size. The citation and the in-plot text are small.\n- Nothing overlaps or is clipped.\n- Observed and expected are told apart by orange vs blue, which is safe for colour-blind viewers. The CL levels are told apart by dashed vs solid lines.\n- The dotted grid lines at \u03ba_b = 1 and \u03ba_c = 0 are thin and have low contrast.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear: a joint (\u03ba_b, \u03ba_c) fit from ttH(bb\u0304)+ttH(cc\u0304). But the title only names the topic and states no take-away. The nearest thing to one, \"fit constrains both Yukawas\", gives no \u03ba_c range, and the figure only partly supports it because the 95% \u03ba_c region runs past the \u00b120 plot range. The second bullet lists four signal strengths, and none of them appear in the \u03ba-space figure. The two ttZ values are unexplained for a non-CMS audience. \u03ba_b and \u03ba_c are never defined, though a Higgs conference audience will mostly know them."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "The plot is the key content but takes only about 45% of the slide width, with a lot of empty space around it. Its tick labels, axis titles and legend are small and will be hard to read from the back of the room. The four-number semicolon list with asymmetric errors is dense to read aloud or scan. The citation and the low-contrast reference lines at \u03ba_b=1 and \u03ba_c=0 are small or faint. Nothing overlaps or is clipped. Orange vs blue and dashed vs solid are distinguishable."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "No take-away statement and no numbers in \u03ba space. The slide never says what the fit shows about \u03ba_c, and the 95% contour is open within the plotted range.",
+          "suggested_fix": "Replace the title or add a headline line with the result, e.g. the observed \u03ba_c interval at 95% CL (or the |\u03ba_c| bound) from PRL 136 (2026) 011801. State that the result is compatible with the SM at (1,0)."
+        },
+        {
+          "severity": "major",
+          "description": "The plot is too small for its importance, so its tick labels, axis titles and legend will be hard to read when projected, while much of the slide is empty.",
+          "suggested_fix": "Enlarge the plot to about 60-65% of the slide width and the full height. If possible, use a version with larger fonts from the paper's supplementary material."
+        },
+        {
+          "severity": "major",
+          "description": "The second bullet lists four signal strengths (including ttZ(bb), ttZ(cc)) that the figure does not show. ttZ is never explained, and the numbers distract from the \u03ba-plane message.",
+          "suggested_fix": "Cut the list to ttH(cc\u0304) \u03bc = \u22121.6 \u00b1 4.5 at most. Mention ttZ(\u2192bb\u0304/cc\u0304) only as a simultaneously measured validation of the c-tagging (\"ttZ(cc\u0304) observed, \u03bc \u2248 1.0 \u00b1 0.8\"), or move it to backup."
+        },
+        {
+          "severity": "minor",
+          "description": "\u03ba_b and \u03ba_c are not defined on the slide, and \"Yukawas\" is informal shorthand.",
+          "suggested_fix": "Add a short definition, e.g. \"\u03ba_q = y_q / y_q^SM (coupling modifiers)\", and write \"b and c Yukawa couplings\"."
+        },
+        {
+          "severity": "minor",
+          "description": "The legend does not say that the contour colours mean observed (orange) and expected (blue). Readers have to infer it from the marker colours.",
+          "suggested_fix": "Add a one-line note next to the plot (\"orange: observed, blue: expected; dashed 68%, solid 95% CL\"), or use a version of the figure with an explicit legend."
+        },
+        {
+          "severity": "minor",
+          "description": "Decay notation is inconsistent: the title and first bullet use H\u2192bb\u0304/cc\u0304, but the second bullet uses \"(bb)\" and \"(cc)\" without bars or arrows.",
+          "suggested_fix": "Use H\u2192bb\u0304 / H\u2192cc\u0304 and Z\u2192bb\u0304 / Z\u2192cc\u0304 throughout."
+        },
+        {
+          "severity": "minor",
+          "description": "The 95% contours leave the plotted range, so the plot does not show the full allowed region in \u03ba_c.",
+          "suggested_fix": "Say on the slide that the 95% region is open beyond |\u03ba_c| = 20 within this range, or quote the 1D \u03ba_c interval so the constraint is explicit."
+        },
+        {
+          "severity": "minor",
+          "description": "The citation in the top right is small blue text and the dotted SM reference lines are faint.",
+          "suggested_fix": "Enlarge the citation slightly and mark the SM point (1,0) with a clear marker labelled \"SM\"."
+        }
+      ]
+    },
+    "19": {
+      "description": "The slide title reads \"t\u0304tH(H \u2192 cc\u0304) and boosted H \u2192 cc\u0304: more figures\". Slide 19/24.\n\n**1. Message**\n- This is a backup slide that collects extra figures from two published analyses: ttH(H\u2192cc\u0304) in PRL 136 (2026) 011801 and boosted H\u2192cc\u0304 in PRL 131 (2023) 041801.\n- The title only says \"more figures\". It doesn't state a point, and there is no take-away line.\n\n**2. Text**\n- There is very little text: the title, two one-line captions and the footer (\"C. Gupta | Constraints on Higgs-charm couplings | Higgs 2026, Louvain-la-Neuve\").\n- Left caption: \"PRL 136 (2026) 011801: event yields vs. log\u2081\u2080(S/B)\". S/B is not spelled out.\n- Right caption: \"PRL 131 (2023) 041801: boosted H \u2192 cc\u0304-jet mass, passing region\".\n- Several symbols and terms in the figures are not defined on the slide: \u03bc_fit, \u03bc_SM, \u03bc_Z(cc\u0304), \u03bc_H(cc\u0304), DeepDoubleX, m_SD, and the \"Passing\" and \"Failing\" regions.\n- There are no grammar problems.\n\n**3. Figures**\nThere are four CMS plots in two pairs. Each has the \"CMS\" label (not \"Preliminary\") and \"138 fb\u207b\u00b9 (13 TeV)\".\n\n- **Plot 1 (ttH, H\u2192cc\u0304):**\n  - Events on a log scale, plotted against log\u2081\u2080(S/B) from about \u22124.5 to \u22121.5.\n  - Legend: Data, Background, Bkg uncertainty, ttH(H\u2192cc\u0304) (\u03bc_fit = 1.6 in the text layer; the image seems to show a minus sign, \u22121.6), and ttH(H\u2192cc\u0304) (\u03bc_SM = 1.0).\n  - The lower panel shows Data/Background (about 0.8 to 1.2) with the signal + Bkg curves.\n- **Plot 2 (ttH, H\u2192bb\u0304):**\n  - Same layout, with log\u2081\u2080(S/B) from about \u22123 to 0.\n  - Legend: ttH(H\u2192bb\u0304) (\u03bc_fit = 0.91) and (\u03bc_SM = 1.0).\n  - The ratio panel runs from about 1 to 2.\n- **Plots 3 and 4 (boosted H\u2192cc\u0304):**\n  - Events / 7 GeV on a linear scale, plotted against jet m_SD [GeV] from 40 to 200.\n  - The selection is 450 < p_T < 1200 GeV with DeepDoubleX. Plot 3 is the Passing Region and plot 4 is the Failing Region.\n  - Stacked legend: Data, W(qq\u0304), Z(cc\u0304), H(bb\u0304), Z(bb\u0304), H(cc\u0304), Z(qq), W(cq), Other, QCD, and H(cc\u0304)\u00d7200 drawn as a dashed line.\n  - Also shown: \u03bc_Z(cc\u0304) = 1.0 and \u03bc_H(cc\u0304) = 9.4.\n  - The lower panels show Data \u2212 Bkg with a Bkg. unc. band. The fitted Z(cc\u0304) peak is in red, and the H(cc\u0304)\u00d7200 line is dashed blue.\n- **Caption vs. plots:** the right caption says \"passing region\", but it sits under both the passing and the failing region plots.\n- **Size:** all four plots are small, each about a quarter of the slide width. Legends, axis numbers and the \u03bc values are tiny and would be hard to read when projected.\n\n**4. Layout**\n- The plots take up only the middle band of the slide. There is a large empty area below them and some above.\n- The text inside the figures (legends, tick labels, region labels) is very small.\n- Nothing overlaps or is clipped.\n- The stacked plots use red (Z(cc\u0304)) next to green (Z(qq)/W(cq)) and orange/yellow among other colours, so some categories are told apart only by red vs. green hues.\n- Text contrast on the white background is fine. The title bar is white text on dark blue.\n",
+      "content": {
+        "score": 2,
+        "reason": "This is a backup slide titled 'more figures' with no stated message or take-away. The left caption only mentions ttH(H\u2192cc\u0304), but the second plot is ttH(H\u2192bb\u0304). The right caption says 'passing region' but sits under both the passing and failing plots. The plots need symbols the slide never defines (\u03bc_fit, S/B, DeepDoubleX, m_SD, Passing/Failing, H(cc\u0304)\u00d7200). The fitted ttH(H\u2192cc\u0304) signal strength reads as 1.6 in the text layer but may show \u22121.6 in the image. A signal-strength number this ambiguous is not supported until it is checked against the paper."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Four plots each about a quarter of the slide wide, in a narrow middle band with empty space above and below. Legends, tick labels, \u03bc values and region labels are too small to read when projected. In the stacked plots, Z(cc\u0304) red sits next to green Z(qq)/W(cq), so those categories differ only by red vs. green."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The ttH(H\u2192cc\u0304) fitted signal strength is ambiguous: the text layer says \u03bc_fit = 1.6 and the image seems to show \u22121.6. This is the headline number of the plot, and the sign changes how it reads.",
+          "suggested_fix": "Check the value in PRL 136 (2026) 011801 (figure and abstract), then state the correct \u03bc_fit with its uncertainty in a caption at readable size."
+        },
+        {
+          "severity": "major",
+          "description": "Caption/plot mismatch on both sides. The left caption names only ttH(H\u2192cc\u0304) but covers an H\u2192bb\u0304 plot too. The right caption says 'passing region' but covers the failing region too.",
+          "suggested_fix": "Give each plot its own caption, e.g. 'ttH(H\u2192cc\u0304) categories', 'ttH(H\u2192bb\u0304) categories (fitted simultaneously)', 'Passing (cc\u0304-tagged)', 'Failing (control)'."
+        },
+        {
+          "severity": "major",
+          "description": "All plots are tiny and the legends and \u03bc values can't be read from the room. Most of the slide area is empty.",
+          "suggested_fix": "Split into two backup slides (ttH on one, boosted on the other). Make each plot about half the slide width, or keep only the passing region and the H\u2192cc\u0304 S/B plot and drop the failing region and H\u2192bb\u0304."
+        },
+        {
+          "severity": "major",
+          "description": "The title states no message and there is no take-away line.",
+          "suggested_fix": "Use a message title, e.g. 'ttH(H\u2192cc\u0304): signal concentrated at high S/B' and 'Boosted H\u2192cc\u0304: Z(cc\u0304) peak validates the cc\u0304 tagger (\u03bc_Z = 1.0)', and add one take-away line under each pair."
+        },
+        {
+          "severity": "minor",
+          "description": "Undefined terms: S/B, \u03bc_fit vs \u03bc_SM, DeepDoubleX, m_SD, Passing/Failing, and why H(cc\u0304) is scaled \u00d7200.",
+          "suggested_fix": "Add one short line: 'S/B = expected signal/background per bin; Pass/Fail = DeepDoubleX cc\u0304-tagger score above/below threshold; H(cc\u0304) scaled \u00d7200 for visibility.'"
+        },
+        {
+          "severity": "minor",
+          "description": "Red vs. green separates Z(cc\u0304) from Z(qq)/W(cq) in the stacks, which is hard for colour-blind viewers.",
+          "suggested_fix": "These are published figures and can't be restyled. Point to the Z(cc\u0304) peak with an annotation or arrow instead of relying on colour."
+        }
+      ]
+    },
+    "20": {
+      "description": "## Slide 20/24: \"cH(H\u2192WW): post-fit distributions and per-period limits\"\n\n**1. Message**\nThe slide shows post-fit distributions for the cH(H\u2192WW) analysis and the \u03bc_cH upper limits for each data-taking period. The title says what is shown but does not state a conclusion. The conclusion comes in the bottom line: \"Best fit (1 POI): \u03bc_cH = 390 +380 \u2212270, compatible with SM within 1.5\u03c3; limited by data statistics, then flavour-scheme and ggH heavy-flavour modelling.\" A source reference, \"JHEP 08 (2026) 051\", sits at the top right.\n\n**2. Text**\nThere is little text: the title, two short figure captions and one take-away sentence of about two lines. These acronyms and symbols are not defined on the slide: POI, SR, CR, N_c-j, D_bkg, bH, H+c-bkg, H+notc-bkg, \"B Uncertainty\", and \u03bc_H+c-bkg (in the limit plot legend). The take-away sentence reads correctly.\n\n**3. Figures**\n*Left, a 2\u00d72 grid of post-fit distributions.* The caption reads \"1-POI post-fit distributions of the BDT discriminants\".\n- The panels are N_c-j = 1 SR, N_c-j > 1 SR, a high-m_ll CR and a top CR.\n- Each panel has a log-scale \"Events\" axis, a \"Fraction\" subpanel and a data/background ratio subpanel.\n- The x-axis is log(S/B) for the two SR panels, D_bkg for the high-m_ll CR and \"Yield\" for the top CR. Because two panels use log(S/B) and one uses Yield, the caption's \"BDT discriminants\" does not literally describe every panel.\n- The legend lists V+jets, Diboson, Single top, tt\u0304, B Uncertainty, bH, H+c-bkg, H+notc-bkg, cH (\u03bc_cH = 390) and Data. The SR ratio panels are annotated \"\u03bc_cH = 390\".\n- Every panel carries \"CMS\" and \"138 fb\u207b\u00b9 (13 TeV)\". There is no \"Preliminary\" label, which fits a published JHEP result.\n- Together the four panels take up roughly a quarter of the slide. Tick labels, legends and axis titles are very small and would probably be hard to read when projected.\n\n*Right, the limit summary.* The caption reads \"\u03bc_cH limits per data-taking period, 1 and 2 POI\".\n- The plot shows the 95% CL upper limit on \u03bc_cH on a log x-axis (about 10\u00b3 to 10\u2074), labelled \"\u03bc_cH @95%CL\".\n- The rows are 2018, 2017, 2016 period 1, 2016 period 2 and Combination. Each row has two fits: 1POI (H+c bkg fixed), drawn with pink/lavender 95%/68% expected bands, and 2POI (H+c bkg floated), drawn with yellow/green bands.\n- Blue dots mark the expected limit and black dots the observed limit. The values are printed in a column on the right; for the Combination they are 1097 / 1804 for 2POI and 506 / 1065 for 1POI.\n- The plot carries \"CMS\" and \"138 fb\u207b\u00b9 (13 TeV)\". It is larger than the left panels, but its legend text and printed numbers are still small.\n\n**4. Layout**\n- The left plots are crowded and small, while there is unused white space below the limit plot.\n- The light pink and lavender 1POI bands have low contrast against the white background.\n- The 1POI and 2POI fits differ partly by colour (pink vs. green/yellow), but they also sit on separate rows, so the distinction does not rely only on red versus green.\n- The 1POI numbers are printed in a lighter blue than the 2POI numbers, and that lighter blue has lower contrast.\n- I saw no text overlapping or cut off at the slide edges.\n",
+      "content": {
+        "score": 3,
+        "reason": "The take-away is stated and agrees with the figures: the best fit of 390 +380 -270 sits about 1.4 sigma from mu=1, and an observed combined limit near 1065 fits that best fit. But the message is buried. The title only says what is shown and gives no conclusion. The slide also tries to say two things at once (post-fit agreement and per-period limits). Terms the audience needs are not defined: POI, the 1POI vs 2POI fits (H+c bkg fixed vs floated), N_c-j, D_bkg, bH, H+c-bkg, H+notc-bkg. The caption 'BDT discriminants' is wrong for the log(S/B) and Yield panels. The ranking of limiting systematics is not shown in any figure."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "The four post-fit panels together fill about a quarter of the slide. Their tick labels, legends and axis titles will not be readable when projected. The limit plot is larger, but its printed numbers and legend are small. The light pink and lavender 1POI bands and the light-blue 1POI numbers have low contrast on white. There is unused white space below the limit plot while the left side is crowded."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The 2x2 post-fit grid is too small to read: tiny tick labels, legend and axis titles in each panel.",
+          "suggested_fix": "Show only the two SR panels (N_c-j = 1 and > 1) at a readable size and drop the CRs or move them to backup. Or move the post-fit plots to their own slide."
+        },
+        {
+          "severity": "major",
+          "description": "The title gives no conclusion, and the slide carries two messages (post-fit agreement and the limit summary).",
+          "suggested_fix": "Use a conclusion title, e.g. 'cH(H\u2192WW): \u03bc_cH < 1065 (obs) at 95% CL, best fit 390 +380 \u2212270, consistent with SM'. Keep the limit plot as the main figure."
+        },
+        {
+          "severity": "major",
+          "description": "Terms the audience needs are undefined: POI, what 1POI vs 2POI means, N_c-j, D_bkg, bH, H+c-bkg vs H+notc-bkg, \u03bc_H+c-bkg.",
+          "suggested_fix": "Add one line: '1POI: H+c background fixed to SM; 2POI: H+c background floated'. Define N_c-j as the number of c-tagged jets. Group the minor legend entries as 'other H' or explain them in words."
+        },
+        {
+          "severity": "minor",
+          "description": "The caption 'BDT discriminants' does not match panels whose x-axes are log(S/B) and Yield.",
+          "suggested_fix": "Change the caption to 'Post-fit distributions in signal and control regions (1-POI fit)'."
+        },
+        {
+          "severity": "minor",
+          "description": "The 1POI bands (light pink/lavender) and the light-blue 1POI numbers have low contrast on white.",
+          "suggested_fix": "Use darker band colours or a thicker outline, and print all numbers in a dark colour."
+        },
+        {
+          "severity": "minor",
+          "description": "It is unclear which of the printed pairs (e.g. 506 / 1065) is expected and which is observed.",
+          "suggested_fix": "Label the number column 'exp / obs', or quote the combined values in the take-away line."
+        },
+        {
+          "severity": "minor",
+          "description": "The ranking of limiting uncertainties (data stats, then flavour scheme, then ggH heavy-flavour modelling) is not supported by anything on the slide.",
+          "suggested_fix": "Cite the paper's impact table, or cut the clause to 'statistically limited'."
+        },
+        {
+          "severity": "minor",
+          "description": "White space below the limit plot is unused while the left side is crowded.",
+          "suggested_fix": "Rebalance the layout: enlarge the limit plot, or use the space for the 1POI/2POI definition."
+        }
+      ]
+    },
+    "21": {
+      "description": "**Slide 21/24: \"Indirect: Higgs p_T spectrum and \u03b3H\"**\n\n**1. Message**\n- The slide shows indirect constraints on \u03ba_c (and on \u03ba_b and the light-quark \u03ba's) from Higgs p_T spectrum measurements.\n- No take-away line states a conclusion. The title only names the topic.\n- The title mentions \"\u03b3H\", but nothing on the slide is labelled as a \u03b3H result. The right-hand caption says only \"light-quark \u03ba scans\".\n\n**2. Text**\n- There is little text: one caption under each group of plots, plus the footer.\n- Left caption: \"JHEP 04 (2026) 093: (\u03ba_b, \u03ba_c) from the Run 2 p_T^H combination (\u03b3\u03b3, ZZ, WW, \u03c4\u03c4); left \u212c coupling-dependent, right \u212c unconstrained. Shape sensitive to the sign of \u03ba_c.\"\n- Right caption: \"PRD 112 (2025) 112001: light-quark \u03ba scans.\"\n- Undefined on the slide:\n  - \u212c (presumably the BSM or branching-fraction treatment);\n  - \u03ba itself;\n  - the legend terms \"float all\" and \"fix others\".\n- In the rendering, the \"H\" in p_T^H sits above the \"T\", so it looks like a stacked superscript.\n- No grammar problems are visible.\n\n**3. Figures**\n- **Left pair (2D \u03ba_c vs \u03ba_b contours):**\n  - Left panel: contours shaped like rings (annuli). \u03ba_b runs from about \u22121.5 to 2.0 and \u03ba_c from about \u22128 to 8.\n  - Right panel: elliptical contours. \u03ba_b runs from about \u22122 to 10 and \u03ba_c from about \u221230 to 25.\n  - Legend in both: Exp. Combination best fit / 68% / 95%, and Combination best fit / 68% / 95%. Filled blue bands show expected, black lines show observed.\n  - Both carry the \"CMS\" label (no \"Preliminary\") and \"138 fb\u207b\u00b9 (13 TeV)\".\n  - Axis labels are \u03ba_b and \u03ba_c. The \u03ba's are dimensionless, so no units are needed.\n  - The plots are small. Legend, tick labels and the luminosity label are very hard to read at this size.\n  - The caption says the result is \"sensitive to the sign of \u03ba_c\". The left contours look roughly symmetric in \u03ba_c. The right ellipse is slightly off-centre, but the asymmetry is not obvious.\n- **Right 2\u00d72 grid (1D likelihood scans):**\n  - Each panel plots \u22122\u0394ln L against one coupling: \u03ba_u (about \u00b12500), \u03ba_d (about \u00b11200), \u03ba_s (about \u00b160) and \u03ba_c (about \u22124 to 4).\n  - Legend: Observed and Expected, each with \"float all\" and \"fix others\". Observed is solid and expected is dotted, in blue and black.\n  - Dashed horizontal lines mark the 68% CL and 95% CL levels.\n  - Every panel carries \"CMS\" and \"138 fb\u207b\u00b9 (13 TeV)\".\n  - In the \u03ba_c panel the curves are almost flat between about \u22122 and 2.\n  - Panels are small: legend and tick fonts are near the limit of what can be read when projected.\n\n**4. Layout**\n- There is a large empty band between the title and the plots, and another below the plots, so the figures fill only about half the slide's height.\n- The left caption's two lines are spaced unusually far apart.\n- Text in the plots (legends, ticks, CMS and luminosity labels) is very small.\n- Nothing overlaps or is clipped.\n- The colour scheme is blue and black, with no red/green-only distinctions. Contrast between the light-blue and medium-blue bands is moderate.\n- Footer: \"C. Gupta | Constraints on Higgs-charm couplings | Higgs 2026, Louvain-la-Neuve\", page 21/24.\n",
+      "content": {
+        "score": 2,
+        "reason": "There is no take-away line, and the title promises a \u03b3H result that nothing on the slide shows. The caption's claim of sensitivity to the sign of \u03ba_c is not visibly supported: the left contours look symmetric in \u03ba_c, and the right ellipse's offset is subtle. \u212c, \u03ba, 'float all' and 'fix others' are never defined. Nothing tells a non-CMS audience the scale of the \u03ba_c limit compared with direct searches."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Six small plots share the slide, so legends, tick labels and the CMS/luminosity labels are very hard to read when projected. Empty bands above and below the plots mean the figures use only about half the slide height. The light-blue and medium-blue bands have only moderate contrast. The p_T^H subscript renders as a stacked superscript."
+      },
+      "issues": [
+        {
+          "severity": "blocker",
+          "description": "The title mentions \u03b3H, but no \u03b3H result is shown or labelled. The right-hand grid is captioned only 'light-quark \u03ba scans'.",
+          "suggested_fix": "If PRD 112 (2025) 112001 is the \u03b3H analysis, label it so (e.g. 'H+\u03b3: light-quark \u03ba scans'). Otherwise drop \u03b3H from the title."
+        },
+        {
+          "severity": "major",
+          "description": "No take-away. The audience is not told what the indirect \u03ba_c bound is or how it compares with direct H\u2192cc\u0304 limits.",
+          "suggested_fix": "Add one line with the numbers, e.g. 'p_T^H shape: \u03ba_c \u2208 [a, b] at 95% CL (\u212c coupling-dependent), compared with |\u03ba_c| < X from direct searches'."
+        },
+        {
+          "severity": "major",
+          "description": "The claim 'Shape sensitive to the sign of \u03ba_c' is not visibly supported by the contours, which look nearly symmetric in \u03ba_c.",
+          "suggested_fix": "Point to where the asymmetry appears (e.g. an arrow or a quoted asymmetric interval), or soften the claim to 'mild sign sensitivity'."
+        },
+        {
+          "severity": "major",
+          "description": "Six small panels make legends and tick labels unreadable at projection size, while large empty bands go unused.",
+          "suggested_fix": "Show the two \u03ba_b\u2013\u03ba_c contours large and keep only the \u03ba_c 1D scan from the right grid. Move \u03ba_u, \u03ba_d, \u03ba_s to backup or summarise them in one text line. Remove the vertical whitespace."
+        },
+        {
+          "severity": "major",
+          "description": "\u212c, 'float all' and 'fix others' are not defined, and the meaning of left vs right panels depends on \u212c.",
+          "suggested_fix": "Spell it out: 'left: BR_BSM = 0, total width from \u03ba's; right: BSM width free'. Explain 'float all' and 'fix others' as other \u03ba's profiled or set to SM."
+        },
+        {
+          "severity": "minor",
+          "description": "The p_T^H subscript renders as a stacked superscript.",
+          "suggested_fix": "Write it as p_T^H with consistent LaTeX, or as $p_{\\mathrm{T}}^{\\mathrm{H}}$ so H sits as a proper superscript beside T."
+        },
+        {
+          "severity": "minor",
+          "description": "The two lines of the left caption are spaced unusually far apart.",
+          "suggested_fix": "Tighten the line spacing, or shorten the caption to one line once the definitions are moved."
+        },
+        {
+          "severity": "minor",
+          "description": "Contrast between the light-blue and medium-blue expected bands is only moderate.",
+          "suggested_fix": "Accept this as it is in the official CMS figure, but make sure the larger figures make the 68% and 95% bands distinguishable."
+        }
+      ]
+    },
+    "22": {
+      "description": "**1. Message**\n- The slide is about CMS searches for H\u2192J/\u03c8\u03b3 and H\u2192\u03c8(2S)\u03b3, and the \u03ba_c constraint that follows from them.\n- The title only names the topic. There is no take-away line. The nearest thing to one is the last bullet, which gives the \u03ba_c interval.\n\n**2. Text**\n- There are three bullets, about 6 lines in total, written as terse fragments. The amount of text is moderate.\n- Bullet 1 says the direct amplitude (\u221d \u03ba_c) and the indirect amplitude (H\u2192\u03b3\u03b3*\u2192\u03b3J/\u03c8) interfere, and that this gives \"sign sensitivity\". It does not say what the sign refers to, which is presumably the sign of \u03ba_c.\n- Bullet 2 gives the limits with 123 fb\u207b\u00b9: B(H\u2192J/\u03c8\u03b3) < 2.6\u00d710\u207b\u2074 and B(H\u2192\u03c8(2S)\u03b3) < 9.9\u00d710\u207b\u2074.\n- Bullet 3 gives \u03ba_c/\u03ba_\u03b3 \u2208 (\u2212157, 199), and \u03ba_c \u2208 (\u2212166, 208) with \u03ba_\u03b3 = 1.\n- \u03ba_c, \u03ba_\u03b3 and \u03b3* are not defined on the slide. They may be defined earlier in the talk.\n- The bullets do not say whether the limits are at 95% CL. Only the plot legend states \"95% CL\".\n- There are no grammar errors.\n- Typesetting is slightly inconsistent: \"J/\u03c8\" is upright in some places and math italic in others, and the spacing in \"H\u2192 \u03b3\u03b3*\" is uneven.\n\n**3. Figure** (one plot, right half)\n- The plot shows 95% CL upper limits on B(Z, H \u2192 \u03c8(nS)\u03b3) on a log y-axis from about 10\u207b\u2076 to 10\u207b\u00b3. Branching fractions have no units, so none are needed.\n- There are four categories on the x-axis: Z\u2192J/\u03c8\u03b3, Z\u2192\u03c8(2S)\u03b3, H\u2192J/\u03c8\u03b3 and H\u2192\u03c8(2S)\u03b3. Each has an observed limit (solid line), an expected limit (dashed line), and \u00b11\u03c3 (yellow) and \u00b12\u03c3 (blue) bands.\n- The legend is inside the frame at the lower right.\n- The plot carries a \"CMS\" label with no \"Preliminary\", and \"123 fb\u207b\u00b9 (13 TeV)\".\n- The reference \"PLB 865 (2025) 139462, CMS-SMP-22-012\" is in small blue text above the plot.\n- The plot covers roughly a third of the slide width. The legend text, the category labels and the y-axis title are small and may be hard to read when projected.\n- The H values in the bullets (2.6\u00d710\u207b\u2074 and about 10\u207b\u00b3) match the observed markers.\n- The plot also shows the two Z channels, which the text does not mention.\n- The \u03ba_c interval is not shown in any figure. It is stated only in the text.\n\n**4. Layout**\n- All content sits in a narrow middle band. There is a large empty area between the title and the content, and another below the content.\n- The bullet text is a readable size. The citation, the legend and the axis labels are small.\n- Nothing overlaps or is clipped.\n- The bands are yellow and blue, so nothing depends on telling red from green. Contrast is adequate, except that the small light-blue citation text has fairly low contrast against the white background.\n",
+      "content": {
+        "score": 3,
+        "reason": "The message is clear (the J/\u03c8\u03b3 and \u03c8(2S)\u03b3 searches set limits that give a weak, sign-sensitive bound on \u03ba_c), but no line states it as a take-away; the interval is only the last bullet. The plot supports the BR limits, and the numbers match the observed markers. It does not support the \u03ba_c result, which is the main point for this audience. 'Sign sensitivity' is not explained, \u03ba_c, \u03ba_\u03b3 and \u03b3* are not defined on the slide, and the bullets do not give the CL. The Z channels in the plot are not mentioned, so part of the figure is superfluous."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "The plot takes up only about a third of the slide width, and its legend, x-axis category labels and y-axis title are too small to read when projected. Large empty areas sit above and below a narrow content band, so the figure could easily be bigger. The light-blue citation is small and low-contrast. The bullet text is a readable size."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "The figure is too small: the legend, category labels and y-axis title are unreadable from the back of the room, and the slide has large unused vertical space.",
+          "suggested_fix": "Enlarge the plot to fill the vertical space, about half the slide width or more, or crop it to the two H categories so the labels can be bigger."
+        },
+        {
+          "severity": "major",
+          "description": "There is no take-away line. The physics point (a direct constraint on \u03ba_c, sign-sensitive through interference but still about 200\u00d7 the SM) is left for the audience to work out from the last bullet.",
+          "suggested_fix": "Add a boxed conclusion, e.g. 'Exclusive H\u2192J/\u03c8\u03b3: |\u03ba_c| \u2272 200, sign-sensitive via interference; far from SM, needs HL-LHC+', or put the message in the title."
+        },
+        {
+          "severity": "major",
+          "description": "The \u03ba_c interval, which is the result the talk cares about, has no supporting figure; the plot shows only BR limits.",
+          "suggested_fix": "Say on the slide how BR maps to \u03ba_c (e.g. one line: B \u221d |\u03ba_\u03b3 A_ind + \u03ba_c A_dir|\u00b2), or show the BR-vs-\u03ba_c/\u03ba_\u03b3 curve if one exists in the paper."
+        },
+        {
+          "severity": "minor",
+          "description": "'Sign sensitivity' is unexplained, and \u03ba_c, \u03ba_\u03b3 and \u03b3* are undefined on this slide.",
+          "suggested_fix": "Write 'sensitive to the sign of \u03ba_c relative to \u03ba_\u03b3' and define the \u03ba symbols briefly, or point to the slide where the \u03ba framework was introduced."
+        },
+        {
+          "severity": "minor",
+          "description": "The bullet limits and the \u03ba intervals do not say what CL they are at.",
+          "suggested_fix": "Add '95% CL' to the limit and interval bullets."
+        },
+        {
+          "severity": "minor",
+          "description": "The plot shows the Z\u2192\u03c8(nS)\u03b3 channels, but the text never mentions them.",
+          "suggested_fix": "Crop the plot to the H categories, or say in a short phrase that the Z channels were measured in the same analysis."
+        },
+        {
+          "severity": "minor",
+          "description": "The citation text is small and light blue on white, with poor contrast.",
+          "suggested_fix": "Use a darker colour and a slightly larger font for the reference."
+        },
+        {
+          "severity": "minor",
+          "description": "Typesetting is inconsistent: J/\u03c8 is upright in some places and italic in others, and the spacing in 'H\u2192 \u03b3\u03b3*' is uneven.",
+          "suggested_fix": "Use one macro for J/\u03c8 throughout and fix the arrow spacing."
+        }
+      ]
+    },
+    "23": {
+      "description": "1. **Message:** The slide compares HLT flavour-tagging performance between online and offline taggers, and shows the VBF H\u2192cc\u0304 trigger efficiency in Run 3 against the Run 2 VBF Hbb trigger. The title, \"Run 3 HLT flavour tagging\", names the topic only. No take-away line states the conclusion. The two captions are \"HLT tagger misidentification vs. efficiency\" and \"VBF H\u2192cc\u0304 trigger efficiency\". The source is cited at the top right: arXiv:2608.18331, CMS-BTV-25-002.\n\n2. **Text:** There is very little text: the title, two captions and the citation. Acronyms that are not defined on the slide: HLT, PNet, DeepJet, DeepCSV, udsg, VBFHcc and VBFHbb. Capitalisation of \"Distribution before trigger requirements\" is the only wording issue. There are no grammar errors.\n\n3. **Figures:** There are four plots, all with a CMS Simulation label. The two left plots say 13.6 TeV and the two right plots say 13 TeV, 13.6 TeV. No luminosity is given, which is expected for simulation.\n   - **Plots 1 and 2:** These show mis-ID probability (log y axis) against c jet efficiency. Plot 1 covers jet pT in [30,100] GeV and plot 2 covers jet pT > 100 GeV, both with |\u03b7| < 2.5. Each shows Offline PNet, Online PNet, Online DeepJet and DeepCSV curves. Line style separates c vs udsg (dotted) from c vs b (solid). The axes have no units, which is fine because they are probabilities and efficiencies.\n   - **Plot 3:** Trigger efficiency against offline PNet P_c, for Run 3 VBFHcc HLT (blue) and Run 2 VBFHbb HLT (orange). A cyan filled histogram shows the distribution before trigger requirements. The process label is VBF(H\u2192cc\u0304).\n   - **Plot 4:** The same comparison, plotted against VBF m_jj in GeV.\n   - **Readability:** Each plot takes up only about a quarter of the slide width and sits in the vertical middle, with large empty areas above and below. The tick labels, legends and pT/\u03b7 annotations are very small and would be hard to read when projected.\n   - **Captions vs. plots:** Neither caption claims anything the plots do not show.\n\n4. **Layout:** The figures are small, with a lot of unused white space above and below them. The arXiv/CMS-BTV-25-002 citation is in small blue text. In the left plots, the taggers are told apart by colour (black, blue, red, orange). Red and orange lines sit close together, which may be hard to tell apart. Nothing overlaps or is clipped.\n",
+      "content": {
+        "score": 3,
+        "reason": "The topic is clear and the figures can back a message: online PNet comes close to offline PNet, and the Run 3 VBFHcc HLT is more efficient than the Run 2 VBFHbb HLT. But the slide never states that message. The title only names the topic and the captions only describe the plots. A non-CMS audience is also left with undefined acronyms (HLT, PNet, DeepJet, DeepCSV, udsg, VBFHcc/VBFHbb), so it has to work out what to look at."
+      },
+      "readability": {
+        "score": 2,
+        "reason": "Four plots, each about a quarter of the slide wide, sit in a thin band in the middle with large empty areas above and below. Tick labels, legends and the pT/eta annotations are too small to read when projected. In the ROC plots the red and orange curves sit close together, and the dotted vs solid line styles carry meaning that will not be visible from the back of the room."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "There is no take-away. The title only names the topic and no line states the conclusion: online PNet nearly matches offline, and the Run 3 VBF H->cc trigger gains efficiency over the Run 2 VBF Hbb trigger.",
+          "suggested_fix": "Turn the title or a one-line banner into the result, for example 'Run 3 HLT ParticleNet c-tagging nearly matches offline and roughly doubles VBF H->cc trigger efficiency vs Run 2'. Use the real number from the plots."
+        },
+        {
+          "severity": "major",
+          "description": "The plots are too small and the empty space above and below them is wasted. The tick labels, legends and pT/eta annotations cannot be read when projected.",
+          "suggested_fix": "Use a 2x2 grid that fills the slide, or show only the two most important plots (one ROC, one trigger-efficiency curve) at half width each and move the rest to backup."
+        },
+        {
+          "severity": "major",
+          "description": "Acronyms are undefined for a non-CMS audience: HLT, PNet/ParticleNet, DeepJet, DeepCSV, udsg, and VBFHcc/VBFHbb as trigger names.",
+          "suggested_fix": "Add one short line: 'HLT = software trigger; ParticleNet (PNet) = graph-NN tagger; DeepJet/DeepCSV = Run 2 taggers; udsg = light-flavour jets'. Or define them on an earlier slide."
+        },
+        {
+          "severity": "minor",
+          "description": "In the ROC plots the red and orange tagger curves are hard to tell apart, and the c-vs-udsg (dotted) vs c-vs-b (solid) styles are hard to see at this size.",
+          "suggested_fix": "Use more distinct colours, thicker lines, and an enlarged legend. Alternatively show only the c-vs-udsg curves in the main talk."
+        },
+        {
+          "severity": "minor",
+          "description": "The two efficiency plots say '13 TeV, 13.6 TeV' because they compare Run 2 and Run 3. A sentence explaining that would help, since the energies differ.",
+          "suggested_fix": "Add a caption note: 'Run 2 trigger evaluated on 13 TeV simulation, Run 3 on 13.6 TeV'."
+        },
+        {
+          "severity": "minor",
+          "description": "The citation (arXiv:2608.18331, CMS-BTV-25-002) is in small blue text that may not read well when projected.",
+          "suggested_fix": "Make it slightly larger and use a darker colour, keeping it in the corner."
+        }
+      ]
+    },
+    "24": {
+      "description": "1. **Message:** This is a reference list for the talk. The title \"References\" says so, and there is no take-away line, which is normal for this kind of slide. It is the last slide (24/24).\n\n2. **Text:**\n   - There are 14 bullet entries, one line each. Each gives a short topic label, the collaboration, the journal reference, the arXiv number and the CMS analysis code.\n   - **Uneven entries:**\n     - \"t t\u0304+b/c cross sections\" gives only CMS-PAS-TOP-26-003, with no arXiv number.\n     - \"Off-shell + on-shell H\u21924\u2113\" has an arXiv number but is marked \"submitted to PRD\", with no journal reference.\n     - \"HLT flavour tagging\" has an arXiv number but no journal.\n     - The last entry, \"BSM: arXiv:2410.05236\", has no collaboration, journal or topic beyond \"BSM\".\n   - **Acronyms and abbreviations:** VH, HLT, PAS, HL-LHC and BSM are not spelled out, nor are the journal abbreviations (PRL, JHEP, PRD, PLB, Rep. Prog. Phys.). These are standard in the field.\n   - **Notes in parentheses:** Some labels carry notes like \"(backup)\" and \"(motivation figure)\" that point to where they are used in the talk.\n   - **Spacing:** Spacing around the arrow is inconsistent. \"H \u2192 cc\u0304\" has spaces on both sides, while \"H\u2192 \u03b3\u03b3\", \"H\u2192WW\" and \"H\u2192J/\u03c8\u03b3\" have no space before the arrow (and \"H\u2192WW\" and \"H\u2192J/\u03c8\u03b3\" none after it either).\n   - **Rendering:** In the rendered image, the c\u0304 in \"H \u2192 cc\u0304\" is very small and looks like \"ee\". The extracted text confirms it is c c\u0304. In \"Boosted H \u2192 cc\u0304:\" the bar and colon run together into a small smudge. The t t\u0304 symbols also render small.\n\n3. **Figures:** None.\n\n4. **Layout:**\n   - The title is white on the dark-blue header bar.\n   - The body is black on white, so contrast is fine.\n   - The list uses a small font, about the size of normal body text in the rendered image, and is placed in the upper-middle of the slide. A large empty area remains below it.\n   - The footer (author, talk title, conference, page number) is in a very small font.\n   - There is no overlap or clipping, and there are no colour-coded distinctions.\n",
+      "content": {
+        "score": 4,
+        "reason": "The slide does its job as a reference list. Each entry is labelled by topic and mostly gives the collaboration, journal, arXiv number and CMS code. The entries are inconsistent though: TOP-26-003 has only a PAS number, two entries have an arXiv number but no journal, and the bare 'BSM: arXiv:2410.05236' line has no collaboration or description. The '(backup)' and '(motivation figure)' notes are internal pointers that mean little to an outside reader."
+      },
+      "readability": {
+        "score": 3,
+        "reason": "Contrast is good and nothing is clipped or overlapping. But the list is set in a small font and packed into the upper-middle, leaving a large empty area below it, so the space is not used to enlarge the text. The c-bar in 'H \u2192 cc\u0304' renders so small it reads as 'ee', the bar and colon in 'Boosted H \u2192 cc\u0304:' merge, and the t t\u0304 symbols are tiny. Arrow spacing is inconsistent between entries. The footer is very small."
+      },
+      "issues": [
+        {
+          "severity": "major",
+          "description": "In 'H \u2192 cc\u0304' the c-bar renders so small it reads as 'ee'. In 'Boosted H \u2192 cc\u0304:' the bar and colon merge. The t t\u0304 also renders small. These are the talk's key physics symbols.",
+          "suggested_fix": "Typeset with proper math mode ($H\\to c\\bar{c}$, $t\\bar{t}$) and a larger body font, then check the rendered PDF at projection size."
+        },
+        {
+          "severity": "major",
+          "description": "The list uses a small font while a large empty area remains below it.",
+          "suggested_fix": "Increase the font size (or use two columns) so the list fills the slide. 14 single-line entries fit comfortably at a normal body size."
+        },
+        {
+          "severity": "minor",
+          "description": "The 'BSM: arXiv:2410.05236' entry has no collaboration, journal or descriptive topic, so it is unclear what it refers to.",
+          "suggested_fix": "Give it a descriptive label (the specific BSM model or interpretation), the collaboration, and the journal reference if it is published."
+        },
+        {
+          "severity": "minor",
+          "description": "Entries are inconsistent: 't t\u0304+b/c cross sections' gives only CMS-PAS-TOP-26-003, 'Off-shell + on-shell H\u21924\u2113' is 'submitted to PRD', and 'HLT flavour tagging' has an arXiv number but no journal.",
+          "suggested_fix": "Use one format for every entry (Collab., journal or 'submitted to X', arXiv, CMS code), and update to journal references wherever papers have since been published."
+        },
+        {
+          "severity": "minor",
+          "description": "Internal notes such as '(backup)' and '(motivation figure)' mean nothing to someone reading the posted slides.",
+          "suggested_fix": "Remove them, or replace them with the slide numbers where each reference is used."
+        },
+        {
+          "severity": "minor",
+          "description": "Arrow spacing is inconsistent: 'H \u2192 cc\u0304' has spaces on both sides, but 'H\u2192 \u03b3\u03b3', 'H\u2192WW' and 'H\u2192J/\u03c8\u03b3' have none before the arrow.",
+          "suggested_fix": "Typeset every decay in math mode with the same spacing, e.g. $H\\to\\gamma\\gamma$."
+        },
+        {
+          "severity": "minor",
+          "description": "The footer (author, title, conference, page number) is in a very small font.",
+          "suggested_fix": "Increase the footer font slightly so the page number at least can be read when projected."
+        }
+      ]
+    }
+  },
+  "coherence": {
+    "score": 4,
+    "reason": "The deck follows a clean arc: motivation (p2), an overview map of all probes (p3), direct H->cc (p4-7), H+c production (p8-10), indirect probes (p11), a consolidated comparison table (p12), Run 3 tools (p13), HL-LHC (p14) and a summary (p15). Backup exists for most main-body analyses. It falls short of 5 for three reasons. First, the observed-vs-expected tension in the direct searches is never addressed: VH has mu < 14 obs vs 7.6 exp, the VH observed interval 1.1 < |kc| excludes kc = 1, and the combination is weaker observed (3.5) than ttH alone (3.0). Second, there is no comparison with ATLAS, which a non-CMS-internal audience will expect. Third, no slide covers dominant systematics or charm-tagger calibration, even though p14 names them as the future limitation.",
+    "unanswered_questions": [
+      "VH(H->cc) observes 1.1 < |kc| < 5.5, which excludes the SM at 95% CL, and its observed mu limit (14) is almost twice the expected (7.6). How large is this excess, what drives it, and why does the ttH+VH combination (3.5 obs) end up weaker than ttH alone (3.0 obs)?",
+      "How do these results compare with ATLAS (VH(H->cc) with Run 2, and any ATLAS ttH/cH or combined kc constraints), and is an ATLAS+CMS or global combination of all the kc probes planned?",
+      "What are the dominant systematic uncertainties in the direct searches (charm-tagging calibration for ParticleNet/ParT, V+HF and tt+cc modelling), and how are they correlated between ttH and VH in the combination? The deck states these will become limiting but never quantifies them."
+    ],
+    "ordering_issues": [
+      {
+        "pages": "4",
+        "description": "VH and boosted ggH(H->cc) share one slide, and the boosted result appears only as a number with no method. Its supporting figure is in backup p19, mixed in with ttH plots, so the main body never actually presents the boosted analysis."
+      },
+      {
+        "pages": "7, 12",
+        "description": "p7 calls the ttH+VH combination the 'most stringent' and 'tightest' constraint, but its observed |kc| < 3.5 is weaker than ttH alone (3.0) on the same slide and in the p12 table. The claim needs to say explicitly that the ranking is by expected sensitivity (2.7 vs 3.3), or a reader will see a contradiction."
+      },
+      {
+        "pages": "8",
+        "description": "The 'flat direction' assumption (other H rates kept SM-like), which every cH kc number depends on, is introduced as the last bullet, after the challenges. It should come before the kc interpretation, alongside the statement that kc enters the production vertex."
+      },
+      {
+        "pages": "3, 11, 12, 15",
+        "description": "Sign sensitivity to kc is claimed for indirect probes (p3, p12), but the only sign-sensitive result shown in the main body, H->J/psi gamma (-166 < kc < 208), is far from competitive. The pT-spectrum (kb, kc) fit, also sign sensitive, appears only in backup p21 and is missing from the p3 overview and the p12 table. The p15 summary also says indirect probes reach |kc| ~ 3, which J/psi gamma does not."
+      },
+      {
+        "pages": "13, 23",
+        "description": "The Run 3 slide shows HLT trigger-efficiency plots, but the HLT tagger performance that explains them is only in backup p23, and the main slide does not point to it."
+      }
+    ]
+  }
+}
