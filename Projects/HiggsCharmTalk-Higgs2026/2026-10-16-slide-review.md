@@ -82,3 +82,7 @@ Fixed: the c̄ glyph, the HL-LHC "Previous" caption, take-aways on every main sl
 ## PPTEval (Claude, pages 1 to 24)
 
 Mean content is about 3.2 and mean readability about 2.7 (pages 1 to 9: 3.22 / 2.67; pages 10 to 24: 3.13 / 2.73). Pages 25 to 27 and the coherence score are missing because of the rate limit. Lowest scores: p7 (2/2, title overclaim, finding 3), p14 (2/3, overclaim, finding 1), p23 (2/1, unreadable panels), and p2, p5, p6, p9, p11, p17, p19, p21 (readability 2, mostly small figures). The p6 candidate "VH comparison not shown" is minor, since S4 sits right before it.
+
+## Chirayu's reactions (16 Oct)
+
+He agreed with every main-deck line under "Your review" and with findings 1 and 3. He cares little about backup polish. He disagreed with finding 4 (no ATLAS line on the CMS table) and finding 6 (keep the boosted slide in the main deck). He wants a Feynman diagram on the title slide, and text density is fine by him. Saved for the personal reviewer in `~/slide-review/skills/cern-slides/personal/feedback/higgs2026-hcharm-2026-10-16/reactions.jsonl`.
