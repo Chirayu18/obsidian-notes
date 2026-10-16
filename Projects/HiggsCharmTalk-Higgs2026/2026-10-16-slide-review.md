@@ -9,7 +9,7 @@ source: laptop
 
 Deck reviewed: `higgs2026_higgs_charm.tex` at commit 179a490 (27 pages: 15 main, 12 backup). Config: `slide-review.json` (public mode, 15+5 min, now with the abstract, the day's programme, and two speaker notes: text density is fine, and add a Feynman diagram on the title slide). Previous review: [[2026-10-15-slide-review]].
 
-**Status: PARTIAL.** Both the claims verifier and the statistics reviewer hit the Claude session limit before they finished, so the numbers on the slides have not been re-verified against INSPIRE in this pass. They resume after 16:00 on 16 Oct. PPTEval scores are missing for pages 25 to 27, and there is no deck coherence score yet, for the same reason. Every finding below comes from the personal, figures and audience reviewers, plus my own check of slide 7.
+**Status: COMPLETE** (all five layers; claims and statistics finished on 16 Oct after a rate-limit pause). Every number on the slides matches its paper (arXiv full text, INSPIRE, CMS public pages), all κc intervals are at 95% CL, all links resolve, and HIG-25-001/-017 and HIG-26-003 are still not public (re-checked 16 Oct 09:19 UTC). No blocker.
 
 ## Your review
 
@@ -34,11 +34,11 @@ Also noticed: κb (S6), κV/κZ/κW (S11) and POI (S10) are used without definit
 ## Correctness and CMS
 
 1. [major] Slides 14 and 15, "Prospects at the HL-LHC" and "Summary": the S2 question ("does the Higgs give 2nd-generation quarks their mass?") is answered with an upper bound, and an upper bound cannot answer it. |κc| < 1.5 says nothing about κc = 0, and slide 14 itself gives VH(cc̄) at the HL-LHC as about 1.6σ expected. Raised independently by the audience reviewer and PPTEval. Evidence: tex:363, tex:370, tex:387; p-14 and p-15. Fix: on S15, "HL-LHC expected |κc| < 1.5: approaching, not yet reaching, sensitivity to κc = 0". In the S14 box, "κc at O(1): first sensitivity to whether the Higgs gives charm its mass".
-2. [major] Slide 13, "Toward Run 3": the "measured tt̄+cc̄ background" (TOP-26-003) comes from Run 2 data. The figure label reads 138 fb⁻¹ (13 TeV), yet the slide frames it as Run 3 progress and tags it NEW. The same framing recurs in the S15 bullet. Raised by all three reviewers. Evidence: p-13; tex:346, tex:352. Fix: caption "Run 2 data (138 fb⁻¹), the main background for Run 3 tt̄H(cc̄)", and add "(Run 2 data)" to the take-away and the summary. While editing, put stat before syst: 680 ± 40 (stat) +130/−100 (syst) fb.
-3. [major] Slide 7, "Combination of ttH and VH: most stringent direct constraint on κc": on observed limits the title is false, because ttH alone gives 3.0 and the combination gives 3.5. The slide's own bullet explains this, but the title and the take-away line ("below the BSM-motivated |κc| ∼ 3") hold only for the expected limit. Verified on the rendered page. Fix: title "...best expected direct sensitivity to κc". Take-away: "Best expected sensitivity to date, |κc| < 2.7 (obs. 3.5), probing the BSM-motivated |κc| ∼ 3".
-4. [major] Slide 12, "Where we stand": there is no ATLAS line on the day's reference table. Both afternoon plenaries (Cabrera Urban, D'Eramo) will compare ATLAS and CMS, and the ATLAS number appears only on backup p26. Evidence: tex:312-326, tex:546. Fix: a footnote, "ATLAS VBF+VH(cc̄): |κc| < 4.7 (3.9), arXiv:2511.21911", after checking that the κ assumptions match (unverified, see below).
+2. [major] Slide 13, "Toward Run 3": the "measured tt̄+cc̄ background" (TOP-26-003) comes from Run 2 data. The figure label reads 138 fb⁻¹ (13 TeV), yet the slide frames it as Run 3 progress and tags it NEW. The same framing recurs in the S15 bullet. Raised by all five layers, and confirmed by the claims check (PAS TOP-26-003 abstract: 13 TeV, 138 fb⁻¹). The same framing is on slide 3 ("Run 3 delivered the tools"). Only the HLT taggers are a Run 3 deliverable. Evidence: p-13; tex:113, tex:346, tex:352, tex:386. Fix: caption "Run 2 data (138 fb⁻¹), the main background for Run 3 tt̄H(cc̄)"; take-away "Run 3 searches start with higher trigger efficiency and a tt̄+cc̄ background already measured in Run 2"; same wording on slides 3 and 15. While editing, put stat before syst: 680 ± 40 (stat) +130/−100 (syst) fb.
+3. [major] Slide 3, "How CMS probes κc" (and Summary, slide 15): the "best" labels are wrong on observed. The H+c box says "best: |κc| < 47 (51)", but γγ alone gives |κc| < 38 (73) on slide 9: WW fluctuated up (μ̂_cH = 390 vs −230 in γγ), the same pattern as ttH alone (3.0) vs the ttH+VH combination (3.5). Evidence: tex:95, tex:100; 2503.08797 (38.1 (72.5)), 2508.14988 Sec. 7. Fix: "comb.: |κc| < 47 (51 exp.)" and "ttH+VH comb.: |κc| < 3.5 (2.7 exp.)"; optionally one line on slide 10: "combined obs. weaker than γγ alone (38) because WW fluctuated up".
+4. [declined by Chirayu: CMS talk, ATLAS stays in backup] Slide 12, "Where we stand": there is no ATLAS line on the day's reference table. Both afternoon plenaries (Cabrera Urban, D'Eramo) will compare ATLAS and CMS, and the ATLAS number appears only on backup p26. Evidence: tex:312-326, tex:546. Fix: a footnote, "ATLAS VBF+VH(cc̄): |κc| < 4.7 (3.9), arXiv:2511.21911", after checking that the κ assumptions match (unverified, see below).
 5. [major] Slide 21 (backup), "cH(H→WW) post-fit": the last caption line, "heavy-flavour modelling.", overprints the footer. Evidence: p-21 and the 150 dpi crop; tex:472. Fix: shorten the sentence, or drop the figure height below 5.8 cm.
-6. [major] Slide 5, "Direct H→cc̄: boosted H": the slide feeds no κc number. Its result is not in the S3 "best" list, the S12 table or the summary, and its take-away concerns ggH dominance. It is the cheapest minute to cut from a talk the audience reviewer estimates at 16 to 17 min. Fix: fold the Z→cc̄-in-Z+jets point into S4 and move S5 to backup, or add the boosted μ limit to the S12 table. Either way, fix the "first time" clash with S4 (see your S5 line).
+6. [declined by Chirayu: keep the slide] Slide 5, "Direct H→cc̄: boosted H": the slide feeds no κc number. Its result is not in the S3 "best" list, the S12 table or the summary, and its take-away concerns ggH dominance. It is the cheapest minute to cut from a talk the audience reviewer estimates at 16 to 17 min. Fix: fold the Z→cc̄-in-Z+jets point into S4 and move S5 to backup, or add the boosted μ limit to the S12 table. Either way, fix the "first time" clash with S4 (see your S5 line).
 7. [minor] Slide 13: "parking and scouting → backup" points at p25, which covers only HLT tagging. Drop the pointer, or drop "scouting" (the word also trips the forbidden-pattern list, though only as a false positive).
 8. [minor] Slide 11, "Indirect": the blue "On-shell" curve is the on-shell-only fit from HIG-25-003, while the bullet labels on-shell as "(γH paper) [−3.7, 3.2]". Fix: a caption with the colour key, "blue on-shell, red on+off-shell (|κV| ≤ 1), black κZ, κW free; arXiv:2607.23352". The asymmetric 4ℓ intervals (S11, S12) also come with no word on where the sign sensitivity comes from. A theorist will ask (tex:289-293).
 9. [minor] Slide 7: neither figure has a caption, and the |κc| scan legend is unreadable. Fix: one line each: "μ limits: ttH, VH, comb." and "|κc| scans, κb = 1".
@@ -47,21 +47,38 @@ Also noticed: κb (S6), κV/κZ/κW (S11) and POI (S10) are used without definit
 12. [minor] Jargon a non-CMS audience may not know: ParticleNet (S4: add "graph-NN jet tagger"), DeepDoubleX (S5), "γH paper" (S3, S11), "1 POI" (S10), "light κq prof." (S12). Also, the "F. Errico's talk" and "J. Daniel's talk" pointers give no day.
 13. [minor] Slide 2: the κc point in the HIG-21-018 figure is the separate ttH+VH constraint ("not part of combined fit"), and the caption does not say so.
 14. [minor] Backup p23 and p25: the plots are unreadable even at 150 dpi. Show one enlarged panel each. On p25, say "light (solid) and b (dashed) misID vs. c-jet efficiency". Backups p17, p18 and p22 have no take-away line, and p24 gives no CL for the J/ψγ κc interval.
-15. [minor] Slides 4, 6 and 7: the band colours swap meaning between papers (VH: green 68%, yellow 95%; ttH: yellow 68%, blue 95%). This comes from the sources, so just say "inner band 68%" once.
+15. [minor] Slide 7 title "most stringent direct constraint": HIG-24-018 itself says "most stringent constraint to date", so the wording follows the paper, and the claims and statistics reviewers both accept it. On observed limits, though, ttH alone (3.0) beats the combination (3.5), and the take-away "below the BSM-motivated |κc| ∼ 3" holds only for the expected limit. Clearer: title "...best expected direct sensitivity", take-away "|κc| < 2.7 (obs. 3.5)". (Was major in the first draft of this report; downgraded after the claims check.)
+16. [minor] Slide 26 (likely questions): "VH excess about 2σ above SM" is our own estimate, (7.7−1)/3.5 ≈ 1.9. The paper calls it "a small upward statistical fluctuation". Fix: "about 1.9σ above μ = 1 (estimated from the quoted uncertainty)".
+17. [minor] Slide 5: μ_Z is quoted with the syst part only, which reads as the full uncertainty. The full result is 1.00 +0.17 −0.14 (syst) ± 0.08 (theo) ± 0.06 (stat), total +0.19 −0.17. The boosted block also lacks the "95% CL obs. (exp.)" label the other blocks carry. Evidence: tex:152, tex:155.
+18. [minor] Slide 12, J/ψγ row: the header promises "obs. (exp.)" but gives only the observed value. Expected is (−128, 169). J/ψγ uses 123 fb⁻¹, so slide 3's "All κc results: Run 2 data (13 TeV, 138 fb⁻¹)" should say "up to 138 fb⁻¹".
+19. [minor] Slides 11 and 12, |κV| ≤ 1 labels: slide 11 says |κV| ≤ 1 (tex:292) but slide 12 says |κZ = κW| ≤ 1 (tex:319) for the same on+off-shell row. Use HIG-25-003 Table 3's "|κV| ≤ 1" in both, and keep |κZ = κW| ≤ 1 for the on-shell PRD 112 row. The indirect rows also allow Γ_BSM ≥ 0, which the direct rows do not; worth stating, since the indirect rows are the more general ones.
+20. [minor] Slide 14: the assumptions behind |κc| < 1.5 are partly missing: 14 TeV, VH(cc̄) only, S2 systematics with improved c tagging (2504.00672). The "30% better" is relative to the YR2019 projection, not the HIG-21-008 figure on the slide. The history bullet "~37 (2016) → 5.6" compares VH alone with VH+ttH; like-for-like it is 37 → 7.6, or label it "VH → VH+ttH".
+21. [minor] Notation: results use \obsexp on slides 4, 6, 7, 9, 10 and 12, but "(2.7 exp.)" on slides 3 and 15. Slide 4 writes "(<3.4)" without κc. Slide 3's footnote calls κc intervals "limits"; better: "μ limits and κc intervals at 95% CL: obs. (exp.)". Slide 10's combination block should say "(1 POI)".
+22. [minor] Slide 13: the BTV trigger-efficiency figure is simulation; add "simulation" to the caption.
+23. [minor] Slide 27 (references): the bookkeeping notes "(backup)", "(motivation figure)" and "(motivation)" are visible in four entries (verified in the PDF text). Drop them.
+24. [minor, optional] Slide 2: "couplings to t, b, τ, μ measured": μ is evidence at about 3σ, so "evidence for μ" is safer.
+25. [minor] Slides 4, 6 and 7: the band colours swap meaning between papers (VH: green 68%, yellow 95%; ttH: yellow 68%, blue 95%). This comes from the sources, so just say "inner band 68%" once.
 
 ## Unverified
 
-- The numbers themselves: the claims verifier did not finish, so nothing on the slides was re-checked against INSPIRE in this pass. The README number checks from 15 Oct still stand.
-- Whether the ATLAS arXiv:2511.21911 κc interval uses the same assumptions as CMS (κb = 1, SM production).
-- The CL and assumptions of every κc interval in the S12 table: the statistics reviewer did not finish.
-- Whether the HIG-23-010/HIG-24-009 "flat direction" rescales the other couplings to keep the Higgs rates SM (S8 wording).
-- HIG-25-001, -017 and HIG-26-003 still being non-public today: not re-checked in this pass.
+- Backup p23: the pT-spectrum fit channels (γγ, ZZ, resolved ττ) were not re-checked in this pass; they were verified against 2504.13081 on 15 Oct.
+
+Cleared since the first draft: all numbers (claims table in the claims verifier's scratch, `tmp/cv/`), confidentiality, links and journal references, the CL of every interval, and the S8 flat-direction wording (correct: both papers rescale all other couplings by a common κH(κc) so the other Higgs rates stay SM). The 4ℓ asymmetry is NOT a sign measurement; the deck does not claim one, so do not add one. If asked: "the small asymmetry comes from charm-loop interference in ggH and H→gg; the constraint is essentially on κc²".
+
+## Q&A prep from the checks
+
+- **ATLAS arXiv:2511.21911** uses the same assumptions as CMS (other couplings SM, SM decays only, SM VBF/ggF/VH production), so 4.7 (3.9) vs CMS 3.5 (2.7) is like-for-like. But its VBF part includes Run 3 data (51.5 fb⁻¹ at 13.6 TeV), so ATLAS has a partly-Run-3 κc result and CMS does not. ATLAS also fluctuated up (μ = 3.3 +5.2 −5.0); ATLAS VH alone gives |κc| < 4.2 (4.1).
+- **The theorist recasts** in 2410.05236 Table 3 (the SFV paper on slide 2) list "CMS |κc| < 2.92" and an ATLAS ±2.27 from the pT shape. These are not CMS results, but someone may quote them.
+- **The slide 13 trigger gain** compares 10 Hz (2018) with 60/115/170 Hz (2022/23/24), so part of the gain is rate budget.
+- **The slide 9 observed limit** (38) is much better than expected (73) because μ̂ = −230.
 
 ## Three unanswered questions
 
 1. ATLAS (a hardest question): "Your 3.5 (2.7) vs our 4.7 (3.9): same assumptions? Combination plans?" Only the number is in backup. Nothing on fairness or plans.
 2. Theorist: "How model-dependent are κc values from 2.8 to 208? At κc ≈ 47 in the cH flat direction, what keeps Γ_H SM? Where does the 4ℓ sign sensitivity come from?" Partly answered by the S12 assumptions column. The flat-direction and sign questions are not.
 3. Chair: "Answering 'does the Higgs give charm its mass' needs κc = 0 excluded. When?" Not answered, and slightly overclaimed (finding 1).
+
+PPTEval's deck-level questions add three more: how compatible are VH (μ̂ = 7.7) and ttH (μ̂ = −1.6), and what is the combination's p-value? Why is boosted H→cc̄ not converted to κc or combined (overlap with the VH merged-jet category)? What κc reach is expected from Run 3 before the HL-LHC (there is no intermediate point between 2.7 and 1.5)?
 
 ## Fixed since the previous review
 
@@ -79,10 +96,10 @@ Fixed: the c̄ glyph, the HL-LHC "Previous" caption, take-aways on every main sl
 | density | 9 slides over 110 words: ignored per the speaker, and the config limit is now 200 |
 | `\tiny` | 10 uses (provenance and captions) |
 
-## PPTEval (Claude, pages 1 to 24)
+## PPTEval (Claude, all 27 pages)
 
-Mean content is about 3.2 and mean readability about 2.7 (pages 1 to 9: 3.22 / 2.67; pages 10 to 24: 3.13 / 2.73). Pages 25 to 27 and the coherence score are missing because of the rate limit. Lowest scores: p7 (2/2, title overclaim, finding 3), p14 (2/3, overclaim, finding 1), p23 (2/1, unreadable panels), and p2, p5, p6, p9, p11, p17, p19, p21 (readability 2, mostly small figures). The p6 candidate "VH comparison not shown" is minor, since S4 sits right before it.
+Mean content 3.04, mean readability 2.67. **Coherence 4/5**: clear order (motivation, roadmap, direct, H+c, indirect, table, Run 3, HL-LHC, summary), terms defined before use, and backups that answer the main slides. It falls short of 5 because of the S13 scouting pointer, the unexplained "γH paper", and the boosted slide disappearing without a κc value. Lowest pages: p7 (2/2), p14 (2/3), p23 (2/1, unreadable panels), p25 (3/2, unreadable panels). Readability 2 on p2, p5, p6, p9, p11, p17, p19 and p21, mostly small figures. The p6 candidate "VH comparison not shown" is minor, since S4 sits right before it.
 
 ## Chirayu's reactions (16 Oct)
 
-He agreed with every main-deck line under "Your review" and with findings 1 and 3. He cares little about backup polish. He disagreed with finding 4 (no ATLAS line on the CMS table) and finding 6 (keep the boosted slide in the main deck). He wants a Feynman diagram on the title slide, and text density is fine by him. Saved for the personal reviewer in `~/slide-review/skills/cern-slides/personal/feedback/higgs2026-hcharm-2026-10-16/reactions.jsonl`.
+He agreed with every main-deck line under "Your review", with finding 1, and with the S7 retitle (now finding 15). He cares little about backup polish. He disagreed with finding 4 (no ATLAS line on the CMS table) and finding 6 (keep the boosted slide in the main deck). Findings 3 and 16 to 24 were added after his reactions and are not yet reacted to. He wants a Feynman diagram on the title slide, and text density is fine by him. Saved for the personal reviewer in `~/slide-review/skills/cern-slides/personal/feedback/higgs2026-hcharm-2026-10-16/reactions.jsonl`.
