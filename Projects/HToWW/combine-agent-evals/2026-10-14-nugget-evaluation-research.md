@@ -225,3 +225,37 @@ Agenthon evidence paths:
 * `submission/FINAL_DECISION_s16.md`
 * `track1-coding-public/docs/{AUTHORING-GUIDE.md,TRUSTED-CHECKER-LABELS.md}`
 * `ext_Fpengz_Agenthon-track-1-coding/experiments/README.md`
+
+## First test (2026-10-16): nuggets on gmn and shape-counting, all 8 configs
+
+`cae-run/nuggets.yaml` holds the key points and must_not items for the two questions. `cae-run/nugget_score.py` is the scorer (stdlib only). It ran on lxplus with the Qwen judge, 3 judge repetitions with shuffled order, and its outputs are in `/eos/user/c/cgupta/combine-nugget-scoring/nugget-results`. `compare_nuggets.py` builds the table below.
+
+| question | config | nugget pass | V_strict | FC recall | rubric |
+|---|---|---|---|---|---|
+| gmn | qwen vanilla | 0/3 | 0.00 | 0.00 | 1.0 |
+| gmn | qwen changed | 2/3 | 0.67 | 0.55 | 3.7 |
+| gmn | luna vanilla / v1 / changed | 3/3, 3/3, 3/3 | 1.00 | 0.55, 0.45, 0.43 | 5.0 |
+| gmn | terra vanilla / v1 / changed | 2/3, 3/3, 3/3 | 1.00 | 0.66, 0.41, 0.59 | 5.0 |
+| shape-counting | qwen vanilla | 0/3 | 0.00 | 0.00 | 1.0 |
+| shape-counting | qwen changed | 1/3 | 0.33 | 0.44 | 2.7 |
+| shape-counting | luna vanilla / v1 / changed | 2/3, 1/3, 3/3 | 0.67, 0.50, 1.00 | 0.48, 0.60, 0.84 | 3.7, 3.7, 5.0 |
+| shape-counting | terra vanilla / v1 / changed | 3/3, 3/3, 2/3 | 1.00, 1.00, 0.83 | 0.85, 0.80, 0.84 | 5.0 |
+
+What it shows:
+
+* Correct GPT gmn answers get V_strict 1.0 where FC recall gave 0.41 to 0.55. The FC/rubric disagreement came from RAGAS, not from the answers.
+* Each failure has a named cause:
+  * the killed luna runs miss kp1 and kp2;
+  * Qwen changed shape-counting rep1 triggers must_not mn1 ("cannot be combined").
+* Nuggets caught errors the rubric rated 5/5. terra vanilla gmn rep2 writes `gmN - 0.12` with no N, and mn3 flagged it. terra changed gmn rep2 has rate 10.0 for 25 × 0.12; mn3 did not catch that arithmetic. Both answers got rubric 5.
+
+Problems found in the scorer and fixed:
+
+* The quote check first rejected valid evidence. The judge joins spans with "...", and answers contain LaTeX `\(N\alpha\)`. Quotes are now matched as fragments in order, ignoring LaTeX delimiters.
+* The judge sometimes copies the key point text, or pads a real quote with text that is not in the answer. Those quotes are rightly rejected. In one case (terra changed shape-counting rep2, which does give `-S`) it turned a correct answer into a miss in 2 of 3 judge repetitions. That is the remaining judge noise; I did not tune further on 2 questions.
+
+Still to do:
+
+* nuggets for the other 13 questions;
+* a calibration run against the 13 October hand grades;
+* probably a stronger or cross-family judge for arithmetic must_not items.
