@@ -109,8 +109,8 @@ He agreed with every main-deck line under "Your review", with finding 1, and wit
 All main-deck lines and findings 1 to 3, 5 and 7 to 25 applied, including the optional ones; findings 4 (ATLAS line on S12) and 6 (boosted slide to backup) skipped as Chirayu declined them. Choices worth knowing:
 
 - S1: two TikZ diagrams (gc → cH left, H → cc̄ right, κc at orange vertices).
-- S4: the per-channel μ-limit plot could not be made readable in a column (row labels stay about 3 pt even cropped to three rows), so it moved to backup p17 with a pointer; the merged-jet mass plot is larger and the block quotes the merged-jet limit.
+- S4: the per-channel μ-limit plot stays on the slide (Chirayu: "it's okay"); a backup move was tried and reverted.
 - S14: the old HIG-21-008 projection plot is replaced by a TikZ bar chart of allowed |κc| (Run 2 obs. 3.5, exp. 2.7, HL-LHC exp. 1.5, SM line, BSM band). The history bullet is dropped (and HIG-18-031 from the references). The 1.5 assumptions are as stated in 2504.00672: 14 TeV, VH(cc̄) with improved c tagging from an ATLAS study, 30% better than the 2019 Yellow Report; the paper does not name S2 for charm, so the slide does not either.
-- S11 caption uses the review's |κV| ≤ 1 for the red curve, though the HIG-25-003 figure legend itself writes |κZ = κW| ≤ 1.
+- S11: follows the paper, not the review. The Fig. 8 curves are labelled as in its legend (|κZ = κW| ≤ 1 vs κZ ≠ κW); the quoted intervals are Table 3, which the paper says is "obtained without imposing custodial symmetry" (|κV| ≤ 1 / all free). So the red curve is not exactly the configuration of [−3.3, 2.8]; the caption says so.
 - Talk days added: F. Errico Tue 27, J. Daniel Mon 26, J. Bierkens Thu 29 (Indico 1668640).
 - Build: 27 pages, no errors; residual overfull 2.3 pt (S3 boxes) and 2.2 pt (likely-questions slide), not visible.

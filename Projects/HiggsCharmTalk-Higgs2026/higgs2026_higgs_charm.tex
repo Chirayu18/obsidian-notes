@@ -140,22 +140,25 @@
 \begin{frame}{Direct \Hcc: VH(\Hcc)}
   \pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}{\pubHIG{HIG-21-008}}
   \begin{columns}[T]
-    \column{0.42\textwidth}
+    \column{0.32\textwidth}
     \begin{itemize}\small
-      \item Leptonic W/Z decays: 0, 1, 2 leptons
-      \item Resolved (two small-radius c jets) and merged-jet (one large-radius jet) topologies; c tagging with ParticleNet (graph neural network)
+      \item W/Z $\to$ 0, 1, 2 leptons; resolved (two c jets) and merged-jet (one large jet) topologies; ParticleNet (graph NN) c tagging
       \item VZ(Z$\to\ccbar$) observed at 5.7$\sigma$: validates the method
     \end{itemize}
     \begin{block}{VH(\Hcc)}
       {\scriptsize 95\% CL obs.\ (exp.)}\\
-      \small $\mu < \obsexp{14}{7.6}$ \ {\scriptsize(merged-jet: \obsexp{16.9}{8.75})}\\
+      \small $\mu < \obsexp{14}{7.6}$\\
       $1.1 < |\kc| < 5.5$ \ {\color{cmsgrey}($|\kc|<3.4$)}\\
-      {\scriptsize obs.\ excludes $\kc=1$: upward fluctuation, $\hat\mu = 7.7$; per-channel limits \tobackup}
+      {\scriptsize obs.\ excludes $\kc=1$: upward fluctuation, $\hat\mu = 7.7$ \tobackup}
     \end{block}
-    \column{0.54\textwidth}
+    \column{0.33\textwidth}
     \centering
-    \includegraphics[height=5.3cm]{HIG-21-008_Figure_003.pdf}\\
-    {\scriptsize Merged-jet $m(\mathrm{H_{cand}})$, events weighted by S/(S+B)}
+    \includegraphics[width=\linewidth]{HIG-21-008_Figure_003.pdf}\\
+    {\scriptsize Merged-jet $m(\mathrm{H_{cand}})$, S/(S+B) weighted: VZ peak near 90\,GeV}
+    \column{0.33\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-21-008_Figure_004.pdf}\\
+    {\scriptsize $\mu$ limits per channel (inner band 68\%)}
   \end{columns}
   \takeaway{The most sensitive single channel of Run 2 (expected $\mu < 7.6$)}
 \end{frame}
@@ -322,7 +325,7 @@
     \column{0.42\textwidth}
     \centering
     \includegraphics[width=0.82\linewidth]{HIG-25-003_Figure_008-d.pdf}\\
-    {\scriptsize arXiv:2607.23352 \kc\ scans: blue on-shell only, red on+off-shell ($|\kappa_V|\le1$), black (on+off) and green (on-shell) with $\kappa_\mathrm{Z}$, $\kappa_\mathrm{W}$ free; solid obs., dashed exp.}
+    {\scriptsize arXiv:2607.23352 Fig.\ 8: blue on-shell and red on+off-shell with $|\kappa_\mathrm{Z}=\kappa_\mathrm{W}|\le1$; green on-shell and black on+off-shell with $\kappa_\mathrm{Z}\neq\kappa_\mathrm{W}$; solid obs., dashed exp. Text intervals: Table 3 (no custodial symmetry)}
   \end{columns}
   \takeaway{With $|\kappa_V|\le1$, H$\to4\ell$ matches the direct searches, under different assumptions \ \tobackup}
 \end{frame}
@@ -389,7 +392,7 @@
     \column{0.44\textwidth}
     \centering
     {\small\bfseries\color{cmsblue}Direct searches: allowed $|\kc|$ at 95\% CL}\\[0.6ex]
-    \begin{tikzpicture}[x=0.95cm,y=0.62cm,font=\footnotesize]
+    \begin{tikzpicture}[x=0.82cm,y=0.62cm,font=\footnotesize]
       \fill[cmsorange!15] (2.5,0.4) rectangle (3.5,3.6);
       \node[cmsorange,font=\scriptsize,align=center] at (3.0,3.95) {BSM\\$|\kc|\sim3$};
       \fill[cmsblue!45] (0,3) rectangle (3.5,3.5);
@@ -434,19 +437,15 @@
 \begin{frame}{VH(\Hcc): event categories and sensitivity}
   \pubref{PRL 131 (2023) 061801}{\pubHIG{HIG-21-008}}
   \begin{columns}[T]
-    \column{0.24\textwidth}
+    \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_001.pdf}\\
     {\scriptsize ParticleNet merged-jet \Hcc\ tagging}
-    \column{0.24\textwidth}
+    \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_002-b.pdf}\\
     {\scriptsize Events vs.\ $\log_{10}(S/B)$}
-    \column{0.24\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-21-008_Figure_004.pdf}\\
-    {\scriptsize $\mu$ limits per channel (green 68\%, yellow 95\%)}
-    \column{0.24\textwidth}
+    \column{0.32\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure-aux_001.pdf}\\
     {\scriptsize $|\kc|$ scan (supplementary)}
