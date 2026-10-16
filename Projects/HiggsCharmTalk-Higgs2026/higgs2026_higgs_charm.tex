@@ -11,7 +11,13 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage{hyperref}
-\usetikzlibrary{arrows.meta,positioning,shapes}
+\usetikzlibrary{arrows.meta,positioning,shapes,decorations.pathmorphing,decorations.markings}
+\tikzset{
+  fermion/.style={thick,cmsblue,postaction={decorate},decoration={markings,mark=at position 0.55 with {\arrow{Stealth}}}},
+  antifermion/.style={thick,cmsblue,postaction={decorate},decoration={markings,mark=at position 0.55 with {\arrow{Stealth[reversed]}}}},
+  higgs/.style={thick,dashed,cmsblue},
+  gluon/.style={thick,cmsblue,decorate,decoration={coil,amplitude=2.2pt,segment length=3.6pt}},
+  kcvertex/.style={circle,fill=cmsorange,inner sep=1.8pt}}
 \graphicspath{{figures/}}
 
 % antiquarks: \bar{c} renders as "e" in this font setup, so use \overline
@@ -57,6 +63,23 @@
       {\includegraphics[height=1.5cm]{CMSlogo_color.png}};
     \node[anchor=south west,inner sep=0pt] at ([xshift=-0.4cm,yshift=0.9cm]current page.south)
       {\includegraphics[height=1.5cm]{VUB_logo.png}};
+    % production (gc -> cH) on the left, decay (H -> cc) on the right; kc at the orange vertices
+    \begin{scope}[shift={([xshift=0.7cm,yshift=0.4cm]current page.west)},font=\small]
+      \draw[gluon] (0,0.7) node[left,cmsblue]{g} -- (0.8,0);
+      \draw[fermion] (0,-0.7) node[left,cmsblue]{c} -- (0.8,0);
+      \draw[fermion] (0.8,0) -- (1.6,0);
+      \draw[fermion] (1.6,0) -- (2.4,0.7) node[right,cmsblue]{c};
+      \draw[higgs] (1.6,0) -- (2.4,-0.7) node[right,cmsblue]{H};
+      \node[kcvertex] at (1.6,0) {};
+      \node[cmsorange,below=2pt] at (1.6,-0.05) {$\kappa_\mathrm{c}$};
+    \end{scope}
+    \begin{scope}[shift={([xshift=-2.9cm,yshift=0.4cm]current page.east)},font=\small]
+      \draw[higgs] (0,0) node[left,cmsblue]{H} -- (1.1,0);
+      \draw[fermion] (1.1,0) -- (1.9,0.7) node[right,cmsblue]{c};
+      \draw[antifermion] (1.1,0) -- (1.9,-0.7) node[right,cmsblue]{$\overline{\mathrm{c}}$};
+      \node[kcvertex] at (1.1,0) {};
+      \node[cmsorange,left=3pt] at (1.1,-0.35) {$\kappa_\mathrm{c}$};
+    \end{scope}
   \end{tikzpicture}
 \end{frame}
 
@@ -65,7 +88,7 @@
   \begin{columns}[T]
     \column{0.58\textwidth}
     \begin{itemize}
-      \item Since the 2012 discovery: couplings to t, b, $\tau$ and $\mu$ measured, all SM-like
+      \item Since the 2012 discovery: couplings to t, b, $\tau$ measured, evidence for $\mu$; all SM-like
       \item \textbf{2\textsuperscript{nd}-generation quark Yukawas are the open frontier}; charm is the most accessible
       \begin{itemize}
         \item $\mathcal{B}(\Hcc)\approx 2.9\%$, about 20$\times$ below $\Hbb$
@@ -78,7 +101,7 @@
     \column{0.40\textwidth}
     \centering
     \includegraphics[height=5.9cm]{HIG-21-018_Figure-aux_011.pdf}\\
-    {\scriptsize CMS, Rep.\ Prog.\ Phys.\ 89 (2026) 087801 (supplementary)}
+    {\scriptsize CMS, Rep.\ Prog.\ Phys.\ 89 (2026) 087801 (supplementary); the \kc\ point is the separate \ttH+VH constraint, not part of the combined fit}
   \end{columns}
 \end{frame}
 
