@@ -1,6 +1,7 @@
 ---
 tags: [reference, talk, review]
-status: active
+status: superseded
+superseded_by: "[[2026-10-16-slide-review]]"
 date: 2026-10-15
 source: laptop
 ---
