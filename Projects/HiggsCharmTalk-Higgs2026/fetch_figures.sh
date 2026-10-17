@@ -12,6 +12,8 @@ DP-2025-081_sl27_evolution_algo.png https://btv-public.docs.cern.ch/DPNotesRun3/
 HIG-17-028_Figure_006.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-17-028/CMS-HIG-17-028_Figure_006.pdf
 HIG-17-028_Figure_007-b.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-17-028/CMS-HIG-17-028_Figure_007-b.pdf
 HIG-18-031_Figure_008.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-18-031/CMS-HIG-18-031_Figure_008.pdf
+HIG-19-006_Figure_011-a.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-19-006/CMS-HIG-19-006_Figure_011-a.pdf
+HIG-19-006_Figure_014-a.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-19-006/CMS-HIG-19-006_Figure_014-a.pdf
 HIG-21-008_Figure-aux_001.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-008/CMS-HIG-21-008_Figure-aux_001.pdf
 HIG-21-008_Figure-aux_050.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-008/CMS-HIG-21-008_Figure-aux_050.pdf
 HIG-21-008_Figure_001.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-008/CMS-HIG-21-008_Figure_001.pdf
