@@ -73,11 +73,13 @@ ParticleNet: H. Qu and L. Gouskos, Phys. Rev. D 101 (2020) 056019, arXiv:1902.08
 
 ---
 
-## Slide 5: Direct H→cc: boosted H (40 s)
+## Slide 5: Direct H→cc: boosted H, ggF-enriched (20 s, flash)
 
-**Say.** At very high Higgs transverse momentum, above 450 GeV, the search is dominated by gluon fusion. The Higgs boson is again a single large-radius jet, identified with a double-charm tagger, DeepDoubleX, and the signal is extracted from a fit to the jet mass. The big peak you see in the passing region is not the Higgs: it is the Z boson decaying to charm, observed here for the first time in Z plus jets at high pT, with a signal strength of one. For the Higgs the limit is μ below 47, with 39 expected. The paper gives no κc interpretation, so this is an independent high-pT handle rather than a κc number.
+**Say.** At very high Higgs pT, above 450 GeV, the Higgs is a single large-radius jet tagged with DeepDoubleX, with a data-driven QCD estimate from the failing region. The peak you see is Z to charm, observed here for the first time in Z plus jets. For the Higgs, μ is below 47; the paper gives no κc. So this is a complementary high-pT handle, and I move on.
 
-**Understand.** The Z→cc peak is the standard candle: it calibrates the double-charm tagger and the jet-mass scale in situ. Note the difference from slide 4: "VZ(Z→cc) observed at 5.7σ" is VZ production; this one is Z+jets. Both are 2023 papers.
+**Understand.** Signal composition 55% ggF, 25% VBF, 20% VH (the paper's numbers), hence "ggF-enriched". The jet mass is the soft-drop mass (β = 0, z = 0.1). DeepDoubleX is decorrelated from the mass, which is what allows the failing region to predict the QCD shape in the passing region; QCD is more than 95% of the background. The Z+jets result is μZ = 1.00 (+0.17 −0.14 syst ± 0.08 theo ± 0.06 stat), "well over 5 standard deviations" in the paper's words. The VZ result on slide 4 and this Z+jets one are different production modes; the deck keeps the "first observation" wording here only.
+
+Internal only: the pre-approval quoted an expected Z→cc significance of 11.4σ and the approval talk "11σ expected/observed"; the published paper and PAS say only "well over 5σ", so do not quote 11σ in the public talk.
 
 **Read.**
 Boosted H→cc, PRL 131 (2023) 041801, arXiv:2211.14181 (HIG-21-012): the paragraphs on the DeepDoubleX tagger and its calibration, the passing/failing region fit, and the Z+jets result μZ = 1.00 (+0.17 −0.14 syst ± 0.08 theo ± 0.06 stat).
