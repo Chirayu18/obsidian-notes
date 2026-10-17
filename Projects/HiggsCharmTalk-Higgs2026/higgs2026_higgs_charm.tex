@@ -458,6 +458,45 @@
   \takeaway{The upward fluctuation comes from the merged-jet category}
 \end{frame}
 
+\begin{frame}{VH(\Hcc): analysis details}
+  \pubref{PRL 131 (2023) 061801; strategy as in JHEP 03 (2020) 131}{\pubHIG{HIG-21-008}}
+  \begin{columns}[T]
+    \column{0.60\textwidth}
+    \begin{itemize}\scriptsize
+      \item \textbf{Two topologies, orthogonal}: H candidate from a large-R ($R=1.5$) jet with $p_\mathrm{T}$ above (merged) or below (resolved) 300\,GeV; same lepton channels
+      \item \textbf{Resolved}: DeepJet CvsL/CvsB; the two highest-CvsL jets form the H candidate; leading-jet cuts at $\approx$40\% c efficiency ($\approx$4\% light, $\approx$16\% b mistag). c-jet energy regression, FSR-jet recovery and a 2L kinematic fit improve the $m(\mathrm{H_{cand}})$ resolution by up to 20\%. BDT per channel, fit to the BDT score
+      \item \textbf{Merged}: ParticleNet \ccbar\ tagger, 4--7$\times$ better rejection than DeepAK15; 3 working points ($\approx$58, 40, 16\% \ccbar\ efficiency) define 3 purity categories. ParticleNet mass regression: $\approx$50\% better mass resolution. BDTs decorrelated from $m(\mathrm{H_{cand}})$; fit to $m(\mathrm{H_{cand}})$
+      \item \textbf{Backgrounds}: V+jets and \ttbar\ normalised in dedicated control regions, following the 2016 analysis (V+jets split by jet flavour, free rate parameters)
+      \item \textbf{VZ(Z$\to\ccbar$) validation}: same analysis, resolved BDTs retrained with VZ as signal, merged unchanged. $\mu_\mathrm{VZ} = 1.01^{+0.23}_{-0.21}$; 4.4$\sigma$ merged, 3.1$\sigma$ resolved, 5.7$\sigma$ combined (exp.\ 4.7, 3.3, 5.9)
+    \end{itemize}
+    \column{0.37\textwidth}
+    \centering
+    {\small\bfseries\color{cmsblue}Uncertainty breakdown}\\[0.3ex]
+    \scriptsize
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{lr}
+      \toprule
+      Source & $\Delta\mu/\Delta\mu_\mathrm{tot}$\\
+      \midrule
+      \textbf{Statistical} & \textbf{85\%}\\
+      \quad Bkg.\ normalisations & 37\%\\
+      Experimental & 48\%\\
+      \quad Simulated sample sizes & 37\%\\
+      \quad c-jet identification & 23\%\\
+      \quad Jet energy scale, resolution & 15\%\\
+      \quad Simulation modelling & 11\%\\
+      \quad Luminosity & 6\%\\
+      \quad Lepton identification & 4\%\\
+      Theory & 22\%\\
+      \quad Backgrounds & 17\%\\
+      \quad Signal & 15\%\\
+      \bottomrule
+    \end{tabular}\\[0.5ex]
+    {\scriptsize For $\hat\mu = 7.7^{+3.8}_{-3.5}$; simulation size driven by negative weights in NLO V+jets}
+  \end{columns}
+  \takeaway{Statistics-limited; the c-tagging and simulation-size systematics come next}
+\end{frame}
+
 \begin{frame}{\ttH(\Hcc): event yields}
   \pubref{PRL 136 (2026) 011801}{\pubHIG{HIG-24-018}}
   \centering
@@ -618,6 +657,7 @@
   \begin{itemize}
     \item VH(\Hcc): CMS, PRL 131 (2023) 061801, arXiv:2205.05550 (HIG-21-008)
     \item \ttH(\Hcc) + VH combination: CMS, PRL 136 (2026) 011801, arXiv:2509.22535 (HIG-24-018)
+    \item VH(\Hcc) with 2016 data (analysis strategy): CMS, JHEP 03 (2020) 131, arXiv:1912.01662 (HIG-18-031)
     \item Boosted \Hcc: CMS, PRL 131 (2023) 041801, arXiv:2211.14181 (HIG-21-012)
     \item cH(H$\to\gamma\gamma$): CMS, JHEP 11 (2025) 060, arXiv:2503.08797 (HIG-23-010)
     \item cH(H$\to$WW) and combination: CMS, JHEP 08 (2026) 051, arXiv:2508.14988 (HIG-24-009)

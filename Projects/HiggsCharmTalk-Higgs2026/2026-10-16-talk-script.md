@@ -62,7 +62,10 @@ Slide 5 also says "Z→cc observed for the first time": that is Z+jets at high p
 
 Off the slide but good to know: the observed interval excludes κc = 1 because of an upward fluctuation. The best fit is μ = 7.7 (+3.8 −3.5), about 1.9σ above μ = 1 if estimated from the quoted uncertainty (the paper calls it "a small upward statistical fluctuation"), and it sits in the merged-jet category: merged μ̂ = 8.7 (+4.6 −4.0), resolved μ̂ = −9.5 ± 9.6 (backup p17). The κc interval is a profile-likelihood scan with the 95% CL boundary at −2ΔlnL = 3.84; when the data fluctuate up, the minimum moves away from κc = 1 and the SM can fall outside the interval, which is not evidence against the SM.
 
-Details from the analysis note and approval talks (internal; do not say them in the public talk unless asked by CMS colleagues): the V+jets background is split by jet flavour; control regions invert the c-tag selections; the resolved control regions fit the subleading-jet c-tag score; the two topologies are fitted simultaneously with rate parameters, V+jets and tt̄ scale factors and c-tagging efficiencies uncorrelated between them and the rest correlated. None of this is in the PRL.
+Your notes, sorted by where they can be used (verified against the PRL on 17 Oct):
+Public, on slide 4 or backup p18: DeepJet for resolved and ParticleNet for merged; merged is under 5% of the signal but has much lower background; V+jets and tt̄ are the main backgrounds, normalised in control regions; resolved fits the BDT score and merged fits the regressed mass; three cc purity categories in merged; ParticleNet mass regression; the 300 GeV large-R (R = 1.5) jet split makes the two topologies orthogonal; the VZ validation retrains the resolved BDTs with VZ as signal; Z→cc first observed at a hadron collider. Also public, via the 2016 paper whose strategy the PRL says it follows (JHEP 03 (2020) 131): V+jets split by jet flavour and free rate parameters for the background normalisations.
+Corrected: the analysis is statistics-limited (85% of the total uncertainty), not systematics-limited; the c-jet energy regression, FSR recovery and 2L kinematic fit are the resolution "recovery" you mention (up to 20% better mass resolution), and the paper's reason for the merged gain is lower background, not higher Higgs reconstruction efficiency.
+Internal only (analysis note or approval talks; not in any public paper, keep out of the slides): control regions built by inverting the c-tag selections; the subleading-jet c-tag score fitted in the resolved control regions; the two topologies fitted simultaneously with rate parameters not shared, V+jets and tt̄ scale factors and c-tagging efficiencies uncorrelated between them and everything else correlated; VH(cc) fixed to the SM in the VZ fit.
 
 **Read.**
 VH(H→cc), PRL 131 (2023) 061801, arXiv:2205.05550 (HIG-21-008): read the whole letter, it is short; the key parts are the description of the resolved and merged-jet selections, the ParticleNet tagger and its calibration, the VZ(Z→cc) validation, and the κc interpretation (Eq. 1). The public results page has the supplementary κc scan and the per-category best fits (Additional Tables 5 and 6).
@@ -85,7 +88,7 @@ Boosted H→cc, PRL 131 (2023) 041801, arXiv:2211.14181 (HIG-21-012): the paragr
 
 **Say.** The newest direct channel is the Higgs produced with a top-quark pair. The top pair decays to zero, one or two leptons, and the events contain many jets of all flavours, so every jet is placed in two-dimensional tagging categories from ParticleNet, separating b, c and light jets, and a transformer event classifier, ParT, separates ttH to charm, ttH to bottom, ttZ and top-pair plus heavy flavour. ttH to charm, ttH to bottom and ttZ are fitted simultaneously, with the top-pair plus charm and plus bottom backgrounds constrained in control regions. As a check, ttZ with Z to charm is measured at μ = 1.0 ± 0.8. The result is μ below 7.8, with 8.7 expected, and |κc| below 3.0, with 3.3 expected, for κb fixed to one; if κb is fitted from ttH to bottom, |κc| is below 4.2. So this is a second direct channel with expected sensitivity comparable to VH.
 
-**Understand.** The simultaneous fit is what makes ttH special: the same events constrain bottom and charm, so you can fit κb and κc together (backup p20). The 2D tagging plane has two axes, b+c versus light and b versus c (backup p19). The dominant systematics are tt+c and tt+light modelling (about 32% and 29% of the total), but statistics still dominate (74%).
+**Understand.** The simultaneous fit is what makes ttH special: the same events constrain bottom and charm, so you can fit κb and κc together (backup p21). The 2D tagging plane has two axes, b+c versus light and b versus c (backup p20). The dominant systematics are tt+c and tt+light modelling (about 32% and 29% of the total), but statistics still dominate (74%).
 
 **Read.**
 ttH(H→cc), PRL 136 (2026) 011801, arXiv:2509.22535 (HIG-24-018): the main-text paragraphs on event categories and the ParT classifier, and the Supplemental Material sections "Simulated samples", "Baseline event selection", "Neural network event classifier", "Systematic uncertainties" (experimental and modelling), and "Validation of the background model".
@@ -149,7 +152,7 @@ cH(H→WW), JHEP 08 (2026) 051, arXiv:2508.14988 (HIG-24-009): Sec. 4 "Event rec
 γH + on-shell H→4ℓ, PRD 112 (2025) 112001, arXiv:2502.05665 (HIG-23-011): Sec. 8 "Analysis of the light-quark Yukawa couplings" and 8.2 "Results for light-quark Yukawa couplings" (Table 3 has the scenarios); Sec. 7 for the γH part.
 Off-shell + on-shell H→4ℓ, arXiv:2607.23352 (HIG-25-003): Sec. 1 "Introduction" (why custodial symmetry and |κZ| ≤ 1 were dropped), Sec. 6 "Implementation of fitting and associated uncertainties", Sec. 9 "Constraints on Higgs boson Yukawa couplings to light quarks" (Fig. 8, Table 3), Sec. 12 "Measurement of the Higgs boson width from the combination".
 H→J/ψγ, PLB 865 (2025) 139462, arXiv:2411.15000 (SMP-22-012): "Introduction" for the interfering amplitudes, and the κc/κγ interpretation in the results (observed (−157, 199) for κc/κγ; (−166, 208), expected (−128, 169), for κγ = 1).
-Higgs pT spectrum (backup p23), JHEP 04 (2026) 093, arXiv:2504.13081 (HIG-23-013): Sec. 7, the κ-framework interpretation (it uses γγ, ZZ and resolved ττ; WW and boosted ττ are excluded). Theory idea: F. Bishara, U. Haisch, P. F. Monni, E. Re, PRL 118 (2017) 121801, arXiv:1606.09253.
+Higgs pT spectrum (backup p24), JHEP 04 (2026) 093, arXiv:2504.13081 (HIG-23-013): Sec. 7, the κ-framework interpretation (it uses γγ, ZZ and resolved ττ; WW and boosted ττ are excluded). Theory idea: F. Bishara, U. Haisch, P. F. Monni, E. Re, PRL 118 (2017) 121801, arXiv:1606.09253.
 
 ---
 
@@ -197,27 +200,29 @@ HL-LHC projections, arXiv:2504.00672 (ATL-PHYS-PUB-2025-018, CMS-HIG-25-002): Se
 
 **p17 VH categories.** The excess sits in the merged-jet category (μ̂ = 8.7), the resolved category is low (−9.5 ± 9.6). μ limits are CLs, κc intervals are profile-likelihood scans.
 
-**p18 ttH yields.** The ttH(cc) best fit is −1.6 ± 4.5: compatible with zero and with the SM (about 0.6σ from one).
+**p18 VH analysis details.** Everything about the method that does not fit on slide 4, all from the PRL (plus the 2016 paper for the control-region strategy): resolved tagging and resolution recovery, ParticleNet working points and mass regression, background normalisation, the VZ validation (4.4σ merged, 3.1σ resolved, 5.7σ combined), and the full uncertainty table (statistical 85%, simulation size 37%, c-tagging 23%, theory 22%).
 
-**p19 ttH flavour tagging.** Each jet gets ParticleNet scores; the plane (b+c vs light, b vs c) is cut into categories; ttZ(cc) is the standard candle; ttH(bb) is measured on the side at 4.4σ.
+**p19 ttH yields.** The ttH(cc) best fit is −1.6 ± 4.5: compatible with zero and with the SM (about 0.6σ from one).
 
-**p20 (κb, κc) plane.** Orange observed, blue expected; the simultaneous fit constrains both Yukawas, which gives the "κb fitted" number on slide 6.
+**p20 ttH flavour tagging.** Each jet gets ParticleNet scores; the plane (b+c vs light, b vs c) is cut into categories; ttZ(cc) is the standard candle; ttH(bb) is measured on the side at 4.4σ.
 
-**p21 cH(WW) post-fit.** μ̂ = 390 (+380 −270), within 1.5σ of the SM; statistics-limited, then flavour-scheme and ggH heavy-flavour modelling.
+**p21 (κb, κc) plane.** Orange observed, blue expected; the simultaneous fit constrains both Yukawas, which gives the "κb fitted" number on slide 6.
 
-**p22 floating H+c background.** 2 POI: the κc-independent H+c floats too, anticorrelated at −87%, limit 1804; the combination uses 1 POI.
+**p22 cH(WW) post-fit.** μ̂ = 390 (+380 −270), within 1.5σ of the SM; statistics-limited, then flavour-scheme and ggH heavy-flavour modelling.
 
-**p23 Higgs pT spectrum.** 2D (κb, κc) contours only, no 1D κc interval; inputs are γγ, ZZ and resolved ττ.
+**p23 floating H+c background.** 2 POI: the κc-independent H+c floats too, anticorrelated at −87%, limit 1804; the combination uses 1 POI.
 
-**p24 J/ψγ.** Interference of direct and indirect amplitudes gives sign sensitivity; 95% CL κc ∈ (−166, 208), expected (−128, 169); 123 fb⁻¹.
+**p24 Higgs pT spectrum.** 2D (κb, κc) contours only, no 1D κc interval; inputs are γγ, ZZ and resolved ττ.
 
-**p25 H→μμ.** Evidence at 3.0σ (2.5σ expected) with 137 fb⁻¹ in ggH, VBF, VH and ttH categories; μ = 1.19 +0.40 −0.39 (stat) +0.15 −0.14 (syst); κμ = 1.07 +0.22 −0.22 (68% CL), 0.59 < κμ < 1.50 at 95% CL, from a fit with six free κ and the total width fixed to the SM. The first evidence for a Higgs coupling to a second-generation fermion; charm is the quark counterpart. L. D'Eramo's plenary (Wed 17:00) covers rare decays including μμ.
+**p25 J/ψγ.** Interference of direct and indirect amplitudes gives sign sensitivity; 95% CL κc ∈ (−166, 208), expected (−128, 169); 123 fb⁻¹.
 
-**p26 HLT tagging.** Light (solid) and b (dashed) misidentification versus c efficiency; VBF H→cc trigger efficiency vs offline ParticleNet score.
+**p26 H→μμ.** Evidence at 3.0σ (2.5σ expected) with 137 fb⁻¹ in ggH, VBF, VH and ttH categories; μ = 1.19 +0.40 −0.39 (stat) +0.15 −0.14 (syst); κμ = 1.07 +0.22 −0.22 (68% CL), 0.59 < κμ < 1.50 at 95% CL, from a fit with six free κ and the total width fixed to the SM. The first evidence for a Higgs coupling to a second-generation fermion; charm is the quark counterpart. L. D'Eramo's plenary (Wed 17:00) covers rare decays including μμ.
+
+**p27 HLT tagging.** Light (solid) and b (dashed) misidentification versus c efficiency; VBF H→cc trigger efficiency vs offline ParticleNet score.
 
 **Why no ggH(H→cc) slide, if asked.** CMS has no public ggH(H→cc) result: the Run 3 analyses (HIG-25-001, HIG-25-017, HIG-26-003) were still not public on 17 Oct (404 on both public-results pages). The gluon-fusion-dominated public result is the boosted search on slide 5. Do not quote any Run 3 number from the Athens workshop; those are internal. A safe answer: "gluon fusion is the largest production mode but has no handle on the event besides the Higgs jet itself, so the backgrounds are enormous; the public result in that regime is the boosted search, and Run 3 analyses are in progress."
 
-**p27 likely questions.** The VH excess, what limits the direct searches, ATLAS, why cH is weaker, the negative γγ best fit, boosted without κc, trigger gain vs rate budget, sign sensitivity of 4ℓ.
+**p28 likely questions.** The VH excess, what limits the direct searches, ATLAS, why cH is weaker, the negative γγ best fit, boosted without κc, trigger gain vs rate budget, sign sensitivity of 4ℓ.
 
 **ATLAS, if asked.** VBF+VH(cc), arXiv:2511.21911: |κc| < 4.7 (3.9 expected), same assumptions as CMS (other couplings SM, no BSM decays), so 4.7 (3.9) vs 3.5 (2.7) is like-for-like; its VBF part includes 51.5 fb⁻¹ of Run 3 data at 13.6 TeV, and ATLAS VH alone gives |κc| < 4.2 (4.1). Read its introduction and the κc interpretation section.
 
@@ -259,10 +264,10 @@ Found on Indico on 17 Oct by searching each analysis ID. Two kinds, and the diff
 | 11 | γH + on-shell 4ℓ light Yukawas, HIG-23-011 | [J. Davis, pre-approval reprise on light Yukawas, 16 Jul 2024](https://indico.cern.ch/event/1433234/contributions/6048301/attachments/2897045/5079725/Light_Yukawa_PreApproval_Reprise.pptx.pdf) | [J. Davis, 17 Sep 2024](https://indico.cern.ch/event/1451194/contributions/6122638/attachments/2922793/5143469/Approval_Talk.pdf) |
 | 11, 12 | Off-shell + on-shell 4ℓ, HIG-25-003 | [A. Petkovic, 14 Oct 2025](https://indico.cern.ch/event/1583963/contributions/6730263/attachments/3154167/5601958/Preapproval_HIG-25-003.pdf) | [M. V. Srivastav, 5 Mar 2026](https://indico.cern.ch/event/1620561/contributions/6969499/attachments/3229277/5761458/HIG-25-003_Approval_3_6_2026.pdf) |
 | 11 | H→J/ψγ, SMP-22-012 | [R. Ardino, κc interpretation at the Higgs combination meeting, 14 Nov 2023](https://indico.cern.ch/event/1319571/contributions/5668916/attachments/2752181/4790999/23_11_14__HComb__HToJPsiG_KappaC.pdf) | [R. Ardino, 20 Nov 2023](https://indico.cern.ch/event/1344769/contributions/5673179/attachments/2751893/4797451/23_11_20__SMP__SMP_22_012_approval__rardino.pdf) |
-| backup p23 | Higgs pT combination, HIG-23-013 | [M. Galli, 23 Jan 2024](https://indico.cern.ch/event/1360899/contributions/5750357/attachments/2779350/4856476/240123_PreApp.pdf) | [M. Galli, 15 Jul 2024](https://indico.cern.ch/event/1433234/contributions/6040614/attachments/2891744/5078908/240715_Approval.pdf) |
+| backup p24 | Higgs pT combination, HIG-23-013 | [M. Galli, 23 Jan 2024](https://indico.cern.ch/event/1360899/contributions/5750357/attachments/2779350/4856476/240123_PreApp.pdf) | [M. Galli, 15 Jul 2024](https://indico.cern.ch/event/1433234/contributions/6040614/attachments/2891744/5078908/240715_Approval.pdf) |
 | 13 | HLT flavour tagging, BTV-25-002 | [S. Mukherjee, 19 Jan 2026](https://indico.cern.ch/event/1621020/contributions/6862391/attachments/3196953/5702168/BTV_25_002_preapproval_presentation.pdf) | [A. Zaza, 6 May 2026](https://indico.cern.ch/event/1672122/contributions/7071918/attachments/3267043/5840127/BTV_25_002_approval_presentation.pdf) |
 | 13 | tt+c/b cross sections, TOP-26-003 | [D. Kavtaradze, 1 Jul 2026](https://indico.cern.ch/event/1702002/contributions/7158578/attachments/3301174/5916171/pre_approval.pdf) | [D. Kavtaradze, 29 Sep 2026](https://indico.cern.ch/event/1732787/contributions/7286199/attachments/3347605/6009791/approval.pdf) |
-| backup p25 | H→μμ, HIG-19-006 | (only a CADI link on Indico) | [S. Cooperstein, 22 Jul 2020](https://indico.cern.ch/event/938597/contributions/3950570/attachments/2075743/3490666/cooperstein_vbfhmm_approval_july222020.pdf) |
+| backup p26 | H→μμ, HIG-19-006 | (only a CADI link on Indico) | [S. Cooperstein, 22 Jul 2020](https://indico.cern.ch/event/938597/contributions/3950570/attachments/2075743/3490666/cooperstein_vbfhmm_approval_july222020.pdf) |
 
 Slide 14 (HL-LHC, HIG-25-002) has no CMS approval talk on Indico; it was an ATLAS+CMS Strategy input, so read the paper's Sec. 2.
 
