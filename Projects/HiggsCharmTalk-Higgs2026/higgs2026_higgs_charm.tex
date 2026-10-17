@@ -140,27 +140,28 @@
 \begin{frame}{Direct \Hcc: VH(\Hcc)}
   \pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}{\pubHIG{HIG-21-008}}
   \begin{columns}[T]
-    \column{0.32\textwidth}
-    \begin{itemize}\small
-      \item W/Z $\to$ 0, 1, 2 leptons; resolved (two c jets) and merged-jet (one large jet) topologies; ParticleNet (graph NN) c tagging
-      \item VZ(Z$\to\ccbar$) observed at 5.7$\sigma$: validates the method
+    \column{0.37\textwidth}
+    \begin{itemize}\footnotesize
+      \item W/Z $\to$ 0, 1, 2 leptons; main backgrounds V+jets and \ttbar, normalised in control regions
+      \item \textbf{Resolved} ($p_\mathrm{T}^\mathrm{H}<300$\,GeV, $>$95\% of signal): two DeepJet c-tagged jets; fit to a BDT
+      \item \textbf{Merged} (large-R jet $p_\mathrm{T}>300$\,GeV): $<$5\% of signal but less background; ParticleNet \ccbar\ tagging (3 purity categories) and mass regression; fit to $m(\mathrm{H_{cand}})$
+      \item Z$\to\ccbar$ in VZ: \textbf{first observation at a hadron collider}, 5.7$\sigma$
     \end{itemize}
-    \begin{block}{VH(\Hcc)}
-      {\scriptsize 95\% CL obs.\ (exp.)}\\
-      \small $\mu < \obsexp{14}{7.6}$\\
-      $1.1 < |\kc| < 5.5$ \ {\color{cmsgrey}($|\kc|<3.4$)}\\
-      {\scriptsize obs.\ excludes $\kc=1$: upward fluctuation, $\hat\mu = 7.7$ \tobackup}
-    \end{block}
-    \column{0.33\textwidth}
+    \column{0.30\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-21-008_Figure_003.pdf}\\
-    {\scriptsize Merged-jet $m(\mathrm{H_{cand}})$, S/(S+B) weighted: VZ peak near 90\,GeV}
-    \column{0.33\textwidth}
+    {\scriptsize Merged-jet only; bottom: VZ (grey, $\approx$90\,GeV) and VH (red) after background subtraction}
+    \column{0.30\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{HIG-21-008_Figure_004.pdf}\\
-    {\scriptsize $\mu$ limits per channel (inner band 68\%)}
+    \includegraphics[width=0.85\linewidth]{HIG-21-008_Figure_004.pdf}\\
+    {\scriptsize $\mu$ limits per channel (inner band 68\%)}\\[0.3ex]
+    \begin{block}{VH(\Hcc)}
+      {\scriptsize 95\% CL obs.\ (exp.) \tobackup}\\
+      \small $\mu < \obsexp{14}{7.6}$\\
+      $1.1 < |\kc| < 5.5$ \ {\color{cmsgrey}($|\kc|<3.4$)}
+    \end{block}
   \end{columns}
-  \takeaway{The most sensitive single channel of Run 2 (expected $\mu < 7.6$)}
+  \takeaway{The most sensitive single channel of Run 2 (expected $\mu < 7.6$); statistics-limited}
 \end{frame}
 
 % -------------------------------------------------------------------
