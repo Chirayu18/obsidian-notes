@@ -168,21 +168,31 @@
 \begin{frame}{Direct \Hcc: boosted H (ggF-enriched)}
   \pubref{PRL 131 (2023) 041801, CMS-HIG-21-012}{\pubHIG{HIG-21-012}}
   \begin{columns}[T]
-    \column{0.34\textwidth}
-    \begin{itemize}\small
-      \item $p_\mathrm{T}^\mathrm{H}>450$\,GeV to suppress QCD; \Hcc\ in one large-radius jet, soft-drop mass $m_\mathrm{SD}$
-      \item DeepDoubleX tagger, decorrelated from $m_\mathrm{SD}$: passing and failing regions, QCD estimated from data; simultaneous fit of $m_\mathrm{SD}$
-      \item \textbf{Z$\to\ccbar$ observed} for the first time in Z+jets at high $p_\mathrm{T}$, well over 5$\sigma$, $\mu_\mathrm{Z}$ consistent with 1
+    \column{0.56\textwidth}
+    {\small\bfseries\color{cmsblue}Boosted regime ($p_\mathrm{T}^\mathrm{H}>450$\,GeV)}
+    \begin{itemize}\footnotesize
+      \item High-$p_\mathrm{T}$ Higgs bosons to suppress QCD; signal 55\% ggF, 25\% VBF, 20\% VH
+      \item \ccbar\ reconstructed as one large-radius jet; soft drop removes soft, wide-angle radiation and sharpens the jet mass $m_\mathrm{SD}$
     \end{itemize}
-    \column{0.64\textwidth}
+    {\small\bfseries\color{cmsblue}DeepDoubleX tagger}
+    \begin{itemize}\footnotesize
+      \item Deep neural network on low-level jet features: passing (signal-rich) and failing (background-rich) regions
+      \item Decorrelated from $m_\mathrm{SD}$, so the QCD background is estimated from data in the failing region
+    \end{itemize}
+    {\small\bfseries\color{cmsblue}Statistical analysis}
+    \begin{itemize}\footnotesize
+      \item Simultaneous binned fit of $m_\mathrm{SD}$ in all tagger regions; upper limit from the profile likelihood ratio
+      \item Validation: \textbf{Z$\to\ccbar$ observed for the first time in Z+jets} at high $p_\mathrm{T}$, well over 5$\sigma$
+    \end{itemize}
+    \column{0.42\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{HIG-21-012_Figure_002.pdf}\\
-    {\scriptsize $m_\mathrm{SD}$ in the passing (left) and failing (right) regions; the peak is Z$\to\ccbar$}\\[0.5ex]
-    \begin{block}{Boosted \Hcc, 95\% CL obs.\ (exp.)}
-      \centering\small $\mu < \obsexp{47}{39}$
+    \includegraphics[height=3.9cm]{HIG-21-012_Figure_002-a.pdf}\\
+    {\scriptsize Passing region: peak is Z$\to\ccbar$, H$\to\ccbar$ dashed ($\times$200)}\\[0.6ex]
+    \begin{block}{Upper limit, 95\% CL obs.\ (exp.)}
+      \centering\small $\sigma\mathcal{B}/(\sigma\mathcal{B})_\mathrm{SM} < \obsexp{47}{39}$\\
+      {\scriptsize no \kc\ interpretation in the paper}
     \end{block}
   \end{columns}
-  \takeaway{An independent high-$p_\mathrm{T}$ handle (55\% ggF); no \kc\ interpretation}
 \end{frame}
 
 % -------------------------------------------------------------------

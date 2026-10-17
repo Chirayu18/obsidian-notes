@@ -22,6 +22,7 @@ HIG-21-008_Figure_003.pdf https://cms-results.web.cern.ch/cms-results/public-res
 HIG-21-008_Figure_004.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-008/CMS-HIG-21-008_Figure_004.pdf
 HIG-21-009_Figure_027.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-009/CMS-HIG-21-009_Figure_027.pdf
 HIG-21-012_Figure_001.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-012/CMS-HIG-21-012_Figure_001.pdf
+HIG-21-012_Figure_002-a.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-012/CMS-HIG-21-012_Figure_002-a.pdf
 HIG-21-012_Figure_002.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-012/CMS-HIG-21-012_Figure_002.pdf
 HIG-23-010_Figure_001.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-23-010/CMS-HIG-23-010_Figure_001.pdf
 HIG-23-010_Figure_006.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-23-010/CMS-HIG-23-010_Figure_006.pdf
