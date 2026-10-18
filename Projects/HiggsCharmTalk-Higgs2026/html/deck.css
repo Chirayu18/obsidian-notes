@@ -197,5 +197,9 @@ ol.steps li::marker { color: var(--orange); font-weight: 800; }
 table.wst { font-size: 21px; align-self: start; }
 table.wst th { font-size: 17px; }
 table.wst td { padding: 10px 10px; }
-ul.big18 { margin: 6px 0 0; padding-left: 24px; font-size: 21px; line-height: 1.35; }
+ul.big18 { margin: 6px 0 0; padding-left: 26px; font-size: 25px; line-height: 1.3; }
+.slide[data-n="18"] h3 { font-size: 26px; }
+.slide[data-n="18"] .cap { font-size: 16px; }
+.slide[data-n="18"] .result { font-size: 23px; }
+.slide[data-n="18"] .bars .blab { font-size: 17px; white-space: nowrap; }
 ul.big18 li { margin: 8px 0; }
