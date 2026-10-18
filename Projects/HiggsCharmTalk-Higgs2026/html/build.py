@@ -36,6 +36,8 @@ FIGS = {
     "BTV-25-002_Figure_023": (0, 0, 199, 0),
     "PAS-TOP-26-003_Figure_009": None,
 }
+# YR4 BR plot: cropped by fraction of the page (its PDF box is larger than reported)
+FRAC = {"YR4_SMHiggsBR_120-130": (0.28, 0.995)}
 COPY = ["DP-2025-081_sl14_roc_c_tagging.png", "CMSlogo_color.png", "VUB_logo.png"]
 
 
@@ -60,6 +62,15 @@ def images(force=False):
             cmd += ["-x", str(int(l * s)), "-y", str(int(t * s)),
                     "-W", str(int((w - l - r) * s)), "-H", str(int((h - t - b) * s))]
         subprocess.run(cmd + [pdf, os.path.join(IMG, name)], check=True)
+    for name, (a, b) in FRAC.items():
+        out = os.path.join(IMG, name + ".png")
+        if os.path.exists(out) and not force:
+            continue
+        tmp = os.path.join(IMG, name + "_full")
+        subprocess.run(["pdftoppm", "-r", str(DPI), "-png", "-singlefile", os.path.join(FIG, name + ".pdf"), tmp], check=True)
+        from PIL import Image
+        im = Image.open(tmp + ".png"); W, H = im.size
+        im.crop((int(a * W), 0, int(b * W), H)).save(out); os.remove(tmp + ".png")
     for f in COPY:
         shutil.copy(os.path.join(FIG, f), IMG)
 

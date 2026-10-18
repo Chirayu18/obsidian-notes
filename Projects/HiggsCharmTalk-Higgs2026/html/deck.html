@@ -44,17 +44,29 @@
     <h2>Why the Higgs–charm coupling?</h2>
     <p class="sub">Second-generation quark Yukawas are the open frontier</p>
   </header>
-  <div class="cols" style="grid-template-columns: 700px 1fr;">
-    <div class="stack">
-      <p class="small">Since 2012: couplings to t, b, τ measured, evidence for H → μμ <span class="muted">(backup)</span>; all SM-like. <b>Charm is the most accessible second-generation quark.</b></p>
-      <div class="cards" style="grid-template-columns: 1fr 1fr;">
-        <div class="card"><div class="stat"><span class="big">2.9%</span></div>𝓑(H → c<span class="ov">c</span>), about 20× below b<span class="ov">b</span></div>
-        <div class="card"><div class="stat"><span class="big">c jets</span></div>hard to tell from b and light jets, under huge QCD backgrounds</div>
+  <div class="cols" style="grid-template-columns: 720px 1fr;">
+    <div>
+      <div class="box" style="font-size:24px; line-height:1.4; padding:14px 22px">
+        <ul class="tight" style="margin:0">
+          <li>Since 2012: couplings to <b>t, b, τ</b> measured, all SM-like</li>
+          <li>Evidence for <b>H → μμ</b> <span class="muted small">(backup)</span></li>
+          <li><span class="bo">Charm is the most accessible second-generation quark</span></li>
+        </ul>
       </div>
-      <p class="formula">κ<sub>c</sub> = y<sub>c</sub> / y<sub>c</sub><sup>SM</sup> <span class="small muted">&emsp;(SM: κ<sub>c</sub> = 1)</span></p>
-      <div class="result" style="text-align:left">
-        Flavour-compatible BSM (e.g. spontaneous flavour violation) allows <b>|κ<sub>c</sub>| ~ 3</b>:<br>
-        <span class="bo">current sensitivity is entering this region</span>
+      <div style="display:grid; grid-template-columns: 300px 1fr; gap: 20px; margin-top: 16px; align-items:start">
+        <div class="figcol">
+          <div class="fig" id="br"><img src="img/YR4_SMHiggsBR_120-130.png" style="height:300px" alt="SM Higgs branching ratios vs mass">
+            <p class="note" style="position:absolute; left:58%; top:12.2%; font-size:16px">≈ 20× below</p></div>
+          <p class="cap">LHC Higgs XS WG, Yellow Report 4, arXiv:1610.07922</p>
+        </div>
+        <div class="stack">
+          <p style="font-size:20px; margin:4px 0 0">𝓑(H → c<span class="ov">c</span>) ≈ <b>2.9%</b>, about <b>20× below</b> b<span class="ov">b</span>, with huge QCD backgrounds and hard c tagging (slide 4)</p>
+          <p class="formula" style="text-align:left; margin:6px 0">κ<sub>c</sub> = y<sub>c</sub> / y<sub>c</sub><sup>SM</sup> <span class="small muted">&ensp;(SM: 1)</span></p>
+          <div class="result" style="text-align:left; font-size:19px">
+            Flavour-compatible BSM, e.g. spontaneous flavour violation, allows <b style="white-space:nowrap">|κ<sub>c</sub>| ~ 3</b>: <span class="bo">current sensitivity is entering this region</span>
+            <div class="xs muted" style="margin-top:4px">SFV: Egana-Ugrinovic, Homiller, Meade, PRL 123 (2019) 031802 · κ<sub>c</sub> in SFV: Giannakopoulou, Meade, Valli, JHEP 02 (2025) 067</div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="figcol">
@@ -63,6 +75,9 @@
     </div>
   </div>
   <p class="takeaway">Does the Higgs give charm its mass?</p>
+  <svg class="arrows"></svg>
+  <!-- bb and cc lines at M_H = 125 GeV, measured on the PNG -->
+  <i class="arrow" data-from="br@0.536,0.874" data-to="br@0.536,0.636" data-bend="0"></i>
 </section>
 
 <!-- ================================================================ 3 -->
@@ -827,7 +842,8 @@
       <li>ATLAS VBF + VH(H → c<span class="ov">c</span>): ATLAS, arXiv:2511.21911</li>
       <li>HL-LHC: ATLAS and CMS, arXiv:2504.00672 (HIG-25-002)</li>
       <li>Higgs combination: CMS, Rep. Prog. Phys. 89 (2026) 087801, arXiv:2602.18611 (HIG-21-018)</li>
-      <li>Spontaneous flavour violation: arXiv:2410.05236</li>
+      <li>Spontaneous flavour violation: D. Egana-Ugrinovic, S. Homiller, P. Meade, PRL 123 (2019) 031802, arXiv:1811.00017; κ<sub>c</sub> in SFV: A. S. Giannakopoulou, P. Meade, M. Valli, "How charming can the Higgs be?", JHEP 02 (2025) 067, arXiv:2410.05236</li>
+      <li>SM Higgs branching ratios: LHC Higgs Cross Section WG, CERN Yellow Report 4, CERN-2017-002-M, arXiv:1610.07922</li>
       <li>HL-LHC Yellow Report: M. Cepeda et al., CERN Yellow Rep. Monogr. 7 (2019) 221, arXiv:1902.00134</li>
     </ul>
   </div>

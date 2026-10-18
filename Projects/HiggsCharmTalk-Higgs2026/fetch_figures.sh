@@ -52,6 +52,7 @@ SMP-22-012_Figure_005.pdf https://cms-results.web.cern.ch/cms-results/public-res
 HIG-21-018_Figure-aux_011.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-21-018/CMS-HIG-21-018_Figure-aux_011.pdf
 EOF
 for f in *.pdf; do
+  [ "$f" = YR4_SMHiggsBR_120-130.pdf ] && continue   # cropped by html/build.py instead
   read -r w h ox oy < <(gs -q -dNOPAUSE -dBATCH -sDEVICE=bbox "$f" 2>&1 | awk '/HiRes/{x0=$2-2;y0=$3-2;x1=$4+2;y1=$5+2; printf "%.2f %.2f %.2f %.2f\n", x1-x0, y1-y0, -x0, -y0; exit}')
   gs -q -o "$f.tmp" -sDEVICE=pdfwrite -dAutoRotatePages=/None -dDEVICEWIDTHPOINTS="$w" -dDEVICEHEIGHTPOINTS="$h" -dFIXEDMEDIA -c "<</PageOffset [$ox $oy]>> setpagedevice" -f "$f" && mv "$f.tmp" "$f"
 done
@@ -65,3 +66,11 @@ done
 # VUB logo (Wikimedia Commons, File:VUB_RGB.png)
 curl -sfL -A "Mozilla/5.0" -o VUB_logo.png "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/VUB_RGB.png/1280px-VUB_RGB.png" \
   || echo "WARNING: VUB logo not fetched"
+# SM Higgs branching ratios vs M_H (LHC Higgs XS WG, Yellow Report 4, arXiv:1610.07922), from the arXiv source
+if [ ! -s YR4_SMHiggsBR_120-130.pdf ]; then
+  t=$(mktemp -d); curl -sfL -o "$t/yr4.tgz" https://arxiv.org/e-print/1610.07922 \
+    && tar xzf "$t/yr4.tgz" -C "$t" WG1/BranchingRatios/figs/SMHiggsBR_120-130.pdf \
+    && cp "$t/WG1/BranchingRatios/figs/SMHiggsBR_120-130.pdf" YR4_SMHiggsBR_120-130.pdf \
+    || echo "WARNING: YR4 BR plot not fetched"
+  rm -rf "$t"
+fi
