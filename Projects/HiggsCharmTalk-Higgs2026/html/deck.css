@@ -196,4 +196,4 @@ ol.steps li { margin: 4px 0; }
 ol.steps li::marker { color: var(--orange); font-weight: 800; }
 table.wst { font-size: 21px; align-self: start; }
 table.wst th { font-size: 17px; }
-table.wst td { padding: 6px 10px; }
+table.wst td { padding: 10px 10px; }
