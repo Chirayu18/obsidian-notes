@@ -61,3 +61,5 @@ Figures whose text cannot be read from the back (these come from the papers, so 
 | info | fonts | Type 3 fonts present (from the embedded paper figures) |
 
 No forbidden patterns. All "→ backup" pointers land on matching backup slides in `deck.html` (21 to 34). Every "slide N" pointer is correct except S4 (item 2).
+
+Reactions saved: all six top findings agreed (`~/.claude/skills/cern-slides/personal/feedback/higgs2026-html-2026-10-18/reactions.jsonl`).
