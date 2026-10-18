@@ -316,19 +316,18 @@
     <p class="sub">Three t<span class="ov">t</span> decay channels, every jet flavour-tagged</p>
   </header>
   <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
-  <div class="cols" style="grid-template-columns: 640px 1fr; gap: 28px;">
-    <div class="stack" style="font-size:17px">
-      <div class="chan"><span class="pill big">0ℓ</span><div><b>≥ 7 jets</b> (≥ 6 with p<sub>T</sub> &gt; 40 GeV), H<sub>T</sub> &gt; 500 GeV<small>fully hadronic t<span class="ov">t</span></small></div></div>
-      <div class="chan"><span class="pill big">1ℓ</span><div><b>1 lepton</b> (e or μ) + <b>≥ 5 jets</b><small>single-lepton t<span class="ov">t</span></small></div></div>
-      <div class="chan"><span class="pill big">2ℓ</span><div><b>2 opposite-charge leptons</b> + <b>≥ 4 jets</b>; m<sub>ℓℓ</sub> &gt; 20 GeV and outside 76–106 GeV (ee, μμ)<small>dilepton t<span class="ov">t</span></small></div></div>
-      <p class="small" style="margin:10px 0 0">All channels: jets with p<sub>T</sub> &gt; 25 GeV, |η| &lt; 2.4; <b>≥ 3 b- or c-tagged jets, ≥ 1 of them b</b></p>
-      <div class="box small" style="padding:10px 16px">
-        <b>ParticleNet</b> (dynamic graph CNN) classifies every jet: b vs c vs light → <b>11 categories</b> B0–B4, C0–C4, L0 · up to <b>2×</b> better background rejection than DeepJet
+  <div class="cols" style="grid-template-columns: 600px 1fr; gap: 28px; align-items:center;">
+    <div class="stack" style="font-size:20px">
+      <div class="chan" style="font-size:20px"><span class="pill big">0ℓ</span><div><b>≥ 7 jets</b><small>fully hadronic t<span class="ov">t</span></small></div></div>
+      <div class="chan" style="font-size:20px"><span class="pill big">1ℓ</span><div><b>1 lepton + ≥ 5 jets</b><small>single-lepton t<span class="ov">t</span></small></div></div>
+      <div class="chan" style="font-size:20px"><span class="pill big">2ℓ</span><div><b>2 leptons + ≥ 4 jets</b><small>dilepton t<span class="ov">t</span></small></div></div>
+      <div class="box" style="padding:12px 18px; margin-top:22px">
+        <b>ParticleNet</b> tags every jet as b, c or light: <b>11 categories</b> (right)
       </div>
-      <p class="small" style="margin:0"><b>Main background:</b> t<span class="ov">t</span>+jets, split by the flavour of the extra jets: t<span class="ov">t</span>+b, +≥2b, +c, +≥2c, +light</p>
+      <p style="margin:0">Main background: t<span class="ov">t</span>+jets, split by the flavour of the extra jets</p>
     </div>
     <div class="figcol">
-      <img src="img/HIG-24-018_Figure_001.png" style="height:430px" alt="ParticleNet tagging plane">
+      <img src="img/HIG-24-018_Figure_001.png" style="height:460px" alt="ParticleNet tagging plane">
       <p class="cap">b, c and light jets in the ParticleNet (b+c vs light, b vs c) plane, with the 11 tagging categories</p>
     </div>
   </div>
@@ -338,33 +337,29 @@
 <section class="slide" data-n="9">
   <header>
     <h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>): event classifier and regions</h2>
-    <p class="sub">One transformer sorts every event into signal, control or validation regions</p>
+    <p class="sub">Signal, control and validation regions from one classifier</p>
   </header>
   <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
-  <div class="cols" style="grid-template-columns: 640px 1fr; gap: 26px;">
-    <div class="stack">
-      <div class="box small" style="padding:10px 16px">
-        <b>ParT event classifier</b>: many b/c jets make the top and Higgs reconstruction ambiguous, so the classifier works directly on jets, leptons and p<sub>T</sub><sup>miss</sup> (kinematics, tagging category, pairwise ΔR and mass) → scores for <b>10 (9) classes</b> in 0ℓ (1ℓ, 2ℓ): t<span class="ov">t</span>H(c<span class="ov">c</span>), t<span class="ov">t</span>H(b<span class="ov">b</span>), t<span class="ov">t</span>Z(c<span class="ov">c</span>), t<span class="ov">t</span>Z(b<span class="ov">b</span>), five t<span class="ov">t</span>+jets classes, and QCD in 0ℓ
-      </div>
+  <div class="cols" style="grid-template-columns: 560px 1fr; gap: 26px; align-items:center;">
+    <div class="stack" style="font-size:20px">
+      <div class="box" style="padding:12px 18px"><b>Event classifier: ParT</b> (transformer), one score per process</div>
       <div>
-        <p class="small" style="margin:0 0 6px"><b>D<sub>t<span class="ov">t</span>X</sub></b> = sum of the four signal scores:</p>
+        <p style="margin:0 0 6px">D<sub>t<span class="ov">t</span>X</sub> = sum of the four signal scores</p>
         <div class="dstrip">
           <div style="background:#c7d3da; color:var(--ink)">rejected<small>&lt; 0.4</small></div>
-          <div style="background:#5f93a8">Validation (VR)<small>0.4–0.6</small></div>
+          <div style="background:#5f93a8">Validation<small>0.4–0.6</small></div>
           <div style="background:var(--teal)">5 control regions<small>0.6–0.85</small></div>
           <div style="background:var(--orange)">4 SRs<small>&gt; 0.85</small></div>
         </div>
       </div>
-      <ul class="tight small" style="margin:0">
-        <li><b>SRs</b>: t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span>; c-enriched SRs need ≥ 2 c jets, b-enriched ≥ 3 b jets</li>
-        <li><b>CRs</b>: one per t<span class="ov">t</span>+jets component (leading score); they fix its normalisation in the fit</li>
-        <li><b>VR</b>: same SR/CR structure, signal-depleted; validates the background model: good agreement <span class="muted xs">→ backup</span></li>
-        <li>Cleaning cuts: D<sub>t<span class="ov">t</span>+light</sub> &lt; 0.05 (0.02 in 1ℓ); in 0ℓ D<sub>QCD</sub> &lt; 10<sup>−4</sup> leaves QCD &lt; 1% of t<span class="ov">t</span>+jets</li>
-        <li><b>Fit</b>: ParT discriminant in every region; 4 independent μ; five t<span class="ov">t</span>+jets normalisations float</li>
+      <ul class="tight" style="margin:0">
+        <li><b>SRs</b>: t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span></li>
+        <li><b>CRs</b>: one per t<span class="ov">t</span>+jets flavour, fix its normalisation</li>
+        <li><b>Validation</b>: same structure, no signal: good agreement <span class="muted small">→ backup</span></li>
       </ul>
     </div>
     <div class="figcol">
-      <img src="img/HIG-24-018_Figure_005.png" style="width:500px" alt="categorisation tree">
+      <img src="img/HIG-24-018_Figure_005.png" style="width:570px" alt="categorisation tree">
       <p class="cap">Categorisation of events with D<sub>t<span class="ov">t</span>X</sub> &gt; 0.6 (same tree in the VR, 0.4–0.6)</p>
     </div>
   </div>
