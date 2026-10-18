@@ -522,7 +522,12 @@
       <div class="box">
         <div class="formula">σ<sub>on</sub> ∝ <span class="frac"><span>g<sub>p</sub><sup>2</sup> g<sub>d</sub><sup>2</sup></span><span>Γ<sub>H</sub></span></span>
           &emsp;&emsp; σ<sub>off</sub> ∝ g<sub>p</sub><sup>2</sup> g<sub>d</sub><sup>2</sup></div>
-        <div class="small">g<sub>p</sub>, g<sub>d</sub>: production and decay couplings (g<sub>d</sub> ∝ κ<sub>Z</sub>). Large κ<sub>c</sub> adds c<span class="ov">c</span> → H and raises Γ<sub>H</sub>. On-shell alone, a larger κ<sub>Z</sub> can hide it, so |κ<sub>Z</sub>| ≤ 1 must be assumed. <b>Off-shell has no Γ<sub>H</sub></b>: it fixes κ<sub>Z</sub> and removes the assumption.</div>
+        <p class="xs muted center" style="margin:0 0 6px">g<sub>p</sub>, g<sub>d</sub>: production and decay couplings (g<sub>d</sub> ∝ κ<sub>Z</sub>)</p>
+        <ol class="steps">
+          <li><b>Large κ<sub>c</sub></b> adds c<span class="ov">c</span> → H production and a larger width Γ<sub>H</sub></li>
+          <li><b>On-shell</b> ∝ 1/Γ<sub>H</sub>: larger κ<sub>Z</sub> can hide larger Γ<sub>H</sub> ⇒ need |κ<sub>Z</sub>| ≤ 1</li>
+          <li><b>Off-shell</b> has no Γ<sub>H</sub> ⇒ fixes κ<sub>Z</sub>, assumption dropped</li>
+        </ol>
       </div>
       <table class="t">
         <tr><th>κ<sub>c</sub> at 95% CL</th><th class="r">observed</th><th class="r">expected</th></tr>
@@ -530,11 +535,15 @@
         <tr class="hi"><td><span class="bo">new</span> On + off-shell, |κ<sub>V</sub>| ≤ 1</td><td class="r"><b>[−3.3, 2.8]</b></td><td class="r muted">[−3.5, 2.9]</td></tr>
         <tr><td><span class="bo">new</span> On + off-shell, κ<sub>Z</sub>, κ<sub>W</sub> free</td><td class="r">[−8.6, 7.5]</td><td class="r muted">[−9.6, 8.3]</td></tr>
       </table>
-      <p class="xs muted">H → J/ψ γ: −166 &lt; κ<sub>c</sub> &lt; 208 (J. Bierkens, Thu) · Higgs width: F. Errico (Tue) · p<sub>T</sub><sup>H</sup> spectrum → backup</p>
+      <p class="xs muted" style="margin-top:6px">Higgs width: F. Errico (Tue) · p<sub>T</sub><sup>H</sup> spectrum → backup</p>
     </div>
     <div class="figcol">
-      <img src="img/HIG-25-003_Figure_008-d.png" style="height:390px" alt="kappa_c scans">
-      <p class="cap">Fig. 8: on-shell (blue, green), on+off-shell (red, black), with |κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1 or κ<sub>Z</sub> ≠ κ<sub>W</sub>; solid obs., dashed exp. Table: Table 3, no custodial symmetry</p>
+      <img src="img/HIG-25-003_Figure_008-d.png" style="height:300px" alt="kappa_c scans">
+      <p class="cap">On-shell (blue, green), on + off-shell (red, black); solid observed, dashed expected</p>
+      <div class="obox" style="margin-top:24px; text-align:left; font-size:17px"><span class="otitle">H → J/ψ γ · J. Bierkens, Thu</span>
+        Direct (∝ κ<sub>c</sub>) and indirect (H → γγ* → γ J/ψ) amplitudes interfere: sensitive to the <b>sign</b> of κ<sub>c</sub><br>
+        −166 &lt; κ<sub>c</sub> &lt; 208 <span class="muted">(exp. −128, 169)</span>, with κ<sub>γ</sub> = 1</div>
+
     </div>
   </div>
   <p class="takeaway">With |κ<sub>V</sub>| ≤ 1, H → 4ℓ matches the direct searches, under different assumptions</p>
@@ -546,45 +555,20 @@
     <h2>Where we stand</h2>
     <p class="sub">CMS constraints on κ<sub>c</sub> at 95% CL</p>
   </header>
-  <div class="cols" style="grid-template-columns: 1fr; top:124px; align-items:start;">
-    <div class="ichart">
-      <!-- axis: kappa_c from -10 to 10; left% = (k + 10) * 5 -->
-      <div style="position:absolute; left:270px; right:300px; top:0; bottom:30px;">
-        <div class="band" style="left:32.5%; width:5%"></div><div class="band" style="left:62.5%; width:5%"></div>
-        <div class="vline" style="left:55%; bottom:0"></div><span class="xs" style="position:absolute; left:55%; top:-18px; transform:translateX(-50%); color:var(--grey)">SM</span>
-        <div class="vline" style="left:50%; bottom:0; border-left:1px solid #c7d3da"></div>
-      </div>
-      <div class="irow"><div class="lab">t<span class="ov">t</span>H + VH(H → c<span class="ov">c</span>)<small>PRL 136 (2026) 011801</small></div>
-        <div class="track"><div class="obs hi" style="left:32.5%; width:35%"></div><div class="exp" style="left:36.5%; width:27%"></div><span class="val" style="left:calc(67.5% + 8px)">|κ<sub>c</sub>| &lt; 3.5 (2.7)</span></div>
-        <div class="ass">κ<sub>b</sub> = 1, SM production, no BSM decays</div></div>
-      <div class="irow"><div class="lab">t<span class="ov">t</span>H(H → c<span class="ov">c</span>)<small>PRL 136 (2026) 011801</small></div>
-        <div class="track"><div class="obs" style="left:35%; width:30%"></div><div class="exp" style="left:33.5%; width:33%"></div><span class="val" style="left:calc(66.5% + 8px)">&lt; 3.0 (3.3)</span></div>
-        <div class="ass">same</div></div>
-      <div class="irow"><div class="lab">VH(H → c<span class="ov">c</span>)<small>PRL 131 (2023) 061801</small></div>
-        <div class="track"><div class="obs" style="left:22.5%; width:22%"></div><div class="obs" style="left:55.5%; width:22%"></div><div class="exp" style="left:33%; width:34%"></div><span class="val" style="left:calc(77.5% + 8px)">1.1 – 5.5 (3.4)</span></div>
-        <div class="ass">same</div></div>
-      <div class="irow"><div class="lab">On + off-shell H → 4ℓ<small>arXiv:2607.23352</small></div>
-        <div class="track"><div class="obs hi" style="left:33.5%; width:30.5%"></div><div class="exp" style="left:32.5%; width:32%"></div><span class="val" style="left:calc(64.5% + 8px)">[−3.3, 2.8]</span></div>
-        <div class="ass">|κ<sub>V</sub>| ≤ 1, κ<sub>b,t</sub> = 1, other light κ<sub>q</sub> profiled, Γ<sub>BSM</sub> ≥ 0</div></div>
-      <div class="irow"><div class="lab">On-shell H → 4ℓ<small>PRD 112 (2025) 112001</small></div>
-        <div class="track"><div class="obs" style="left:31.5%; width:34.5%"></div><div class="exp" style="left:31%; width:35.5%"></div><span class="val" style="left:calc(66.5% + 8px)">[−3.7, 3.2]</span></div>
-        <div class="ass">|κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1, otherwise same</div></div>
-      <div class="irow"><div class="lab">On + off-shell H → 4ℓ<small>arXiv:2607.23352</small></div>
-        <div class="track"><div class="obs" style="left:7%; width:80.5%"></div><div class="exp" style="left:2%; width:89.5%"></div><span class="val" style="left:calc(91.5% + 8px)">[−8.6, 7.5]</span></div>
-        <div class="ass">κ<sub>Z</sub>, κ<sub>W</sub> free, otherwise same</div></div>
-      <div class="irow"><div class="lab">cH (γγ + WW)<small>JHEP 08 (2026) 051</small></div>
-        <div class="track"><span class="off" style="left:2%">off scale: |κ<sub>c</sub>| &lt; 47 (51) ⟷</span></div>
-        <div class="ass">flat direction, from the μ<sub>cH</sub> limit</div></div>
-      <div class="irow"><div class="lab">H → J/ψ γ<small>PLB 865 (2025) 139462</small></div>
-        <div class="track"><span class="off" style="left:2%">off scale: [−166, 208] (expected [−128, 169]) ⟷</span></div>
-        <div class="ass">κ<sub>γ</sub> = 1, 123 fb<sup>−1</sup></div></div>
-      <div class="axis" style="margin-left:270px; margin-right:300px;">
-        <span style="left:0%">−10</span><span style="left:25%">−5</span><span style="left:50%">0</span><span style="left:75%">5</span><span style="left:100%">10</span>
-      </div>
-    </div>
+  <div class="cols" style="grid-template-columns: 1fr; top:128px; padding: 0 40px;">
+    <table class="t wst">
+      <tr><th>Probe</th><th>Reference</th><th class="r">observed</th><th class="r">expected</th></tr>
+      <tr class=hi><td>t<span class="ov">t</span>H + VH(H → c<span class="ov">c</span>)</td><td class="muted">PRL 136 (2026) 011801</td><td class="r"><b>|κ<sub>c</sub>| &lt; 3.5</b></td><td class="r muted">2.7</td></tr>
+      <tr><td>t<span class="ov">t</span>H(H → c<span class="ov">c</span>)</td><td class="muted">PRL 136 (2026) 011801</td><td class="r">|κ<sub>c</sub>| &lt; 3.0</td><td class="r muted">3.3</td></tr>
+      <tr><td>VH(H → c<span class="ov">c</span>)</td><td class="muted">PRL 131 (2023) 061801</td><td class="r">1.1 &lt; |κ<sub>c</sub>| &lt; 5.5</td><td class="r muted">3.4</td></tr>
+      <tr class=hi><td>On + off-shell H → 4ℓ, |κ<sub>V</sub>| ≤ 1</td><td class="muted">arXiv:2607.23352</td><td class="r"><b>[−3.3, 2.8]</b></td><td class="r muted">[−3.5, 2.9]</td></tr>
+      <tr><td>On-shell H → 4ℓ, |κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1</td><td class="muted">PRD 112 (2025) 112001</td><td class="r">[−3.7, 3.2]</td><td class="r muted">[−3.8, 3.3]</td></tr>
+      <tr><td>On + off-shell H → 4ℓ, κ<sub>Z</sub>, κ<sub>W</sub> free</td><td class="muted">arXiv:2607.23352</td><td class="r">[−8.6, 7.5]</td><td class="r muted">[−9.6, 8.3]</td></tr>
+      <tr><td>cH (γγ + WW)</td><td class="muted">JHEP 08 (2026) 051</td><td class="r">|κ<sub>c</sub>| &lt; 47</td><td class="r muted">51</td></tr>
+      <tr><td>H → J/ψ γ</td><td class="muted">PLB 865 (2025) 139462</td><td class="r">[−166, 208]</td><td class="r muted">[−128, 169]</td></tr>
+    </table>
   </div>
-  <p class="xs muted" style="position:absolute; left:70px; right:46px; top:552px; margin:0; text-align:center">bar: observed · dotted: expected · shaded: |κ<sub>c</sub>| ~ 3 (BSM) · dashed: SM · the rows use different coupling models and are not directly comparable</p>
-  <p class="xs muted" style="position:absolute; left:70px; right:46px; bottom:58px; margin:0; text-align:center">t<span class="ov">t</span>H alone beats the combination on observed because VH fluctuated up; the combination has the best <i>expected</i> sensitivity (2.7)</p>
+  <p class="xs muted" style="position:absolute; left:70px; right:46px; bottom:78px; margin:0; text-align:center; font-size:15px">The results use different assumptions on the other Higgs couplings and are not directly comparable</p>
   <p class="takeaway">Direct searches and on + off-shell H → 4ℓ both reach |κ<sub>c</sub>| ~ 3, where flavour-compatible BSM lives</p>
 </section>
 
