@@ -7,7 +7,7 @@ source: laptop
 
 # Talk script: "Constraints on Higgs-charm couplings at CMS" (Higgs 2026)
 
-Script for the HTML deck, `html/deck.html` → `html/higgs2026_higgs_charm.pdf` (18 main slides, 15 backup; VH is split into strategy (5) and results (6), the c-tagging slide 4 is new, Run 3 prospects share slide 17 with the HL-LHC). Slot is 15+5 min; the time budgets below add up to about 14 min, leaving a minute of slack for pauses and the pointer. Speaking pace assumed: about 140 words per minute. Every number in the script is on the slide and was checked against its paper in the reviews ([[2026-10-15-slide-review]], [[2026-10-16-slide-review]]).
+Script for the HTML deck, `html/deck.html` → `html/higgs2026_higgs_charm.pdf` (18 main slides, 15 backup; VH is split into strategy (5) and results (6), the c-tagging slide 3 is new, Run 3 prospects share slide 17 with the HL-LHC). Slot is 15+5 min; the time budgets below add up to about 14 min, leaving a minute of slack for pauses and the pointer. Speaking pace assumed: about 140 words per minute. Every number in the script is on the slide and was checked against its paper in the reviews ([[2026-10-15-slide-review]], [[2026-10-16-slide-review]]).
 
 Each slide has three parts. **Say** is the spoken text. **Understand** explains the physics or statistics behind the slide in a few sentences, so you can answer follow-ups. **Read** names the paper sections that go deeper; section numbers were taken from the arXiv full texts on 16 Oct. The PRL letters (HIG-21-008, HIG-21-012, HIG-24-018) have no numbered sections, so for those the pointer is to the relevant paragraphs and the Supplemental Material.
 
@@ -41,18 +41,7 @@ Background on the κ framework: LHC Higgs Cross Section Working Group, CERN Yell
 
 ---
 
-## Slide 3: How CMS probes κc (45 s)
-
-**Say.** CMS attacks κc in four ways. Direct searches for H to charm pairs, where the rate goes as κc squared over the total width; here the best result is the ttH plus VH combination, |κc| below 3.5, with 2.7 expected. Associated production(what is the rate proportional to here and how does it work?) of a Higgs boson with a charm quark, where κc enters the production vertex; the combination gives |κc| below 47. Indirect constraints from Higgs rates and the Higgs width, which reach between about three and eight depending on the assumptions. And rare exclusive decays to J/ψ plus a photon, which are sensitive to the sign of κc. Throughout, μ is the signal strength relative to the SM, limits are at 95 percent confidence level, observed with expected in brackets. All κc results so far use Run 2 data; Run 3 has so far delivered better triggers, which I will show at the end.
-
-**Understand.** Why "κc²/ΓH": the branching fraction is B(H→cc) = Γcc/ΓH. Γcc scales as κc², but ΓH also grows with κc because charm is part of the total width: in the paper's model B = κc² B_SM / (1 + (κc² − 1) B_cc + (κb² − 1) B_bb). At large κc the branching fraction saturates, which is why decay-based limits flatten out. This is also why production (slide 11) is a genuinely different handle.
-
-**Read.**
-ttH+VH combination, PRL 136 (2026) 011801, arXiv:2509.22535: Eq. (3) and the paragraph around it give the branching-fraction model with the width.
-
----
-
-## Slide 4: Charm tagging (40 s)
+## Slide 3: Charm tagging (40 s)
 
 **Say.** Everything that follows depends on finding charm jets. A charm hadron sits between light and b hadrons in mass and lifetime: it decays at a secondary vertex like a b, but closer to the primary vertex, so c jets are easily confused with light jets on one side and b jets on the other. CMS taggers went from likelihoods built on track impact parameters and secondary vertices, to deep networks on all jet constituents like DeepJet, to particle-cloud networks: ParticleNet, a graph network, and UParT, a transformer. The plot is Run 3 simulation: at the same charm efficiency, UParT v2 has the lowest misidentification rate for both b and light jets. In this talk: DeepJet in VH resolved and the cH searches, ParticleNet in VH merged and ttH, DeepDoubleX in the boosted search.
 
@@ -61,6 +50,17 @@ ttH+VH combination, PRL 136 (2026) 011801, arXiv:2509.22535: Eq. (3) and the par
 **Read.**
 CMS-DP-2025-081 (BTV public pages, Run 3 DP notes): the c-tagging ROC curves (sl14) and the tagger descriptions.
 DeepJet: E. Bols et al., JINST 15 (2020) P12012, arXiv:2008.10519. ParticleNet: H. Qu and L. Gouskos, PRD 101 (2020) 056019, arXiv:1902.08570. Particle Transformer: H. Qu, C. Li, S. Qian, ICML 2022, arXiv:2202.03772.
+
+---
+
+## Slide 4: How CMS probes κc (45 s)
+
+**Say.** CMS attacks κc in four ways. Direct searches for H to charm pairs, where the rate goes as κc squared over the total width; here the best result is the ttH plus VH combination, |κc| below 3.5, with 2.7 expected. Associated production(what is the rate proportional to here and how does it work?) of a Higgs boson with a charm quark, where κc enters the production vertex; the combination gives |κc| below 47. Indirect constraints from Higgs rates and the Higgs width, which reach between about three and eight depending on the assumptions. And rare exclusive decays to J/ψ plus a photon, which are sensitive to the sign of κc. Throughout, μ is the signal strength relative to the SM, limits are at 95 percent confidence level, observed with expected in brackets. All κc results so far use Run 2 data; Run 3 has so far delivered better triggers, which I will show at the end.
+
+**Understand.** Why "κc²/ΓH": the branching fraction is B(H→cc) = Γcc/ΓH. Γcc scales as κc², but ΓH also grows with κc because charm is part of the total width: in the paper's model B = κc² B_SM / (1 + (κc² − 1) B_cc + (κb² − 1) B_bb). At large κc the branching fraction saturates, which is why decay-based limits flatten out. This is also why production (slide 11) is a genuinely different handle.
+
+**Read.**
+ttH+VH combination, PRL 136 (2026) 011801, arXiv:2509.22535: Eq. (3) and the paragraph around it give the branching-fraction model with the width.
 
 ---
 
@@ -206,7 +206,7 @@ tt+b/c cross sections, CMS-PAS-TOP-26-003: the results section and Table 8 (part
 
 ## Slide 17: Run 3 and HL-LHC prospects (55 s)
 
-**Say.** First Run 3. The direct searches are statistics-limited, 85 percent of the VH uncertainty is statistical, so more data helps directly; on top of that come the better taggers from slide 4, the higher trigger efficiency and the measured tt̄cc̄ background from slide 16. ATLAS has already included 51.5 inverse femtobarn of Run 3 data in its VBF H to charm search. Looking further ahead, the ATLAS and CMS input to the European Strategy update, with 3 inverse attobarn per experiment at 14 TeV, expects about 1.6 standard deviations for VH to charm and |κc| below 1.5 at 95 percent confidence level. That is 30 percent better than the 2019 Yellow Report projection, thanks to improved charm tagging; it is extrapolated from an ATLAS VH study and assumed for both experiments. The bar chart puts it in context: Run 2 observed 3.5, expected 2.7, HL-LHC expected 1.5, with the SM at one. Every bar still includes κc equal to zero. Further gains will come from Run 3 data, machine-learning tagging and the detector upgrades, and theory modelling and tagger calibration will become limiting. κc of order one is where we first become sensitive to whether the Higgs gives charm its mass.
+**Say.** First Run 3. The direct searches are statistics-limited, 85 percent of the VH uncertainty is statistical, so more data helps directly; on top of that come the better taggers from slide 3, the higher trigger efficiency and the measured tt̄cc̄ background from slide 16. ATLAS has already included 51.5 inverse femtobarn of Run 3 data in its VBF H to charm search. Looking further ahead, the ATLAS and CMS input to the European Strategy update, with 3 inverse attobarn per experiment at 14 TeV, expects about 1.6 standard deviations for VH to charm and |κc| below 1.5 at 95 percent confidence level. That is 30 percent better than the 2019 Yellow Report projection, thanks to improved charm tagging; it is extrapolated from an ATLAS VH study and assumed for both experiments. The bar chart puts it in context: Run 2 observed 3.5, expected 2.7, HL-LHC expected 1.5, with the SM at one. Every bar still includes κc equal to zero. Further gains will come from Run 3 data, machine-learning tagging and the detector upgrades, and theory modelling and tagger calibration will become limiting. κc of order one is where we first become sensitive to whether the Higgs gives charm its mass.
 
 **Understand.** There is no public CMS Run 3 κc projection, so the Run 3 half of the slide is qualitative on purpose; do not extrapolate a number by √L on the spot (that would be a private projection). An upper bound |κc| < 1.5 does not exclude κc = 0; establishing a nonzero charm Yukawa needs more than the HL-LHC projection shows. The 1.5 is an expected sensitivity, not a measurement. The paper does not name the S2/S3 systematics scenario for charm, so do not quote one.
 
