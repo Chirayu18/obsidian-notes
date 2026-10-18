@@ -186,37 +186,47 @@
     <p class="sub">Cleanest signature: the W or Z decays to leptons</p>
   </header>
   <p class="ref">PRL 131 (2023) 061801 · CMS-HIG-21-008</p>
-  <div class="cols" style="grid-template-columns: 650px 1fr;">
+  <div class="cols" style="grid-template-columns: 770px 1fr; gap: 24px;">
     <div>
       <div class="pillrow">
         <span class="pill big">0ℓ · Z → νν</span>
         <span class="pill big">1ℓ · W → ℓν</span>
         <span class="pill big">2ℓ · Z → ℓℓ</span>
       </div>
-      <p class="center" style="margin:10px 0 0">Main backgrounds V+jets and t<span class="ov">t</span>, normalised in control regions</p>
-      <div class="split"><span class="pill orange big" id="ptcut">p<sub>T</sub><sup>H</sup> = 300 GeV</span></div>
-      <div class="two">
-        <div class="obox" id="res"><span class="otitle">Resolved · two jets</span>
-          <b>&gt;95% of the signal</b><br>two DeepJet c-tagged jets<br>fit to a BDT score</div>
-        <div class="obox" id="mer"><span class="otitle">Merged · one large-R jet</span>
-          &lt;5% of the signal, but <b>much less background</b><br>ParticleNet c<span class="ov">c</span> tagging in 3 purity categories + mass regression<br>fit to m(H<sub>cand</sub>)</div>
+      <p class="center small" style="margin:8px 0 0">Main backgrounds V+jets and t<span class="ov">t</span>, normalised in control regions</p>
+      <div class="split" style="margin-top:14px"><span class="pill orange big" id="ptcut">p<sub>T</sub><sup>H</sup> = 300 GeV</span></div>
+      <div class="two" style="margin-top:44px; gap:20px">
+        <div class="obox vhbox" id="res"><span class="otitle">Resolved · two small-R jets (R = 0.4)</span>
+          <ul>
+            <li><b>&gt;95% of the signal</b>, but more background</li>
+            <li><b>DeepJet</b> CvsL and CvsB: the two highest-CvsL jets form the H candidate</li>
+            <li>Leading-jet cut: ≈40% c efficiency, ≈4% light and ≈16% b mis-ID</li>
+            <li>c-jet energy regression, FSR-jet recovery, 2ℓ kinematic fit: m(H<sub>cand</sub>) resolution up to <b>20% better</b></li>
+          </ul>
+          <div class="fitvar">Fit: BDT score (m(H<sub>cand</sub>) among the inputs)</div>
+        </div>
+        <div class="obox vhbox" id="mer"><span class="otitle">Merged · one large-R jet (R = 1.5)</span>
+          <ul>
+            <li><b>&lt;5% of the signal</b>, but much less background</li>
+            <li><b>ParticleNet</b> c<span class="ov">c</span> tagger (graph NN, mass-decorrelated): <b>4–7×</b> better rejection than DeepAK15</li>
+            <li>3 purity categories: ≈58, 40, 16% c<span class="ov">c</span> efficiency</li>
+            <li>ParticleNet mass regression: ≈<b>50% better</b> mass resolution</li>
+          </ul>
+          <div class="fitvar">Fit: m(H<sub>cand</sub>) (BDTs decorrelated from it)</div>
+        </div>
       </div>
-      <p class="note" style="position:absolute; left:120px; top:150px">below</p>
-      <p class="note" style="position:absolute; left:470px; top:150px">above</p>
-      <div class="box" style="margin-top:22px">
-        <b>Validation:</b> the same analysis finds <b>VZ(Z → c<span class="ov">c</span>) at 5.7σ</b>, so the c tagging and background model work <span class="muted xs">(details → backup)</span>
-      </div>
+      <p class="note" style="position:absolute; left:150px; top:96px">below</p>
+      <p class="note" style="position:absolute; left:560px; top:96px">above</p>
     </div>
     <div class="figcol">
-      <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:400px" alt="merged-jet mass"></div>
-      <p class="cap">Merged-jet only: candidate mass; bottom, after background subtraction: VZ (grey, ≈ 90 GeV) and VH (red)</p>
+      <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:370px" alt="merged-jet mass"></div>
+      <p class="cap">Merged-jet candidate mass; bottom, after background subtraction: VZ (grey, ≈ 90 GeV) and VH (red)</p>
     </div>
   </div>
-  <p class="note" id="vznote" style="position:absolute; left:610px; top:640px;">VZ(Z → c<span class="ov">c</span>): the Z peak is seen</p>
+  <div class="box" style="position:absolute; left:70px; top:596px; width:770px; padding:10px 18px; font-size:18px"><b>Validation:</b> the same analysis sees <b>VZ(Z → c<span class="ov">c</span>) at 5.7σ</b> (grey peak, right): c tagging and background model work <span class="muted xs">→ backup</span></div>
   <svg class="arrows"></svg>
-  <i class="arrow" data-from="ptcut:w" data-to="res@0.86,1.03" data-bend="-0.3"></i>
-  <i class="arrow" data-from="ptcut:e" data-to="mer@0.14,1.03" data-bend="0.3"></i>
-  <i class="arrow" data-from="vznote:n" data-to="f3@0.40,0.17" data-bend="0.15"></i>
+  <i class="arrow" data-from="ptcut:w" data-to="res@0.86,1.0" data-bend="-0.3"></i>
+  <i class="arrow" data-from="ptcut:e" data-to="mer@0.14,1.0" data-bend="0.3"></i>
 </section>
 
 <!-- ================================================================ 6 -->

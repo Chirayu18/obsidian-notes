@@ -174,3 +174,7 @@ table.t td.r, table.t th.r { text-align: right; }
 .arow2 { margin-bottom: 6px; line-height: 1.2; }
 .arow2 b { display: block; }
 .arow2 span { font-size: 13.5px; font-weight: 650; color: var(--teal); }
+.vhbox { font-size: 15.5px; line-height: 1.3; padding: 20px 12px 10px; }
+.vhbox ul { margin: 0; padding-left: 18px; }
+.vhbox li { margin-bottom: 5px; }
+.vhbox .fitvar { margin-top: 6px; font-weight: 700; color: var(--orange); }
