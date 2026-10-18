@@ -227,36 +227,35 @@
   </header>
   <p class="ref">PRL 131 (2023) 061801 · CMS-HIG-21-008</p>
 
-  <!-- left: mu limits per category -->
-  <div class="fig" id="f4" style="position:absolute; left:70px; top:128px;"><img src="img/HIG-21-008_Figure_004.png" style="height:380px" alt="mu limits per category"></div>
-  <p class="note" id="n4a" style="position:absolute; left:486px; top:258px; width:200px;">Merged jet drives the sensitivity: expected 8.75 vs 19.0 resolved</p>
-  <p class="note" id="n4b" style="position:absolute; left:486px; top:168px; width:200px;">Combined: observed 14.4, expected 7.60</p>
-  <p class="note" id="n4c" style="position:absolute; left:70px; top:522px;">red line: the SM, μ = 1</p>
+  <div style="position:absolute; left:70px; top:128px; width:560px; text-align:center">
+    <img src="img/HIG-21-008_Figure_004.png" style="height:318px" alt="mu limits per category">
+    <p class="cap">95% CL limits on μ per category · red line: SM (μ = 1) · the <b>merged-jet</b> category carries most of the sensitivity</p>
+  </div>
 
-  <!-- right: kappa_c scan -->
-  <div class="fig" id="fk" style="position:absolute; left:716px; top:140px;"><img src="img/HIG-21-008_Figure-aux_001.png" style="height:300px" alt="kappa_c likelihood scan"></div>
-  <p class="xs muted" style="position:absolute; left:716px; top:446px; width:370px; margin:0">q = −2Δln L vs |κ<sub>c</sub>| (supplementary); 95% CL where q = 3.84 (dashed)</p>
-  <p class="note" id="nk1" style="position:absolute; left:1098px; top:150px; width:150px;">observed:<br>1.1 &lt; |κ<sub>c</sub>| &lt; 5.5</p>
-  <p class="note" id="nk2" style="position:absolute; left:1098px; top:262px; width:150px;">SM expected:<br>|κ<sub>c</sub>| &lt; 3.4</p>
-
-  <div class="result" style="position:absolute; left:716px; right:46px; top:494px;">
+  <div style="position:absolute; left:680px; top:140px; width:554px; text-align:center">
+    <img src="img/HIG-21-008_Figure-aux_001.png" style="height:290px" alt="kappa_c likelihood scan">
+    <p class="cap">q = −2Δln L vs |κ<sub>c</sub>| (supplementary) · 95% CL where q &lt; 3.84 (dashed line)</p>
+  </div>
+  <div class="result" style="position:absolute; left:680px; right:46px; top:486px;">
     <div class="rlab">95% CL · observed (expected)</div>
     <div class="rval">μ &lt; 14 <span class="exp">(7.6)</span> &emsp; 1.1 &lt; |κ<sub>c</sub>| &lt; 5.5 <span class="exp">(&lt; 3.4)</span></div>
+    <div class="rlab">μ limits with CLs; κ<sub>c</sub> interval from the profile-likelihood scan</div>
   </div>
-  <div class="small" style="position:absolute; left:70px; top:566px; width:620px; line-height:1.35">
-    <b>Statistics-limited</b>: the statistical uncertainty is 85% of the total <span class="muted xs">(breakdown → backup)</span><br>
-    μ limits with CLs; κ<sub>c</sub> interval from the profile-likelihood scan
-  </div>
-  <p class="takeaway">Expected μ &lt; 7.6: the best single channel, and still statistics-limited</p>
 
-  <svg class="arrows"></svg>
-  <!-- positions measured on the PNGs: merged-row band, combined marker, red mu=1 line, q=3.84 crossings -->
-  <i class="arrow" data-from="n4a:w" data-to="f4@0.56,0.621" data-bend="0.1"></i>
-  <i class="arrow" data-from="n4b:w" data-to="f4@0.49,0.736" data-bend="0.15"></i>
-  <i class="arrow" data-from="n4c:n" data-to="f4@0.2016,0.12" data-bend="0.2"></i>
-  <i class="arrow" data-from="nk1:w" data-to="fk@0.2427,0.4507" data-bend="0.25"></i>
-  <i class="arrow" data-from="nk1:sw" data-to="fk@0.8008,0.4507" data-bend="-0.2"></i>
-  <i class="arrow" data-from="nk2:w" data-to="fk@0.5344,0.4507" data-bend="0.2"></i>
+  <div class="box" style="position:absolute; left:70px; top:500px; width:590px; padding:12px 18px; display:grid; grid-template-columns: 150px 1fr; gap:16px; align-items:center">
+    <div style="text-align:center">
+      <div style="font-size:46px; font-weight:800; color:var(--orange); line-height:1">85%</div>
+      <div style="font-size:15px; font-weight:700; color:var(--teal); line-height:1.2; margin-top:4px">of the uncertainty is statistical</div>
+    </div>
+    <div>
+      <div style="font-size:16px; font-weight:750; color:var(--teal); margin-bottom:4px">Statistics-limited: more data helps directly</div>
+      <div style="display:grid; grid-template-columns:110px 1fr 46px; align-items:center; gap:8px; font-size:15px; margin:3px 0"><span>Statistical</span><span style="background:#e3eaee; border-radius:4px; height:14px; position:relative"><span style="position:absolute; left:0; top:0; bottom:0; width:85%; background:var(--orange); border-radius:4px"></span></span><b style="text-align:right">85%</b></div>
+      <div style="display:grid; grid-template-columns:110px 1fr 46px; align-items:center; gap:8px; font-size:15px; margin:3px 0"><span>Experimental</span><span style="background:#e3eaee; border-radius:4px; height:14px; position:relative"><span style="position:absolute; left:0; top:0; bottom:0; width:48%; background:var(--teal); border-radius:4px"></span></span><b style="text-align:right">48%</b></div>
+      <div style="display:grid; grid-template-columns:110px 1fr 46px; align-items:center; gap:8px; font-size:15px; margin:3px 0"><span>Theory</span><span style="background:#e3eaee; border-radius:4px; height:14px; position:relative"><span style="position:absolute; left:0; top:0; bottom:0; width:22%; background:#5f93a8; border-radius:4px"></span></span><b style="text-align:right">22%</b></div>
+      <div class="xs muted">share of the total uncertainty on μ, in quadrature · details → backup</div>
+    </div>
+  </div>
+  <p class="takeaway">Expected μ &lt; 7.6: the best single channel of Run 2</p>
 </section>
 
 <!-- ================================================================ 7 -->
