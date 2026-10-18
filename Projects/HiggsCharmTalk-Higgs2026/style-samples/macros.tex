@@ -1,4 +1,6 @@
 \usepackage{amsmath,amssymb,booktabs,graphicx}
+% upright math letters in the sans font (H, c, Z...), not Computer Modern
+\AtBeginDocument{\renewcommand{\mathrm}[1]{\text{\upshape #1}}}
 \graphicspath{{../figures/}}
 \newcommand{\qbar}[1]{\mathrm{#1}\overline{\mathrm{#1}}}
 \newcommand{\ccbar}{\ensuremath{\qbar{c}}}
@@ -8,8 +10,10 @@
 \newcommand{\ttbar}{\ensuremath{\qbar{t}}}
 \newcommand{\ttH}{\ensuremath{\qbar{t}\mathrm{H}}}
 \newcommand{\obsexp}[2]{#1\,{\color{gray}(#2)}}
-\newcommand{\pubref}[1]{\begin{tikzpicture}[remember picture,overlay]
-  \node[anchor=north east,font=\tiny,text=gray] at ([xshift=-4mm,yshift=-1.5mm]current page.north east) {#1};\end{tikzpicture}}
+\newcommand{\pubref}[1]{\gdef\thepubref{#1}}
+\gdef\thepubref{}
+\addtobeamertemplate{frametitle}{}{\begin{tikzpicture}[remember picture,overlay]
+  \node[anchor=north east,font=\scriptsize,text=gray!80] at ([xshift=-3mm,yshift=-1.2mm]current page.north east) {\thepubref};\end{tikzpicture}\gdef\thepubref{}}
 \title{Constraints on Higgs-charm couplings at CMS}
 \author{Chirayu Gupta\\{\small on behalf of the CMS Collaboration}}
 \institute{Vrije Universiteit Brussel}

@@ -5,122 +5,123 @@
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Charm tagging: telling c jets from b and light jets}
-  \pubref{CMS-DP-2025-081; taggers: JINST 15 (2020) P12012 (DeepJet)}
+\pubref{CMS-DP-2025-081}
+\begin{frame}[t]{Charm tagging: telling c jets from b and light jets}
   \begin{columns}[T]
-    \column{0.57\textwidth}
+    \column{0.585\textwidth}
     \pill{Charm signature}\par\vspace{2pt}
     \begin{keybox}
-      \begin{minipage}[c]{0.56\linewidth}
-        c-hadron mass and lifetime lie \textbf{between light and b}:
-        \begin{itemize}\setlength\itemsep{0pt}
-          \item secondary vertex (SV), like b jets
-          \item but closer to the primary vertex (PV): easy to confuse with light jets
-        \end{itemize}
+      \begin{minipage}[c]{0.64\linewidth}\raggedright
+        c-hadron mass and lifetime lie \textbf{between light and b}:\\
+        $\bullet$ secondary vertex (SV), like b jets\\
+        $\bullet$ but closer to the primary vertex (PV): easily confused with light jets
       \end{minipage}\hfill
-      \begin{minipage}[c]{0.42\linewidth}\centering
-        \begin{tikzpicture}[scale=0.62,font=\scriptsize]
+      \begin{minipage}[c]{0.34\linewidth}\centering
+        \begin{tikzpicture}[scale=0.52,font=\scriptsize]
           \coordinate (pv) at (0,0); \coordinate (sv) at (1.6,0.55);
-          \fill[accA!25] (pv) -- (3.3,1.55) arc (25:5:3.5) -- cycle;
-          \draw[jettrack,dashed] (pv) -- (sv) node[midway,above,sloped,text=accA]{flight};
+          \fill[accA!20] (pv) -- (3.3,1.55) -- (3.4,0.15) -- cycle;
+          \draw[jettrack,dashed] (pv) -- (sv);
           \draw[jettrack] (sv) -- (3.2,1.35); \draw[jettrack] (sv) -- (3.3,0.95);
-          \draw[jettrack] (sv) -- (3.25,0.65);
-          \draw[jettrack] (pv) -- (3.1,0.25); \draw[jettrack] (pv) -- (2.9,-0.55);
-          \fill[accA] (pv) circle (2.4pt) node[below left=-1pt]{PV};
+          \draw[jettrack] (sv) -- (3.3,0.6);
+          \draw[jettrack] (pv) -- (3.3,0.3); \draw[jettrack] (pv) -- (2.9,-0.45);
+          \fill[accA] (pv) circle (2.4pt) node[left]{PV};
           \fill[accB] (sv) circle (2.4pt) node[above left=-1pt,text=accB]{SV};
-          \node[right,text=accA] at (3.3,1.1) {c jet};
+          \node[above,text=accA] at (3.2,1.5) {c jet};
         \end{tikzpicture}
       \end{minipage}
     \end{keybox}
-    \vspace{3pt}
-    \pill{Algorithm evolution at CMS}\par\vspace{5pt}
-    \begin{minipage}[t]{0.32\linewidth}
-      \begin{outbox}{Likelihood / BDT}
-        JP: track impact-parameter probability\\
-        CSV: SV + track variables combined
+    \vspace{1pt}
+    \pill{Algorithm evolution at CMS}\par\vspace{6pt}
+    \begin{minipage}[t]{0.325\linewidth}
+      \begin{outbox}[equal height group=alg]{Likelihood / BDT}
+        JP: track impact parameters\\
+        CSV: SV + track variables
       \end{outbox}
     \end{minipage}\hfill
-    \begin{minipage}[t]{0.32\linewidth}
-      \begin{outbox}{Deep NN}
-        DeepCSV: first multi-class (b, c, light)\\
-        \textbf{DeepJet}: all jet constituents as sequences
+    \begin{minipage}[t]{0.325\linewidth}
+      \begin{outbox}[equal height group=alg]{Deep NN}
+        DeepCSV: multi-class b/c/light\\
+        \textbf{DeepJet}: constituent sequences
       \end{outbox}
     \end{minipage}\hfill
-    \begin{minipage}[t]{0.32\linewidth}
-      \begin{outbox}{Particle cloud}
+    \begin{minipage}[t]{0.325\linewidth}
+      \begin{outbox}[equal height group=alg]{Particle cloud}
         \textbf{ParticleNet}: graph network\\
-        UParT: transformer, all-to-all particle interactions
+        UParT: transformer
       \end{outbox}
-    \end{minipage}\par
+    \end{minipage}\par\vspace{2pt}
     \begin{tikzpicture}
-      \draw[callout] (0,0) to[out=-8,in=188] (\linewidth,0);
-      \node[callnote,below=1pt] at (0.5\linewidth,-0.12) {Run 1 $\to$ Run 3: inputs closer to raw particles, richer architectures};
-    \end{tikzpicture}\par\vspace{1pt}
-    {\footnotesize\textbf{In this talk:} DeepJet (VH resolved, cH), ParticleNet (VH merged, \ttH), DeepDoubleX (boosted H)}
+      \coordinate (e) at (1.0\linewidth,0);
+      \draw[callout] (0,0) to[out=-6,in=186] (e);
+      \node[callnote,below=2pt] at ($(0,0)!0.5!(e)$) {Run 1 $\to$ Run 3: richer architectures, inputs closer to raw particles};
+    \end{tikzpicture}
 
-    \column{0.41\textwidth}
+    \column{0.395\textwidth}
     \centering
     \begin{tikzpicture}
-      \node[inner sep=0] (roc) {\includegraphics[height=5.5cm]{DP-2025-081_sl14_roc_c_tagging.png}};
-      \begin{scope}[x={(roc.south east)},y={(roc.north west)},shift={(roc.south west)}]
-        % blue (UParT v2) curves at c-tag efficiency 0.4: c vs light (dashed) and c vs b (solid)
-        \node[callnote,anchor=east] (n1) at (0.15,0.30) {UParT v2:\\lowest\\mis-ID};
-        \draw[callout] (n1.north) to[out=70,in=170] (0.40,0.38);
-        \draw[callout] (n1.north east) to[out=40,in=200] (0.40,0.555);
-      \end{scope}
+      \node[inner sep=0] (roc) {\includegraphics[height=4.9cm]{DP-2025-081_sl14_roc_c_tagging.png}};
+      \begin{onimage}{roc}
+        \node[callnote,anchor=west] (n1) at (0.17,0.80) {UParT v2 (blue):\\lowest mis-ID};
+        \draw[callout] (n1.south) to[out=-80,in=150] (0.42,0.565);
+        \draw[callout] (n1.south east) to[out=-30,in=110] (0.50,0.47);
+      \end{onimage}
     \end{tikzpicture}\\
-    {\scriptsize \ttbar\ simulation, 13.6\,TeV. Solid: c vs b; dashed: c vs light.}
+    {\scriptsize \ttbar\ simulation, 13.6\,TeV; solid: c vs b, dashed: c vs light\par}\vspace{4pt}
+    \begin{keybox}
+      \textbf{Used in this talk:} DeepJet (VH resolved, cH), ParticleNet (VH merged, \ttH), DeepDoubleX (boosted H)
+    \end{keybox}
   \end{columns}
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Direct \Hcc: VH(\Hcc)}
-  \pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}
+\pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}
+\begin{frame}[t]{Direct \Hcc: VH(\Hcc)}
   \begin{columns}[T]
-    \column{0.57\textwidth}
+    \column{0.585\textwidth}
     \begin{keybox}
-      \textbf{Cleanest signature:} W/Z $\to$ 0, 1, 2 leptons
-      \hfill\pill{0L: Z$\to\nu\nu$}\,\pill{1L: W$\to\ell\nu$}\,\pill{2L: Z$\to\ell\ell$}\\[2pt]
-      V+jets and \ttbar\ normalised in control regions
+      \textbf{Cleanest signature:} W/Z $\to$ 0, 1, 2 leptons\\
+      V+jets and \ttbar\ normalised in control regions\par\vspace{3pt}
+      {\centering\pill{0L: Z$\to\nu\nu$}\enspace\pill{1L: W$\to\ell\nu$}\enspace\pill{2L: Z$\to\ell\ell$}\par}
     \end{keybox}
     \vspace{2pt}
-    \centering\pill[accB]{$p_\mathrm{T}^\mathrm{H} = 300$\,GeV}\par\vspace{-3pt}
+    {\centering\pill[accB]{$p_\mathrm{T}^\mathrm{H} = 300$\,GeV}\par}
     \begin{tikzpicture}[overlay]
-      \draw[callout] (-0.9,0.25) to[out=180,in=60] (-2.6,-0.35) node[callnote,pos=0.45,above left=-2pt]{below};
-      \draw[callout] (0.9,0.25) to[out=0,in=120] (2.6,-0.35) node[callnote,pos=0.45,above right=-2pt]{above};
-    \end{tikzpicture}\par\vspace{12pt}
-    \raggedright
+      \coordinate (a1) at (0.33\linewidth,0.28); \coordinate (a2) at (0.2\linewidth,-0.25);
+      \coordinate (b1) at (0.67\linewidth,0.28); \coordinate (b2) at (0.8\linewidth,-0.25);
+      \draw[callout] (a1) to[out=180,in=80] (a2);
+      \draw[callout] (b1) to[out=0,in=100] (b2);
+      \node[callnote,anchor=south east] at (0.30\linewidth,0.25) {below};
+      \node[callnote,anchor=south west] at (0.70\linewidth,0.25) {above};
+    \end{tikzpicture}\par\vspace{9pt}
     \begin{minipage}[t]{0.49\linewidth}
       \begin{outbox}{Resolved: two jets}
         $>$95\% of signal\\
         two DeepJet c-tagged jets\\
-        fit to a BDT
+        fit to a BDT discriminant
       \end{outbox}
     \end{minipage}\hfill
     \begin{minipage}[t]{0.49\linewidth}
       \begin{outbox}{Merged: one large-R jet}
-        $<$5\% of signal, \textbf{less background}\\
+        $<$5\% of signal, but \textbf{less background}\\
         ParticleNet \ccbar\ tag (3 purities)\\
         fit to $m(\mathrm{H_{cand}})$
       \end{outbox}
-    \end{minipage}
-    \vspace{6pt}
+    \end{minipage}\par\vspace{6pt}
     \begin{resultbox}
-      \footnotesize 95\% CL obs.\ (exp.)\quad
-      \small $\mu < \obsexp{14}{7.6}$ \qquad $1.1 < |\kc| < 5.5$ \ {\color{gray}($|\kc|<3.4$)}
+      $\mu < \obsexp{14}{7.6}$\qquad $1.1 < |\kc| < 5.5$\ {\color{gray}($|\kc|<3.4$)}\\[-1pt]
+      {\scriptsize\color{gray}95\% CL, observed (expected)}
     \end{resultbox}
-    \centering\callnote{Most sensitive single channel of Run 2; statistics-limited}
 
-    \column{0.41\textwidth}
+    \column{0.395\textwidth}
     \centering
     \begin{tikzpicture}
-      \node[inner sep=0] (f3) {\includegraphics[height=3.55cm]{HIG-21-008_Figure_003.pdf}};
-      \begin{scope}[x={(f3.south east)},y={(f3.north west)},shift={(f3.south west)}]
-        \node[callnote,anchor=west] (vz) at (1.0,0.42) {VZ(Z$\to\ccbar$)\\5.7$\sigma$:\\validates\\the method};
-        \draw[callout] (vz.south west) to[out=200,in=-30] (0.42,0.17);
-      \end{scope}
-    \end{tikzpicture}\\[2pt]
-    \includegraphics[height=3.0cm]{HIG-21-008_Figure_004.pdf}\\
-    {\scriptsize Merged-jet mass (top) and limits per channel}
+      \node[inner sep=0] (f3) {\includegraphics[height=3.0cm]{HIG-21-008_Figure_003.pdf}};
+      \begin{onimage}{f3}
+        \node[callnote,anchor=north west] (vz) at (0.62,-0.02) {VZ(Z$\to\ccbar$) at 5.7$\sigma$\\validates the method};
+        \draw[callout] (vz.west) to[out=180,in=-90] (0.40,0.12);
+      \end{onimage}
+    \end{tikzpicture}\\[13pt]
+    \includegraphics[height=2.45cm]{HIG-21-008_Figure_004.pdf}\\
+    \callnote{Most sensitive single channel of Run 2;\\statistics-limited}
   \end{columns}
 \end{frame}
