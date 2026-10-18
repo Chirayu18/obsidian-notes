@@ -460,28 +460,26 @@
 <section class="slide" data-n="13">
   <header>
     <h2>cH(H → γγ)</h2>
-    <p class="sub">First search for H + charm in the diphoton channel</p>
+    <p class="sub">First search for H + charm in the diphoton channel, 138 fb<sup>−1</sup></p>
   </header>
   <p class="ref">JHEP 11 (2025) 060 · CMS-HIG-23-010</p>
-  <div class="cols" style="grid-template-columns: 560px 1fr;">
+  <div class="cols" style="grid-template-columns: 600px 1fr; gap: 28px;">
     <div class="stack">
-      <ul class="tight">
-        <li>138 fb<sup>−1</sup>, DeepJet c tagging</li>
-        <li>Two BDTs, without c-tag inputs: cH vs ggH (largest resonant background) and cH vs continuum γγ+jets</li>
-        <li>27 categories (9 per year); signal from fits to m<sub>γγ</sub></li>
-      </ul>
+      <div class="card cardlist"><h4>① Selection</h4><ul><li>Two identified photons</li><li>Leading jet (p<sub>T</sub> &gt; 25 GeV) <b>c-tagged</b> with DeepJet</li></ul></div>
+      <div class="card cardlist"><h4>② Two BDTs, no c-tag inputs</h4><ul><li>cH vs <b>ggH</b>, the largest resonant background</li><li>cH vs the <b>continuum</b> γγ + jets</li></ul></div>
+      <div class="card cardlist"><h4>③ Categories and fit</h4><ul><li>27 categories (9 per year)</li><li>Signal from fits to m<sub>γγ</sub></li></ul></div>
       <div class="result">
         <div class="rval">μ<sub>cH</sub> &lt; 243 <span class="exp">(355)</span> &emsp; |κ<sub>c</sub>| &lt; 38 <span class="exp">(73)</span></div>
         <div class="rlab">95% CL · observed (expected)</div>
       </div>
-      <p class="note" style="font-size:20px">|κ<sub>c</sub>| ≲ 40, not ~3: σ𝓑 ≈ 0.2 fb, and ggH H+c mimics the signal</p>
     </div>
     <div class="figcol">
-      <div class="fig" id="gg"><img src="img/HIG-23-010_Figure_006.png" style="height:470px" alt="m_gamma_gamma"></div>
+      <div class="fig" id="gg"><img src="img/HIG-23-010_Figure_006.png" style="height:450px" alt="m_gamma_gamma"></div>
       <p class="cap">m<sub>γγ</sub>, all categories, S/(S+B) weighted</p>
     </div>
   </div>
-  <p class="note" id="pknote" style="position:absolute; left:70px; top:590px; width:560px;">125 GeV peak is fully explained by the other Higgs processes (mostly ggH): μ̂<sub>cH</sub> = −230 <sup>+170</sup><sub>−251</sub></p>
+  <p class="note" id="pknote" style="position:absolute; left:70px; top:590px; width:600px;">The 125 GeV peak is explained by the other Higgs processes (mostly ggH)</p>
+  <p class="takeaway">|κ<sub>c</sub>| ≲ 40: σ𝓑 ≈ 0.2 fb, and Yukawa-insensitive H+c looks the same</p>
   <svg class="arrows"></svg>
   <i class="arrow" data-from="pknote:e" data-to="gg@0.40,0.44" data-bend="0.25"></i>
 </section>
@@ -493,27 +491,23 @@
     <p class="sub">eνμν + a c jet, then combined with γγ</p>
   </header>
   <p class="ref">JHEP 08 (2026) 051 · CMS-HIG-24-009</p>
-  <div class="cols" style="grid-template-columns: 590px 1fr;">
+  <div class="cols" style="grid-template-columns: 600px 1fr; gap: 28px;">
     <div class="stack">
-      <ul class="tight">
-        <li>Signal regions with 1 or &gt;1 DeepJet c jets; two BDTs: vs non-Higgs and vs other Higgs processes</li>
-        <li>κ<sub>c</sub>-independent H+c fixed to the SM: μ<sub>cH</sub> is the only parameter of interest <span class="muted xs">(floating it → backup)</span></li>
-        <li>WW alone: μ<sub>cH</sub> &lt; 1065 <span class="exp">(506)</span>, |κ<sub>c</sub>| &lt; 211 <span class="exp">(95)</span></li>
-      </ul>
+      <div class="card cardlist"><h4>① Selection</h4><ul><li>One electron + one muon, p<sub>T</sub><sup>miss</sup> &gt; 20 GeV</li><li>≥ 1 <b>c jet</b> (DeepJet): 43% c efficiency, 27% b and 5% light mistag, to separate cH from bH</li></ul></div>
+      <div class="card cardlist"><h4>② Two BDTs</h4><ul><li>vs non-Higgs backgrounds</li><li>vs other Higgs processes; signal regions with 1 or &gt; 1 c jets</li></ul></div>
+      <div class="card cardlist"><h4>③ Fit</h4><ul><li>μ<sub>cH</sub> is the only parameter; Yukawa-insensitive H+c fixed to the SM <span class="muted xs">(floating it → backup)</span></li></ul></div>
       <div class="result">
         <div class="rlab">γγ + WW · 95% CL · observed (expected)</div>
         <div class="rval">μ<sub>cH</sub> &lt; 257 <span class="exp">(281)</span> &emsp; |κ<sub>c</sub>| &lt; 47 <span class="exp">(51)</span></div>
+        <div class="rlab">WW alone: μ<sub>cH</sub> &lt; 1065 (506), |κ<sub>c</sub>| &lt; 211 (95)</div>
       </div>
-      <p class="note" style="font-size:20px">κ<sub>c</sub> from production alone: statistics-limited</p>
     </div>
     <div class="figcol">
-      <div class="fig" id="ww"><img src="img/HIG-24-009_Figure_008.png" style="height:420px" alt="mu_cH limits"></div>
-      <p class="cap">μ<sub>cH</sub> limits: γγ, WW, combined</p>
+      <img src="img/HIG-24-009_Figure_008.png" style="height:450px" alt="mu_cH limits">
+      <p class="cap">μ<sub>cH</sub> limits: γγ, WW and combined</p>
     </div>
   </div>
-  <p class="note" id="wwnote" style="position:absolute; left:660px; top:606px; width:560px; text-align:center">WW fluctuated up (μ̂<sub>cH</sub> = 390 vs −230 in γγ): obs. weaker than γγ alone (38)</p>
-  <svg class="arrows"></svg>
-  <i class="arrow" data-from="wwnote:n" data-to="ww@0.60,0.47" data-bend="-0.2"></i>
+  <p class="takeaway">κ<sub>c</sub> from production alone, independent of the H → c<span class="ov">c</span> decay; statistics-limited</p>
 </section>
 
 <!-- ================================================================ 15 -->
