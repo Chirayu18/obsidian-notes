@@ -317,14 +317,14 @@
   </header>
   <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
   <div class="cols" style="grid-template-columns: 600px 1fr; gap: 28px; align-items:center;">
-    <div class="stack" style="font-size:20px">
-      <div class="chan" style="font-size:20px"><span class="pill big">0ℓ</span><div><b>≥ 7 jets</b><small>fully hadronic t<span class="ov">t</span></small></div></div>
-      <div class="chan" style="font-size:20px"><span class="pill big">1ℓ</span><div><b>1 lepton + ≥ 5 jets</b><small>single-lepton t<span class="ov">t</span></small></div></div>
-      <div class="chan" style="font-size:20px"><span class="pill big">2ℓ</span><div><b>2 leptons + ≥ 4 jets</b><small>dilepton t<span class="ov">t</span></small></div></div>
-      <div class="box" style="padding:12px 18px; margin-top:22px">
-        <b>ParticleNet</b> tags every jet as b, c or light: <b>11 categories</b> (right)
+    <div class="stack" style="font-size:19px">
+      <div class="chan" style="font-size:19px"><span class="pill big">0ℓ</span><div><b>≥ 7 jets</b>, H<sub>T</sub> &gt; 500 GeV<small>fully hadronic t<span class="ov">t</span></small></div></div>
+      <div class="chan" style="font-size:19px"><span class="pill big">1ℓ</span><div><b>1 lepton + ≥ 5 jets</b><small>single-lepton t<span class="ov">t</span></small></div></div>
+      <div class="chan" style="font-size:19px"><span class="pill big">2ℓ</span><div><b>2 opposite-charge leptons + ≥ 4 jets</b>, Z veto<small>dilepton t<span class="ov">t</span></small></div></div>
+      <div class="box" style="padding:12px 18px; margin-top:18px">
+        <b>ParticleNet</b> (graph NN) tags every jet as b, c or light: <b>11 categories</b> (right), up to <b>2×</b> better background rejection than DeepJet
       </div>
-      <p style="margin:0">Main background: t<span class="ov">t</span>+jets, split by the flavour of the extra jets</p>
+      <p style="margin:0"><b>Main background:</b> t<span class="ov">t</span>+jets, split by the flavour of the extra jets: t<span class="ov">t</span>+b, +≥2b, +c, +≥2c, +light</p>
     </div>
     <div class="figcol">
       <img src="img/HIG-24-018_Figure_001.png" style="height:460px" alt="ParticleNet tagging plane">
@@ -341,8 +341,8 @@
   </header>
   <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
   <div class="cols" style="grid-template-columns: 560px 1fr; gap: 26px; align-items:center;">
-    <div class="stack" style="font-size:20px">
-      <div class="box" style="padding:12px 18px"><b>Event classifier: ParT</b> (transformer), one score per process</div>
+    <div class="stack" style="font-size:19px">
+      <div class="box" style="padding:12px 18px"><b>Event classifier: ParT</b> (transformer) on jets, leptons and p<sub>T</sub><sup>miss</sup>: one score per process (4 signals, 5 t<span class="ov">t</span>+jets, + QCD in 0ℓ)</div>
       <div>
         <p style="margin:0 0 6px">D<sub>t<span class="ov">t</span>X</sub> = sum of the four signal scores</p>
         <div class="dstrip">
@@ -353,9 +353,11 @@
         </div>
       </div>
       <ul class="tight" style="margin:0">
-        <li><b>SRs</b>: t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span></li>
-        <li><b>CRs</b>: one per t<span class="ov">t</span>+jets flavour, fix its normalisation</li>
+        <li><b>SRs</b>: t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span>; c-enriched SRs need ≥ 2 c jets</li>
+        <li><b>CRs</b>: one per t<span class="ov">t</span>+jets flavour; their normalisations float in the fit</li>
         <li><b>Validation</b>: same structure, no signal: good agreement <span class="muted small">→ backup</span></li>
+        <li><b>QCD</b> (0ℓ): a classifier cut leaves &lt; 1% of t<span class="ov">t</span>+jets</li>
+        <li><b>Fit</b>: ParT score in all regions of the 3 channels at once</li>
       </ul>
     </div>
     <div class="figcol">
