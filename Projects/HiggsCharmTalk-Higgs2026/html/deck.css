@@ -92,3 +92,72 @@ svg.arrows { position: absolute; inset: 0; width: 1280px; height: 720px; pointer
 .affil { margin: 2px 0 0; font-size: 21px; font-style: italic; opacity: .9; }
 .behalf { margin: 26px 0 0; font-size: 20px; opacity: .8; }
 .feyn { position: absolute; right: 60px; bottom: 60px; width: 470px; }
+
+/* ---- additions for the full deck ---- */
+.small { font-size: 17px; }
+.xs { font-size: 15px; }
+.muted { color: var(--grey); }
+.bo { color: var(--orange); font-weight: 700; }
+.bt { color: var(--teal); font-weight: 700; }
+p { margin: 0 0 8px; }
+ul.tight li { margin: 0 0 5px; }
+.stack > * + * { margin-top: 14px; }
+.cap.left { text-align: left; }
+
+/* cards (roadmap, summary) */
+.cards { display: grid; gap: 18px; }
+.card { border-radius: 18px; padding: 16px 20px; background: var(--teal-soft); position: relative; }
+.card h4 { margin: 0 0 6px; font-size: 21px; color: var(--teal); font-weight: 800; }
+.card .num { font-size: 26px; font-weight: 800; color: var(--orange); margin-top: 6px; }
+.card .refs { font-size: 14px; color: var(--grey); line-height: 1.35; }
+.card .tag { position: absolute; right: 16px; top: 14px; font-size: 13px; font-weight: 700; color: var(--teal);
+  border: 1.5px solid var(--teal-line); border-radius: 999px; padding: 1px 10px; background: #fff; }
+
+/* big numbers */
+.stat { display: flex; align-items: baseline; gap: 12px; }
+.stat .big { font-size: 34px; font-weight: 800; color: var(--teal); }
+
+/* formula card */
+.formula { font-size: 27px; text-align: center; margin: 4px 0 8px; }
+.frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; margin: 0 4px; }
+.frac > span:first-child { border-bottom: 2px solid currentColor; padding: 0 4px; }
+
+/* tables */
+table.t { border-collapse: collapse; width: 100%; font-size: 17px; }
+table.t th { text-align: left; font-size: 15px; color: var(--grey); font-weight: 600; border-bottom: 2px solid var(--teal-line); padding: 4px 8px; }
+table.t td { padding: 4px 8px; border-bottom: 1px solid #e3eaee; }
+table.t tr.hi td { background: var(--orange-soft); }
+table.t td.r, table.t th.r { text-align: right; }
+
+/* interval chart (where we stand) */
+.ichart { position: relative; }
+.irow { display: grid; grid-template-columns: 270px 1fr 300px; align-items: center; height: 44px; }
+.irow .lab { font-size: 18px; font-weight: 650; }
+.irow .lab small { display: block; font-size: 13px; font-weight: 500; color: var(--grey); }
+.irow .ass { font-size: 14px; color: var(--grey); padding-left: 14px; line-height: 1.25; }
+.track { position: relative; height: 100%; }
+.track .obs { position: absolute; top: 15px; height: 14px; border-radius: 7px; background: var(--teal); }
+.track .obs.hi { background: var(--orange); }
+.track .exp { position: absolute; top: 33px; height: 0; border-top: 3px dotted var(--grey); }
+.track .val { position: absolute; top: 9px; font-size: 15px; font-weight: 700; color: var(--teal); white-space: nowrap; }
+.track .off { position: absolute; top: 12px; font-size: 15px; color: var(--grey); font-style: italic; white-space: nowrap; }
+.axis { position: relative; height: 30px; border-top: 2px solid var(--ink); }
+.axis span { position: absolute; top: 4px; transform: translateX(-50%); font-size: 14px; }
+.vline { position: absolute; top: 0; bottom: 30px; border-left: 2px dashed var(--grey); }
+.band { position: absolute; top: 0; bottom: 30px; background: rgba(224,122,31,.10); }
+
+/* horizontal bar chart (prospects) */
+.bars .brow { display: grid; grid-template-columns: 130px 1fr; align-items: center; height: 46px; }
+.bars .blab { font-size: 16px; text-align: right; padding-right: 12px; }
+.bars .btrack { position: relative; height: 100%; }
+.bars .bar { position: absolute; top: 10px; height: 26px; border-radius: 0 6px 6px 0; background: var(--teal); }
+.bars .bar span { position: absolute; left: calc(100% + 8px); top: 0; font-weight: 800; font-size: 18px; color: var(--ink); }
+
+/* section / backup divider */
+.divider { background: linear-gradient(125deg, #0a3346 0%, #0b4f6c 50%, #1b8a8f 100%); color: #fff; }
+.divider::before, .divider::after { content: none !important; }
+.divider h1 { position: absolute; left: 70px; top: 290px; margin: 0; font-size: 64px; font-weight: 800; }
+.divider .line { position: absolute; left: 70px; top: 270px; width: 120px; height: 5px; background: var(--orange); border-radius: 3px; }
+
+.qa li { margin-bottom: 7px; font-size: 16.5px; line-height: 1.32; }
+.refs-list li { font-size: 15px; margin-bottom: 2px; }

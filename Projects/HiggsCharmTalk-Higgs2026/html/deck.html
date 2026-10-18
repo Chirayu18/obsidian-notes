@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Higgs-charm couplings at CMS</title>
+<!-- Higgs 2026, Louvain-la-Neuve, 28 Oct 2026 (15+5 min). Public CMS results only.
+     Build: python3 build.py  ->  higgs2026_higgs_charm.pdf  (figures from ../figures via fetch_figures.sh) -->
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<!-- ================================================================ 1 -->
+<section class="slide title-slide">
+  <div class="logos-tile">
+    <img src="img/CMSlogo_color.png" alt="CMS">
+    <img src="img/VUB_logo.png" alt="VUB">
+  </div>
+  <svg class="feyn" viewBox="0 0 520 220" aria-hidden="true">
+    <g stroke="#fff" stroke-width="3" fill="none" opacity="0.9">
+      <path id="gluon" d="" stroke-width="2.6"/>
+      <path d="M20,180 L100,110"/><path d="M100,110 L170,110"/>
+      <path d="M170,110 L240,40"/><path d="M170,110 L240,180" stroke-dasharray="9 7"/>
+      <path d="M300,110 L380,110" stroke-dasharray="9 7"/>
+      <path d="M380,110 L450,40"/><path d="M380,110 L450,180"/>
+    </g>
+    <circle cx="170" cy="110" r="9" fill="#f4a259"/><circle cx="380" cy="110" r="9" fill="#f4a259"/>
+    <g fill="#fff" font-size="22" font-style="italic"><text x="0" y="36">g</text><text x="0" y="196">c</text>
+      <text x="248" y="40">c</text><text x="248" y="190">H</text><text x="280" y="117">H</text>
+      <text x="458" y="40">c</text><text x="458" y="190">c̄</text></g>
+    <g fill="#f4a259" font-size="22" font-weight="700"><text x="150" y="150">κ<tspan font-size="15" dy="5">c</tspan></text><text x="360" y="150">κ<tspan font-size="15" dy="5">c</tspan></text></g>
+  </svg>
+  <div class="title-block">
+    <h1>Constraints on Higgs–charm couplings at CMS</h1>
+    <p class="venue">Higgs 2026 · Louvain-la-Neuve · 28 October 2026</p>
+    <p class="speaker">Chirayu Gupta</p>
+    <p class="affil">Vrije Universiteit Brussel</p>
+    <p class="behalf">on behalf of the CMS Collaboration</p>
+  </div>
+</section>
+
+<!-- ================================================================ 2 -->
+<section class="slide" data-n="2">
+  <header>
+    <h2>Why the Higgs–charm coupling?</h2>
+    <p class="sub">Second-generation quark Yukawas are the open frontier</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 700px 1fr;">
+    <div class="stack">
+      <p class="small">Since 2012: couplings to t, b, τ measured, evidence for H → μμ <span class="muted">(backup)</span>; all SM-like. <b>Charm is the most accessible second-generation quark.</b></p>
+      <div class="cards" style="grid-template-columns: 1fr 1fr;">
+        <div class="card"><div class="stat"><span class="big">2.9%</span></div>𝓑(H → c<span class="ov">c</span>), about 20× below b<span class="ov">b</span></div>
+        <div class="card"><div class="stat"><span class="big">c jets</span></div>hard to tell from b and light jets, under huge QCD backgrounds</div>
+      </div>
+      <p class="formula">κ<sub>c</sub> = y<sub>c</sub> / y<sub>c</sub><sup>SM</sup> <span class="small muted">&emsp;(SM: κ<sub>c</sub> = 1)</span></p>
+      <div class="result" style="text-align:left">
+        Flavour-compatible BSM (e.g. spontaneous flavour violation) allows <b>|κ<sub>c</sub>| ~ 3</b>:<br>
+        <span class="bo">current sensitivity is entering this region</span>
+      </div>
+    </div>
+    <div class="figcol">
+      <img src="img/HIG-21-018_Figure-aux_011.png" style="height:450px" alt="couplings vs mass">
+      <p class="cap">CMS, Rep. Prog. Phys. 89 (2026) 087801 (suppl.); κ<sub>c</sub> point: separate t<span class="ov">t</span>H+VH result, not in the fit</p>
+    </div>
+  </div>
+  <p class="takeaway">Does the Higgs give charm its mass?</p>
+</section>
+
+<!-- ================================================================ 3 -->
+<section class="slide" data-n="3">
+  <header>
+    <h2>How CMS probes κ<sub>c</sub></h2>
+    <p class="sub">In the decay, in production, and through the Higgs width</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr;">
+    <div class="cards" style="grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr;">
+      <div class="card"><span class="tag">slides 5–9</span>
+        <h4>Direct H → c<span class="ov">c</span></h4>
+        <div class="small">rate ∝ κ<sub>c</sub><sup>2</sup>/Γ<sub>H</sub> · VH, t<span class="ov">t</span>H, boosted (mostly ggH)</div>
+        <div class="num">|κ<sub>c</sub>| &lt; 3.5 <span class="exp">(2.7)</span> <span class="xs muted">t<span class="ov">t</span>H + VH</span></div>
+        <div class="refs">PRL 131 (2023) 061801 · PRL 136 (2026) 011801 · PRL 131 (2023) 041801</div></div>
+      <div class="card"><span class="tag">slides 10–12</span>
+        <h4>H + charm production</h4>
+        <div class="small">cg → cH: κ<sub>c</sub> in the production vertex · H → γγ, WW</div>
+        <div class="num">|κ<sub>c</sub>| &lt; 47 <span class="exp">(51)</span></div>
+        <div class="refs">JHEP 11 (2025) 060 · JHEP 08 (2026) 051</div></div>
+      <div class="card"><span class="tag">slide 13</span>
+        <h4>Indirect: Higgs rates and width</h4>
+        <div class="small">on-shell and <span class="bo">new</span> off-shell H → ZZ → 4ℓ</div>
+        <div class="num">κ<sub>c</sub> ∈ [−3.3, 2.8] … [−8.6, 7.5] <span class="xs muted">by assumptions</span></div>
+        <div class="refs">PRD 112 (2025) 112001 · arXiv:2607.23352</div></div>
+      <div class="card"><span class="tag">slide 13</span>
+        <h4>Rare exclusive decays</h4>
+        <div class="small">H → J/ψ γ, ψ(2S) γ: sensitive to the <i>sign</i> of κ<sub>c</sub></div>
+        <div class="num">−166 &lt; κ<sub>c</sub> &lt; 208</div>
+        <div class="refs">PLB 865 (2025) 139462</div></div>
+    </div>
+  </div>
+  <p class="takeaway" style="font-size:19px">All results: Run 2, 13 TeV, up to 138 fb<sup>−1</sup> · 95% CL, observed (expected) · μ = σ𝓑/(σ𝓑)<sub>SM</sub></p>
+</section>
+
+<!-- ================================================================ 4 -->
+<section class="slide" data-n="4">
+  <header>
+    <h2>Charm tagging</h2>
+    <p class="sub">Finding c jets between b and light jets</p>
+  </header>
+  <p class="ref">CMS-DP-2025-081</p>
+  <div class="cols" style="grid-template-columns: 640px 1fr;">
+    <div>
+      <h3>Charm signature</h3>
+      <div class="box row">
+        <div>
+          c-hadron mass and lifetime lie <b>between light and b</b>
+          <ul>
+            <li>secondary vertex (SV), like b jets</li>
+            <li>but closer to the primary vertex: <span class="hl">easily mistaken for light jets</span></li>
+          </ul>
+        </div>
+        <svg class="jet" viewBox="0 0 200 120" aria-hidden="true">
+          <path d="M10,85 L190,20 L195,95 Z" fill="#dbe9ef"/>
+          <g stroke="#0b4f6c" stroke-width="2.4" fill="none">
+            <path d="M10,85 L95,58" stroke-dasharray="6 4"/>
+            <path d="M95,58 L185,28"/><path d="M95,58 L190,48"/><path d="M95,58 L190,68"/>
+            <path d="M10,85 L190,86"/><path d="M10,85 L170,112"/>
+          </g>
+          <circle cx="10" cy="85" r="6" fill="#0b4f6c"/><circle cx="95" cy="58" r="6" fill="#e07a1f"/>
+          <text x="2" y="110" font-size="15" fill="#0b4f6c" font-weight="700">PV</text>
+          <text x="80" y="44" font-size="15" fill="#e07a1f" font-weight="700">SV</text>
+          <text x="150" y="16" font-size="15" fill="#0b4f6c" font-weight="700">c jet</text>
+        </svg>
+      </div>
+      <h3 style="margin-top:26px">Algorithm evolution at CMS</h3>
+      <div class="three">
+        <div class="obox"><span class="otitle">Likelihood / BDT</span>JP, CSV:<br>tracks + secondary vertices</div>
+        <div class="obox"><span class="otitle">Deep NN</span><b>DeepJet</b>:<br>all jet constituents</div>
+        <div class="obox"><span class="otitle">Particle cloud</span><b>ParticleNet</b>, UParT:<br>graph, transformer</div>
+      </div>
+      <div class="timeline" id="tl"></div>
+      <p class="note center">Run 1 → Run 3: richer networks, inputs closer to raw particles</p>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:430px" alt="c-tagging ROC curves"></div>
+      <p class="cap">t<span class="ov">t</span> simulation, 13.6 TeV · solid: c vs b, dashed: c vs light</p>
+    </div>
+  </div>
+  <div class="footer-pills">
+    <span class="lbl">In this talk</span>
+    <span class="pill">DeepJet · VH resolved, cH</span>
+    <span class="pill">ParticleNet · VH merged, t<span class="ov">t</span>H</span>
+    <span class="pill">DeepDoubleX · boosted H</span>
+  </div>
+  <p class="note" id="rocnote" style="position:absolute; left:858px; top:205px;">UParT v2 (blue):<br>lowest mis-ID</p>
+  <svg class="arrows"></svg>
+  <!-- tips sit on the blue (UParT v2) curves, located by colour in the PNG -->
+  <i class="arrow" data-from="rocnote:s" data-to="roc@0.38,0.506" data-bend="0.25"></i>
+  <i class="arrow" data-from="rocnote:se" data-to="roc@0.425,0.385" data-bend="-0.3"></i>
+  <i class="arrow" data-from="tl:w" data-to="tl:e" data-bend="0"></i>
+</section>
+
+<!-- ================================================================ 5 -->
+<section class="slide" data-n="5">
+  <header>
+    <h2>VH(H → c<span class="ov">c</span>)</h2>
+    <p class="sub">Cleanest signature: the W or Z decays to leptons</p>
+  </header>
+  <p class="ref">PRL 131 (2023) 061801 · CMS-HIG-21-008</p>
+  <div class="cols" style="grid-template-columns: 650px 1fr;">
+    <div>
+      <div class="pillrow">
+        <span class="pill big">0ℓ · Z → νν</span>
+        <span class="pill big">1ℓ · W → ℓν</span>
+        <span class="pill big">2ℓ · Z → ℓℓ</span>
+      </div>
+      <p class="center" style="margin:10px 0 0">V+jets and t<span class="ov">t</span> normalised in control regions</p>
+      <div class="split"><span class="pill orange big" id="ptcut">p<sub>T</sub><sup>H</sup> = 300 GeV</span></div>
+      <div class="two">
+        <div class="obox" id="res"><span class="otitle">Resolved · two jets</span>
+          &gt;95% of the signal<br>two DeepJet c-tagged jets<br>fit to a BDT score</div>
+        <div class="obox" id="mer"><span class="otitle">Merged · one large jet</span>
+          &lt;5% of the signal<br><b>much less background</b><br>ParticleNet c<span class="ov">c</span> tagging<br>fit to the regressed mass</div>
+      </div>
+      <p class="note" style="position:absolute; left:120px; top:150px">below</p>
+      <p class="note" style="position:absolute; left:470px; top:150px">above</p>
+      <div class="result" style="margin-top:26px">
+        <div class="rlab">95% CL · observed (expected)</div>
+        <div class="rval">μ &lt; 14 <span class="exp">(7.6)</span> &emsp; 1.1 &lt; |κ<sub>c</sub>| &lt; 5.5 <span class="exp">(&lt; 3.4)</span></div>
+      </div>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:400px" alt="merged-jet mass"></div>
+      <p class="cap">Merged-jet candidate mass, background-subtracted below</p>
+    </div>
+  </div>
+  <p class="takeaway">Most sensitive single channel of Run 2 · statistics-limited</p>
+  <p class="note" id="vznote" style="position:absolute; left:820px; top:590px;">VZ(Z → c<span class="ov">c</span>) seen at 5.7σ: the method works</p>
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="ptcut:w" data-to="res@0.86,1.03" data-bend="-0.3"></i>
+  <i class="arrow" data-from="ptcut:e" data-to="mer@0.14,1.03" data-bend="0.3"></i>
+  <i class="arrow" data-from="vznote:n" data-to="f3@0.40,0.17" data-bend="-0.25"></i>
+</section>
+
+<!-- ================================================================ 6 -->
+<section class="slide" data-n="6">
+  <header>
+    <h2>Boosted H → c<span class="ov">c</span></h2>
+    <p class="sub">Gluon-fusion enriched: one large-radius jet at high p<sub>T</sub></p>
+  </header>
+  <p class="ref">PRL 131 (2023) 041801 · CMS-HIG-21-012</p>
+  <div class="cols" style="grid-template-columns: 610px 1fr;">
+    <div class="stack">
+      <div class="card"><h4>① p<sub>T</sub><sup>H</sup> &gt; 450 GeV</h4>
+        <div class="small">High-p<sub>T</sub> Higgs bosons suppress QCD · signal 55% ggF, 25% VBF, 20% VH · soft-drop jet mass m<sub>SD</sub></div></div>
+      <div class="card"><h4>② DeepDoubleX tagger</h4>
+        <div class="small">Passing (signal-rich) and failing regions · decorrelated from m<sub>SD</sub>: QCD estimated from data in the failing region</div></div>
+      <div class="card"><h4>③ Fit m<sub>SD</sub></h4>
+        <div class="small">Simultaneous binned fit in all tagger regions</div></div>
+      <div class="result">
+        <div class="rval">σ𝓑 / (σ𝓑)<sub>SM</sub> &lt; 47 <span class="exp">(39)</span></div>
+        <div class="rlab">95% CL · observed (expected) · no κ<sub>c</sub> interpretation in the paper</div>
+      </div>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="bz"><img src="img/HIG-21-012_Figure_002-a.png" style="height:410px" alt="jet mass, passing region"></div>
+      <p class="cap">Passing region · H → c<span class="ov">c</span> dashed (×200)</p>
+    </div>
+  </div>
+  <p class="note" id="znote" style="position:absolute; left:770px; top:618px;">Z → c<span class="ov">c</span> observed for the first time in Z+jets, well over 5σ</p>
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="znote:n" data-to="bz@0.30,0.17" data-bend="0.25"></i>
+</section>
+
+<!-- ================================================================ 7 -->
+<section class="slide" data-n="7">
+  <header>
+    <h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>)</h2>
+    <p class="sub">The whole analysis in one fit</p>
+  </header>
+  <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
+  <div class="cols" style="grid-template-columns: 720px 1fr; align-items:center;">
+    <div class="figcol">
+      <img src="img/HIG-24-018_Figure_006.png" style="width:720px" alt="post-fit distributions">
+      <p class="cap">Post-fit ParT discriminants in every control and signal region (p-value 0.85)</p>
+    </div>
+    <div class="figcol">
+      <div class="pillrow" style="margin-bottom:10px"><span class="pill big">0ℓ · 1ℓ · 2ℓ</span></div>
+      <p class="center small" style="margin-bottom:12px">each: <b>5</b> t<span class="ov">t</span>+jets CRs + <b>4</b> SRs</p>
+      <img src="img/HIG-24-018_Figure_005.png" style="width:390px" alt="categorisation">
+      <p class="cap">Summed signal score D<sub>t<span class="ov">t</span>X</sub> &gt; 0.85 → SR by t<span class="ov">t</span>H/t<span class="ov">t</span>Z and c<span class="ov">c</span>/b<span class="ov">b</span>; 0.6–0.85 → CR of the leading t<span class="ov">t</span>+jets class</p>
+    </div>
+  </div>
+  <p class="takeaway">One fit: t<span class="ov">t</span>H(c<span class="ov">c</span>), t<span class="ov">t</span>H(b<span class="ov">b</span>), t<span class="ov">t</span>Z(c<span class="ov">c</span>), t<span class="ov">t</span>Z(b<span class="ov">b</span>) and every t<span class="ov">t</span>+jets component</p>
+</section>
+
+<!-- ================================================================ 8 -->
+<section class="slide" data-n="8">
+  <header>
+    <h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>): strategy and results</h2>
+    <p class="sub">t<span class="ov">t</span>H(c<span class="ov">c</span>) and t<span class="ov">t</span>H(b<span class="ov">b</span>) together, t<span class="ov">t</span>Z as standard candles</p>
+  </header>
+  <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
+  <div class="cols" style="grid-template-columns: 600px 1fr;">
+    <div class="stack">
+      <div class="obox" style="font-size:19px"><span class="otitle">Jet tagging</span>Every jet in one of <b>11 ParticleNet categories</b> (B0–B4, C0–C4, L0) <span class="muted xs">→ backup</span></div>
+      <div class="obox" style="font-size:19px"><span class="otitle">Event classifier</span>ParT with 4 signal and 5 t<span class="ov">t</span>+jets classes · SR: D<sub>t<span class="ov">t</span>X</sub> &gt; 0.85 · CR: 0.6–0.85 · validation: 0.4–0.6</div>
+      <div class="obox" style="font-size:19px"><span class="otitle">Backgrounds</span>t<span class="ov">t</span>+jets split by extra-jet flavour, each normalised in its own CR · QCD &lt; 1% after a classifier cut <span class="muted xs">→ backup</span></div>
+    </div>
+    <div class="stack">
+      <div class="result">
+        <div class="rlab">t<span class="ov">t</span>H(H → c<span class="ov">c</span>) · 95% CL · observed (expected)</div>
+        <div class="rval">μ &lt; 7.8 <span class="exp">(8.7)</span> &emsp; |κ<sub>c</sub>| &lt; 3.0 <span class="exp">(3.3)</span></div>
+        <div class="rlab">κ<sub>b</sub> = 1 · with κ<sub>b</sub> fitted: |κ<sub>c</sub>| &lt; 4.2 obs.</div>
+      </div>
+      <table class="t">
+        <tr><th></th><th class="r">best fit μ̂</th><th class="r">obs. (exp.) signif.</th></tr>
+        <tr><td>t<span class="ov">t</span>H(b<span class="ov">b</span>)</td><td class="r">0.91 <sup>+0.26</sup><sub>−0.22</sub></td><td class="r">4.4σ (4.5σ)</td></tr>
+        <tr class="hi"><td><b>t<span class="ov">t</span>H(c<span class="ov">c</span>)</b></td><td class="r"><b>−1.6 ± 4.5</b></td><td class="r">–</td></tr>
+        <tr><td>t<span class="ov">t</span>Z(b<span class="ov">b</span>)</td><td class="r">1.47 <sup>+0.45</sup><sub>−0.41</sub></td><td class="r">3.5σ (2.4σ)</td></tr>
+        <tr><td>t<span class="ov">t</span>Z(c<span class="ov">c</span>)</td><td class="r">1.02 <sup>+0.79</sup><sub>−0.84</sub></td><td class="r">1.2σ (1.3σ)</td></tr>
+      </table>
+      <p class="xs muted">Limits per channel and event yields → backup</p>
+    </div>
+  </div>
+  <p class="takeaway">A second direct channel, with expected sensitivity comparable to VH</p>
+</section>
+
+<!-- ================================================================ 9 -->
+<section class="slide" data-n="9">
+  <header>
+    <h2>t<span class="ov">t</span>H + VH combination</h2>
+    <p class="sub">Best expected direct sensitivity to κ<sub>c</sub></p>
+  </header>
+  <p class="ref">PRL 136 (2026) 011801 · CMS-HIG-24-018</p>
+  <div class="cols" style="grid-template-columns: 500px 290px 1fr; gap: 26px;">
+    <div class="figcol">
+      <div class="fig" id="b12"><img src="img/HIG-24-018_Figure_B12.png" style="width:500px" alt="mu limits"></div>
+      <p class="cap">μ<sub>H→cc̄</sub> limits: t<span class="ov">t</span>H, VH, combined</p>
+    </div>
+    <div class="figcol">
+      <img src="img/HIG-24-018_Figure_B13.png" style="width:290px" alt="likelihood scan">
+      <p class="cap">−2Δln L vs |κ<sub>c</sub>|; solid obs., dashed exp. (κ<sub>b</sub> = 1)</p>
+    </div>
+    <div class="stack">
+      <div class="result">
+        <div class="rlab">t<span class="ov">t</span>H + VH · 95% CL<br>observed (expected)</div>
+        <div class="rval" style="font-size:24px">μ &lt; 9.3 <span class="exp">(5.6)</span></div>
+        <div class="rval" style="font-size:30px">|κ<sub>c</sub>| &lt; 3.5 <span class="exp">(2.7)</span></div>
+        <div class="rlab">SM production, κ<sub>b</sub> = 1</div>
+      </div>
+      <p class="small">Expected μ limit <b>26% better</b> than VH alone, <b>36%</b> better than t<span class="ov">t</span>H alone</p>
+      <p class="small">t<span class="ov">t</span>H alone (3.0) beats the combination (3.5) on observed</p>
+    </div>
+  </div>
+  <p class="note" id="upnote" style="position:absolute; left:300px; top:520px;">VH fluctuated up (μ̂ = 7.7)</p>
+  <p class="takeaway">Expected |κ<sub>c</sub>| &lt; 2.7: the reach is now below the BSM-motivated |κ<sub>c</sub>| ~ 3</p>
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="upnote:e" data-to="b12@0.735,0.27" data-bend="0.35"></i>
+</section>
+
+<!-- ================================================================ 10 -->
+<section class="slide" data-n="10">
+  <header>
+    <h2>H + charm production</h2>
+    <p class="sub">κ<sub>c</sub> in the production vertex, independent of the H → c<span class="ov">c</span> decay</p>
+  </header>
+  <p class="ref">JHEP 11 (2025) 060 · CMS-HIG-23-010</p>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; grid-template-rows: auto 1fr; row-gap: 16px;">
+    <div class="figcol" style="grid-column: 1 / 3;">
+      <img src="img/HIG-23-010_Figure_001.png" style="height:200px" alt="cH diagrams">
+      <p class="cap">LO diagrams for cH production; κ<sub>c</sub> enters at the marked vertices</p>
+    </div>
+    <div class="card"><h4>Signal</h4>
+      Clean Higgs decay + one c-tagged jet<br>
+      σ<sub>cH</sub> = 90 fb → σ𝓑 ≈ <b>0.2 fb</b> (γγ), ≈ <b>20 fb</b> (WW)</div>
+    <div class="card"><h4>Challenges</h4>
+      <span class="hl">κ<sub>c</sub>-independent H+c</span> from g → c<span class="ov">c</span> in ggH (same final state) · soft, often forward c jets · flavour-scheme modelling <span class="muted">(T. Bevilacqua, next talk)</span></div>
+  </div>
+  <p class="takeaway">“Flat direction”: κ<sub>c</sub> varies, all other Higgs rates stay SM, so only cH production changes</p>
+</section>
+
+<!-- ================================================================ 11 -->
+<section class="slide" data-n="11">
+  <header>
+    <h2>cH(H → γγ)</h2>
+    <p class="sub">First search for H + charm in the diphoton channel</p>
+  </header>
+  <p class="ref">JHEP 11 (2025) 060 · CMS-HIG-23-010</p>
+  <div class="cols" style="grid-template-columns: 560px 1fr;">
+    <div class="stack">
+      <ul class="tight">
+        <li>138 fb<sup>−1</sup>, DeepJet c tagging</li>
+        <li>Two BDTs, without c-tag inputs: cH vs ggH (largest resonant background) and cH vs continuum γγ+jets</li>
+        <li>27 categories (9 per year); signal from fits to m<sub>γγ</sub></li>
+      </ul>
+      <div class="result">
+        <div class="rval">μ<sub>cH</sub> &lt; 243 <span class="exp">(355)</span> &emsp; |κ<sub>c</sub>| &lt; 38 <span class="exp">(73)</span></div>
+        <div class="rlab">95% CL · observed (expected)</div>
+      </div>
+      <p class="note" style="font-size:20px">|κ<sub>c</sub>| ≲ 40, not ~3: σ𝓑 ≈ 0.2 fb, and ggH H+c mimics the signal</p>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="gg"><img src="img/HIG-23-010_Figure_006.png" style="height:470px" alt="m_gamma_gamma"></div>
+      <p class="cap">m<sub>γγ</sub>, all categories, S/(S+B) weighted</p>
+    </div>
+  </div>
+  <p class="note" id="pknote" style="position:absolute; left:640px; top:430px; width:200px; text-align:right">125 GeV peak = other Higgs processes (mostly ggH): μ̂<sub>cH</sub> = −230</p>
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="pknote:e" data-to="gg@0.40,0.44" data-bend="0.3"></i>
+</section>
+
+<!-- ================================================================ 12 -->
+<section class="slide" data-n="12">
+  <header>
+    <h2>cH(H → WW) and the γγ + WW combination</h2>
+    <p class="sub">eνμν + a c jet, then combined with γγ</p>
+  </header>
+  <p class="ref">JHEP 08 (2026) 051 · CMS-HIG-24-009</p>
+  <div class="cols" style="grid-template-columns: 590px 1fr;">
+    <div class="stack">
+      <ul class="tight">
+        <li>Signal regions with 1 or &gt;1 DeepJet c jets; two BDTs: vs non-Higgs and vs other Higgs processes</li>
+        <li>κ<sub>c</sub>-independent H+c fixed to the SM: μ<sub>cH</sub> is the only parameter of interest <span class="muted xs">(floating it → backup)</span></li>
+        <li>WW alone: μ<sub>cH</sub> &lt; 1065 <span class="exp">(506)</span>, |κ<sub>c</sub>| &lt; 211 <span class="exp">(95)</span></li>
+      </ul>
+      <div class="result">
+        <div class="rlab">γγ + WW · 95% CL · observed (expected)</div>
+        <div class="rval">μ<sub>cH</sub> &lt; 257 <span class="exp">(281)</span> &emsp; |κ<sub>c</sub>| &lt; 47 <span class="exp">(51)</span></div>
+      </div>
+      <p class="note" style="font-size:20px">κ<sub>c</sub> from production alone: statistics-limited</p>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="ww"><img src="img/HIG-24-009_Figure_008.png" style="height:420px" alt="mu_cH limits"></div>
+      <p class="cap">μ<sub>cH</sub> limits: γγ, WW, combined</p>
+    </div>
+  </div>
+  <p class="note" id="wwnote" style="position:absolute; left:700px; top:612px;">WW fluctuated up (μ̂<sub>cH</sub> = 390 vs −230 in γγ): obs. weaker than γγ alone (38)</p>
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="wwnote:n" data-to="ww@0.60,0.47" data-bend="-0.2"></i>
+</section>
+
+<!-- ================================================================ 13 -->
+<section class="slide" data-n="13">
+  <header>
+    <h2>Indirect constraints on κ<sub>c</sub></h2>
+    <p class="sub">The Higgs width from on- and off-shell H → ZZ → 4ℓ</p>
+  </header>
+  <p class="ref">PRD 112 (2025) 112001 · arXiv:2607.23352 · PLB 865 (2025) 139462</p>
+  <div class="cols" style="grid-template-columns: 650px 1fr;">
+    <div class="stack">
+      <div class="box">
+        <div class="formula">σ<sub>on</sub> ∝ <span class="frac"><span>g<sub>p</sub><sup>2</sup> g<sub>d</sub><sup>2</sup></span><span>Γ<sub>H</sub></span></span>
+          &emsp;&emsp; σ<sub>off</sub> ∝ g<sub>p</sub><sup>2</sup> g<sub>d</sub><sup>2</sup></div>
+        <div class="small">g<sub>p</sub>, g<sub>d</sub>: production and decay couplings (g<sub>d</sub> ∝ κ<sub>Z</sub>). Large κ<sub>c</sub> adds c<span class="ov">c</span> → H and raises Γ<sub>H</sub>. On-shell alone, a larger κ<sub>Z</sub> can hide it, so |κ<sub>Z</sub>| ≤ 1 must be assumed. <b>Off-shell has no Γ<sub>H</sub></b>: it fixes κ<sub>Z</sub> and removes the assumption.</div>
+      </div>
+      <table class="t">
+        <tr><th>κ<sub>c</sub> at 95% CL</th><th class="r">observed</th><th class="r">expected</th></tr>
+        <tr><td>On-shell, |κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1</td><td class="r">[−3.7, 3.2]</td><td class="r muted">[−3.8, 3.3]</td></tr>
+        <tr class="hi"><td><span class="bo">new</span> On + off-shell, |κ<sub>V</sub>| ≤ 1</td><td class="r"><b>[−3.3, 2.8]</b></td><td class="r muted">[−3.5, 2.9]</td></tr>
+        <tr><td><span class="bo">new</span> On + off-shell, κ<sub>Z</sub>, κ<sub>W</sub> free</td><td class="r">[−8.6, 7.5]</td><td class="r muted">[−9.6, 8.3]</td></tr>
+      </table>
+      <p class="xs muted">H → J/ψ γ: −166 &lt; κ<sub>c</sub> &lt; 208 (J. Bierkens, Thu) · Higgs width: F. Errico (Tue) · p<sub>T</sub><sup>H</sup> spectrum → backup</p>
+    </div>
+    <div class="figcol">
+      <img src="img/HIG-25-003_Figure_008-d.png" style="height:390px" alt="kappa_c scans">
+      <p class="cap">Fig. 8: on-shell (blue, green), on+off-shell (red, black), with |κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1 or κ<sub>Z</sub> ≠ κ<sub>W</sub>; solid obs., dashed exp. Table: Table 3, no custodial symmetry</p>
+    </div>
+  </div>
+  <p class="takeaway">With |κ<sub>V</sub>| ≤ 1, H → 4ℓ matches the direct searches, under different assumptions</p>
+</section>
+
+<!-- ================================================================ 14 -->
+<section class="slide" data-n="14">
+  <header>
+    <h2>Where we stand</h2>
+    <p class="sub">CMS constraints on κ<sub>c</sub> at 95% CL</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; top:128px;">
+    <div class="ichart">
+      <!-- axis: kappa_c from -10 to 10; left% = (k + 10) * 5 -->
+      <div style="position:absolute; left:270px; right:300px; top:0; bottom:30px;">
+        <div class="band" style="left:32.5%; width:5%"></div><div class="band" style="left:62.5%; width:5%"></div>
+        <div class="vline" style="left:55%; bottom:0"></div>
+        <div class="vline" style="left:50%; bottom:0; border-left:1px solid #c7d3da"></div>
+      </div>
+      <div class="irow"><div class="lab">t<span class="ov">t</span>H + VH(H → c<span class="ov">c</span>)<small>PRL 136 (2026) 011801</small></div>
+        <div class="track"><div class="obs hi" style="left:32.5%; width:35%"></div><div class="exp" style="left:36.5%; width:27%"></div><span class="val" style="left:calc(67.5% + 8px)">|κ<sub>c</sub>| &lt; 3.5 (2.7)</span></div>
+        <div class="ass">κ<sub>b</sub> = 1, SM production, no BSM decays</div></div>
+      <div class="irow"><div class="lab">t<span class="ov">t</span>H(H → c<span class="ov">c</span>)<small>PRL 136 (2026) 011801</small></div>
+        <div class="track"><div class="obs" style="left:35%; width:30%"></div><div class="exp" style="left:33.5%; width:33%"></div><span class="val" style="left:calc(66.5% + 8px)">&lt; 3.0 (3.3)</span></div>
+        <div class="ass">same</div></div>
+      <div class="irow"><div class="lab">VH(H → c<span class="ov">c</span>)<small>PRL 131 (2023) 061801</small></div>
+        <div class="track"><div class="obs" style="left:22.5%; width:22%"></div><div class="obs" style="left:55.5%; width:22%"></div><div class="exp" style="left:33%; width:34%"></div><span class="val" style="left:calc(77.5% + 8px)">1.1 – 5.5 (3.4)</span></div>
+        <div class="ass">same</div></div>
+      <div class="irow"><div class="lab">On + off-shell H → 4ℓ<small>arXiv:2607.23352</small></div>
+        <div class="track"><div class="obs hi" style="left:33.5%; width:30.5%"></div><div class="exp" style="left:32.5%; width:32%"></div><span class="val" style="left:calc(64.5% + 8px)">[−3.3, 2.8]</span></div>
+        <div class="ass">|κ<sub>V</sub>| ≤ 1, κ<sub>b,t</sub> = 1, other light κ<sub>q</sub> profiled, Γ<sub>BSM</sub> ≥ 0</div></div>
+      <div class="irow"><div class="lab">On-shell H → 4ℓ<small>PRD 112 (2025) 112001</small></div>
+        <div class="track"><div class="obs" style="left:31.5%; width:34.5%"></div><div class="exp" style="left:31%; width:35.5%"></div><span class="val" style="left:calc(66.5% + 8px)">[−3.7, 3.2]</span></div>
+        <div class="ass">|κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1, otherwise same</div></div>
+      <div class="irow"><div class="lab">On + off-shell H → 4ℓ<small>arXiv:2607.23352</small></div>
+        <div class="track"><div class="obs" style="left:7%; width:80.5%"></div><div class="exp" style="left:2%; width:89.5%"></div><span class="val" style="left:calc(91.5% + 8px)">[−8.6, 7.5]</span></div>
+        <div class="ass">κ<sub>Z</sub>, κ<sub>W</sub> free, otherwise same</div></div>
+      <div class="irow"><div class="lab">cH (γγ + WW)<small>JHEP 08 (2026) 051</small></div>
+        <div class="track"><span class="off" style="left:2%">off scale: |κ<sub>c</sub>| &lt; 47 (51) ⟷</span></div>
+        <div class="ass">flat direction, from the μ<sub>cH</sub> limit</div></div>
+      <div class="irow"><div class="lab">H → J/ψ γ<small>PLB 865 (2025) 139462</small></div>
+        <div class="track"><span class="off" style="left:2%">off scale: −166 &lt; κ<sub>c</sub> &lt; 208 ⟷</span></div>
+        <div class="ass">κ<sub>γ</sub> = 1, 123 fb<sup>−1</sup></div></div>
+      <div class="axis" style="margin-left:270px; margin-right:300px;">
+        <span style="left:0%">−10</span><span style="left:25%">−5</span><span style="left:50%">0</span><span style="left:55%; top:-26px; color:var(--grey)">SM</span><span style="left:75%">5</span><span style="left:100%">10</span>
+      </div>
+    </div>
+  </div>
+  <p class="xs muted" style="position:absolute; left:340px; top:128px; margin:0">bar: observed · dotted: expected · shaded: |κ<sub>c</sub>| ~ 3 (BSM) · rows use different coupling models, not directly comparable</p>
+  <p class="takeaway">Direct searches and on + off-shell H → 4ℓ both reach |κ<sub>c</sub>| ~ 3, where flavour-compatible BSM lives</p>
+</section>
+
+<!-- ================================================================ 15 -->
+<section class="slide" data-n="15">
+  <header>
+    <h2>Toward Run 3</h2>
+    <p class="sub">Better triggers, and the main t<span class="ov">t</span>H background measured</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 40px;">
+    <div class="figcol">
+      <h3>Run 3: ML b/c tagging at the HLT</h3>
+      <img src="img/BTV-25-002_Figure_022.png" style="height:350px" alt="trigger efficiency">
+      <p class="cap">arXiv:2608.18331 (BTV-25-002), simulation: t<span class="ov">t</span>H(H → c<span class="ov">c</span>) trigger efficiency, Run 2 (2018) vs Run 3 (2022–24), 13.6 TeV · HLT taggers: J. Daniel (Mon) → backup</p>
+    </div>
+    <div class="figcol">
+      <h3>Run 2: t<span class="ov">t</span>c<span class="ov">c</span> cross section measured</h3>
+      <img src="img/PAS-TOP-26-003_Figure_009.png" style="height:350px" alt="ttbb ttcc cross sections">
+      <p class="cap">CMS-PAS-TOP-26-003 <span class="bo">new</span>, 138 fb<sup>−1</sup>: σ<sub>t<span class="ov">t</span>c<span class="ov">c</span></sub> = 680 ± 40 (stat) <sup>+130</sup><sub>−100</sub> (syst) fb</p>
+    </div>
+  </div>
+  <p class="takeaway">Run 3 starts with higher trigger efficiency and a t<span class="ov">t</span>+c<span class="ov">c</span> background measured in Run 2</p>
+</section>
+
+<!-- ================================================================ 16 -->
+<section class="slide" data-n="16">
+  <header>
+    <h2>Run 3 and HL-LHC prospects</h2>
+    <p class="sub">From |κ<sub>c</sub>| ~ 3 toward κ<sub>c</sub> of order one</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 620px 1fr;">
+    <div>
+      <h3>Run 3 (13.6 TeV)</h3>
+      <ul class="tight small" style="margin-bottom:14px">
+        <li>The direct searches are <b>statistics-limited</b> (VH: 85% of the uncertainty): more data helps directly</li>
+        <li>UParT rejects more b and light jets than DeepJet and ParticleNet at the same c efficiency (slide 4)</li>
+        <li>HLT b/c tagging and a measured t<span class="ov">t</span>c<span class="ov">c</span> background (slide 15)</li>
+        <li>ATLAS VBF H → c<span class="ov">c</span> already uses 51.5 fb<sup>−1</sup> of Run 3 data</li>
+      </ul>
+      <h3>HL-LHC (3 ab<sup>−1</sup> per experiment)</h3>
+      <ul class="tight small">
+        <li>ATLAS + CMS European Strategy input (arXiv:2504.00672, CMS-HIG-25-002): VH(H → c<span class="ov">c</span>) ≈ 1.6σ expected</li>
+        <li><b>Expected |κ<sub>c</sub>| &lt; 1.5</b> (95% CL, 14 TeV): VH with improved c tagging (ATLAS study, assumed for both experiments); 30% better than the 2019 Yellow Report</li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="center">Direct searches: allowed |κ<sub>c</sub>|</h3>
+      <div class="bars" style="position:relative; margin-top:24px">
+        <!-- 0..4.4 on the track; width% = value / 4.4 * 100 -->
+        <div style="position:absolute; left:130px; right:0; top:-14px; bottom:0;">
+          <div style="position:absolute; left:56.8%; width:22.7%; top:0; bottom:0; background:rgba(224,122,31,.12)"></div>
+          <div style="position:absolute; left:22.7%; top:0; bottom:0; border-left:2px dashed var(--grey)"></div>
+          <span class="xs" style="position:absolute; left:22.7%; top:-20px; transform:translateX(-50%); color:var(--grey)">SM</span>
+          <span class="xs" style="position:absolute; left:68%; top:-20px; transform:translateX(-50%); color:var(--orange)">BSM |κ<sub>c</sub>| ~ 3</span>
+        </div>
+        <div class="brow"><div class="blab">Run 2, obs.</div><div class="btrack"><div class="bar" style="width:79.5%"><span>3.5</span></div></div></div>
+        <div class="brow"><div class="blab">Run 2, exp.</div><div class="btrack"><div class="bar" style="width:61.4%; background:#5f93a8"><span>2.7</span></div></div></div>
+        <div class="brow"><div class="blab">HL-LHC, exp.</div><div class="btrack"><div class="bar" style="width:34.1%; background:#e07a1f"><span>1.5</span></div></div></div>
+        <div class="axis" style="margin-left:130px; margin-top:6px">
+          <span style="left:0%">0</span><span style="left:22.7%">1</span><span style="left:45.5%">2</span><span style="left:68.2%">3</span><span style="left:90.9%">4</span>
+        </div>
+      </div>
+      <p class="cap">Run 2: t<span class="ov">t</span>H + VH (PRL 136 (2026) 011801) · HL-LHC: ATLAS + CMS, 3 ab<sup>−1</sup> each · every bar still includes κ<sub>c</sub> = 0</p>
+      <div class="result" style="margin-top:18px">κ<sub>c</sub> of order one: first sensitivity to whether the Higgs gives charm its mass</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 17 -->
+<section class="slide" data-n="17">
+  <header>
+    <h2>Summary</h2>
+    <p class="sub">Does the Higgs give charm its mass?</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr;">
+    <div class="stack">
+      <div class="cards" style="grid-template-columns: repeat(4, 1fr);">
+        <div class="card"><h4>Direct</h4>t<span class="ov">t</span>H + VH(H → c<span class="ov">c</span>)<div class="num">|κ<sub>c</sub>| &lt; 3.5 <span class="exp">(2.7)</span></div><div class="xs muted">most stringent direct constraint, best expected sensitivity</div></div>
+        <div class="card"><h4>Production</h4>H + charm, γγ + WW<div class="num">|κ<sub>c</sub>| &lt; 47 <span class="exp">(51)</span></div><div class="xs muted">independent of the H → c<span class="ov">c</span> decay</div></div>
+        <div class="card"><h4>Indirect</h4>on + off-shell H → 4ℓ<div class="num">[−3.3, 2.8]</div><div class="xs muted">with |κ<sub>V</sub>| ≤ 1 (about ±8 without)</div></div>
+        <div class="card"><h4>Next</h4>Run 3 data<div class="num" style="font-size:21px">better taggers and triggers</div><div class="xs muted">t<span class="ov">t</span>c<span class="ov">c</span> background already measured</div></div>
+      </div>
+      <div class="result" style="font-size:22px; margin-top:26px">
+        Today <b>|κ<sub>c</sub>| ≲ 3–3.5</b>: entering BSM-motivated territory<br>
+        HL-LHC expected <b>|κ<sub>c</sub>| &lt; 1.5</b>: approaching, not yet reaching, sensitivity to κ<sub>c</sub> = 0
+      </div>
+    </div>
+  </div>
+  <p class="takeaway" style="font-size:26px">Thank you!</p>
+</section>
+
+<!-- ================================================================ backup -->
+<section class="slide divider"><div class="line"></div><h1>Backup</h1></section>
+
+<!-- 19 -->
+<section class="slide" data-n="19">
+  <header><h2>VH(H → c<span class="ov">c</span>): categories and sensitivity</h2></header>
+  <p class="ref">PRL 131 (2023) 061801</p>
+  <div class="cols" style="grid-template-columns: repeat(4, 1fr); gap: 16px; top:110px;">
+    <div class="figcol"><img src="img/HIG-21-008_Figure_001.png" style="width:270px"><p class="cap">ParticleNet merged-jet H → c<span class="ov">c</span> tagging</p></div>
+    <div class="figcol"><img src="img/HIG-21-008_Figure_002-b.png" style="width:270px"><p class="cap">Events vs log<sub>10</sub>(S/B)</p></div>
+    <div class="figcol"><img src="img/HIG-21-008_Figure_004.png" style="width:270px"><p class="cap">μ limits per channel (inner band 68%)</p></div>
+    <div class="figcol"><img src="img/HIG-21-008_Figure-aux_001.png" style="width:270px"><p class="cap">|κ<sub>c</sub>| scan (supplementary)</p></div>
+  </div>
+  <div class="box small" style="position:absolute; left:70px; right:46px; top:440px;">
+    Best fit μ = 7.7 <sup>+3.8</sup><sub>−3.5</sub>; merged μ = 8.7 <sup>+4.6</sup><sub>−4.0</sub>, resolved μ = −9.5 ± 9.6 · σ𝓑 &lt; 0.94 (0.50) pb · μ limits with CLs, κ<sub>c</sub> intervals from profile-likelihood scans
+  </div>
+  <p class="takeaway">The upward fluctuation comes from the merged-jet category</p>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-n="20">
+  <header><h2>VH(H → c<span class="ov">c</span>): analysis details</h2></header>
+  <p class="ref">PRL 131 (2023) 061801 · strategy as in JHEP 03 (2020) 131</p>
+  <div class="cols" style="grid-template-columns: 1fr 340px; top:110px;">
+    <div class="small" style="font-size:16px; line-height:1.36">
+      <p><span class="pill">Topologies</span> Two, orthogonal: H candidate from a large-R (R = 1.5) jet with p<sub>T</sub> above (merged) or below (resolved) 300 GeV; same lepton channels</p>
+      <p><span class="pill">Resolved</span> DeepJet CvsL/CvsB; the two highest-CvsL jets form the H candidate; leading-jet cuts at ≈40% c efficiency (≈4% light, ≈16% b mistag). c-jet energy regression, FSR-jet recovery and a 2ℓ kinematic fit improve the m(H<sub>cand</sub>) resolution by up to 20%. BDT per channel, fit to the BDT score</p>
+      <p><span class="pill">Merged</span> ParticleNet c<span class="ov">c</span> tagger, 4–7× better rejection than DeepAK15; 3 working points (≈58, 40, 16% c<span class="ov">c</span> efficiency) define 3 purity categories. ParticleNet mass regression: ≈50% better mass resolution. BDTs decorrelated from m(H<sub>cand</sub>); fit to m(H<sub>cand</sub>)</p>
+      <p><span class="pill">Backgrounds</span> V+jets and t<span class="ov">t</span> normalised in dedicated control regions, following the 2016 analysis (V+jets split by jet flavour, free rate parameters)</p>
+      <p><span class="pill">VZ validation</span> Same analysis, resolved BDTs retrained with VZ as signal, merged unchanged. μ<sub>VZ</sub> = 1.01 <sup>+0.23</sup><sub>−0.21</sub>; 4.4σ merged, 3.1σ resolved, 5.7σ combined (exp. 4.7, 3.3, 5.9)</p>
+    </div>
+    <div>
+      <table class="t" style="font-size:15px">
+        <tr><th>Source</th><th class="r">Δμ/Δμ<sub>tot</sub></th></tr>
+        <tr class="hi"><td><b>Statistical</b></td><td class="r"><b>85%</b></td></tr>
+        <tr><td>&emsp;Bkg. normalisations</td><td class="r">37%</td></tr>
+        <tr><td>Experimental</td><td class="r">48%</td></tr>
+        <tr><td>&emsp;Simulated sample sizes</td><td class="r">37%</td></tr>
+        <tr><td>&emsp;c-jet identification</td><td class="r">23%</td></tr>
+        <tr><td>&emsp;Jet energy scale, resolution</td><td class="r">15%</td></tr>
+        <tr><td>&emsp;Simulation modelling</td><td class="r">11%</td></tr>
+        <tr><td>&emsp;Luminosity</td><td class="r">6%</td></tr>
+        <tr><td>&emsp;Lepton identification</td><td class="r">4%</td></tr>
+        <tr><td>Theory</td><td class="r">22%</td></tr>
+        <tr><td>&emsp;Backgrounds</td><td class="r">17%</td></tr>
+        <tr><td>&emsp;Signal</td><td class="r">15%</td></tr>
+      </table>
+      <p class="cap left">For μ̂ = 7.7 <sup>+3.8</sup><sub>−3.5</sub>; simulation size driven by negative weights in NLO V+jets</p>
+    </div>
+  </div>
+  <p class="takeaway">Statistics-limited; c tagging and simulation size come next</p>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-n="21">
+  <header><h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>): event yields</h2></header>
+  <p class="ref">PRL 136 (2026) 011801</p>
+  <div class="cols" style="grid-template-columns: 720px 1fr; align-items:center;">
+    <div class="figcol"><img src="img/HIG-24-018_Figure_002.png" style="width:720px"><p class="cap">Event yields vs log<sub>10</sub>(S/B); the t<span class="ov">t</span>H(c<span class="ov">c</span>) panel shows the published best fit</p></div>
+    <div class="figcol"><img src="img/HIG-24-018_Figure_003.png" style="width:400px"><p class="cap">μ<sub>ttH(cc̄)</sub> limits per channel (inner band 68%)</p></div>
+  </div>
+  <p class="takeaway">t<span class="ov">t</span>H(c<span class="ov">c</span>) best fit μ̂ = −1.6 ± 4.5: compatible with zero and with the SM</p>
+</section>
+
+<!-- 22 -->
+<section class="slide" data-n="22">
+  <header><h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>): flavour tagging and by-products</h2></header>
+  <p class="ref">PRL 136 (2026) 011801</p>
+  <div class="cols" style="grid-template-columns: 560px 1fr;">
+    <div class="stack">
+      <h3>Tagging</h3>
+      <ul class="tight"><li>Each jet gets ParticleNet scores; the (b+c vs light, b vs c) plane is split into 2D categories</li>
+        <li>ParT event classifier separates t<span class="ov">t</span>H(c<span class="ov">c</span>), t<span class="ov">t</span>H(b<span class="ov">b</span>), t<span class="ov">t</span>Z, t<span class="ov">t</span>+HF</li></ul>
+      <h3>By-products</h3>
+      <ul class="tight"><li>t<span class="ov">t</span>Z(Z → c<span class="ov">c</span>) standard candle: μ = 1.0 ± 0.8</li>
+        <li>t<span class="ov">t</span>H(H → b<span class="ov">b</span>): μ = 0.91 <sup>+0.26</sup><sub>−0.22</sub>, 4.4σ (4.5σ exp.)</li></ul>
+    </div>
+    <div class="figcol"><img src="img/HIG-24-018_Figure_001.png" style="height:440px"><p class="cap">b, c, light jets in the ParticleNet plane and the 2D tagging categories</p></div>
+  </div>
+</section>
+
+<!-- 23 -->
+<section class="slide" data-n="23">
+  <header><h2>t<span class="ov">t</span>H(H → c<span class="ov">c</span>): validation region and QCD rejection</h2></header>
+  <p class="ref">PRL 136 (2026) 011801 (supplementary)</p>
+  <div class="cols" style="grid-template-columns: 720px 1fr; top:112px;">
+    <div class="figcol">
+      <img src="img/HIG-24-018_Figure_0B6.png" style="width:720px">
+      <p class="cap">Validation region 0.4 &lt; D<sub>ttX</sub> &lt; 0.6, same SR/CR structure (CR-like 0.40–0.58, SR-like 0.58–0.60): good agreement</p>
+      <ul class="tight xs" style="text-align:left"><li>c-enriched regions need ≥2 c jets (t<span class="ov">t</span>+c: ≥1); CR choice weights 100, 12, 4, 2, 1 on the t<span class="ov">t</span>+light, +c, +≥2c, +b, +≥2b scores</li>
+        <li>t<span class="ov">t</span>+b, +≥2b from a dedicated 4FS t<span class="ov">t</span>b<span class="ov">b</span> sample</li></ul>
+    </div>
+    <div class="figcol">
+      <img src="img/HIG-24-018_Figure_0B3.png" style="width:390px">
+      <p class="cap">0ℓ only: D<sub>QCD</sub> &lt; 10<sup>−4</sup> (grey area rejected) suppresses QCD by nearly four orders of magnitude, to &lt;1% of t<span class="ov">t</span>+jets; QCD simulation only trains the classifier</p>
+    </div>
+  </div>
+</section>
+
+<!-- 24 -->
+<section class="slide" data-n="24">
+  <header><h2>t<span class="ov">t</span>H: the (κ<sub>b</sub>, κ<sub>c</sub>) plane</h2></header>
+  <p class="ref">PRL 136 (2026) 011801</p>
+  <div class="cols" style="grid-template-columns: 560px 1fr; align-items:center;">
+    <div class="figcol"><img src="img/HIG-24-018_Figure_004.png" style="width:540px"><p class="cap">orange: observed, blue: expected; dashed 68%, solid 95% CL</p></div>
+    <div class="stack">
+      <p>The simultaneous t<span class="ov">t</span>H(H → b<span class="ov">b</span>) + t<span class="ov">t</span>H(H → c<span class="ov">c</span>) fit constrains both Yukawas</p>
+      <p class="small">Signal strengths: t<span class="ov">t</span>H(b<span class="ov">b</span>) 0.91 <sup>+0.26</sup><sub>−0.22</sub> · t<span class="ov">t</span>H(c<span class="ov">c</span>) −1.6 ± 4.5 · t<span class="ov">t</span>Z(b<span class="ov">b</span>) 1.47 <sup>+0.45</sup><sub>−0.41</sub> · t<span class="ov">t</span>Z(c<span class="ov">c</span>) 1.02 <sup>+0.79</sup><sub>−0.84</sub></p>
+      <div class="result"><div class="rval">|κ<sub>c</sub>| &lt; 4.2 obs. with κ<sub>b</sub> fitted</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 25 -->
+<section class="slide" data-n="25">
+  <header><h2>cH(H → WW): post-fit and per-period limits</h2></header>
+  <p class="ref">JHEP 08 (2026) 051</p>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; align-items:start;">
+    <div class="figcol"><img src="img/HIG-24-009_Figure_005.png" style="height:430px"><p class="cap">1-POI post-fit BDT discriminants</p></div>
+    <div class="figcol"><img src="img/HIG-24-009_Figure_006.png" style="height:430px"><p class="cap">μ<sub>cH</sub> limits per data-taking period, 1 and 2 POI</p></div>
+  </div>
+  <p class="takeaway">Best fit (1 POI): μ<sub>cH</sub> = 390 <sup>+380</sup><sub>−270</sub>, within 1.5σ of the SM; statistics-limited</p>
+</section>
+
+<!-- 26 -->
+<section class="slide" data-n="26">
+  <header><h2>cH(H → WW): floating the H+c background</h2></header>
+  <p class="ref">JHEP 08 (2026) 051</p>
+  <div class="cols" style="grid-template-columns: 540px 1fr; align-items:center;">
+    <div class="stack">
+      <p><span class="pill big">1 POI</span> only μ<sub>cH</sub> floats; the κ<sub>c</sub>-independent H+c background (from ggH etc.) is fixed to its SM prediction</p>
+      <p><span class="pill big orange">2 POI</span> H+c background also floats; correlation with cH: −87%</p>
+      <p>2-POI limit: μ<sub>cH</sub> &lt; 1804 <span class="exp">(1097)</span></p>
+      <p class="small muted">The combination with γγ uses the 1-POI fit</p>
+    </div>
+    <div class="figcol"><img src="img/HIG-24-009_Figure_007.png" style="height:430px"><p class="cap">WW: μ<sub>cH</sub> vs μ<sub>H+c bkg</sub></p></div>
+  </div>
+  <p class="takeaway">Floating the H+c background weakens the WW limit from 1065 to 1804</p>
+</section>
+
+<!-- 27 -->
+<section class="slide" data-n="27">
+  <header><h2>Indirect: Higgs p<sub>T</sub> spectrum and on-shell H → 4ℓ</h2></header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; top:112px;">
+    <div class="figcol"><img src="img/HIG-23-013_Figure_006.png" style="height:420px"><p class="cap">JHEP 04 (2026) 093: (κ<sub>b</sub>, κ<sub>c</sub>) from the Run 2 p<sub>T</sub><sup>H</sup> combination (γγ, ZZ, resolved ττ), 𝓑 coupling-dependent; 2D contours only</p></div>
+    <div class="figcol"><img src="img/HIG-23-011_Figure_009.png" style="height:420px"><p class="cap">PRD 112 (2025) 112001 (γH + on-shell H → 4ℓ): κ<sub>c</sub> scan; solid obs., dashed exp.</p></div>
+  </div>
+</section>
+
+<!-- 28 -->
+<section class="slide" data-n="28">
+  <header><h2>Rare exclusive decays: H → J/ψ γ, ψ(2S) γ</h2></header>
+  <p class="ref">PLB 865 (2025) 139462 · CMS-SMP-22-012</p>
+  <div class="cols" style="grid-template-columns: 540px 1fr; align-items:center;">
+    <div class="stack">
+      <p>Direct (∝ κ<sub>c</sub>) and indirect (H → γγ* → γ J/ψ) amplitudes interfere ⇒ <b>sign sensitivity</b></p>
+      <p class="small">123 fb<sup>−1</sup>: 𝓑(H → J/ψ γ) &lt; 2.6 × 10<sup>−4</sup>, 𝓑(H → ψ(2S) γ) &lt; 9.9 × 10<sup>−4</sup></p>
+      <div class="result"><div class="rval" style="font-size:22px">κ<sub>c</sub>/κ<sub>γ</sub> ∈ (−157, 199); with κ<sub>γ</sub> = 1: κ<sub>c</sub> ∈ (−166, 208)</div><div class="rlab">expected (−128, 169) · 95% CL</div></div>
+    </div>
+    <div class="figcol"><img src="img/SMP-22-012_Figure_005.png" style="width:540px"><p class="cap">95% CL upper limits on 𝓑(Z, H → ψ(nS) γ), observed and expected</p></div>
+  </div>
+</section>
+
+<!-- 29 -->
+<section class="slide" data-n="29">
+  <header><h2>H → μμ: evidence for a second-generation Yukawa</h2></header>
+  <p class="ref">JHEP 01 (2021) 148 · CMS-HIG-19-006</p>
+  <div class="cols" style="grid-template-columns: 400px 1fr 1fr; gap: 24px;">
+    <div class="stack small">
+      <p>137 fb<sup>−1</sup>, categories ggH, VBF, VH, t<span class="ov">t</span>H</p>
+      <p>Excess of <b>3.0σ</b> (2.5σ exp.): first evidence for H decays to second-generation fermions</p>
+      <p>μ = 1.19 <sup>+0.40</sup><sub>−0.39</sub> (stat) <sup>+0.15</sup><sub>−0.14</sub> (syst)</p>
+      <p>κ<sub>μ</sub> = 1.07; 95% CL: 0.59 &lt; κ<sub>μ</sub> &lt; 1.50 <span class="xs muted">(6 free κ, SM total width)</span></p>
+      <p class="xs muted">Rare decays incl. μμ: L. D'Eramo's plenary (Wed)</p>
+    </div>
+    <div class="figcol"><img src="img/HIG-19-006_Figure_011-a.png" style="width:340px"><p class="cap">μ̂ per production category and combined</p></div>
+    <div class="figcol"><img src="img/HIG-19-006_Figure_014-a.png" style="width:330px"><p class="cap">−2Δln L vs κ<sub>μ</sub></p></div>
+  </div>
+  <p class="takeaway">The muon Yukawa is SM-like within about 20% (68% CL); charm is the next test</p>
+</section>
+
+<!-- 30 -->
+<section class="slide" data-n="30">
+  <header><h2>Run 3 HLT flavour tagging</h2></header>
+  <p class="ref">arXiv:2608.18331 · CMS-BTV-25-002</p>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; top:112px;">
+    <div class="figcol"><img src="img/BTV-25-002_Figure_005.png" style="height:420px"><p class="cap">Simulation, jet p<sub>T</sub> 30–100 GeV: light (solid) and b (dashed) misidentification vs c-jet efficiency, online vs offline taggers</p></div>
+    <div class="figcol"><img src="img/BTV-25-002_Figure_023.png" style="height:420px"><p class="cap">Simulation: VBF H → c<span class="ov">c</span> trigger efficiency vs offline ParticleNet c score, Run 3 VBF H → c<span class="ov">c</span> vs Run 2 VBF H → b<span class="ov">b</span> trigger</p></div>
+  </div>
+</section>
+
+<!-- 31 -->
+<section class="slide" data-n="31">
+  <header><h2>Likely questions</h2></header>
+  <div class="cols" style="grid-template-columns: 1fr; top:104px; bottom:24px;">
+    <ul class="qa" style="margin:0">
+      <li><b>How large is the VH excess?</b> Best fit μ<sub>VH</sub> = 7.7 <sup>+3.8</sup><sub>−3.5</sub>, about 1.9σ above μ = 1 (estimated from the quoted uncertainty; the paper calls it a small upward fluctuation). This is why VH alone excludes |κ<sub>c</sub>| &lt; 1.1 and why t<span class="ov">t</span>H alone (3.0) beats the combination (3.5) on observed</li>
+      <li><b>What limits the direct searches?</b> Statistics first. t<span class="ov">t</span>H(c<span class="ov">c</span>): statistical 74% of the total uncertainty, then t<span class="ov">t</span>+c and t<span class="ov">t</span>+light modelling (≈32%, ≈29%). VH(c<span class="ov">c</span>): simulation sample size (≈37%), c-tagging efficiency (≈23%), theory (≈22%)</li>
+      <li><b>And ATLAS?</b> VBF + VH(H → c<span class="ov">c</span>) (arXiv:2511.21911): |κ<sub>c</sub>| &lt; 4.7 (3.9 exp.), same assumptions as CMS (other couplings SM, no BSM decays); its VBF part includes 51.5 fb<sup>−1</sup> of Run 3 data</li>
+      <li><b>Why is cH an order of magnitude weaker than H → c<span class="ov">c</span>?</b> cH σ𝓑 is tiny (≈0.2 fb in γγ) and ggH produces the same H+c final state independently of κ<sub>c</sub>; in H → c<span class="ov">c</span>, κ<sub>c</sub> changes the branching fraction of Higgs bosons from much larger production modes (VH, t<span class="ov">t</span>H)</li>
+      <li><b>Why is cH(γγ) obs. (38) much better than exp. (73)?</b> The best fit is negative, μ̂<sub>cH</sub> = −230 <sup>+170</sup><sub>−251</sub></li>
+      <li><b>Why no κ<sub>c</sub> from boosted H → c<span class="ov">c</span>?</b> The paper quotes only μ; the result is ggH-dominated</li>
+      <li><b>How much of the Run 3 trigger gain is the tagger?</b> Part of it is rate budget: 10 Hz in 2018 vs 60, 115, 170 Hz in 2022, 2023, 2024</li>
+      <li><b>Are the H → 4ℓ intervals sign-sensitive?</b> Not really: the small asymmetry comes from charm-loop interference in ggH and H → gg; the constraint is essentially on κ<sub>c</sub><sup>2</sup></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 32 -->
+<section class="slide" data-n="32">
+  <header><h2>References</h2></header>
+  <div class="cols" style="grid-template-columns: 1fr; top:104px; bottom:24px;">
+    <ul class="refs-list" style="margin:0">
+      <li>VH(H → c<span class="ov">c</span>): CMS, PRL 131 (2023) 061801, arXiv:2205.05550 (HIG-21-008)</li>
+      <li>t<span class="ov">t</span>H(H → c<span class="ov">c</span>) + VH combination: CMS, PRL 136 (2026) 011801, arXiv:2509.22535 (HIG-24-018)</li>
+      <li>VH(H → c<span class="ov">c</span>) with 2016 data (analysis strategy): CMS, JHEP 03 (2020) 131, arXiv:1912.01662 (HIG-18-031)</li>
+      <li>Boosted H → c<span class="ov">c</span>: CMS, PRL 131 (2023) 041801, arXiv:2211.14181 (HIG-21-012)</li>
+      <li>cH(H → γγ): CMS, JHEP 11 (2025) 060, arXiv:2503.08797 (HIG-23-010)</li>
+      <li>cH(H → WW) and combination: CMS, JHEP 08 (2026) 051, arXiv:2508.14988 (HIG-24-009)</li>
+      <li>Differential combination Run 2: CMS, JHEP 04 (2026) 093, arXiv:2504.13081 (HIG-23-013)</li>
+      <li>γH + H → 4ℓ light Yukawas: CMS, PRD 112 (2025) 112001, arXiv:2502.05665 (HIG-23-011)</li>
+      <li>Off-shell + on-shell H → 4ℓ: CMS, arXiv:2607.23352, submitted to PRD (HIG-25-003)</li>
+      <li>H → J/ψ γ: CMS, PLB 865 (2025) 139462, arXiv:2411.15000 (SMP-22-012)</li>
+      <li>H → μμ: CMS, JHEP 01 (2021) 148, arXiv:2009.04363 (HIG-19-006)</li>
+      <li>Jet flavour tagging in Run 3: CMS-DP-2025-081; DeepJet: E. Bols et al., JINST 15 (2020) P12012</li>
+      <li>HLT flavour tagging: CMS, arXiv:2608.18331 (BTV-25-002)</li>
+      <li>t<span class="ov">t</span>+b/c cross sections: CMS-PAS-TOP-26-003</li>
+      <li>ATLAS VBF + VH(H → c<span class="ov">c</span>): ATLAS, arXiv:2511.21911</li>
+      <li>HL-LHC: ATLAS and CMS, arXiv:2504.00672 (HIG-25-002)</li>
+      <li>Higgs combination: CMS, Rep. Prog. Phys. 89 (2026) 087801, arXiv:2602.18611 (HIG-21-018)</li>
+      <li>Spontaneous flavour violation: arXiv:2410.05236</li>
+      <li>HL-LHC Yellow Report: M. Cepeda et al., CERN Yellow Rep. Monogr. 7 (2019) 221, arXiv:1902.00134</li>
+    </ul>
+  </div>
+</section>
+
+<script>
+// gluon on the title slide: a sine wave from (20,40) to (100,110)
+(function () {
+  const x0 = 20, y0 = 40, x1 = 100, y1 = 110, L = Math.hypot(x1 - x0, y1 - y0);
+  const ux = (x1 - x0) / L, uy = (y1 - y0) / L, nx = -uy, ny = ux; let d = "";
+  for (let i = 0; i <= 120; i++) { const t = i / 120, a = 6 * Math.sin(t * 2 * Math.PI * 5);
+    d += (i ? " L" : "M") + (x0 + ux * L * t + nx * a).toFixed(1) + "," + (y0 + uy * L * t + ny * a).toFixed(1); }
+  document.getElementById("gluon").setAttribute("d", d);
+})();
+</script>
+<script src="deck.js"></script>
+</body>
+</html>
