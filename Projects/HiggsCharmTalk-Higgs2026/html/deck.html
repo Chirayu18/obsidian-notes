@@ -200,8 +200,7 @@
           <ul>
             <li><b>&gt;95% of the signal</b>, but more background</li>
             <li><b>DeepJet</b> CvsL and CvsB: the two highest-CvsL jets form the H candidate</li>
-            <li>Leading-jet cut: ≈40% c efficiency, ≈4% light and ≈16% b mis-ID</li>
-            <li>c-jet energy regression, FSR-jet recovery, 2ℓ kinematic fit: m(H<sub>cand</sub>) resolution up to <b>20% better</b></li>
+            <li>The Higgs mass peak is up to <b>20% sharper</b>, thanks to a c-jet energy regression, recovery of FSR jets and, in 2ℓ, a kinematic fit</li>
           </ul>
           <div class="fitvar">Fit: BDT score (m(H<sub>cand</sub>) among the inputs)</div>
         </div>
@@ -209,7 +208,6 @@
           <ul>
             <li><b>&lt;5% of the signal</b>, but much less background</li>
             <li><b>ParticleNet</b> c<span class="ov">c</span> tagger (graph NN, mass-decorrelated): <b>4–7×</b> better rejection than DeepAK15</li>
-            <li>3 purity categories: ≈58, 40, 16% c<span class="ov">c</span> efficiency</li>
             <li>ParticleNet mass regression: ≈<b>50% better</b> mass resolution</li>
           </ul>
           <div class="fitvar">Fit: m(H<sub>cand</sub>) (BDTs decorrelated from it)</div>
@@ -219,14 +217,16 @@
       <p class="note" style="position:absolute; left:560px; top:96px">above</p>
     </div>
     <div class="figcol">
+      <p class="cap" style="margin:0 0 4px">Merged-jet candidate mass; bottom panel after background subtraction: VZ (grey, ≈ 90 GeV) and VH (red)</p>
       <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:370px" alt="merged-jet mass"></div>
-      <p class="cap">Merged-jet candidate mass; bottom, after background subtraction: VZ (grey, ≈ 90 GeV) and VH (red)</p>
     </div>
   </div>
-  <div class="box" style="position:absolute; left:70px; top:596px; width:770px; padding:10px 18px; font-size:18px"><b>Validation:</b> the same analysis sees <b>VZ(Z → c<span class="ov">c</span>) at 5.7σ</b> (grey peak, right): c tagging and background model work <span class="muted xs">→ backup</span></div>
+  <div class="box" id="valbox" style="position:absolute; left:70px; top:556px; width:770px; padding:10px 18px; font-size:18px"><b>Validation:</b> the same analysis sees <b>VZ(Z → c<span class="ov">c</span>) at 5.7σ</b> (grey peak, right): c tagging and background model work <span class="muted xs">→ backup</span></div>
   <svg class="arrows"></svg>
   <i class="arrow" data-from="ptcut:w" data-to="res@0.86,1.0" data-bend="-0.3"></i>
   <i class="arrow" data-from="ptcut:e" data-to="mer@0.14,1.0" data-bend="0.3"></i>
+  <!-- Z peak in the background-subtracted panel, measured on the PNG -->
+  <i class="arrow" data-from="valbox:e" data-to="f3@0.40,0.21" data-bend="0.3"></i>
 </section>
 
 <!-- ================================================================ 6 -->
