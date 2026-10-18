@@ -203,3 +203,14 @@ ul.big18 { margin: 6px 0 0; padding-left: 26px; font-size: 25px; line-height: 1.
 .slide[data-n="18"] .result { font-size: 23px; }
 .slide[data-n="18"] .bars .blab { font-size: 17px; white-space: nowrap; }
 ul.big18 li { margin: 8px 0; }
+.arow2 span { font-size: 16px; }
+.vhbox { font-size: 17px; }
+.s4cards .card { padding: 22px 24px; min-height: 200px; }
+.s4cards .card h4 { font-size: 25px; }
+.s4cards .card .small { font-size: 21px; }
+.s4cards .card .num { font-size: 32px; }
+.s4cards .card .refs { font-size: 16px; }
+.slide[data-n="18"] .bars .brow { height: 62px; }
+.slide[data-n="18"] .bars .bar { top: 14px; height: 32px; }
+.slide[data-n="18"] .bars .bar span { font-size: 21px; top: 3px; }
+.slide[data-n="18"] .axis span { font-size: 16px; }
