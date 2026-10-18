@@ -87,18 +87,14 @@
     <p class="sub">Finding c jets between b and light jets</p>
   </header>
   <p class="ref">CMS-DP-2025-081</p>
-  <div class="cols" style="grid-template-columns: 640px 1fr;">
+  <div class="cols" style="grid-template-columns: 680px 1fr; gap:24px">
     <div>
       <h3>Charm signature</h3>
-      <div class="box row">
-        <div>
-          c-hadron mass and lifetime lie <b>between light and b</b>
-          <ul>
-            <li>secondary vertex (SV), like b jets</li>
-            <li>but closer to the primary vertex: <span class="hl">easily mistaken for light jets</span></li>
-          </ul>
+      <div class="box row" style="padding:10px 16px">
+        <div style="font-size:19px">
+          c-hadron mass and lifetime lie <b>between light and b</b>: a secondary vertex (SV) like b jets, but closer to the primary vertex, so <span class="hl">easily mistaken for light jets</span>
         </div>
-        <svg class="jet" viewBox="0 0 200 120" aria-hidden="true">
+        <svg class="jet" viewBox="0 0 200 120" aria-hidden="true" style="width:160px">
           <path d="M10,85 L190,20 L195,95 Z" fill="#dbe9ef"/>
           <g stroke="#0b4f6c" stroke-width="2.4" fill="none">
             <path d="M10,85 L95,58" stroke-dasharray="6 4"/>
@@ -111,14 +107,24 @@
           <text x="150" y="16" font-size="15" fill="#0b4f6c" font-weight="700">c jet</text>
         </svg>
       </div>
-      <h3 style="margin-top:26px">Algorithm evolution at CMS</h3>
-      <div class="three">
-        <div class="obox"><span class="otitle">Likelihood / BDT</span>JP: track impact parameters<br>CSV: SV + track variables</div>
-        <div class="obox"><span class="otitle">Deep NN</span>DeepCSV: b/c/light classes<br><b>DeepJet</b>: all jet constituents</div>
-        <div class="obox"><span class="otitle">Particle cloud</span><b>ParticleNet</b>: graph network<br>UParT: transformer</div>
+      <h3 style="margin-top:18px">Algorithm evolution at CMS</h3>
+      <div class="three" style="margin-top:16px">
+        <div class="obox algobox2"><span class="otitle">Likelihood / BDT<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="1.6" fill="none"><path d="M15,4 L7,13 M15,4 L23,13 M7,13 L3,21 M7,13 L11,21"/></g><g fill="#0b4f6c"><circle cx="15" cy="4" r="2.6"/><circle cx="7" cy="13" r="2.6"/><circle cx="23" cy="13" r="2.6"/><circle cx="3" cy="21" r="2.2"/><circle cx="11" cy="21" r="2.2"/></g></svg></span>
+          <div class="arow2"><b>JP</b><span>likelihood of track impact parameters</span></div>
+          <div class="arow2"><b>CSV, CSVv2</b><span>likelihood ratio, then MLP</span></div>
+          <div class="arow2"><b>Run 2 c tagger</b><span>BDT: CvsL, CvsB</span></div>
+        </div>
+        <div class="obox algobox2"><span class="otitle">Deep NN<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="0.8" opacity=".7"><path d="M4,5 L15,4 M4,5 L15,12 M4,5 L15,20 M4,12 L15,4 M4,12 L15,12 M4,12 L15,20 M4,19 L15,4 M4,19 L15,12 M4,19 L15,20 M15,4 L26,8 M15,12 L26,8 M15,20 L26,8 M15,4 L26,16 M15,12 L26,16 M15,20 L26,16"/></g><g fill="#0b4f6c"><circle cx="4" cy="5" r="2.2"/><circle cx="4" cy="12" r="2.2"/><circle cx="4" cy="19" r="2.2"/><circle cx="15" cy="4" r="2.2"/><circle cx="15" cy="12" r="2.2"/><circle cx="15" cy="20" r="2.2"/><circle cx="26" cy="8" r="2.2"/><circle cx="26" cy="16" r="2.2"/></g></svg></span>
+          <div class="arow2"><b>DeepCSV</b><span>dense DNN (4 × 100), b/c/light classes</span></div>
+          <div class="arow2"><b>DeepJet</b><span>1×1 convolutions + LSTMs on all jet constituents</span></div>
+        </div>
+        <div class="obox algobox2"><span class="otitle">Particle cloud<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="1.3"><path d="M5,6 L14,3 L25,7 L21,18 L9,20 L5,6 M14,3 L15,12 L21,18 M9,20 L15,12 L5,6 M25,7 L15,12"/></g><g fill="#0b4f6c"><circle cx="5" cy="6" r="2.4"/><circle cx="14" cy="3" r="2.4"/><circle cx="25" cy="7" r="2.4"/><circle cx="21" cy="18" r="2.4"/><circle cx="9" cy="20" r="2.4"/><circle cx="15" cy="12" r="2.6" fill="#e07a1f"/></g></svg><svg viewBox="0 0 30 24"><rect x="4" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="10" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.3"/><rect x="16" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.6"/><rect x="22" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="4" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.3"/><rect x="10" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="16" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="22" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.5"/><rect x="4" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.6"/><rect x="10" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="16" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="22" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.4"/><rect x="4" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="10" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.5"/><rect x="16" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.4"/><rect x="22" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.9"/></svg></span>
+          <div class="arow2"><b>ParticleNet</b><span>graph NN (dynamic graph CNN)</span></div>
+          <div class="arow2"><b>UParT</b><span>transformer with pairwise interaction features, adversarial training</span></div>
+        </div>
       </div>
       <div class="timeline" id="tl"></div>
-      <p class="note center">Run 1 → Run 3: richer networks, inputs closer to raw particles</p>
+      <p class="note center">Run 1 → Run 3: likelihoods and trees → dense nets → graphs and attention</p>
     </div>
     <div class="figcol">
       <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:430px" alt="c-tagging ROC curves"></div>
