@@ -1,0 +1,93 @@
+/* Higgs 2026 deck: fixed 1280x720 slides, printed to PDF by Chrome. */
+:root {
+  --ink: #1f2a30;
+  --teal: #0b4f6c;
+  --teal-soft: #e6f0f4;
+  --teal-line: #9dbdcb;
+  --orange: #e07a1f;
+  --orange-soft: #fff3e8;
+  --grey: #6b7780;
+}
+@page { size: 1280px 720px; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: #d9dee2; }
+body { font-family: "Inter", "Fira Sans", sans-serif; color: var(--ink); font-size: 21px; line-height: 1.38; }
+@media print { body { background: none; } .slide { margin: 0 !important; box-shadow: none !important; } }
+
+.slide {
+  width: 1280px; height: 720px; position: relative; overflow: hidden;
+  background: #fff; margin: 24px auto; box-shadow: 0 2px 14px rgba(0,0,0,.18);
+  break-after: page; padding: 0;
+}
+/* left strip with the talk name, like the ICNFP side bar */
+.slide:not(.title-slide)::before {
+  content: "Higgs–charm couplings at CMS · Higgs 2026"; position: absolute; left: 0; top: 0;
+  width: 30px; height: 720px; background: linear-gradient(180deg, #0b4f6c, #1b8a8f 60%, #e07a1f);
+  color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .04em;
+  writing-mode: vertical-rl; transform: rotate(180deg); display: flex; align-items: center; justify-content: center;
+}
+.slide::after {
+  content: attr(data-n); position: absolute; right: 26px; bottom: 16px;
+  font-size: 15px; font-weight: 700; color: var(--teal);
+}
+header { position: absolute; left: 70px; top: 26px; right: 330px; }
+h2 { margin: 0; font-size: 40px; font-weight: 800; color: var(--teal); letter-spacing: -.01em; }
+.sub { margin: 2px 0 0; font-size: 23px; font-weight: 600; color: var(--orange); }
+.ref { position: absolute; right: 30px; top: 30px; margin: 0; font-size: 14px; color: var(--grey); text-align: right; max-width: 300px; }
+
+.cols { position: absolute; left: 70px; right: 46px; top: 132px; bottom: 70px; display: grid; gap: 34px; }
+h3 { margin: 0 0 8px; font-size: 23px; color: var(--teal); font-weight: 750; }
+ul { margin: 6px 0 0; padding-left: 22px; } li { margin: 2px 0; }
+.hl { color: var(--orange); font-weight: 600; }
+.center { text-align: center; }
+.ov { text-decoration: overline; text-decoration-thickness: 1.5px; }
+
+.box { background: var(--teal-soft); border-radius: 18px; padding: 14px 18px; }
+.box.row { display: flex; gap: 14px; align-items: center; }
+.box.row > div { flex: 1; }
+.jet { width: 190px; flex: none; }
+
+.obox { position: relative; border: 2px solid var(--teal-line); border-radius: 16px; padding: 18px 14px 12px; font-size: 18px; line-height: 1.35; }
+.otitle { position: absolute; top: -13px; left: 12px; background: #fff; padding: 0 6px; font-size: 16px; font-weight: 750; color: var(--teal); }
+.three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 58px; }
+.timeline { height: 22px; margin: 6px 4px 0; }
+
+.pill { display: inline-block; background: var(--teal); color: #fff; border-radius: 999px; padding: 4px 14px; font-size: 16px; font-weight: 650; }
+.pill.big { font-size: 19px; padding: 6px 18px; }
+.pill.orange { background: var(--orange); }
+.pillrow { display: flex; gap: 12px; justify-content: center; }
+.split { text-align: center; margin-top: 22px; }
+
+.note { margin: 0; font-style: italic; font-weight: 600; color: var(--orange); font-size: 19px; line-height: 1.25; }
+.takeaway { position: absolute; left: 70px; right: 46px; bottom: 26px; margin: 0; text-align: center;
+  font-size: 22px; font-weight: 700; font-style: italic; color: var(--orange); }
+.takeaway::before { content: "➜  "; }
+
+.result { border: 2.5px solid var(--orange); background: var(--orange-soft); border-radius: 18px; padding: 10px 18px; text-align: center; }
+.rlab { font-size: 15px; color: var(--grey); }
+.rval { font-size: 26px; font-weight: 750; }
+.exp { color: var(--grey); font-weight: 500; }
+
+.figcol { text-align: center; }
+.fig { display: inline-block; position: relative; }
+.fig img { display: block; }
+.cap { margin: 4px 0 0; font-size: 14px; color: var(--grey); }
+
+.footer-pills { position: absolute; left: 70px; bottom: 22px; display: flex; gap: 10px; align-items: center; }
+.footer-pills .lbl { font-weight: 750; color: var(--teal); font-size: 17px; margin-right: 4px; }
+
+svg.arrows { position: absolute; inset: 0; width: 1280px; height: 720px; pointer-events: none; overflow: visible; }
+
+/* title slide */
+.title-slide { background: linear-gradient(125deg, #0b3c52 0%, #0b4f6c 45%, #1b8a8f 75%, #e07a1f 130%); color: #fff; }
+.title-slide::after { content: none; }
+.logos-tile { position: absolute; left: 70px; top: 50px; display: flex; gap: 16px; background: #fff; border-radius: 14px; padding: 10px 14px; }
+.logos-tile img { height: 64px; }
+.title-block { position: absolute; left: 70px; top: 240px; right: 70px; }
+.title-block h1 { margin: 0 0 18px; font-size: 52px; font-weight: 800; letter-spacing: -.015em; line-height: 1.1; max-width: 780px; }
+.venue { margin: 0 0 34px; font-size: 24px; font-style: italic; opacity: .95; }
+.speaker { margin: 0; font-size: 28px; font-weight: 700; }
+.affil { margin: 2px 0 0; font-size: 21px; font-style: italic; opacity: .9; }
+.behalf { margin: 26px 0 0; font-size: 20px; opacity: .8; }
+.feyn { position: absolute; right: 60px; bottom: 60px; width: 470px; }

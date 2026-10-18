@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Higgs-charm couplings at CMS</title>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<!-- ============================================================ 1. title -->
+<section class="slide title-slide">
+  <div class="logos-tile">
+    <img src="img/CMSlogo_color.png" alt="CMS">
+    <img src="img/VUB_logo.png" alt="VUB">
+  </div>
+  <svg class="feyn" viewBox="0 0 520 220" aria-hidden="true">
+    <defs><marker id="fa" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#fff"/></marker></defs>
+    <g stroke="#fff" stroke-width="3" fill="none" opacity="0.9">
+      <path d="M20,40 q10,-12 20,0 t20,0 t20,0 t20,0" />
+      <path d="M20,180 L100,110" marker-mid="url(#fa)"/>
+      <path d="M100,110 L100,110 L170,110"/>
+      <path d="M170,110 L240,40"/>
+      <path d="M170,110 L240,180" stroke-dasharray="9 7"/>
+      <path d="M100,40 L100,110" opacity="0"/>
+      <path d="M300,110 L380,110" stroke-dasharray="9 7"/>
+      <path d="M380,110 L450,40"/>
+      <path d="M380,110 L450,180"/>
+    </g>
+    <circle cx="170" cy="110" r="9" fill="#f4a259"/><circle cx="380" cy="110" r="9" fill="#f4a259"/>
+    <g fill="#fff" font-size="22" font-style="italic"><text x="0" y="36">g</text><text x="0" y="196">c</text>
+      <text x="248" y="40">c</text><text x="248" y="190">H</text><text x="280" y="117">H</text>
+      <text x="458" y="40">c</text><text x="458" y="190">c̄</text></g>
+    <g fill="#f4a259" font-size="22" font-weight="700"><text x="150" y="150">κ<tspan font-size="15" dy="5">c</tspan></text><text x="360" y="150">κ<tspan font-size="15" dy="5">c</tspan></text></g>
+  </svg>
+  <div class="title-block">
+    <h1>Constraints on Higgs–charm couplings at CMS</h1>
+    <p class="venue">Higgs 2026 · Louvain-la-Neuve · 28 October 2026</p>
+    <p class="speaker">Chirayu Gupta</p>
+    <p class="affil">Vrije Universiteit Brussel</p>
+    <p class="behalf">on behalf of the CMS Collaboration</p>
+  </div>
+</section>
+
+<!-- ============================================================ 4. c-tagging -->
+<section class="slide" data-n="4">
+  <header>
+    <h2>Charm tagging</h2>
+    <p class="sub">Finding c jets between b and light jets</p>
+  </header>
+  <p class="ref">CMS-DP-2025-081</p>
+
+  <div class="cols" style="grid-template-columns: 640px 1fr;">
+    <div>
+      <h3>Charm signature</h3>
+      <div class="box row">
+        <div>
+          c-hadron mass and lifetime lie <b>between light and b</b>
+          <ul>
+            <li>secondary vertex (SV), like b jets</li>
+            <li>but closer to the primary vertex: <span class="hl">easily mistaken for light jets</span></li>
+          </ul>
+        </div>
+        <svg class="jet" viewBox="0 0 200 120" aria-hidden="true">
+          <path d="M10,85 L190,20 L195,95 Z" fill="#dbe9ef"/>
+          <g stroke="#0b4f6c" stroke-width="2.4" fill="none">
+            <path d="M10,85 L95,58" stroke-dasharray="6 4"/>
+            <path d="M95,58 L185,28"/><path d="M95,58 L190,48"/><path d="M95,58 L190,68"/>
+            <path d="M10,85 L190,86"/><path d="M10,85 L170,112"/>
+          </g>
+          <circle cx="10" cy="85" r="6" fill="#0b4f6c"/><circle cx="95" cy="58" r="6" fill="#e07a1f"/>
+          <text x="2" y="110" font-size="15" fill="#0b4f6c" font-weight="700">PV</text>
+          <text x="80" y="44" font-size="15" fill="#e07a1f" font-weight="700">SV</text>
+          <text x="150" y="16" font-size="15" fill="#0b4f6c" font-weight="700">c jet</text>
+        </svg>
+      </div>
+
+      <h3 style="margin-top:26px">Algorithm evolution at CMS</h3>
+      <div class="three">
+        <div class="obox"><span class="otitle">Likelihood / BDT</span>JP, CSV:<br>tracks + secondary vertices</div>
+        <div class="obox"><span class="otitle">Deep NN</span><b>DeepJet</b>:<br>all jet constituents</div>
+        <div class="obox"><span class="otitle">Particle cloud</span><b>ParticleNet</b>, UParT:<br>graph, transformer</div>
+      </div>
+      <div class="timeline" id="tl"></div>
+      <p class="note center" id="tlnote">Run 1 → Run 3: richer networks, inputs closer to raw particles</p>
+    </div>
+
+    <div class="figcol">
+      <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:430px" alt="c-tagging ROC curves"></div>
+      <p class="cap">t t̄ simulation, 13.6 TeV · solid: c vs b, dashed: c vs light</p>
+      <p class="note" id="rocnote" style="position:absolute; left:700px; top:150px;">UParT v2:<br>lowest mis-ID</p>
+    </div>
+  </div>
+
+  <div class="footer-pills">
+    <span class="lbl">In this talk</span>
+    <span class="pill">DeepJet · VH resolved, cH</span>
+    <span class="pill">ParticleNet · VH merged, t t̄H</span>
+    <span class="pill">DeepDoubleX · boosted H</span>
+  </div>
+
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="rocnote:s" data-to="roc@0.38,0.506" data-bend="0.25"></i>
+  <i class="arrow" data-from="rocnote:se" data-to="roc@0.425,0.385" data-bend="-0.3"></i>
+  <i class="arrow" data-from="tl:w" data-to="tl:e" data-bend="0"></i>
+</section>
+
+<!-- ============================================================ 5. VH -->
+<section class="slide" data-n="5">
+  <header>
+    <h2>VH(H → c<span class="ov">c</span>)</h2>
+    <p class="sub">Cleanest signature: the W or Z decays to leptons</p>
+  </header>
+  <p class="ref">PRL 131 (2023) 061801 · CMS-HIG-21-008</p>
+
+  <div class="cols" style="grid-template-columns: 650px 1fr;">
+    <div>
+      <div class="pillrow">
+        <span class="pill big">0ℓ · Z → νν</span>
+        <span class="pill big">1ℓ · W → ℓν</span>
+        <span class="pill big">2ℓ · Z → ℓℓ</span>
+      </div>
+      <p class="center" style="margin:10px 0 0">V+jets and t t̄ normalised in control regions</p>
+
+      <div class="split">
+        <span class="pill orange big" id="ptcut">p<sub>T</sub><sup>H</sup> = 300 GeV</span>
+      </div>
+      <div class="two">
+        <div class="obox" id="res"><span class="otitle">Resolved · two jets</span>
+          &gt;95% of the signal<br>two DeepJet c-tagged jets<br>fit to a BDT score</div>
+        <div class="obox" id="mer"><span class="otitle">Merged · one large jet</span>
+          &lt;5% of the signal, <b>much less background</b><br>ParticleNet c<span class="ov">c</span> tagging<br>fit to the regressed mass</div>
+      </div>
+      <p class="note" id="lowlab" style="position:absolute; left:150px; top:322px">below</p>
+      <p class="note" id="highlab" style="position:absolute; left:575px; top:322px">above</p>
+
+      <div class="result" style="margin-top:26px">
+        <div class="rlab">95% CL · observed (expected)</div>
+        <div class="rval">μ &lt; 14 <span class="exp">(7.6)</span> &emsp; 1.1 &lt; |κ<sub>c</sub>| &lt; 5.5 <span class="exp">(&lt; 3.4)</span></div>
+      </div>
+    </div>
+
+    <div class="figcol">
+      <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:400px" alt="merged-jet mass"></div>
+      <p class="cap">Merged-jet candidate mass, background-subtracted below</p>
+      <p class="note" id="vznote" style="position:absolute; left:1010px; top:560px;">VZ(Z → c<span class="ov">c</span>) seen at 5.7σ:<br>the method works</p>
+    </div>
+  </div>
+  <p class="takeaway">Most sensitive single channel of Run 2 · statistics-limited</p>
+
+  <svg class="arrows"></svg>
+  <i class="arrow" data-from="ptcut:w" data-to="res:n" data-bend="-0.35"></i>
+  <i class="arrow" data-from="ptcut:e" data-to="mer:n" data-bend="0.35"></i>
+  <i class="arrow" data-from="vznote:w" data-to="f3@0.40,0.17" data-bend="-0.3"></i>
+</section>
+
+<script src="deck.js"></script>
+</body>
+</html>
