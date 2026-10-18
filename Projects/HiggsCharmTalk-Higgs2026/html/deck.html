@@ -321,7 +321,7 @@
       <div class="chan"><span class="pill big">0ℓ</span><div><b>≥ 7 jets</b> (≥ 6 with p<sub>T</sub> &gt; 40 GeV), H<sub>T</sub> &gt; 500 GeV<small>fully hadronic t<span class="ov">t</span></small></div></div>
       <div class="chan"><span class="pill big">1ℓ</span><div><b>1 lepton</b> (e or μ) + <b>≥ 5 jets</b><small>single-lepton t<span class="ov">t</span></small></div></div>
       <div class="chan"><span class="pill big">2ℓ</span><div><b>2 opposite-charge leptons</b> + <b>≥ 4 jets</b>; m<sub>ℓℓ</sub> &gt; 20 GeV and outside 76–106 GeV (ee, μμ)<small>dilepton t<span class="ov">t</span></small></div></div>
-      <p class="small" style="margin:2px 0 0">All channels: jets with p<sub>T</sub> &gt; 25 GeV, |η| &lt; 2.4; <b>≥ 3 b- or c-tagged jets, ≥ 1 of them b</b></p>
+      <p class="small" style="margin:10px 0 0">All channels: jets with p<sub>T</sub> &gt; 25 GeV, |η| &lt; 2.4; <b>≥ 3 b- or c-tagged jets, ≥ 1 of them b</b></p>
       <div class="box small" style="padding:10px 16px">
         <b>ParticleNet</b> (dynamic graph CNN) classifies every jet: b vs c vs light → <b>11 categories</b> B0–B4, C0–C4, L0 · up to <b>2×</b> better background rejection than DeepJet
       </div>
@@ -344,7 +344,7 @@
   <div class="cols" style="grid-template-columns: 640px 1fr; gap: 26px;">
     <div class="stack">
       <div class="box small" style="padding:10px 16px">
-        <b>ParT event classifier</b>: jets, leptons and p<sub>T</sub><sup>miss</sup> (kinematics, tagging category) plus pairwise features (ΔR, mass) → scores for <b>10 (9) classes</b> in 0ℓ (1ℓ, 2ℓ): t<span class="ov">t</span>H(c<span class="ov">c</span>), t<span class="ov">t</span>H(b<span class="ov">b</span>), t<span class="ov">t</span>Z(c<span class="ov">c</span>), t<span class="ov">t</span>Z(b<span class="ov">b</span>), five t<span class="ov">t</span>+jets classes, and QCD in 0ℓ
+        <b>ParT event classifier</b>: many b/c jets make the top and Higgs reconstruction ambiguous, so the classifier works directly on jets, leptons and p<sub>T</sub><sup>miss</sup> (kinematics, tagging category, pairwise ΔR and mass) → scores for <b>10 (9) classes</b> in 0ℓ (1ℓ, 2ℓ): t<span class="ov">t</span>H(c<span class="ov">c</span>), t<span class="ov">t</span>H(b<span class="ov">b</span>), t<span class="ov">t</span>Z(c<span class="ov">c</span>), t<span class="ov">t</span>Z(b<span class="ov">b</span>), five t<span class="ov">t</span>+jets classes, and QCD in 0ℓ
       </div>
       <div>
         <p class="small" style="margin:0 0 6px"><b>D<sub>t<span class="ov">t</span>X</sub></b> = sum of the four signal scores:</p>
@@ -396,7 +396,7 @@
         <tr><td>t<span class="ov">t</span>Z(b<span class="ov">b</span>)</td><td class="r">1.47 <sup>+0.45</sup><sub>−0.41</sub></td><td class="r">3.5σ (2.4σ)</td></tr>
         <tr><td>t<span class="ov">t</span>Z(c<span class="ov">c</span>)</td><td class="r">1.02 <sup>+0.79</sup><sub>−0.84</sub></td><td class="r">1.2σ (1.3σ)</td></tr>
       </table>
-      <p class="xs muted">Limits per channel and event yields → backup</p>
+      <p class="xs muted">t<span class="ov">t</span>Z(c<span class="ov">c</span>) and t<span class="ov">t</span>Z(b<span class="ov">b</span>) are the standard candles: both consistent with the SM · limits per channel and event yields → backup</p>
     </div>
   </div>
   <p class="takeaway">A second direct channel, with expected sensitivity comparable to VH</p>
