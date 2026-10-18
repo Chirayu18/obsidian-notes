@@ -277,25 +277,36 @@
   <p class="ref">PRL 131 (2023) 041801 · CMS-HIG-21-012</p>
   <div class="cols" style="grid-template-columns: 610px 1fr;">
     <div class="stack">
-      <div class="card"><h4>① p<sub>T</sub><sup>H</sup> &gt; 450 GeV</h4>
-        <div class="small">High-p<sub>T</sub> Higgs bosons suppress QCD · signal 55% ggF, 25% VBF, 20% VH · c<span class="ov">c</span> in one large-radius jet; soft drop removes soft, wide-angle radiation and sharpens the jet mass m<sub>SD</sub></div></div>
-      <div class="card"><h4>② DeepDoubleX tagger</h4>
-        <div class="small">Deep neural network on low-level jet features: passing (signal-rich) and failing (background-rich) regions · decorrelated from m<sub>SD</sub>, so QCD is estimated from data in the failing region</div></div>
-      <div class="card"><h4>③ Fit m<sub>SD</sub></h4>
-        <div class="small">Simultaneous binned fit of m<sub>SD</sub> in all tagger regions; upper limit from the profile likelihood ratio</div></div>
+      <div class="card cardlist"><h4>① Boosted regime: p<sub>T</sub><sup>H</sup> &gt; 450 GeV</h4>
+        <ul>
+          <li>High p<sub>T</sub> suppresses the QCD background</li>
+          <li>H → c<span class="ov">c</span> in <b>one large-radius jet</b> (R = 0.8); soft drop grooms it and sharpens the mass m<sub>SD</sub></li>
+          <li>Signal: 55% ggF, 25% VBF, 20% VH</li>
+        </ul></div>
+      <div class="card cardlist"><h4>② DeepDoubleX tagger</h4>
+        <ul>
+          <li>Convolutional + recurrent network on tracks and secondary vertices</li>
+          <li><b>Passing</b> region (signal-rich) and <b>failing</b> region (background-rich)</li>
+          <li>Mass-decorrelated: QCD in the passing region is <b>predicted from data</b> in the failing region</li>
+        </ul></div>
+      <div class="card cardlist"><h4>③ Statistical analysis</h4>
+        <ul>
+          <li>Simultaneous binned fit of m<sub>SD</sub> in both regions, in 6 p<sub>T</sub> bins</li>
+          <li>Upper limit from the profile likelihood ratio (CLs)</li>
+        </ul></div>
       <div class="result">
         <div class="rval">σ𝓑 / (σ𝓑)<sub>SM</sub> &lt; 47 <span class="exp">(39)</span></div>
         <div class="rlab">95% CL · observed (expected) · no κ<sub>c</sub> interpretation in the paper</div>
       </div>
     </div>
     <div class="figcol">
+      <p class="cap" style="margin:0 0 4px">Jet mass in the passing region · H → c<span class="ov">c</span> dashed (×200)</p>
       <div class="fig" id="bz"><img src="img/HIG-21-012_Figure_002-a.png" style="height:410px" alt="jet mass, passing region"></div>
-      <p class="cap">Passing region · H → c<span class="ov">c</span> dashed (×200)</p>
     </div>
   </div>
-  <p class="note" id="znote" style="position:absolute; left:770px; top:618px;">Z → c<span class="ov">c</span> observed for the first time in Z+jets, well over 5σ</p>
+  <p class="note" id="znote" style="position:absolute; left:720px; top:612px; width:520px; text-align:center">Z → c<span class="ov">c</span> observed for the first time in Z+jets, well over 5σ</p>
   <svg class="arrows"></svg>
-  <i class="arrow" data-from="znote:n" data-to="bz@0.30,0.17" data-bend="0.25"></i>
+  <i class="arrow" data-from="znote:n" data-to="bz@0.31,0.21" data-bend="0.2"></i>
 </section>
 
 <!-- ================================================================ 8 -->
