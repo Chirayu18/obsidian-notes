@@ -7,6 +7,7 @@
 % -------------------------------------------------------------------
 \pubref{CMS-DP-2025-081}
 \begin{frame}[t]{Charm tagging: telling c jets from b and light jets}
+  \vspace*{-0.8em}
   \begin{columns}[T]
     \column{0.585\textwidth}
     \pill{Charm signature}\par\vspace{2pt}
@@ -40,8 +41,8 @@
     \end{minipage}\hfill
     \begin{minipage}[t]{0.325\linewidth}
       \begin{outbox}[equal height group=alg]{Deep NN}
-        DeepCSV: multi-class b/c/light\\
-        \textbf{DeepJet}: constituent sequences
+        DeepCSV: b/c/light classes\\
+        \textbf{DeepJet}: all constituents
       \end{outbox}
     \end{minipage}\hfill
     \begin{minipage}[t]{0.325\linewidth}
@@ -52,8 +53,8 @@
     \end{minipage}\par\vspace{2pt}
     \begin{tikzpicture}
       \coordinate (e) at (1.0\linewidth,0);
-      \draw[callout] (0,0) to[out=-6,in=186] (e);
-      \node[callnote,below=2pt] at ($(0,0)!0.5!(e)$) {Run 1 $\to$ Run 3: richer architectures, inputs closer to raw particles};
+      \draw[callout] (0,0) -- (e);
+      \node[callnote,below=1pt] at ($(0,0)!0.5!(e)$) {Run 1 $\to$ Run 3: richer architectures, inputs closer to raw particles};
     \end{tikzpicture}
 
     \column{0.395\textwidth}
@@ -62,8 +63,8 @@
       \node[inner sep=0] (roc) {\includegraphics[height=4.9cm]{DP-2025-081_sl14_roc_c_tagging.png}};
       \begin{onimage}{roc}
         \node[callnote,anchor=west] (n1) at (0.17,0.80) {UParT v2 (blue):\\lowest mis-ID};
-        \draw[callout] (n1.south) to[out=-80,in=150] (0.42,0.565);
-        \draw[callout] (n1.south east) to[out=-30,in=110] (0.50,0.47);
+        \draw[callout] (n1.south) to[out=-100,in=120] (0.38,0.506);
+        \draw[callout] (n1.south east) to[out=-20,in=45] (0.425,0.385);
       \end{onimage}
     \end{tikzpicture}\\
     {\scriptsize \ttbar\ simulation, 13.6\,TeV; solid: c vs b, dashed: c vs light\par}\vspace{4pt}
@@ -76,6 +77,7 @@
 % -------------------------------------------------------------------
 \pubref{PRL 131 (2023) 061801, CMS-HIG-21-008}
 \begin{frame}[t]{Direct \Hcc: VH(\Hcc)}
+  \vspace*{-0.8em}
   \begin{columns}[T]
     \column{0.585\textwidth}
     \begin{keybox}
@@ -86,8 +88,8 @@
     \vspace{2pt}
     {\centering\pill[accB]{$p_\mathrm{T}^\mathrm{H} = 300$\,GeV}\par}
     \begin{tikzpicture}[overlay]
-      \coordinate (a1) at (0.33\linewidth,0.28); \coordinate (a2) at (0.2\linewidth,-0.25);
-      \coordinate (b1) at (0.67\linewidth,0.28); \coordinate (b2) at (0.8\linewidth,-0.25);
+      \coordinate (a1) at (0.33\linewidth,0.28); \coordinate (a2) at (0.2\linewidth,-0.12);
+      \coordinate (b1) at (0.67\linewidth,0.28); \coordinate (b2) at (0.8\linewidth,-0.12);
       \draw[callout] (a1) to[out=180,in=80] (a2);
       \draw[callout] (b1) to[out=0,in=100] (b2);
       \node[callnote,anchor=south east] at (0.30\linewidth,0.25) {below};
@@ -120,8 +122,8 @@
         \node[callnote,anchor=north west] (vz) at (0.62,-0.02) {VZ(Z$\to\ccbar$) at 5.7$\sigma$\\validates the method};
         \draw[callout] (vz.west) to[out=180,in=-90] (0.40,0.12);
       \end{onimage}
-    \end{tikzpicture}\\[13pt]
-    \includegraphics[height=2.45cm]{HIG-21-008_Figure_004.pdf}\\
-    \callnote{Most sensitive single channel of Run 2;\\statistics-limited}
+    \end{tikzpicture}\\[11pt]
+    \includegraphics[height=2.25cm]{HIG-21-008_Figure_004.pdf}\\
+    \callnote{Most sensitive single channel;\\statistics-limited}
   \end{columns}
 \end{frame}

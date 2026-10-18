@@ -1,6 +1,9 @@
 \usepackage{amsmath,amssymb,booktabs,graphicx}
 % upright math letters in the sans font (H, c, Z...), not Computer Modern
-\AtBeginDocument{\renewcommand{\mathrm}[1]{\text{\upshape #1}}}
+\DeclareSymbolFont{operators}{\encodingdefault}{\sfdefault}{m}{n}
+\SetSymbolFont{operators}{bold}{\encodingdefault}{\sfdefault}{b}{n}
+\DeclareMathAlphabet{\mathrm}{\encodingdefault}{\sfdefault}{m}{n}
+\SetMathAlphabet{\mathrm}{bold}{\encodingdefault}{\sfdefault}{b}{n}
 \graphicspath{{../figures/}}
 \newcommand{\qbar}[1]{\mathrm{#1}\overline{\mathrm{#1}}}
 \newcommand{\ccbar}{\ensuremath{\qbar{c}}}
