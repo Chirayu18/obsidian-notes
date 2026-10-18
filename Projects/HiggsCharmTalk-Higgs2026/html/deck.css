@@ -40,7 +40,7 @@ h3 { margin: 0 0 8px; font-size: 23px; color: var(--teal); font-weight: 750; }
 ul { margin: 6px 0 0; padding-left: 22px; } li { margin: 2px 0; }
 .hl { color: var(--orange); font-weight: 600; }
 .center { text-align: center; }
-.ov { text-decoration: overline; text-decoration-thickness: 1.5px; }
+.ov { display: inline-block; border-top: 0.07em solid currentColor; line-height: 0.95; padding-top: 0.02em; }
 
 .box { background: var(--teal-soft); border-radius: 18px; padding: 14px 18px; }
 .box.row { display: flex; gap: 14px; align-items: center; }
@@ -80,7 +80,8 @@ ul { margin: 6px 0 0; padding-left: 22px; } li { margin: 2px 0; }
 svg.arrows { position: absolute; inset: 0; width: 1280px; height: 720px; pointer-events: none; overflow: visible; }
 
 /* title slide */
-.title-slide { background: linear-gradient(125deg, #0b3c52 0%, #0b4f6c 45%, #1b8a8f 75%, #e07a1f 130%); color: #fff; }
+.title-slide { background: linear-gradient(125deg, #0a3346 0%, #0b4f6c 50%, #1b8a8f 100%); color: #fff; }
+.title-slide::before { content: ""; position: absolute; left: 70px; top: 222px; width: 120px; height: 5px; background: var(--orange); border-radius: 3px; }
 .title-slide::after { content: none; }
 .logos-tile { position: absolute; left: 70px; top: 50px; display: flex; gap: 16px; background: #fff; border-radius: 14px; padding: 10px 14px; }
 .logos-tile img { height: 64px; }

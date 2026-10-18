@@ -16,13 +16,12 @@
   <svg class="feyn" viewBox="0 0 520 220" aria-hidden="true">
     <defs><marker id="fa" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#fff"/></marker></defs>
     <g stroke="#fff" stroke-width="3" fill="none" opacity="0.9">
-      <path d="M20,40 q10,-12 20,0 t20,0 t20,0 t20,0" />
+      <path d="M20.0,40.0 L19.6,41.8 L19.4,43.4 L19.2,44.9 L19.2,46.2 L19.5,47.3 L20.0,48.0 L20.9,48.4 L21.9,48.6 L23.2,48.4 L24.7,48.1 L26.3,47.6 L28.0,47.0 L29.7,46.4 L31.3,45.9 L32.8,45.6 L34.1,45.4 L35.1,45.6 L36.0,46.0 L36.5,46.7 L36.8,47.8 L36.8,49.1 L36.6,50.6 L36.4,52.2 L36.0,54.0 L35.6,55.8 L35.4,57.4 L35.2,58.9 L35.2,60.2 L35.5,61.3 L36.0,62.0 L36.9,62.4 L37.9,62.6 L39.2,62.4 L40.7,62.1 L42.3,61.6 L44.0,61.0 L45.7,60.4 L47.3,59.9 L48.8,59.6 L50.1,59.4 L51.1,59.6 L52.0,60.0 L52.5,60.7 L52.8,61.8 L52.8,63.1 L52.6,64.6 L52.4,66.2 L52.0,68.0 L51.6,69.8 L51.4,71.4 L51.2,72.9 L51.2,74.2 L51.5,75.3 L52.0,76.0 L52.9,76.4 L53.9,76.6 L55.2,76.4 L56.7,76.1 L58.3,75.6 L60.0,75.0 L61.7,74.4 L63.3,73.9 L64.8,73.6 L66.1,73.4 L67.1,73.6 L68.0,74.0 L68.5,74.7 L68.8,75.8 L68.8,77.1 L68.6,78.6 L68.4,80.2 L68.0,82.0 L67.6,83.8 L67.4,85.4 L67.2,86.9 L67.2,88.2 L67.5,89.3 L68.0,90.0 L68.9,90.4 L69.9,90.6 L71.2,90.4 L72.7,90.1 L74.3,89.6 L76.0,89.0 L77.7,88.4 L79.3,87.9 L80.8,87.6 L82.1,87.4 L83.1,87.6 L84.0,88.0 L84.5,88.7 L84.8,89.8 L84.8,91.1 L84.6,92.6 L84.4,94.2 L84.0,96.0 L83.6,97.8 L83.4,99.4 L83.2,100.9 L83.2,102.2 L83.5,103.3 L84.0,104.0 L84.9,104.4 L85.9,104.6 L87.2,104.4 L88.7,104.1 L90.3,103.6 L92.0,103.0 L93.7,102.4 L95.3,101.9 L96.8,101.6 L98.1,101.4 L99.1,101.6 L100.0,102.0 L100.5,102.7 L100.8,103.8 L100.8,105.1 L100.6,106.6 L100.4,108.2 L100.0,110.0" stroke-width="2.6"/>
       <path d="M20,180 L100,110" marker-mid="url(#fa)"/>
-      <path d="M100,110 L100,110 L170,110"/>
+      <path d="M100,110 L170,110"/>
       <path d="M170,110 L240,40"/>
       <path d="M170,110 L240,180" stroke-dasharray="9 7"/>
-      <path d="M100,40 L100,110" opacity="0"/>
-      <path d="M300,110 L380,110" stroke-dasharray="9 7"/>
+            <path d="M300,110 L380,110" stroke-dasharray="9 7"/>
       <path d="M380,110 L450,40"/>
       <path d="M380,110 L450,180"/>
     </g>
@@ -87,7 +86,6 @@
     <div class="figcol">
       <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:430px" alt="c-tagging ROC curves"></div>
       <p class="cap">t t̄ simulation, 13.6 TeV · solid: c vs b, dashed: c vs light</p>
-      <p class="note" id="rocnote" style="position:absolute; left:700px; top:150px;">UParT v2:<br>lowest mis-ID</p>
     </div>
   </div>
 
@@ -98,6 +96,7 @@
     <span class="pill">DeepDoubleX · boosted H</span>
   </div>
 
+  <p class="note" id="rocnote" style="position:absolute; left:858px; top:205px;">UParT v2 (blue):<br>lowest mis-ID</p>
   <svg class="arrows"></svg>
   <i class="arrow" data-from="rocnote:s" data-to="roc@0.38,0.506" data-bend="0.25"></i>
   <i class="arrow" data-from="rocnote:se" data-to="roc@0.425,0.385" data-bend="-0.3"></i>
@@ -128,10 +127,10 @@
         <div class="obox" id="res"><span class="otitle">Resolved · two jets</span>
           &gt;95% of the signal<br>two DeepJet c-tagged jets<br>fit to a BDT score</div>
         <div class="obox" id="mer"><span class="otitle">Merged · one large jet</span>
-          &lt;5% of the signal, <b>much less background</b><br>ParticleNet c<span class="ov">c</span> tagging<br>fit to the regressed mass</div>
+          &lt;5% of the signal<br><b>much less background</b><br>ParticleNet c<span class="ov">c</span> tagging<br>fit to the regressed mass</div>
       </div>
-      <p class="note" id="lowlab" style="position:absolute; left:150px; top:322px">below</p>
-      <p class="note" id="highlab" style="position:absolute; left:575px; top:322px">above</p>
+      <p class="note" id="lowlab" style="position:absolute; left:120px; top:150px">below</p>
+      <p class="note" id="highlab" style="position:absolute; left:470px; top:150px">above</p>
 
       <div class="result" style="margin-top:26px">
         <div class="rlab">95% CL · observed (expected)</div>
@@ -142,15 +141,15 @@
     <div class="figcol">
       <div class="fig" id="f3"><img src="img/HIG-21-008_Figure_003.png" style="height:400px" alt="merged-jet mass"></div>
       <p class="cap">Merged-jet candidate mass, background-subtracted below</p>
-      <p class="note" id="vznote" style="position:absolute; left:1010px; top:560px;">VZ(Z → c<span class="ov">c</span>) seen at 5.7σ:<br>the method works</p>
     </div>
   </div>
   <p class="takeaway">Most sensitive single channel of Run 2 · statistics-limited</p>
+  <p class="note" id="vznote" style="position:absolute; left:820px; top:590px;">VZ(Z → c<span class="ov">c</span>) seen at 5.7σ: the method works</p>
 
   <svg class="arrows"></svg>
-  <i class="arrow" data-from="ptcut:w" data-to="res:n" data-bend="-0.35"></i>
-  <i class="arrow" data-from="ptcut:e" data-to="mer:n" data-bend="0.35"></i>
-  <i class="arrow" data-from="vznote:w" data-to="f3@0.40,0.17" data-bend="-0.3"></i>
+  <i class="arrow" data-from="ptcut:w" data-to="res@0.86,1.03" data-bend="-0.3"></i>
+  <i class="arrow" data-from="ptcut:e" data-to="mer@0.14,1.03" data-bend="0.3"></i>
+  <i class="arrow" data-from="vznote:n" data-to="f3@0.40,0.17" data-bend="-0.25"></i>
 </section>
 
 <script src="deck.js"></script>

@@ -11,3 +11,4 @@ figures/
 *.fdb_latexmk
 *.synctex.gz
 build.out
+html/img/
