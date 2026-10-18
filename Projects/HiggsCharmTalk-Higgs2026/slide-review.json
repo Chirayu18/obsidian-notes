@@ -1,10 +1,12 @@
 {
-  "deck": "higgs2026_higgs_charm.tex",
+  "deck": "html/higgs2026_higgs_charm_main.pdf",
   "mode": "public",
   "audience": "Higgs 2026 conference (Louvain-la-Neuve): theorists and experimentalists from ATLAS/CMS/pheno, not CMS-internal; H+c flavour-scheme talk follows, rare-Higgs talks cover J/psi gamma",
   "talk_minutes": 15,
   "focus": [
-    "all"
+    "text size and legibility",
+    "correctness",
+    "minor polish"
   ],
   "backend": "claude",
   "forbidden_patterns": [
@@ -35,6 +37,8 @@
   },
   "speaker_notes": [
     "text density per slide is fine by the speaker (2026-10-16); do not flag word counts",
-    "wants a Higgs-charm Feynman diagram on the title slide for aesthetics"
-  ]
+    "wants a Higgs-charm Feynman diagram on the title slide for aesthetics",
+    "2026-10-18: content and storyline already reviewed and liked by the speaker; do not propose restructuring or content changes, only text size/legibility, correctness, and minor comments"
+  ],
+  "deck_source": "html/deck.html"
 }
