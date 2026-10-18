@@ -102,15 +102,7 @@ Boosted H→cc, PRL 131 (2023) 041801, arXiv:2211.14181 (HIG-21-012): the paragr
 
 ---
 
-## Slide 8: ttH(H→cc): the whole analysis in one plot (30 s, quick)
-
-**Say.** The newest direct channel is the Higgs produced with a top-quark pair. This one plot is the whole analysis: three channels, with zero, one or two leptons from the top pair, and in each of them five control regions for the top-pair background and four signal regions, all fitted together. The tree on the right is how events are sorted: a classifier's summed signal score sends the most signal-like events into one of four signal regions, ttH or ttZ, charm or bottom, and the next band into the control region of whichever top-pair background they look most like. Data and the fitted model agree across all of it.
-
-**Understand.** Each bin of the post-fit plot is a bin of the ParT discriminant in one category; the p-value of the post-fit agreement is 0.85. D_ttX is the sum of the four signal scores (ttH(cc), ttH(bb), ttZ(cc), ttZ(bb)). Events with D_ttX > 0.85 go to a signal region, split first by D_ttH vs D_ttZ and then by D_X→cc vs D_X→bb; events with 0.6 < D_ttX < 0.85 go to the control region of the tt+jets class with the largest weighted score (weights 100, 12, 4, 2, 1 for tt+light, tt+c, tt+≥2c, tt+b, tt+≥2b; the paper does not explain the choice of weights). Before that, every event must pass D_tt+light < 0.05 (0.02 in 1L), and in 0L D_QCD < 0.0001. The c-enriched regions (ttH(cc), ttZ(cc), tt+≥2c) need at least two c jets, tt+c at least one.
-
-**Read.** arXiv:2509.22535 Supplemental Material: Fig. 5 (the flowchart) and the text around it on the region definitions, Fig. 6 (the post-fit plot), Tables B.6 to B.10 for the post-fit yields per channel.
-
-## Slide 9: ttH(H→cc): strategy and results (60 s)
+## Slide 8: ttH(H→cc): strategy (signals, tagging, classifier and regions, backgrounds) (55 s)
 
 **Say.** The strategy is a simultaneous measurement: ttH to charm and ttH to bottom have essentially the same signature apart from the number of charm and bottom jets, so they are fitted together, and ttZ with Z to charm or bottom serves as a standard candle in its own regions. Every jet goes into one of eleven ParticleNet tagging categories, and a transformer event classifier, ParT, separates the four signals from five top-pair backgrounds. The leading background is top pairs with extra jets, split by the flavour of those jets, each part normalised in its own control region; QCD multijet is negligible even in the all-hadronic channel. The signal and control regions sit above 0.6 in the summed signal score; a validation band between 0.4 and 0.6 with the same structure checks the background model. The result: μ below 7.8, with 8.7 expected, and |κc| below 3.0 with κb fixed, 4.2 if κb is fitted. On the side, ttH to bottom comes out at 4.4 sigma and the ttZ candles agree with the SM. So a second direct channel with sensitivity comparable to VH.
 
@@ -121,6 +113,16 @@ ttH(H→cc), PRL 136 (2026) 011801, arXiv:2509.22535 (HIG-24-018): the main-text
 Particle Transformer: H. Qu, C. Li, S. Qian, "Particle Transformer for jet tagging", arXiv:2202.03772.
 
 ---
+
+## Slide 9: ttH(H→cc): results (post-fit in all regions, limits, best fits) (35 s)
+
+**Note.** The deck now shows the strategy first (slide 8, with the categorisation tree) and the post-fit plot with the numbers second (slide 9). The limits and best-fit table moved to slide 9, so when you rehearse, say the numbers there rather than on slide 8.
+
+**Say.** The newest direct channel is the Higgs produced with a top-quark pair. This one plot is the whole analysis: three channels, with zero, one or two leptons from the top pair, and in each of them five control regions for the top-pair background and four signal regions, all fitted together. The tree on the right is how events are sorted: a classifier's summed signal score sends the most signal-like events into one of four signal regions, ttH or ttZ, charm or bottom, and the next band into the control region of whichever top-pair background they look most like. Data and the fitted model agree across all of it.
+
+**Understand.** Each bin of the post-fit plot is a bin of the ParT discriminant in one category; the p-value of the post-fit agreement is 0.85. D_ttX is the sum of the four signal scores (ttH(cc), ttH(bb), ttZ(cc), ttZ(bb)). Events with D_ttX > 0.85 go to a signal region, split first by D_ttH vs D_ttZ and then by D_X→cc vs D_X→bb; events with 0.6 < D_ttX < 0.85 go to the control region of the tt+jets class with the largest weighted score (weights 100, 12, 4, 2, 1 for tt+light, tt+c, tt+≥2c, tt+b, tt+≥2b; the paper does not explain the choice of weights). Before that, every event must pass D_tt+light < 0.05 (0.02 in 1L), and in 0L D_QCD < 0.0001. The c-enriched regions (ttH(cc), ttZ(cc), tt+≥2c) need at least two c jets, tt+c at least one.
+
+**Read.** arXiv:2509.22535 Supplemental Material: Fig. 5 (the flowchart) and the text around it on the region definitions, Fig. 6 (the post-fit plot), Tables B.6 to B.10 for the post-fit yields per channel.
 
 ## Slide 10: ttH + VH combination (60 s)
 
