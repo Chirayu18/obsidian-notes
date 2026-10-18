@@ -36,6 +36,10 @@ HIG-24-018_Figure_001.pdf https://cms-results.web.cern.ch/cms-results/public-res
 HIG-24-018_Figure_002.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_002.pdf
 HIG-24-018_Figure_003.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_003.pdf
 HIG-24-018_Figure_004.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_004.pdf
+HIG-24-018_Figure_005.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_005.pdf
+HIG-24-018_Figure_006.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_006.pdf
+HIG-24-018_Figure_0B3.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_0B3.pdf
+HIG-24-018_Figure_0B6.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_0B6.pdf
 HIG-24-018_Figure_B11.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_B11.pdf
 HIG-24-018_Figure_B12.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_B12.pdf
 HIG-24-018_Figure_B13.pdf https://cms-results.web.cern.ch/cms-results/public-results/publications/HIG-24-018/CMS-HIG-24-018_Figure_B13.pdf
@@ -49,7 +53,7 @@ HIG-21-018_Figure-aux_011.pdf https://cms-results.web.cern.ch/cms-results/public
 EOF
 for f in *.pdf; do
   read -r w h ox oy < <(gs -q -dNOPAUSE -dBATCH -sDEVICE=bbox "$f" 2>&1 | awk '/HiRes/{x0=$2-2;y0=$3-2;x1=$4+2;y1=$5+2; printf "%.2f %.2f %.2f %.2f\n", x1-x0, y1-y0, -x0, -y0; exit}')
-  gs -q -o "$f.tmp" -sDEVICE=pdfwrite -dDEVICEWIDTHPOINTS="$w" -dDEVICEHEIGHTPOINTS="$h" -dFIXEDMEDIA -c "<</PageOffset [$ox $oy]>> setpagedevice" -f "$f" && mv "$f.tmp" "$f"
+  gs -q -o "$f.tmp" -sDEVICE=pdfwrite -dAutoRotatePages=/None -dDEVICEWIDTHPOINTS="$w" -dDEVICEHEIGHTPOINTS="$h" -dFIXEDMEDIA -c "<</PageOffset [$ox $oy]>> setpagedevice" -f "$f" && mv "$f.tmp" "$f"
 done
 
 # Official CMS logo (CMS DocDB 3045). cms-docdb needs the CERN CA, so this fetch may fail
