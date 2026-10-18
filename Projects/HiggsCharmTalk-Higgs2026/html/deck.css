@@ -108,8 +108,8 @@ ul.tight li { margin: 0 0 5px; }
 .cards { display: grid; gap: 18px; }
 .card { border-radius: 18px; padding: 16px 20px; background: var(--teal-soft); position: relative; }
 .card h4 { margin: 0 0 6px; font-size: 21px; color: var(--teal); font-weight: 800; }
-.card .num { font-size: 26px; font-weight: 800; color: var(--orange); margin-top: 6px; }
-.card .refs { font-size: 14px; color: var(--grey); line-height: 1.35; }
+.card .num { font-size: 27px; font-weight: 800; color: var(--orange); margin-top: 6px; }
+.card .refs { margin-top: 6px; font-size: 14px; color: var(--grey); line-height: 1.35; }
 .card .tag { position: absolute; right: 16px; top: 14px; font-size: 13px; font-weight: 700; color: var(--teal);
   border: 1.5px solid var(--teal-line); border-radius: 999px; padding: 1px 10px; background: #fff; }
 
