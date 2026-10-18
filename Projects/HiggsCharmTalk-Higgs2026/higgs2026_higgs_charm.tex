@@ -111,29 +111,29 @@
   \begin{tikzpicture}[
       box/.style={draw=cmsblue,thick,rounded corners,fill=cmslight,text width=6.4cm,minimum height=2.45cm,align=left,anchor=north west,inner sep=5pt}]
     \node[box] (d) at (0,0) {%
-      {\color{cmsblue}\bfseries Direct \Hcc} {\footnotesize(rate $\propto \kc^2/\Gamma_\mathrm{H}$)} \hfill{\scriptsize\color{cmsgrey}slides 4--7}\\[0.3ex]
+      {\color{cmsblue}\bfseries Direct \Hcc} {\footnotesize(rate $\propto \kc^2/\Gamma_\mathrm{H}$)} \hfill{\scriptsize\color{cmsgrey}slides 4--8}\\[0.3ex]
       \footnotesize VH(\Hcc) \hfill {\tiny PRL 131 (2023) 061801}\\
       \footnotesize \ttH(\Hcc) + VH comb. \hfill {\tiny PRL 136 (2026) 011801}\\
       \footnotesize Boosted \Hcc\ (mostly ggH) \hfill {\tiny PRL 131 (2023) 041801}\\[0.4ex]
       \small\textbf{\ttH+VH comb.: $|\kc|<\obsexp{3.5}{2.7}$}};
     \node[box] (c) at (7.3,0) {%
-      {\color{cmsblue}\bfseries H + charm production} {\footnotesize(cg $\to$ cH)} \hfill{\scriptsize\color{cmsgrey}slides 8--10}\\[0.3ex]
+      {\color{cmsblue}\bfseries H + charm production} {\footnotesize(cg $\to$ cH)} \hfill{\scriptsize\color{cmsgrey}slides 9--11}\\[0.3ex]
       \footnotesize cH(H$\to\gamma\gamma$) \hfill {\tiny JHEP 11 (2025) 060}\\
       \footnotesize cH(H$\to$WW) + comb. \hfill {\tiny JHEP 08 (2026) 051}\\[1.6ex]
       \small\textbf{comb.: $|\kc|<\obsexp{47}{51}$}};
     \node[box] (i) at (0,-2.75) {%
-      {\color{cmsblue}\bfseries Indirect: H rates and width} \hfill{\scriptsize\color{cmsgrey}slide 11}\\[0.3ex]
+      {\color{cmsblue}\bfseries Indirect: H rates and width} \hfill{\scriptsize\color{cmsgrey}slide 12}\\[0.3ex]
       \footnotesize On-shell H$\to4\ell$ \hfill {\tiny PRD 112 (2025) 112001}\\
       \footnotesize Off-shell + on-shell H$\to4\ell$ \new\ \hfill {\tiny arXiv:2607.23352}\\[0.4ex]
       \small\textbf{$\kc\in[-3.3,2.8]$ to $[-8.6,7.5]$} {\scriptsize(by assumptions)}};
     \node[box] (r) at (7.3,-2.75) {%
-      {\color{cmsblue}\bfseries Rare exclusive decays} \hfill{\scriptsize\color{cmsgrey}slide 11}\\[0.3ex]
+      {\color{cmsblue}\bfseries Rare exclusive decays} \hfill{\scriptsize\color{cmsgrey}slide 12}\\[0.3ex]
       \footnotesize H$\to$J/$\psi\gamma$, $\psi$(2S)$\gamma$ \hfill {\tiny PLB 865 (2025) 139462}\\
       \footnotesize sensitive to the \emph{sign} of \kc\\[0.6ex]
       \small\textbf{$-166<\kc<208$}};
   \end{tikzpicture}\\[0.5em]
   {\footnotesize $\mu = \sigma\mathcal{B}/(\sigma\mathcal{B})_\mathrm{SM}$, \ $\Gamma_\mathrm{H}$ = total Higgs width; \ $\mu$ limits and \kc\ intervals at 95\% CL: obs.\ {\color{cmsgrey}(exp.)}}\\[0.3ex]
-  {\footnotesize All \kc\ results: \textbf{Run 2} (13\,TeV, up to 138\fbinv); Run 3 so far: better triggers (slide 13). \new: public in 2026}
+  {\footnotesize All \kc\ results: \textbf{Run 2} (13\,TeV, up to 138\fbinv); Run 3 so far: better triggers (slide 14). \new: public in 2026}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -198,11 +198,20 @@
 % -------------------------------------------------------------------
 \begin{frame}{\ttH(\Hcc): the whole analysis in one plot}
   \pubref{PRL 136 (2026) 011801, CMS-HIG-24-018}{\pubHIG{HIG-24-018}}
+  \par\vspace{0.2ex}
   \centering
-  {\small 3 channels (0L, 1L, 2L) $\times$ \{5 \ttbar+jets control regions + 4 signal regions\}, fitted simultaneously}\\[0.4ex]
-  \includegraphics[width=0.84\textwidth]{HIG-24-018_Figure_006.pdf}\\
-  {\scriptsize Post-fit ParT discriminants in all CRs and SRs; data agree with the fitted model (p-value 0.85)}
-  \takeaway{One fit measures \ttH(\ccbar), \ttH(\bbbar), \ttZ(\ccbar), \ttZ(\bbbar) and every \ttbar+jets flavour component}
+  {\small 3 channels (0L, 1L, 2L) $\times$ \{5 \ttbar+jets CRs + 4 SRs\}, fitted simultaneously}\\[0.6ex]
+  \begin{columns}[c]
+    \column{0.58\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-24-018_Figure_006.pdf}\\
+    {\scriptsize Post-fit ParT discriminants in all CRs and SRs (p-value 0.85)}
+    \column{0.40\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-24-018_Figure_005.pdf}\\
+    {\scriptsize Categorisation on $D_{\ttbar X}$ (summed signal score): $>0.85$ to an SR by \ttH/\ttZ and \ccbar/\bbbar; $0.6$--$0.85$ to the CR of the leading \ttbar+jets score}
+  \end{columns}
+  \takeaway{One fit: \ttH(\ccbar), \ttH(\bbbar), \ttZ(\ccbar), \ttZ(\bbbar) and all \ttbar+jets components}
 \end{frame}
 
 % -------------------------------------------------------------------
@@ -214,11 +223,7 @@
     \begin{itemize}\scriptsize
       \item Simultaneous \ttH(\ccbar) and \ttH(\bbbar): same signature apart from the c/b-jet multiplicity; \ttZ(\ccbar), \ttZ(\bbbar) as standard candles in their own regions
       \item Every jet in one of 11 ParticleNet tagging categories (B0--B4, C0--C4, L0); ParT event classifier with 4 signal and 5 \ttbar+jets classes \tobackup
-    \end{itemize}
-    {\small\bfseries\color{cmsblue}Backgrounds}
-    \begin{itemize}\scriptsize
-      \item Leading: \ttbar+jets, split by extra-jet flavour (+light, +c, +$\geq$2c, +b, +$\geq$2b), each normalised in its own CR
-      \item QCD multijet negligible, even in 0L: a dedicated classifier output removes it by $\sim$10$^4$, to $<$1\% of \ttbar+jets
+      \item Leading background \ttbar+jets, split by extra-jet flavour, each part normalised in its own CR; QCD negligible even in 0L (removed by a classifier cut to $<$1\% of \ttbar+jets) \tobackup
     \end{itemize}
     {\small\bfseries\color{cmsblue}Regions (on $D_{\ttbar X}$, the summed signal score)}
     \begin{itemize}\scriptsize
@@ -244,8 +249,7 @@
       \ttZ(\ccbar) & $1.02^{+0.79}_{-0.84}$ & 1.2$\sigma$ (1.3$\sigma$)\\
       \bottomrule
     \end{tabular}\\[0.5ex]
-    \includegraphics[width=0.62\linewidth]{HIG-24-018_Figure_003.pdf}\\
-    {\scriptsize $\mu_{\ttH(\ccbar)}$ limits per channel; yields \tobackup}
+    {\scriptsize Limits per channel and event yields \tobackup}
   \end{columns}
   \takeaway{A second direct channel, with expected sensitivity comparable to VH}
 \end{frame}
@@ -532,9 +536,16 @@
 
 \begin{frame}{\ttH(\Hcc): event yields}
   \pubref{PRL 136 (2026) 011801}{\pubHIG{HIG-24-018}}
-  \centering
-  \includegraphics[height=5.6cm]{HIG-24-018_Figure_002.pdf}\\
-  {\scriptsize Event yields vs.\ $\log_{10}(S/B)$; the \ttH(\ccbar) panel shows the published best fit $\hat\mu = -1.6\pm4.5$}
+  \begin{columns}[T]
+    \column{0.62\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-24-018_Figure_002.pdf}\\
+    {\scriptsize Event yields vs.\ $\log_{10}(S/B)$; the \ttH(\ccbar) panel shows the published best fit $\hat\mu = -1.6\pm4.5$}
+    \column{0.36\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-24-018_Figure_003.pdf}\\
+    {\scriptsize $\mu_{\ttH(\ccbar)}$ limits per channel (inner band 68\%)}
+  \end{columns}
   \takeaway{\ttH(\ccbar) best fit $\hat\mu = -1.6\pm4.5$: compatible with zero and with the SM}
 \end{frame}
 
@@ -555,24 +566,21 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}{\ttH(\Hcc): event categorisation and validation}
+\begin{frame}{\ttH(\Hcc): validation region and QCD rejection}
   \pubref{PRL 136 (2026) 011801 (supplementary)}{\pubHIG{HIG-24-018}}
   \begin{columns}[T]
-    \column{0.46\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{HIG-24-018_Figure_005.pdf}\\
-    {\scriptsize Categorisation: $D_{\ttbar X}>0.85$ goes to an SR by $D_{\ttbar H}$ vs.\ $D_{\ttbar Z}$ and $D_{X\to\ccbar}$ vs.\ $D_{X\to\bbbar}$; $0.6$--$0.85$ to the CR of the largest weighted \ttbar+jets score (weights 100, 12, 4, 2, 1)}\\[0.6ex]
-    \includegraphics[width=0.62\linewidth]{HIG-24-018_Figure_0B3.pdf}\\
-    {\scriptsize 0L: $D_\mathrm{QCD}<10^{-4}$ (grey area rejected) leaves QCD below 1\% of \ttbar+jets; QCD simulation only trains the classifier}
-    \column{0.52\textwidth}
+    \column{0.62\textwidth}
     \centering
     \includegraphics[width=\linewidth]{HIG-24-018_Figure_0B6.pdf}\\
-    {\scriptsize Validation region $0.4<D_{\ttbar X}<0.6$, split into CR-like ($0.40$--$0.58$) and SR-like ($0.58$--$0.60$) parts with background purities matched to the analysis region}
-    \vspace{0.5em}
+    {\scriptsize Validation region $0.4<D_{\ttbar X}<0.6$, same SR/CR structure (CR-like $0.40$--$0.58$, SR-like $0.58$--$0.60$): good agreement}
     \begin{itemize}\scriptsize
-      \item c-enriched regions (\ttH(\ccbar), \ttZ(\ccbar), \ttbar+$\geq$2c) need $\geq$2 c jets, \ttbar+c needs $\geq$1
-      \item Fit variable: the ParT discriminant of each category; \ttbar+b, +$\geq$2b from a dedicated 4FS \ttbar\bbbar\ sample
+      \item c-enriched regions need $\geq$2 c jets (\ttbar+c: $\geq$1); CR choice weights 100, 12, 4, 2, 1 on the \ttbar+light, +c, +$\geq$2c, +b, +$\geq$2b scores
+      \item \ttbar+b, +$\geq$2b from a dedicated 4FS \ttbar\bbbar\ sample
     \end{itemize}
+    \column{0.36\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{HIG-24-018_Figure_0B3.pdf}\\
+    {\scriptsize 0L only: $D_\mathrm{QCD}<10^{-4}$ (grey area rejected) suppresses QCD by nearly four orders of magnitude, to $<$1\% of \ttbar+jets; QCD simulation is used only to train the classifier}
   \end{columns}
 \end{frame}
 
