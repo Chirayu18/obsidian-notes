@@ -1,0 +1,36 @@
+% Theme-independent boxes, pills and curved callout arrows (ICNFP-like devices).
+% Colours: accA = boxes/pills, accB = callouts/results. Set them in the wrapper.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hccstyle}
+\RequirePackage{tikz}
+\RequirePackage[most]{tcolorbox}
+\usetikzlibrary{arrows.meta,positioning,calc,tikzmark,shapes,decorations.pathmorphing,decorations.markings,shadows}
+
+\providecolor{accA}{HTML}{23373B}
+\providecolor{accB}{HTML}{EB811B}
+
+% pill label for sub-sections: \pill{Strategy}
+\newcommand{\pill}[2][accA]{%
+  \tikz[baseline=(p.base)]\node[fill=#1,text=white,rounded corners=5pt,
+    font=\footnotesize\bfseries,inner xsep=6pt,inner ysep=2.5pt](p){\strut#2};}
+
+% filled key box and outline box; optional arg passes tcolorbox keys (e.g. remember as=xyz)
+\newtcolorbox{keybox}[1][]{enhanced,colback=accA!10,colframe=accA!10,arc=7pt,
+  boxrule=0pt,left=5pt,right=5pt,top=3pt,bottom=3pt,fontupper=\footnotesize,#1}
+\newtcolorbox{outbox}[2][]{enhanced,colback=white,colframe=accA!70,arc=7pt,
+  boxrule=0.9pt,left=4pt,right=4pt,top=2pt,bottom=2pt,fontupper=\scriptsize,
+  title={#2},coltitle=accA,fonttitle=\footnotesize\bfseries,
+  attach boxed title to top left={xshift=6pt,yshift=-2.2mm},
+  boxed title style={colback=white,colframe=white,boxrule=0pt,arc=2pt},#1}
+% result box: the limit, framed in the callout colour
+\newtcolorbox{resultbox}[1][]{enhanced,colback=accB!8,colframe=accB,arc=7pt,
+  boxrule=1.1pt,left=5pt,right=5pt,top=2pt,bottom=2pt,fontupper=\small,halign=center,#1}
+
+% curved callout arrows and their italic notes
+\tikzset{
+  callout/.style={-{Stealth[length=2.4mm,width=2mm]},line width=1.3pt,draw=accB},
+  callnote/.style={font=\footnotesize\itshape,text=accB,align=center},
+  jettrack/.style={thick,accA!70},
+}
+% \note{text} inline italic remark in the callout colour
+\newcommand{\callnote}[1]{{\footnotesize\itshape\color{accB}#1}}
