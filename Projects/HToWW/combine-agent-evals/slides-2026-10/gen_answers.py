@@ -8,6 +8,7 @@ the nugget judge got it wrong. Blank lines are dropped and long lines wrapped;
 the text itself is unchanged.
 """
 import json
+import re
 import textwrap
 
 WIDTH = 108          # characters per line at 6.6pt
@@ -150,12 +151,68 @@ def frame(title: str, scores: str, body: list[str], font: str = r"\ansfont") -> 
             + "\n".join(body) + "\n\\end{Verbatim}\n\\end{frame}\n")
 
 
-MODEL = {"qwen": "Qwen 3.8 27B", "luna": "GPT-5.6 luna", "terra": "GPT-5.6 terra"}
-CONFIG = {"vanilla": "shipped config (bash: ask)",
-          "changedv1": "bash deny + read-only allow-list",
-          "changed": "bash deny + read-only allow-list + no web fetch/search"}
-CONFSHORT = {"vanilla": "shipped config", "changedv1": "read-only config", "changed": "read-only + no web"}
-SHORT = {"gmn-control-region-1": "gmN question", "agent-shape-counting-1": "Shape + counting question"}
+MODEL = {"qwen": "Qwen 3.8", "luna": "GPT-5.6 luna", "terra": "GPT-5.6 terra"}
+CONF = {"vanilla": "shipped", "changedv1": "read-only", "changed": "no web"}
+SHORT = {"gmn-control-region-1": "gmN", "agent-shape-counting-1": "Shape+counting"}
+ORDER_MODEL = ["qwen", "luna", "terra"]
+ORDER_CONF = ["vanilla", "changedv1", "changed"]
+
+# Notes for runs that need explaining (keyed by config, question, rep; rep is 0-based).
+NOTES = {
+    ("terra-changed", "gmn-control-region-1", 2): r"\con{judge wrong: mn3 missed (rate 10.0, but $25\times0.12=3.0$)}",
+    ("qwen-changed", "gmn-control-region-1", 2): r"\con{invented tool output: no tool calls, the answer is a made-up skill file}",
+    ("terra-changed", "agent-shape-counting-1", 2): r"\con{judge wrong: kp2 missed, the \texttt{-S} fix is there}",
+    ("luna-changedv1", "agent-shape-counting-1", 1): r"\con{judge wrong: kp2 missed, the \texttt{-S}/FAKE fix is there}",
+    ("luna-vanilla", "agent-shape-counting-1", 0): r"\con{killed: bash permission auto-reject; only narration left}",
+    ("luna-changedv1", "agent-shape-counting-1", 0): r"\con{killed: external\_directory reject after a path typo; only narration left}",
+    ("qwen-changed", "agent-shape-counting-1", 2): r"\con{loop: same command 45 times, timeout at 400 s, no answer}",
+}
+
+# Text patterns that locate the evidence for a key point the judge marked supported,
+# used for answers without hand-picked spans. Only applied on one wrapped line.
+AUTO = {
+    "gmn-control-region-1": {
+        "kp1": r"\*\*`?gmN`?\*\*|[Uu]se (?:a |the )?\*{0,2}`?gmN`?",
+        "kp2": r"(?:after|follows?) the `?gmN`?(?: keyword)?|`?gmN`?\s+(?:N|\d+)\b",
+        "kp3": r"(?:alpha|α|extrapolation factor)[^.]{0,50}column|column[^.]{0,40}(?:alpha|α)",
+        "kp4": r"N\s*(?:·|×|\\times|\*|x)\s*(?:\\?alpha|α)|N\\alpha|N·α|N\s?α",
+        "kp5": r"^\s*\S+\s+gmN\s+\d+\s.*$",
+        "kp6": r"1/\s*√\s*\(?N\s*\+\s*1\)?|1/\\?sqrt\{?\(?N\s*\+\s*1|≈\s*45\s*%|45\s*%",
+    },
+    "agent-shape-counting-1": {
+        "kp1": r"no `?shapes`? (?:line|mapping|directive|declaration|entry)|has no `?shapes`?|without a `?shapes`?",
+        "kp2": r"combineCards\.py -S\b|`-S`",
+        "kp3": r"Shape map has no entry for channel '?counting'?",
+        "kp4": r"shapes \* \* FAKE",
+    },
+}
+
+
+def auto_spans(qid, labels, lines):
+    spans = []
+    for kp, pat in AUTO[qid].items():
+        if labels.get("kp:" + kp) not in ("support", "partial_support"):
+            continue
+        for ln in lines:
+            m = re.search(pat, ln)
+            if m and m.group(0).strip():
+                spans.append((m.group(0), kp))
+                break
+    return spans
+
+
+def score_line(a):
+    fc = f"{float(a['fc']):.2f}" if a["fc"] else "--"
+    rub = f"{float(a['rubric']):.0f}" if a["rubric"] else "--"
+    kps = [k[3:] for k, v in sorted(a["labels"].items()) if k.startswith("kp:") and v == "support"]
+    mns = [k[3:] for k, v in sorted(a["labels"].items()) if k.startswith("mn:") and v == "present"]
+    verdict = r"\pos{pass}" if a["pass"] else r"\con{fail}"
+    detail = ("supported: " + ", ".join(kps)) if kps else "no key point supported"
+    if mns:
+        detail += "; must\\_not: " + ", ".join(mns)
+    tools = f"{a['n_tools']} tool calls"
+    return (f"FC {fc} \\quad rubric {rub} \\quad nugget {verdict} ({detail}) \\quad \\grey{{{tools}}}")
+
 
 QUESTIONS = [
     ("gmn-control-region-1",
@@ -211,56 +268,77 @@ def question_frame(qid, text, kps, runs):
 """)
 
 
-def main():
-    answers = {(a["config"], a["id"], a["rep"]): a for a in json.load(open("example_answers.json"))}
-    frames = [r"""\begin{frame}{Whole answers: how to read the next slides}
+INTRO = r"""\begin{frame}{Whole answers: how to read the next slides}
   \vspace{4pt}
   \small
   \begin{itemize}
-    \item For each question: the question and its key points, then every answer this talk refers to,
-      word for word as stored by the harness (blank lines dropped, long lines wrapped)
-    \item Title: question, model, agent config, run number; line below: RAGAS FC recall, rubric (1--5), nugget verdict
+    \item For each question: the question and its key points, then all 24 answers to it
+      (the 8 agent configurations of the results table $\times$ 3 runs), word for word as stored by the harness
+      (blank lines dropped, long lines wrapped)
+    \item Title: question, model, agent config, run; line below: RAGAS FC recall, rubric (1--5), nugget verdict
     \item \hlkp{kp}{blue}: supports a key point \quad \hlmn{mn}{orange}: wrong statement (must\_not)
     \item \hlmiss{kp judge missed}{grey}, \hlmn{mn judge missed}{orange}: the judge got it wrong
+    \item Highlights are hand-placed for the answers discussed in the talk; elsewhere they mark the first
+      text matching each key point the judge accepted
   \end{itemize}
-  \vspace{4pt}
+  \vspace{2pt}
   \footnotesize\grey{Configs: shipped = combine-assistant 0.5.4 as released (bash \texttt{ask});
-  read-only = bash \texttt{deny} plus a read-only allow-list; no web = read-only plus web fetch/search denied.}
+  read-only = bash \texttt{deny} plus a read-only allow-list; no web = read-only plus web fetch/search denied.
+  Qwen was run with shipped and read-only only.}
 \end{frame}
-"""]
-    for qid, text, kps, runs in QUESTIONS:
-        frames.append(question_frame(qid, text, kps, runs))
-        for cfg, rep in runs:
-            a = answers[(cfg, qid, rep)]
-            meta = KEY[(cfg, qid, rep)]
-            model, conf = cfg.split("-", 1)
-            if model == "qwen":
-                conf = "changedv1"   # Qwen "changed" runs (2026-10-14 11:12/11:26) predate the web-fetch deny (12:53)
-            title = f"{SHORT[qid]}: {MODEL[model]}, {CONFSHORT[conf]}, run {rep + 1} of 3"
-            sub = meta["scores"]
+"""
+
+
+def main():
+    answers = json.load(open("all_answers.json"))
+    frames = [INTRO]
+    for qid, text, kps, _ in QUESTIONS:
+        group = [a for a in answers if a["id"] == qid]
+        group.sort(key=lambda a: (ORDER_MODEL.index(a["config"].split("-")[0]),
+                                  ORDER_CONF.index(conf_of(a["config"])), a["rep"]))
+        frames.append(question_frame(qid, text, kps, group))
+        for a in group:
+            cfg, rep = a["config"], a["rep"]
+            model = cfg.split("-")[0]
+            title = f"{SHORT[qid]}: {MODEL[model]}, {CONF[conf_of(cfg)]} config, run {rep + 1}/3"
+            sub = score_line(a)
+            if (cfg, qid, rep) in NOTES:
+                sub += r"\\ " + NOTES[(cfg, qid, rep)]
             best = None
             for font, width, per in FONTS:
-                lines = wrap(a["answer"], width) or ["(empty answer)"]
-                nfr = -(-len(lines) // per)
+                lines = wrap(a["answer"], width)
+                nfr = max(1, -(-len(lines) // per))
                 if best is None or nfr < best[0]:
                     best = (nfr, font, width, per, lines)
             _, font, width, per, lines = best
+            if not lines:
+                why = "timeout" if a["timed_out"] else "the session ended without a final message"
+                lines = [f"(no answer: {why}; {a['n_tools']} tool calls)"]
+            curated = (cfg, qid, rep) in KEY
+            spans = KEY[(cfg, qid, rep)]["spans"] if curated else auto_spans(qid, a["labels"], lines)
             body, found = [], set()
             for ln in lines:
-                m, used = mark(ln, meta["spans"])
+                m, used = mark(ln, spans)
                 body.append(m)
                 found |= used
-            missing = [s for s, _ in meta["spans"] if s not in found]
+            missing = [s for s, _ in spans if s not in found]
             if missing:
                 print("WARN span not found:", title, missing)
             chunks = [body[i:i + per] for i in range(0, len(body), per)]
             for k, chunk in enumerate(chunks):
-                cont = f" (page {k + 1} of {len(chunks)})" if len(chunks) > 1 else ""
+                cont = f", page {k + 1}/{len(chunks)}" if len(chunks) > 1 else ""
                 frames.append(frame(title + cont, sub, chunk, font))
     open("sec-answers.tex", "w").write(
-        "% Generated by gen_answers.py from example_answers.json. Do not edit by hand.\n\n"
+        "% Generated by gen_answers.py from all_answers.json. Do not edit by hand.\n\n"
         + "\n".join(frames))
     print(f"wrote sec-answers.tex: {len(frames)} frames")
+
+
+def conf_of(cfg):
+    model, conf = cfg.split("-", 1)
+    if model == "qwen" and conf == "changed":
+        return "changedv1"   # Qwen "changed" runs (2026-10-14 11:12/11:26) predate the web-fetch deny (12:53)
+    return conf
 
 
 if __name__ == "__main__":
