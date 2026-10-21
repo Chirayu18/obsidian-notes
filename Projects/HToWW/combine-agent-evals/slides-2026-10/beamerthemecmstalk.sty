@@ -1,0 +1,36 @@
+% Minimal CMS-flavoured beamer theme for the Higgs 2026 talk
+\mode<presentation>
+\RequirePackage{appendixnumberbeamer}
+\usepackage{tikz}
+\definecolor{cmsblue}{RGB}{0,51,153}
+\definecolor{cmslight}{RGB}{225,232,247}
+\definecolor{cmsorange}{RGB}{230,120,20}
+\definecolor{cmsgrey}{RGB}{90,90,90}
+\setbeamercolor{structure}{fg=cmsblue}
+\setbeamercolor{frametitle}{fg=white,bg=cmsblue}
+\setbeamercolor{title}{fg=cmsblue}
+\setbeamercolor{block title}{fg=white,bg=cmsblue}
+\setbeamercolor{block body}{bg=cmslight}
+\setbeamercolor{block title alerted}{fg=white,bg=cmsorange}
+\setbeamercolor{block body alerted}{bg=cmsorange!12}
+\setbeamercolor{alerted text}{fg=cmsorange}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}{\color{cmsblue}$\blacktriangleright$}
+\setbeamertemplate{itemize subitem}{\color{cmsorange}--}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{frametitle}{%
+  \nointerlineskip
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.6ex,dp=1.3ex,leftskip=1em,rightskip=1.6em]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle
+  \end{beamercolorbox}%
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north east,inner sep=0pt] at ([xshift=-0.3em,yshift=-0.25em]current page.north east)
+      {\includegraphics[height=3.2ex]{CMSlogo_white.png}};
+  \end{tikzpicture}\vspace{0.3ex}}
+\setbeamertemplate{footline}{%
+  \begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1ex]{}
+    \hspace{1em}{\color{cmsgrey}\scriptsize\insertshortauthor\ \ |\ \ \insertshorttitle\ \ |\ \ \insertshortdate}%
+    \hfill{\color{cmsblue}\scriptsize\bfseries\insertframenumber/\inserttotalframenumber}\hspace{1em}
+  \end{beamercolorbox}}
+\mode<all>

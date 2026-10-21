@@ -1,0 +1,194 @@
+% Nugget (key-point) scoring: why RAGAS FC disagrees with the rubric, and the replacement.
+% Numbers: cae-run/compare_nuggets.py on judge-input/*.jsonl (2026-10-16), judge aigw/qwen3.8-27b-fp16.
+
+% -------------------------------------------------------------------
+\begin{frame}{RAGAS factual correctness disagrees with the rubric}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.47\textwidth}
+    \small \texttt{gmn-control-region-1}, mean of 3 runs per configuration
+    \vspace{4pt}
+    \begin{center}
+    \begin{tabular}{lrr}
+      \toprule
+      agent & FC recall & rubric (1--5) \\
+      \midrule
+      GPT-5.6 luna, 3 configs  & 0.43--0.55 & 5.0 \\
+      GPT-5.6 terra, 3 configs & 0.41--0.66 & 5.0 \\
+      Qwen 3.8, changed config & 0.55 & 3.7 \\
+      \bottomrule
+    \end{tabular}
+    \end{center}
+    \small
+    \begin{itemize}
+      \item 37 answers got rubric 5/5; their FC ranges \con{0.22 to 0.92}
+      \item reading them: the GPT answers are correct
+    \end{itemize}
+    \column{0.49\textwidth}
+    \small What \texttt{FactualCorrectness(mode="recall")} computes\\
+    \grey{(ragas 0.2.15, \texttt{\_factual\_correctness.py})}
+    \[
+      \text{recall}=\frac{TP}{TP+FN}
+    \]
+    \begin{itemize}
+      \item $TP$: claims split from the \textbf{answer} that the gold supports
+      \item $FN$: claims split from the \textbf{gold} missing in the answer
+      \item two different LLM splits, \con{redone on every call}
+      \item every gold claim weighs the same, side remarks included\\
+        \grey{(e.g.\ the docs' ``$\sim$50\%'' comment in gmn)}
+    \end{itemize}
+  \end{columns}
+  \takeaway{Not ``fraction of gold covered'': it moves with answer length and claim split}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Replacement: per-question key points (``nuggets'')}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+    \small Written once per question, frozen, versioned (\texttt{nuggets.yaml}):
+    \vspace{3pt}
+    \begin{center}
+    \begin{tabular}{@{}l>{\raggedright\arraybackslash}p{0.72\linewidth}@{}}
+      \toprule
+      \multicolumn{2}{@{}l}{\texttt{gmn-control-region-1}} \\
+      \midrule
+      \pos{vital} & use the \texttt{gmN} uncertainty type \\
+      \pos{vital} & CR count $N$ written after the keyword \\
+      \pos{vital} & extrapolation factor $\alpha$ in the process column \\
+      \pos{vital} & rate $= N\alpha$ \\
+      \grey{okay} & concrete datacard line; $1/\sqrt{N+1}\approx45\%$ \\
+      \con{must\_not} & recommends \texttt{lnN}/\texttt{lnU}; example card inconsistent \\
+      \bottomrule
+    \end{tabular}
+    \end{center}
+    \column{0.44\textwidth}
+    \small Judge (Qwen 3.8 on aigw) per item:
+    \begin{itemize}
+      \item supported / partly / not supported
+      \item must quote the answer; harness checks the quote is really there
+      \item gold prose not shown; items shuffled; 3 judge runs, majority
+    \end{itemize}
+    Scores per answer:
+    \[
+      V_\text{strict}=\frac{\#\,\text{vital fully supported}}{\#\,\text{vital}}
+    \]
+    \textbf{pass} $=$ all vital supported \textbf{and} no \con{must\_not} present
+  \end{columns}
+  \takeaway{Method of the TREC 2024/25 RAG track (AutoNuggetizer), plus evidence quotes and must\_not items}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Results: 2 questions $\times$ 8 agent configurations $\times$ 3 runs}
+  \vspace{2pt}
+  \begin{center}
+  \footnotesize
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{llcccc}
+    \toprule
+    question & agent / config & nugget pass & $V_\text{strict}$ & FC recall & rubric \\
+    \midrule
+    gmn & Qwen vanilla   & 0/3 & 0.00 & 0.00 & 1.0 \\
+        & Qwen changed   & 2/3 & 0.67 & 0.55 & 3.7 \\
+        & luna (3 configs)  & 3/3, 3/3, 3/3 & 1.00 & 0.43--0.55 & 5.0 \\
+        & terra (3 configs) & \con{2/3}, 3/3, 3/3 & 1.00 & 0.41--0.66 & 5.0 \\
+    \midrule
+    shape-counting & Qwen vanilla & 0/3 & 0.00 & 0.00 & 1.0 \\
+        & Qwen changed   & 1/3 & 0.33 & 0.44 & 2.7 \\
+        & luna van./v1/chg. & 2/3, 1/3, 3/3 & 0.67, 0.50, 1.00 & 0.48, 0.60, 0.84 & 3.7, 3.7, 5.0 \\
+        & terra van./v1/chg. & 3/3, 3/3, 2/3 & 1.00, 1.00, 0.83 & 0.85, 0.80, 0.84 & 5.0 \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+  \footnotesize\grey{vanilla: shipped config (bash \texttt{ask}); v1: bash \texttt{deny} + read-only allow-list; changed: v1 + web fetch/search denied.
+  Killed or empty runs count as 0.}
+  \vspace{4pt}
+  \small
+  \begin{itemize}
+    \item per answer: nugget pass agrees with ``rubric $\geq4$'' on \pos{45/48} answers, with ``FC $\geq0.5$'' on 38/48
+    \item correct GPT answers on gmn: $V_\text{strict}=1.00$ where FC gave 0.41--0.55
+  \end{itemize}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{What the nuggets add: a named reason for every failure}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \textbf{Caught, rubric said 5/5}
+    \small
+    \begin{itemize}
+      \item terra vanilla, gmn run 2: example card\\
+        \texttt{bkg\_stat gmN - 0.12} \con{(no $N$ after gmN)}\\
+        $\to$ \con{must\_not} ``inconsistent example'' present
+    \end{itemize}
+    \textbf{Diagnosed}
+    \begin{itemize}
+      \item killed luna runs (permission reject, path typo): miss both vital points, not ``low recall''
+      \item Qwen changed, shape run 1: ``shape and counting cards cannot be combined'' $\to$ \con{must\_not}
+    \end{itemize}
+    \column{0.47\textwidth}
+    \textbf{Missed / wrong (judge limits)}
+    \small
+    \begin{itemize}
+      \item terra changed, gmn run 2: \texttt{rate 10.0} with \texttt{gmN 25 0.12} ($25\times0.12=3.0$): arithmetic not caught
+      \item 2 correct shape-counting answers failed: judge padded its quote with text not in the answer, quote check rejected it
+    \end{itemize}
+    \vspace{4pt}
+    \begin{center}
+    \begin{tabular}{lc}
+      \toprule
+      rubric-vs-nugget disagreements & 3/48 \\
+      \midrule
+      real error found by nuggets & 1 \\
+      judge false negative & 2 \\
+      \bottomrule
+    \end{tabular}
+    \end{center}
+  \end{columns}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{Caveats and next steps}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    \textbf{Caveats}
+    \small
+    \begin{itemize}
+      \item only 2 questions; key points written after seeing answers
+      \item not yet calibrated against human labels
+      \item Qwen judge grades Qwen answers (self-preference)
+      \item 2 vital points on shape-counting: one judge flip $=\pm0.5$
+      \item agreement with humans is good for ranking systems, weak per question (TREC: $\tau$ 0.73--0.90 vs 0.3--0.66)
+    \end{itemize}
+    \column{0.47\textwidth}
+    \textbf{Next}
+    \small
+    \begin{itemize}
+      \item key points for all questions, drafted automatically from the \textbf{gold only} (LLM ensemble), then reviewed
+      \item \con{must\_not} items mined from observed wrong answers
+      \item one-off calibration vs the 13 Oct.\ hand grades (Scott's $\pi$, judge leniency)
+      \item cross-family judge for headline numbers
+      \item report pass@1, pass$^3$, errors clustered by question
+    \end{itemize}
+  \end{columns}
+  \takeaway{Proposal: nugget pass and $V_\text{strict}$ as headline, rubric as second opinion, drop FC recall}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}{References (scoring)}
+  \footnotesize
+  \begin{itemize}
+    \item E.\ Voorhees, \emph{Overview of the TREC 2003 QA track}: vital/okay nuggets
+    \item J.\ Lin, D.\ Demner-Fushman, \emph{Will pyramids built of nuggets topple over?}, HLT-NAACL 2006
+    \item R.\ Pradeep et al., \emph{Initial nugget evaluation results for the TREC 2024 RAG track (AutoNuggetizer)}, arXiv:2411.09607
+    \item R.\ Pradeep et al., \emph{The Great Nugget Recall}, SIGIR 2025, arXiv:2504.15068
+    \item S.\ Upadhyay et al., \emph{Overview of the TREC 2025 RAG track}, arXiv:2603.09891
+    \item R.\ Arora et al., \emph{HealthBench}, arXiv:2505.08775 \quad A.\ Gunjal et al., \emph{Rubrics as Rewards}, arXiv:2507.17746
+    \item Y.\ Lee et al., \emph{CheckEval}, EMNLP 2025, arXiv:2403.18771
+    \item M.\ Wanner et al., \emph{A closer look at claim decomposition}, arXiv:2403.11903
+    \item A.\ S.\ Thakur et al., \emph{Judging the judges}, arXiv:2406.12624 \quad A.\ Panickssery et al., arXiv:2404.13076
+    \item S.\ Yao et al., \emph{$\tau$-bench} (pass$^k$), arXiv:2406.12045 \quad E.\ Miller, \emph{Adding error bars to evals}, arXiv:2411.00640
+  \end{itemize}
+\end{frame}
