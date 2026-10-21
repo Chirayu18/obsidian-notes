@@ -179,34 +179,6 @@
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{Caveats and next steps}
-  \vspace{2pt}
-  \begin{columns}[T]
-    \column{0.49\textwidth}
-    \textbf{Caveats}
-    \small
-    \begin{itemize}
-      \item only 2 questions; key points written after seeing answers
-      \item not yet calibrated against human labels
-      \item Qwen judge grades Qwen answers (self-preference)
-      \item 2 vital points on shape-counting: one judge flip $=\pm0.5$
-      \item agreement with humans is good for ranking systems, weak per question (TREC: $\tau$ 0.73--0.90 vs 0.3--0.66)
-    \end{itemize}
-    \column{0.47\textwidth}
-    \textbf{Next}
-    \small
-    \begin{itemize}
-      \item key points for all questions, drafted automatically from the \textbf{gold only} (LLM ensemble), then reviewed
-      \item \con{must\_not} items mined from observed wrong answers
-      \item one-off calibration vs the 13 Oct.\ hand grades (Scott's $\pi$, judge leniency)
-      \item cross-family judge for headline numbers
-      \item report pass@1, pass$^3$, errors clustered by question
-    \end{itemize}
-  \end{columns}
-  \takeaway{Proposal: nugget pass and $V_\text{strict}$ as headline, rubric as second opinion, drop FC recall}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{References (scoring)}
   \footnotesize
   \begin{itemize}
