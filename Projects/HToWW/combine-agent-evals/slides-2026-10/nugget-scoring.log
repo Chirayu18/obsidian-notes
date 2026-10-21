@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  21 OCT 2026 17:49
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  21 OCT 2026 18:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1129,27 +1129,46 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 151.
  [5
 
 ] (./sec-answers.tex
+Overfull \hbox (3.35046pt too wide) in paragraph at lines 26--26
+ [] 
+ []
+
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 26.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+[6
+
+]
 \openout4 = `nugget-scoring.vrb'.
 
  (./nugget-scoring.vrb
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-5.
-
-(/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
+4.
+ (/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
+LaTeX Font Info:    Calculating math sizes for size <5.8> on input line 4.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 5.
-LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
-(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 5.
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <5> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 5.
+(Font)              <5.8> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <4.05998> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <2.9> on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <5.8> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <4.05998> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <2.9> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <4.05998> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 4.
 )
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 27.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 57.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [6
+ [7
 
 {/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
 \openout4 = `nugget-scoring.vrb'.
@@ -1157,17 +1176,7 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 27.
  (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 44.
-(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [7
-
-]
-\openout4 = `nugget-scoring.vrb'.
-
- (./nugget-scoring.vrb)
-File: CMSlogo_white.png Graphic file (type png)
-<use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 70.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 86.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
  [8
 
@@ -1178,7 +1187,7 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 70.
 (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 81.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 119.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
  [9
 
@@ -1188,13 +1197,36 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 81.
  (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 107.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 142.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [10
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb
+LaTeX Font Info:    Calculating math sizes for size <6.6> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <6.6> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <4.61998> on input line 4.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <3.3> on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <6.6> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <4.61998> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <3.3> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 4.
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <4.61998> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 4.
+)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 169.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
 
-Overfull \vbox (0.78065pt too high) detected at line 107
- []
-
-[10
+[11
 
 ]
 \openout4 = `nugget-scoring.vrb'.
@@ -1202,19 +1234,19 @@ Overfull \vbox (0.78065pt too high) detected at line 107
  (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 119.
-(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [11
-
-]
-\openout4 = `nugget-scoring.vrb'.
-
- (./nugget-scoring.vrb)
-File: CMSlogo_white.png Graphic file (type png)
-<use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 145.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 194.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
  [12
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 223.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [13
 
 ]
 \openout4 = `nugget-scoring.vrb'.
@@ -1223,13 +1255,9 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 145.
 (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 171.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 252.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
-
-Overfull \vbox (0.78065pt too high) detected at line 171
- []
-
-[13
+ [14
 
 ]
 \openout4 = `nugget-scoring.vrb'.
@@ -1237,30 +1265,155 @@ Overfull \vbox (0.78065pt too high) detected at line 171
  (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 184.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 281.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [14
+ [15
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 302.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+
+[16
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 331.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [17
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 356.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [18
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+
+(./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 385.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [19
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 413.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [20
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 442.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+
+[21
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 455.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [22
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 484.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [23
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+
+(./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 508.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [24
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 518.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [25
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 529.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+
+[26
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 536.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [27
 
 ])
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
 Package pdftex.def Info: CMSlogo_white.png  used on input line 192.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [15
+ [28
 
 ]
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
 Package pdftex.def Info: CMSlogo_white.png  used on input line 220.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [16
+ [29
 
 ]
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
 Package pdftex.def Info: CMSlogo_white.png  used on input line 237.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [17
+ [30
 
 ])
 \tf@nav=\write7
@@ -1281,27 +1434,29 @@ Package rerunfilecheck Info: File `nugget-scoring.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 26166 strings out of 469438
- 513080 string characters out of 5468410
- 892996 words of memory out of 5000000
- 54207 multiletter control sequences out of 15000+600000
- 714873 words of font info for 101 fonts, out of 8000000 for 9000
+ 26327 strings out of 469438
+ 515534 string characters out of 5468410
+ 894686 words of memory out of 5000000
+ 54318 multiletter control sequences out of 15000+600000
+ 765747 words of font info for 141 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  133i,15n,126p,424b,738s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/typ
-e1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm/lmss12.pfb></usr
-/share/texmf/fonts/type1/public/lm/lmss8.pfb></usr/share/texmf/fonts/type1/publ
-ic/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/shar
-e/texmf/fonts/type1/public/lm/lmsso8.pfb></usr/share/texmf/fonts/type1/public/l
-m/lmsso9.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/tex
-mf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
-9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/font
-s/type1/public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb><
-/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on nugget-scoring.pdf (17 pages, 343334 bytes).
+</usr/share/texmf/fonts/type1/public/lm/lmmi6.pfb></usr/share/texmf/fonts/typ
+e1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi9.pfb></usr/
+share/texmf/fonts/type1/public/lm/lmss12.pfb></usr/share/texmf/fonts/type1/publ
+ic/lm/lmss8.pfb></usr/share/texmf/fonts/type1/public/lm/lmss9.pfb></usr/share/t
+exmf/fonts/type1/public/lm/lmssbx10.pfb></usr/share/texmf/fonts/type1/public/lm
+/lmsso8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsso9.pfb></usr/share/texm
+f/fonts/type1/public/lm/lmsy10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
+6.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy7.pfb></usr/share/texmf/fonts
+/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy9.pfb></
+usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/fonts/type1/
+public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on nugget-scoring.pdf (30 pages, 391441 bytes).
 PDF statistics:
- 248 PDF objects out of 1000 (max. 8388607)
- 159 compressed objects within 2 object streams
- 35 named destinations out of 1000 (max. 500000)
+ 376 PDF objects out of 1000 (max. 8388607)
+ 242 compressed objects within 3 object streams
+ 61 named destinations out of 1000 (max. 500000)
  48 words of extra memory for PDF output out of 10000 (max. 10000000)
 
