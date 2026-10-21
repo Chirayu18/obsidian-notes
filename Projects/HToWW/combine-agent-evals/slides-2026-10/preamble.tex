@@ -7,6 +7,8 @@
 \usepackage{booktabs,array}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{fancyvrb}
+\usepackage{upquote}
 \usetikzlibrary{arrows.meta,positioning}
 
 \newcommand{\pos}[1]{\textcolor{cmsblue}{#1}}
@@ -17,3 +19,7 @@
 
 \author[C. Gupta]{Chirayu Gupta}
 \institute{Vrije Universiteit Brussel}
+
+% evidence highlights in whole-answer frames (gen_answers.py)
+\newcommand{\hlkp}[2]{{\setlength{\fboxsep}{0.6pt}\colorbox{cmsblue!16}{\strut #2}}\textsuperscript{\color{cmsblue}\textbf{#1}}}
+\newcommand{\hlmn}[2]{{\setlength{\fboxsep}{0.6pt}\colorbox{cmsorange!28}{\strut #2}}\textsuperscript{\color{cmsorange}\textbf{#1}}}
