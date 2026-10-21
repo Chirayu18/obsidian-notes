@@ -66,7 +66,7 @@ KEY = {  # (config, question, rep) -> slide metadata
         spans=[("`realistic-counting-experiment.txt` is a counting datacard (no `shapes` line)", "kp1"),
                ("KeyError: \"Shape map has no entry for channel 'counting'\"", "kp3"),
                ("add the `-S` option to", "kp2"),
-               ("by inserting a `shapes * * FAKE`", "kp4")]),
+               ("by inserting a `shapes * *", "kp4")]),
     ("qwen-changed", "agent-shape-counting-1", 1): dict(
         scores=r"FC \con{0.48} \quad rubric 2 \quad nugget \con{fail}: 0/2 vital, mn1 present \quad \grey{(no tool calls)}",
         spans=[("These two datacard formats are fundamentally incompatible", "mn1"),

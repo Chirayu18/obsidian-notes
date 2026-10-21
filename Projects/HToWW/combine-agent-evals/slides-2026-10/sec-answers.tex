@@ -360,7 +360,7 @@ has no shape definitions. `combine` then dies during `text2workspace` with:
   ```
 **The fix** (per the [docs, "Combination of multiple datacards"](https://cms-analysis.github.io/HiggsAnalysis-
 CombinedLimit/latest/part2/settinguptheanalysis/#combination-of-multiple-datacards)): \hlkp{kp2}{add the `-S` option to}
-`combineCards.py`, which converts the counting card into an equivalent shape-based one by inserting a `shapes * *
+`combineCards.py`, which converts the counting card into an equivalent shape-based one \hlkp{kp4}{by inserting a `shapes * *}
 FAKE` line:
 ```
 combineCards.py -S shapes=simple-shapes-TH1.txt counting=realistic-counting-experiment.txt > combined.txt
