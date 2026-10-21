@@ -111,6 +111,79 @@
 \end{frame}
 
 % -------------------------------------------------------------------
+\begin{frame}[fragile]{Real answers, gmn: same rubric, different verdicts}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    {\small\textbf{GPT-5.6 luna, changed, run 2}}\\
+    {\footnotesize FC \con{0.22} \quad rubric 5 \quad nugget \pos{pass} (kp1--kp5 supported)}
+{\scriptsize
+\begin{verbatim}
+Use a gmN nuisance parameter. ...
+rate         10.0    6.0
+crStat   gmN  20   -    0.30
+- 20 is the observed control-region count.
+- 0.30 is the extrapolation factor.
+- yield is therefore 20 x 0.30 = 6.0.
+\end{verbatim}
+}
+    {\footnotesize\grey{Correct and complete: FC calls it 22\% of the gold.}}
+    \column{0.49\textwidth}
+    {\small\textbf{GPT-5.6 terra, vanilla, run 2}}\\
+    {\footnotesize FC 0.50 \quad rubric 5 \quad nugget \con{fail} (mn3 present)}
+{\scriptsize
+\begin{verbatim}
+Use a gamma-distributed (gmN) nuisance. ...
+bkg_stat  gmN  N  -  alpha
+For example, 25 CR events, alpha=0.12:
+rate          3.0  3.0
+bkg_stat      gmN  -    0.12
+\end{verbatim}
+}
+    {\footnotesize\grey{General rule right, but the example has \con{no $N$ after gmN}: this card is wrong. Rubric 5, FC higher than the correct answer.}}
+  \end{columns}
+  \vspace{2pt}
+  \grey{\footnotesize Excerpts of the final answers, unedited apart from ``...'' cuts and spacing.}
+\end{frame}
+
+% -------------------------------------------------------------------
+\begin{frame}[fragile]{Real answers, shape + counting card: diagnosis right vs wrong}
+  \vspace{2pt}
+  \begin{columns}[T]
+    \column{0.49\textwidth}
+    {\small\textbf{GPT-5.6 luna, changed, run 1}}\\
+    {\footnotesize FC 0.89 \quad rubric 5 \quad nugget \pos{pass} (all 4 points)}
+{\scriptsize
+\begin{verbatim}
+`counting` is a counting-only channel
+and has no `shapes` mapping. ... fails:
+KeyError: "Shape map has no entry for
+           channel 'counting'"
+... add  shapes * * FAKE  to the counting
+card, or use  combineCards.py -S
+I reproduced the failure ... and confirmed
+that the -S version runs through FitDiagnostics.
+\end{verbatim}
+}
+    \column{0.49\textwidth}
+    {\small\textbf{Qwen 3.8, changed, run 1} \grey{(no tool calls)}}\\
+    {\footnotesize FC \con{0.48} \quad rubric 2 \quad nugget \con{fail} (mn1 present, 0/2 vital)}
+{\scriptsize
+\begin{verbatim}
+These two datacard formats are
+fundamentally incompatible: ...
+combineCards.py can only combine datacards
+of the same type ...
+Convert the counting experiment to a shapes
+datacard by creating a ROOT file ...
+\end{verbatim}
+}
+    {\footnotesize\grey{Wrong: \texttt{-S} exists. FC still gives it about half credit (0.48).}}
+  \end{columns}
+  \takeaway{FC: correct answers 0.22--0.92, these two wrong ones 0.48 and 0.50. Nuggets separate them and name the reason.}
+\end{frame}
+
+% -------------------------------------------------------------------
 \begin{frame}{What the nuggets add: a named reason for every failure}
   \vspace{2pt}
   \begin{columns}[T]
