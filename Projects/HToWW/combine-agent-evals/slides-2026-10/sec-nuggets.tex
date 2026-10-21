@@ -141,44 +141,6 @@
 \end{frame}
 
 % -------------------------------------------------------------------
-\begin{frame}{What the nuggets add: a named reason for every failure}
-  \vspace{2pt}
-  \begin{columns}[T]
-    \column{0.49\textwidth}
-    \textbf{Caught, rubric said 5/5}
-    \small
-    \begin{itemize}
-      \item terra shipped config, gmn run 3: example card\\
-        \texttt{bkg\_stat gmN - 0.12} \con{(no $N$ after gmN)}\\
-        $\to$ \con{must\_not} ``inconsistent example'' present
-    \end{itemize}
-    \textbf{Diagnosed}
-    \begin{itemize}
-      \item killed luna runs (permission reject, path typo): miss both vital points, not ``low recall''
-      \item Qwen read-only, shape run 2: ``shape and counting cards cannot be combined'' $\to$ \con{must\_not}
-    \end{itemize}
-    \column{0.47\textwidth}
-    \textbf{Missed / wrong (judge limits)}
-    \small
-    \begin{itemize}
-      \item terra no-web config, gmn run 3: \texttt{rate 10.0} with \texttt{gmN 25 0.12} ($25\times0.12=3.0$): arithmetic not caught
-      \item 2 correct shape-counting answers failed: judge padded its quote with text not in the answer, quote check rejected it
-    \end{itemize}
-    \vspace{4pt}
-    \begin{center}
-    \begin{tabular}{lc}
-      \toprule
-      rubric-vs-nugget disagreements & 3/48 \\
-      \midrule
-      real error found by nuggets & 1 \\
-      judge false negative & 2 \\
-      \bottomrule
-    \end{tabular}
-    \end{center}
-  \end{columns}
-\end{frame}
-
-% -------------------------------------------------------------------
 \begin{frame}{References (scoring)}
   \footnotesize
   \begin{itemize}
