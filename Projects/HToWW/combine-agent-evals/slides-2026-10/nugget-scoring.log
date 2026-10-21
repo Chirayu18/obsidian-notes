@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  21 OCT 2026 17:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian) (preloaded format=pdflatex 2026.5.17)  21 OCT 2026 17:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -837,6 +837,22 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@lastruleclass=\count371
 \@thisrulewidth=\dimen329
 )
+(/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2025/07/28 4.6 verbatim text (tvz,hv)
+\FV@CodeLineNo=\count372
+\FV@InFile=\read3
+\FV@TabBox=\box85
+\c@FancyVerbLine=\count373
+\FV@StepNumber=\count374
+\FV@OutFile=\write5
+)
+(/usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
+tim
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+))
 (/usr/share/texlive/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.
 code.tex
 File: pgflibraryarrows.meta.code.tex 2025-08-29 v3.1.11a (3.1.11a)
@@ -856,7 +872,7 @@ File: t1lmss.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2025-10-09 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count372
+\l__color_backend_stack_int=\count375
 )
 (./nugget-scoring.aux)
 \openout1 = `nugget-scoring.aux'.
@@ -916,16 +932,16 @@ LaTeX Font Info:    ... okay on input line 6.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count373
+\scratchcounter=\count376
 \scratchdimen=\dimen334
-\scratchbox=\box85
-\nofMPsegments=\count374
-\nofMParguments=\count375
+\scratchbox=\box86
+\nofMPsegments=\count377
+\nofMParguments=\count378
 \everyMPshowfont=\toks52
-\MPscratchCnt=\count376
+\MPscratchCnt=\count379
 \MPscratchDim=\dimen335
-\MPnumerator=\count377
-\makeMPintoPDFobject=\count378
+\MPnumerator=\count380
+\makeMPintoPDFobject=\count381
 \everyMPtoPDFconversion=\toks53
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
@@ -939,8 +955,8 @@ e
 Package hyperref Info: Link coloring OFF on input line 6.
 
 (./nugget-scoring.out) (./nugget-scoring.out)
-\@outlinefile=\write5
-\openout5 = `nugget-scoring.out'.
+\@outlinefile=\write6
+\openout6 = `nugget-scoring.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
 (Font)                  OT1/lmr/m/n --> OT1/cmss/m/n on input line 6.
@@ -1106,14 +1122,114 @@ Package pdftex.def Info: CMSlogo_white.png  used on input line 111.
  [4
 
 ]
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 151.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [5
+
+] (./sec-answers.tex
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+5.
+
+(/usr/share/texmf/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 5.
+LaTeX Font Info:    Font shape `T1/lmss/m/it' in size <7> not available
+(Font)              Font shape `T1/lmss/m/sl' tried instead on input line 5.
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <5> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 5.
+)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 27.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [6
+
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}]
 \openout4 = `nugget-scoring.vrb'.
 
  (./nugget-scoring.vrb)
 File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 147.
+Package pdftex.def Info: CMSlogo_white.png  used on input line 44.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [5
+ [7
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 70.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [8
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+
+(./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 81.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [9
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 107.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+
+Overfull \vbox (0.78065pt too high) detected at line 107
+ []
+
+[10
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 119.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [11
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+ (./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 145.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [12
+
+]
+\openout4 = `nugget-scoring.vrb'.
+
+
+(./nugget-scoring.vrb)
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 171.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+
+Overfull \vbox (0.78065pt too high) detected at line 171
+ []
+
+[13
 
 ]
 \openout4 = `nugget-scoring.vrb'.
@@ -1123,39 +1239,38 @@ File: CMSlogo_white.png Graphic file (type png)
 <use CMSlogo_white.png>
 Package pdftex.def Info: CMSlogo_white.png  used on input line 184.
 (pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
-
-[6
-
-]
-File: CMSlogo_white.png Graphic file (type png)
-<use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 222.
-(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [7
-
-]
-File: CMSlogo_white.png Graphic file (type png)
-<use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 250.
-(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [8
-
-]
-File: CMSlogo_white.png Graphic file (type png)
-<use CMSlogo_white.png>
-Package pdftex.def Info: CMSlogo_white.png  used on input line 267.
-(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
- [9
+ [14
 
 ])
-\tf@nav=\write6
-\openout6 = `nugget-scoring.nav'.
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 192.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [15
 
-\tf@toc=\write7
-\openout7 = `nugget-scoring.toc'.
+]
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 220.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [16
 
-\tf@snm=\write8
-\openout8 = `nugget-scoring.snm'.
+]
+File: CMSlogo_white.png Graphic file (type png)
+<use CMSlogo_white.png>
+Package pdftex.def Info: CMSlogo_white.png  used on input line 237.
+(pdftex.def)             Requested size: 17.59988pt x 17.59993pt.
+ [17
+
+])
+\tf@nav=\write7
+\openout7 = `nugget-scoring.nav'.
+
+\tf@toc=\write8
+\openout8 = `nugget-scoring.toc'.
+
+\tf@snm=\write9
+\openout9 = `nugget-scoring.snm'.
 
  (./nugget-scoring.aux)
  ***********
@@ -1166,11 +1281,11 @@ Package rerunfilecheck Info: File `nugget-scoring.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 25591 strings out of 469438
- 503618 string characters out of 5468410
- 884560 words of memory out of 5000000
- 53684 multiletter control sequences out of 15000+600000
- 707324 words of font info for 92 fonts, out of 8000000 for 9000
+ 26166 strings out of 469438
+ 513080 string characters out of 5468410
+ 892996 words of memory out of 5000000
+ 54207 multiletter control sequences out of 15000+600000
+ 714873 words of font info for 101 fonts, out of 8000000 for 9000
  59 hyphenation exceptions out of 8191
  133i,15n,126p,424b,738s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/lm/lmmi8.pfb></usr/share/texmf/fonts/typ
@@ -1179,13 +1294,14 @@ e1/public/lm/lmmi9.pfb></usr/share/texmf/fonts/type1/public/lm/lmss12.pfb></usr
 ic/lm/lmss9.pfb></usr/share/texmf/fonts/type1/public/lm/lmssbx10.pfb></usr/shar
 e/texmf/fonts/type1/public/lm/lmsso8.pfb></usr/share/texmf/fonts/type1/public/l
 m/lmsso9.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/tex
-mf/fonts/type1/public/lm/lmsy9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt
-8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on nugget-scoring.pdf (9 pages, 292181 bytes).
+mf/fonts/type1/public/lm/lmsy8.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy
+9.pfb></usr/share/texmf/fonts/type1/public/lm/lmtk10.pfb></usr/share/texmf/font
+s/type1/public/lm/lmtt8.pfb></usr/share/texmf/fonts/type1/public/lm/lmtt9.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb>
+Output written on nugget-scoring.pdf (17 pages, 343334 bytes).
 PDF statistics:
- 165 PDF objects out of 1000 (max. 8388607)
- 105 compressed objects within 2 object streams
- 19 named destinations out of 1000 (max. 500000)
+ 248 PDF objects out of 1000 (max. 8388607)
+ 159 compressed objects within 2 object streams
+ 35 named destinations out of 1000 (max. 500000)
  48 words of extra memory for PDF output out of 10000 (max. 10000000)
 
