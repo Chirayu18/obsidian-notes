@@ -82,3 +82,50 @@ This is most likely what Galli means by "AI Gateway Agents": the combine MCP ser
 * **30, RooAgent:** ROOT analysis agent exposed as an MCP server for Claude/Codex CLI.
 * **27, Agent-driven HEP analysis (LHCb):** harness changes are run against a golden benchmark and discarded if they move observables away.
 * **Discussion sessions (22 Oct):** shared tools (MCPs, KBs, harnesses) and agent benchmarking. Worth checking the minutes once posted.
+
+## 4. Deeper pass (talks 33, 57, 58, 35, 62, 27, 52, Archi paper arXiv:2606.04755 and repos)
+
+Repos read: archi-physics/archi (`archi eval qa`), mitdbg/akmon (OKG bench), BenGalewsky/ai-agentic-analysis. Talk 57's slides are images, so they were read by OCR and their numbers are rough.
+
+**How others build the question set**
+* **Archi `qa-dataset-v2`** (strict, unknown fields rejected):
+  * per question: `id`, `question`, `time_sensitive`, `answer_mode` (direct_answer / needs_information / escalate / refuse), `answer` (hidden from the agent);
+  * `expected_atoms` [{id, text, required}];
+  * for live questions, an `oracle` (an MCP call whose result is hashed, re-run before and after a run; attempts are not scored if the state changed).
+* **CRAB gold set** (talk 57):
+  * required and optional atoms with quoted sources, a `deciding_atom`, and a difficulty tier (one lookup / one live system / chained / operator-only);
+  * status (active, disabled, superseded), semantic versioning;
+  * atom lint and quote checks in CI, and a leakage audit (gold forum threads removed from the indexed corpus).
+
+**Labels and scores**
+* **Labels:** entailed / not_mentioned / contradicted (plus "unjudgeable"). If an answer both supports and contradicts an atom, it counts as contradicted. "Could not find it" counts as not mentioned, never wrong.
+* **Archi scoring:** +1 / 0 / -1 per atom; pass = all required atoms entailed.
+* **Failure states kept apart:** `execution_failed` counts as a failed attempt; `evaluation_failed` (judge broke) is excluded and reported.
+* **WisDQM (58):** "Recall alone hides confident wrong answers" and "judge choice shifts scores by up to 15 points". Atoms contradicted by several models pointed to a documentation inconsistency.
+
+**Comparisons**
+* **akmon:** paired per-question deltas, seeded bootstrap (10k resamples). It prints "INSUFFICIENT EVIDENCE" when the interval contains 0, and refuses below 10 pairs.
+* **Comparability gate on identity fields:** model, dataset, prompt digest, budgets, corpus, judge.
+* **Cartography (52):** keep a new version only if wins beat regressions in a sign test, with a held-out set.
+* **Change one pillar at a time** (store, model, framework, tools) against a fixed baseline. The OKG plenary uses a plain shell (grep) agent as the baseline.
+
+**Diagnostics**
+* Per-tool error rates and causes (bad arguments, invented methods, hung calls, outputs over 1 MB).
+* Peak context per answer, cost per answer.
+* A gap mode and an owner for every missed atom: retrieval_miss, corpus/doc gap, gold issue, tool gap, ...
+* **RooAgent:** numeric answers are checked against an expected value computed once by calling the tools without an LLM, within a tolerance.
+
+**Ranked for us** (S = small, M = medium effort):
+
+| # | What | Effort | Needs LLM |
+|---|---|---|---|
+| 1 | Three-way labels with contradicted, and a wrong-fact rate | S | same calls |
+| 2 | Status per attempt (answer / execution_failed / evaluation_failed); failures count 0; technical failure rate | S | no |
+| 3 | Paired bootstrap and sign test for comparing configs; refuse when the interval includes 0 | S | no |
+| 4 | Run manifest with identity fields and hashes | S-M | no |
+| 5 | Tool-error taxonomy: loop, oversize output, corpus bypass, timeout; tokens and peak context | M | no |
+| 6 | Nugget-file fields (`quote_from_source`, tier, `answer_mode`, status, version) plus a lint that checks quotes against the docs | S-M | no |
+| 7 | Execution oracle: Combine run once without an LLM; numbers checked within a tolerance and against the trace | M | no |
+| 8 | "Not found" is never wrong; `answer_mode` for abstain questions | S | no |
+| 9 | Gap mode and owner per missed vital point | M | mostly no |
+| 10 | Second judge with kappa, disagreement-first review, and a grep baseline arm | S+M | yes |
