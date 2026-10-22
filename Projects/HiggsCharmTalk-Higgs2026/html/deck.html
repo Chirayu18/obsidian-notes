@@ -86,12 +86,12 @@
     <h2>Charm tagging</h2>
     <p class="sub">Finding c jets between b and light jets</p>
   </header>
-  <p class="ref">CMS-DP-2025-081 · arXiv:2202.03772</p>
+  <p class="ref">CMS-DP-2025-081</p>
   <div class="cols" style="grid-template-columns: 680px 1fr; gap:24px">
     <div>
       <h3>Charm signature</h3>
       <div class="box row" style="padding:10px 16px">
-        <div style="font-size:21px">
+        <div style="font-size:19px">
           c-hadron mass and lifetime lie <b>between light and b</b>: a secondary vertex (SV) like b jets, but closer to the primary vertex, so <span class="hl">easily mistaken for light jets</span>
         </div>
         <svg class="jet" viewBox="0 0 200 120" aria-hidden="true" style="width:160px">
@@ -107,17 +107,27 @@
           <text x="150" y="16" font-size="15" fill="#0b4f6c" font-weight="700">c jet</text>
         </svg>
       </div>
-      <h3 style="margin-top:26px">State of the art in Run 3: UParT</h3>
-      <div class="box" style="padding:14px 22px">
-        <ul style="margin:0; padding-left:24px; font-size:22px; line-height:1.4">
-          <li><b>Transformer</b> on the jet's particles, with pairwise particle-interaction features (ParT architecture)</li>
-          <li><b>UParT v2</b>: lowest b and light mis-identification at fixed c-jet efficiency (right)</li>
-          <li>The Run 2 results in this talk use the previous generation (below)</li>
-        </ul>
+      <h3 style="margin-top:18px">Algorithm evolution at CMS</h3>
+      <div class="three" style="margin-top:16px">
+        <div class="obox algobox2"><span class="otitle">Likelihood / BDT<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="1.6" fill="none"><path d="M15,4 L7,13 M15,4 L23,13 M7,13 L3,21 M7,13 L11,21"/></g><g fill="#0b4f6c"><circle cx="15" cy="4" r="2.6"/><circle cx="7" cy="13" r="2.6"/><circle cx="23" cy="13" r="2.6"/><circle cx="3" cy="21" r="2.2"/><circle cx="11" cy="21" r="2.2"/></g></svg></span>
+          <div class="arow2"><b>JP</b><span>track impact-parameter likelihood</span></div>
+          <div class="arow2"><b>CSV, CSVv2</b><span>likelihood ratio → MLP</span></div>
+          <div class="arow2"><b>Run 2 c tagger</b><span>BDT: CvsL, CvsB</span></div>
+        </div>
+        <div class="obox algobox2"><span class="otitle">Deep NN<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="0.8" opacity=".7"><path d="M4,5 L15,4 M4,5 L15,12 M4,5 L15,20 M4,12 L15,4 M4,12 L15,12 M4,12 L15,20 M4,19 L15,4 M4,19 L15,12 M4,19 L15,20 M15,4 L26,8 M15,12 L26,8 M15,20 L26,8 M15,4 L26,16 M15,12 L26,16 M15,20 L26,16"/></g><g fill="#0b4f6c"><circle cx="4" cy="5" r="2.2"/><circle cx="4" cy="12" r="2.2"/><circle cx="4" cy="19" r="2.2"/><circle cx="15" cy="4" r="2.2"/><circle cx="15" cy="12" r="2.2"/><circle cx="15" cy="20" r="2.2"/><circle cx="26" cy="8" r="2.2"/><circle cx="26" cy="16" r="2.2"/></g></svg></span>
+          <div class="arow2"><b>DeepCSV</b><span>dense DNN (4 × 100)</span></div>
+          <div class="arow2"><b>DeepJet</b><span>conv + LSTM on constituents, SVs</span></div>
+        </div>
+        <div class="obox algobox2"><span class="otitle">Particle cloud<svg viewBox="0 0 30 24"><g stroke="#0b4f6c" stroke-width="1.3"><path d="M5,6 L14,3 L25,7 L21,18 L9,20 L5,6 M14,3 L15,12 L21,18 M9,20 L15,12 L5,6 M25,7 L15,12"/></g><g fill="#0b4f6c"><circle cx="5" cy="6" r="2.4"/><circle cx="14" cy="3" r="2.4"/><circle cx="25" cy="7" r="2.4"/><circle cx="21" cy="18" r="2.4"/><circle cx="9" cy="20" r="2.4"/><circle cx="15" cy="12" r="2.6" fill="#e07a1f"/></g></svg><svg viewBox="0 0 30 24"><rect x="4" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="10" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.3"/><rect x="16" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.6"/><rect x="22" y="1" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="4" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.3"/><rect x="10" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="16" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="22" y="7" width="5" height="5" fill="#0b4f6c" opacity="0.5"/><rect x="4" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.6"/><rect x="10" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="16" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.9"/><rect x="22" y="13" width="5" height="5" fill="#0b4f6c" opacity="0.4"/><rect x="4" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.2"/><rect x="10" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.5"/><rect x="16" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.4"/><rect x="22" y="19" width="5" height="5" fill="#0b4f6c" opacity="0.9"/></svg></span>
+          <div class="arow2"><b>ParticleNet</b><span>dynamic graph CNN</span></div>
+          <div class="arow2"><b>UParT</b><span>transformer + pairwise features</span></div>
+        </div>
       </div>
+      <div class="timeline" id="tl"></div>
+      <p class="note center">Run 1 → Run 3: likelihoods and trees → dense nets → graphs and attention</p>
     </div>
     <div class="figcol">
-      <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:450px" alt="c-tagging ROC curves"></div>
+      <div class="fig" id="roc"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:430px" alt="c-tagging ROC curves"></div>
       <p class="cap">t<span class="ov">t</span> simulation, 13.6 TeV · solid: c vs b, dashed: c vs light</p>
     </div>
   </div>
@@ -132,6 +142,7 @@
   <!-- tips sit on the blue (UParT v2) curves, located by colour in the PNG -->
   <i class="arrow" data-from="rocnote:s" data-to="roc@0.38,0.506" data-bend="0.25"></i>
   <i class="arrow" data-from="rocnote:se" data-to="roc@0.425,0.385" data-bend="-0.3"></i>
+  <i class="arrow" data-from="tl:w" data-to="tl:e" data-bend="0"></i>
 </section>
 
 <!-- ================================================================ 4 -->
@@ -154,7 +165,7 @@
         <div class="refs">arXiv:2503.08797 · arXiv:2508.14988</div></div>
       <div class="card"><span class="tag">slide 15</span>
         <h4>Indirect: Higgs rates and width</h4>
-        <div class="small">on-shell and <span class="bo">new</span> off-shell H → ZZ → 4ℓ; range depends on assumptions</div>
+        <div class="small">on-shell and <span class="newtag">new</span> off-shell H → ZZ → 4ℓ; range depends on assumptions</div>
         <div class="num">κ<sub>c</sub> ∈ [−3.3, 2.8] … [−8.6, 7.5]</div>
         <div class="refs">arXiv:2502.05665 · arXiv:2607.23352</div></div>
       <div class="card"><span class="tag">slide 16</span>
@@ -164,7 +175,7 @@
         <div class="refs">arXiv:2411.15000</div></div>
     </div>
   </div>
-  <p class="xs muted" style="position:absolute; left:70px; right:46px; bottom:62px; margin:0; text-align:center"><span class="bo">new</span> = released in 2026 · μ = σ𝓑/(σ𝓑)<sub>SM</sub> · Γ<sub>H</sub> = total Higgs width · μ limits and κ<sub>c</sub> intervals at 95% CL, observed (expected)</p>
+  <p class="xs muted" style="position:absolute; left:70px; right:46px; bottom:62px; margin:0; text-align:center"><span class="newtag">new</span> = released in 2026 · μ = σ𝓑/(σ𝓑)<sub>SM</sub> · Γ<sub>H</sub> = total Higgs width · μ limits and κ<sub>c</sub> intervals at 95% CL, observed (expected)</p>
   <p class="takeaway" style="font-size:20px">All κ<sub>c</sub> results: Run 2 (13 TeV, up to 138 fb<sup>−1</sup>) · Run 3 so far: better triggers (slide 17)</p>
 </section>
 
@@ -329,25 +340,30 @@
     <p class="sub">Signal, control and validation regions from one classifier</p>
   </header>
   <p class="ref">arXiv:2509.22535</p>
-  <div style="position:absolute; left:70px; right:46px; top:136px;">
-    <div class="box" style="padding:16px 22px; font-size:25px"><b>Event classifier: ParT</b> (transformer) on jets, leptons and p<sub>T</sub><sup>miss</sup>: one score per process (4 signals, <span style="white-space:nowrap">5 t<span class="ov">t</span>+jets,</span> + QCD in 0ℓ)</div>
-    <p style="margin:30px 0 10px; font-size:24px"><b>D<sub>t<span class="ov">t</span>X</sub></b> = sum of the four signal scores, sorts every event into a region:</p>
-    <div class="dstrip big">
-      <div style="background:#c7d3da; color:var(--ink)">rejected<small>D &lt; 0.4</small></div>
-      <div style="background:#5f93a8">Validation<small>0.4–0.6</small></div>
-      <div style="background:var(--teal)">5 control regions<small>0.6–0.85</small></div>
-      <div style="background:var(--orange)">4 signal regions<small>D &gt; 0.85</small></div>
+  <div class="cols" style="grid-template-columns: 560px 1fr; gap: 26px; align-items:center;">
+    <div class="stack" style="font-size:19px">
+      <div class="box" style="padding:12px 18px"><b>Event classifier: ParT</b> (transformer) on jets, leptons and p<sub>T</sub><sup>miss</sup>: one score per process (4 signals, 5 t<span class="ov">t</span>+jets, + QCD in 0ℓ)</div>
+      <div>
+        <p style="margin:0 0 6px">D<sub>t<span class="ov">t</span>X</sub> = sum of the four signal scores</p>
+        <div class="dstrip">
+          <div style="background:#c7d3da; color:var(--ink)">rejected<small>&lt; 0.4</small></div>
+          <div style="background:#5f93a8">Validation<small>0.4–0.6</small></div>
+          <div style="background:var(--teal)">5 control regions<small>0.6–0.85</small></div>
+          <div style="background:var(--orange)">4 SRs<small>&gt; 0.85</small></div>
+        </div>
+      </div>
+      <ul class="tight" style="margin:0">
+        <li><b>SRs</b>: t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span>; c-enriched SRs need ≥ 2 c jets</li>
+        <li><b>CRs</b>: one per t<span class="ov">t</span>+jets flavour; their normalisations float in the fit</li>
+        <li><b>Validation</b>: same structure, signal-depleted: good agreement <span class="muted small" style="white-space:nowrap">→ backup</span></li>
+        <li><b>QCD</b> (0ℓ): a classifier cut leaves &lt; 1% of t<span class="ov">t</span>+jets</li>
+        <li><b>Fit</b>: ParT score in all regions of the 3 channels at once</li>
+      </ul>
     </div>
-    <div class="dstrip-notes">
-      <div>least signal-like events</div>
-      <div><b>signal-depleted</b>, same SR/CR structure: good agreement <span class="muted" style="white-space:nowrap">→ backup</span></div>
-      <div>one per t<span class="ov">t</span>+jets flavour: <b>normalisations float</b> in the fit</div>
-      <div>t<span class="ov">t</span>H / t<span class="ov">t</span>Z × c<span class="ov">c</span> / b<span class="ov">b</span>; c-enriched SRs need <b>≥ 2 c jets</b></div>
+    <div class="figcol">
+      <img src="img/HIG-24-018_Figure_005.png" style="width:570px" alt="categorisation tree">
+      <p class="cap">Categorisation of events with D<sub>t<span class="ov">t</span>X</sub> &gt; 0.6 (same tree in the VR, 0.4–0.6)</p>
     </div>
-    <ul style="margin:30px 0 0; padding-left:26px; font-size:25px; line-height:1.5">
-      <li><b>QCD multijet</b> (0ℓ): a cut on the QCD score leaves &lt; 1% of t<span class="ov">t</span>+jets</li>
-      <li><b>Fit</b>: ParT score in all regions of the three channels at once</li>
-    </ul>
   </div>
 </section>
 
@@ -515,8 +531,8 @@
       <table class="t" style="font-size:19px">
         <tr><th>κ<sub>c</sub> at 95% CL</th><th class="r">observed</th><th class="r">expected</th></tr>
         <tr><td>On-shell, |κ<sub>Z</sub> = κ<sub>W</sub>| ≤ 1</td><td class="r">[−3.7, 3.2]</td><td class="r muted">[−3.8, 3.3]</td></tr>
-        <tr class="hi"><td><span class="bo">new</span> On + off-shell, |κ<sub>V</sub>| ≤ 1</td><td class="r"><b>[−3.3, 2.8]</b></td><td class="r muted">[−3.5, 2.9]</td></tr>
-        <tr><td><span class="bo">new</span> On + off-shell, κ<sub>Z</sub>, κ<sub>W</sub> free</td><td class="r">[−8.6, 7.5]</td><td class="r muted">[−9.6, 8.3]</td></tr>
+        <tr class="hi"><td><span class="newtag">new</span> On + off-shell, |κ<sub>V</sub>| ≤ 1</td><td class="r"><b>[−3.3, 2.8]</b></td><td class="r muted">[−3.5, 2.9]</td></tr>
+        <tr><td><span class="newtag">new</span> On + off-shell, κ<sub>Z</sub>, κ<sub>W</sub> free</td><td class="r">[−8.6, 7.5]</td><td class="r muted">[−9.6, 8.3]</td></tr>
       </table>
       <p class="xs muted" style="margin-top:6px">Higgs width: F. Errico (Tue) · p<sub>T</sub><sup>H</sup> spectrum → backup</p>
     </div>
@@ -567,7 +583,7 @@
     <div class="figcol">
       <h3>Run 2: t<span class="ov">t</span>c<span class="ov">c</span> cross section measured</h3>
       <img src="img/PAS-TOP-26-003_Figure_009.png" style="height:290px" alt="ttbb ttcc cross sections">
-      <p class="cap">CMS-PAS-TOP-26-003 <span class="bo">new</span>, 138 fb<sup>−1</sup>: σ<sub>t<span class="ov">t</span>c<span class="ov">c</span></sub> = 680 ± 40 (stat) <sup>+130</sup><sub>−100</sub> (syst) fb</p>
+      <p class="cap">CMS-PAS-TOP-26-003 <span class="newtag">new</span>, 138 fb<sup>−1</sup>: σ<sub>t<span class="ov">t</span>c<span class="ov">c</span></sub> = 680 ± 40 (stat) <sup>+130</sup><sub>−100</sub> (syst) fb</p>
     </div>
   </div>
   <div class="cards r3cards" style="position:absolute; left:70px; right:46px; top:516px; grid-template-columns: repeat(4, 1fr); gap:16px">
@@ -583,7 +599,7 @@
 <section class="slide" data-n="18">
   <header>
     <h2>HL-LHC prospects</h2>
-    <p class="sub">What the projection assumes, and why we want to beat it</p>
+    <p class="sub">What the projection assumes</p>
   </header>
   <p class="ref">arXiv:2504.00672</p>
   <div class="cols" style="grid-template-columns: 640px 1fr;">
@@ -599,7 +615,7 @@
         <li><b>Expected |κ<sub>c</sub>| &lt; 1.5</b>, 30% better than the previous projection</li>
         <li>VH(H → c<span class="ov">c</span>): ≈ 1.6σ, still no observation</li>
       </ul>
-      <div class="obox" style="margin-top:34px; font-size:22px"><span class="otitle" style="font-size:18px">Our goal: beat it</span>The report calls its projections <b>conservative targets</b>. Adding t<span class="ov">t</span>H and other channels, better taggers and analysis methods can push further</div>
+      <p class="bigq">Can we do better?</p>
     </div>
     <div>
       <h3 class="center">Direct searches: allowed |κ<sub>c</sub>|</h3>
