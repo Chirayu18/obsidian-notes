@@ -237,3 +237,7 @@ ol.steps { font-size: 20px; }
 .slide[data-n="19"] .card .num { font-size: 30px; }
 .slide[data-n="19"] .card h4 { font-size: 23px; }
 .bigq { margin: 40px 0 0; font-size: 40px; font-weight: 800; color: var(--orange); text-align: center; }
+.s9 .dstrip { height: 60px; font-size: 18px; }
+.s9 .dstrip small { font-size: 14.5px; }
+.s9 ul.tight { font-size: 21px; line-height: 1.4; }
+.s9 ul.tight li { margin: 5px 0; }
