@@ -245,3 +245,4 @@ ol.steps { font-size: 20px; }
 .divider .divsub { position: absolute; left: 70px; top: 380px; margin: 0; font-size: 26px; opacity: .9; }
 .ph { color: #9aa7ad !important; font-style: italic; }
 .phfig { height: 420px; border: 3px dashed #c7d3da; border-radius: 16px; display: flex; align-items: center; justify-content: center; color: #9aa7ad; font-size: 22px; font-style: italic; }
+a { color: inherit; text-decoration: none; }
