@@ -241,3 +241,5 @@ ol.steps { font-size: 20px; }
 .s9 .dstrip small { font-size: 14.5px; }
 .s9 ul.tight { font-size: 21px; line-height: 1.4; }
 .s9 ul.tight li { margin: 5px 0; }
+.altnote { position: absolute; right: 46px; top: 52px; background: #b03a2e; color: #fff; font-size: 14px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 4px 10px; border-radius: 6px; z-index: 5; }
+.divider .divsub { position: absolute; left: 70px; top: 380px; margin: 0; font-size: 26px; opacity: .9; }

@@ -340,6 +340,7 @@
     <p class="sub">Signal, control and validation regions from one classifier</p>
   </header>
   <p class="ref">arXiv:2509.22535</p>
+  <span class="altnote">dropped if the new result is public</span>
   <div class="cols" style="grid-template-columns: 620px 1fr; gap: 22px; align-items:center;">
     <div class="stack s9" style="font-size:22px">
       <div class="box" style="padding:12px 18px"><b>Event classifier: ParT</b> (transformer) on jets, leptons and p<sub>T</sub><sup>miss</sup>: one score per process (4 signals, 5 t<span class="ov">t</span>+jets, + QCD in 0ℓ)</div>
@@ -662,6 +663,63 @@
     </div>
   </div>
   <p class="takeaway" style="font-size:26px">Thank you!</p>
+</section>
+
+<!-- ================================================================ if the results are public -->
+<section class="slide divider"><div class="line"></div><h1>If the results are public</h1><p class="divsub">Revised slides, used only if the new result is approved in time</p></section>
+
+<section class="slide" data-n="3′">
+  <header>
+    <h2>Charm tagging</h2>
+    <p class="sub">Finding c jets between b and light jets</p>
+  </header>
+  <span class="altnote">replaces slide 3 if the new result is public</span>
+  <p class="ref">CMS-DP-2025-081 · arXiv:2202.03772</p>
+  <div class="cols" style="grid-template-columns: 680px 1fr; gap:24px">
+    <div>
+      <h3>Charm signature</h3>
+      <div class="box row" style="padding:10px 16px">
+        <div style="font-size:21px">
+          c-hadron mass and lifetime lie <b>between light and b</b>: a secondary vertex (SV) like b jets, but closer to the primary vertex, so <span class="hl">easily mistaken for light jets</span>
+        </div>
+        <svg class="jet" viewBox="0 0 200 120" aria-hidden="true" style="width:160px">
+          <path d="M10,85 L190,20 L195,95 Z" fill="#dbe9ef"/>
+          <g stroke="#0b4f6c" stroke-width="2.4" fill="none">
+            <path d="M10,85 L95,58" stroke-dasharray="6 4"/>
+            <path d="M95,58 L185,28"/><path d="M95,58 L190,48"/><path d="M95,58 L190,68"/>
+            <path d="M10,85 L190,86"/><path d="M10,85 L170,112"/>
+          </g>
+          <circle cx="10" cy="85" r="6" fill="#0b4f6c"/><circle cx="95" cy="58" r="6" fill="#e07a1f"/>
+          <text x="2" y="110" font-size="15" fill="#0b4f6c" font-weight="700">PV</text>
+          <text x="80" y="44" font-size="15" fill="#e07a1f" font-weight="700">SV</text>
+          <text x="150" y="16" font-size="15" fill="#0b4f6c" font-weight="700">c jet</text>
+        </svg>
+      </div>
+      <h3 style="margin-top:26px">State of the art in Run 3: UParT</h3>
+      <div class="box" style="padding:14px 22px">
+        <ul style="margin:0; padding-left:24px; font-size:22px; line-height:1.4">
+          <li><b>Transformer</b> on the jet's particles, with pairwise particle-interaction features (ParT architecture)</li>
+          <li><b>UParT v2</b>: lowest b and light mis-identification at fixed c-jet efficiency (right)</li>
+          <li>The Run 2 results in this talk use the previous generation (below)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="figcol">
+      <div class="fig" id="roc2"><img src="img/DP-2025-081_sl14_roc_c_tagging.png" style="height:450px" alt="c-tagging ROC curves"></div>
+      <p class="cap">t<span class="ov">t</span> simulation, 13.6 TeV · solid: c vs b, dashed: c vs light</p>
+    </div>
+  </div>
+  <div class="footer-pills">
+    <span class="lbl">In this talk</span>
+    <span class="pill">DeepJet · VH resolved, cH</span>
+    <span class="pill">ParticleNet · VH merged, t<span class="ov">t</span>H</span>
+    <span class="pill">DeepDoubleX · boosted H</span>
+  </div>
+  <p class="note" id="rocnote2" style="position:absolute; left:858px; top:205px;">UParT v2 (blue):<br>lowest mis-ID</p>
+  <svg class="arrows"></svg>
+  <!-- tips sit on the blue (UParT v2) curves, located by colour in the PNG -->
+  <i class="arrow" data-from="rocnote2:s" data-to="roc2@0.38,0.506" data-bend="0.25"></i>
+  <i class="arrow" data-from="rocnote2:se" data-to="roc2@0.425,0.385" data-bend="-0.3"></i>
 </section>
 
 <!-- ================================================================ backup -->
