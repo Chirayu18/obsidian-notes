@@ -8,7 +8,7 @@ s = open(os.path.join(HERE, "deck.html")).read()
 a = s.index('<section class="slide divider"><div class="line"></div><h1>If the results are public</h1>')
 b = s.index('<section class="slide divider"><div class="line"></div><h1>Backup</h1>')
 s = s[:a] + s[b:]
-s = re.sub(r'\n\s*<span class="altnote">[^<]*</span>', '', s)
+s = re.sub(r'\n[ \t]*<span class="altnote">[^\n]*', '', s)
 # likely questions slide
 a = s.index('<header><h2>Likely questions</h2></header>'); a = s.rindex('<section', 0, a)
 b = s.index('</section>', a) + len('</section>')
