@@ -306,3 +306,46 @@ Open, but not blocking:
 
 CPU reference for validation: `SiPixelDigiMorphing` with `nrows=672, ncols=432,
 nrocs=8` (432/8 = 54 ≤ 62) works for duals; quads need `nrows=1344`.
+
+## Shared memory budget for the sparse design (computed 2026-10-23)
+
+From `OneToManyAssoc.h` (CMSSW_16_1_0_pre4): `off` is `uint32` × (NBINS+1),
+`content` is `uint16` × SIZE. Phase 2 uses NBINS = 1000 and SIZE = 6000 + F.
+
+| Item | Bytes, today | Bytes with F = 2400 |
+|---|---|---|
+| hist `off` (1001 × 4) | 4,004 | 4,004 |
+| hist `content` (SIZE × 2) | 12,000 | 16,800 |
+| `ws` (warpSize × 4, 64 on AMD) | 128–256 | 128–256 |
+| scalars (lastPixel, fakePixels, foundClusters, …) | ~16 | ~16 |
+| **total** | **~16.2 KB** | **~21.0 KB** of 48 KB |
+
+The sparse morphing adds no shared arrays. Fakes live in global memory (`fakes_view`),
+and the histogram is reused: fill with real pixels, morph, then zero and refill with
+real + fakes. Caveat: raising `maxPixInModuleForMorphing` grows the histogram even when
+morphing is off (16 to 21 KB). That is a small occupancy cost; measure it, and if it
+matters, template `FindClus` on a morphing flag.
+
+## Decision 2026-10-23: same bit trick, on column strips (supersedes "option A first")
+
+Keep the Run-3 two-plane, 1-bit bitmap and its shift/OR dilation and shift/AND erosion
+unchanged, but run it on **one column strip of the module at a time** instead of the
+whole module. Words stay 32 consecutive rows, as in Phase 1.
+
+Strip = 32 interior columns + 2 halo columns on each side (36 columns). Two halo
+columns are needed because erosion at an interior edge column looks at the dilated
+value of the next column, which depends on the column after that.
+
+| Module | Words per column | Words per strip | Image + temp | Total with hist (F=2400) |
+|---|---|---|---|---|
+| dual 672×432 | 21 | 756 | 6.0 KB | ~27 KB |
+| quad 1344×432 | 42 | 1512 | 12.1 KB | ~33 KB |
+
+Per module: 432/32 = 14 strips. Skip a strip if the column histogram has no pixel in
+its columns ±1 (free from `hist.off`). Load the strip from the histogram, which is
+contiguous by column. Emit fakes only for interior columns. Halo columns outside the
+module must be forced empty after dilation, to keep the Phase-1 edge rule (absent in y).
+The sparse histogram lookup (option A) stays the fallback if strips turn out slow.
+
+Global fakes buffer, indexed by morphing-module slot: 216 TBPX L1 modules × 2400 ×
+~24 B ≈ 12 MB, instead of ~230 MB with per-block indexing.
