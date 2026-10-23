@@ -263,3 +263,46 @@ due end of 2026 (Musich, slide 11).
 
 Talk PDFs are in `References/DigiMorphing/tkdpg-workshop-2026-10/`, not committed
 because the event is CERN-restricted.
+
+## Update 2026-10-23: Friday talks, verdict: buildable now
+
+**Mersi, "Dataformats" (16 Oct).**
+- Slide 14: the CROC addresses a 50×50 µm bump grid; sensors are 25×100 µm. Fixed
+  mapping, same for planar and 3D: `r_sensor = 2·r_chip + (c_chip mod 2)`,
+  `c_sensor = floor(c_chip / 2)`. Neighbours in chip space are not neighbours on the
+  sensor, so **morphing must run in sensor coordinates**. That is what the clusterizer
+  already gets (`xx`/`yy` in `SiPixelDigisSoA`); a future RAW unpacker has to convert
+  before clustering anyway.
+- Slide 14: big pixels are 25×225 along the dual seam, and for the quad also 112×100
+  and 112×225 at the centre. Bartosik's T40 XML says 87.5 µm in x, not 112. The
+  difference does not matter for index-space morphing, but someone should reconcile it
+  for the CPE.
+- Slide 16: data reaches the HLT as chip index (0 to 3), row/column and ToT. Ordering
+  and duplicates are not specified.
+- Slide 25: "What should digis represent?" is still an open question. It does not block
+  morphing, which acts after the digi to sensor-coordinate step.
+- Slides 12 and 13: in quads, chips 2 and 3 are rotated 180° relative to 0 and 1. That
+  only matters for the unpacker, not for morphing in module coordinates.
+
+**Schulz/Grutta, "HLT Tracking" (16 Oct).** Slide 4 lists Run-3 lessons: 2025 "broken
+clusters due to degraded charge collection → pixel digi morphing", and the Phase-2
+takeaway is to build the chain with failure scenarios in mind. Slide 23 (backup):
+`hltPhase2SiPixelClustersSoA` feeds everything downstream (CA, legacy clusters for
+mkFit and CKF, LST seeds), so morphing there reaches all of HLT tracking.
+
+**Verdict.** Every input the kernel needs is known: the 48 KB static budget (Bocci),
+sensor dimensions 672×216 per ROC (T40 XML), sensor-coordinate digis, and occupancy
+(about 240 per module on average, about 580 in L1). The sparse design does not depend
+on digi order. Nothing blocks building it.
+
+Open, but not blocking:
+1. Which module types to enable. Start with type 1 (TBPX L1, 3D), default off, and
+   decide from a PU200 study.
+2. Duplicate pixels: unknown for Phase-2 data. Add a cheap duplicate count under
+   `GPU_DEBUG` first.
+3. The edge rule (module edge counts as present in x, absent in y): keep the Phase-1
+   behaviour unless the L1 study says otherwise.
+4. The big-pixel pitch mismatch (87.5 vs 112 µm): pass it to the geometry people.
+
+CPU reference for validation: `SiPixelDigiMorphing` with `nrows=672, ncols=432,
+nrocs=8` (432/8 = 54 ≤ 62) works for duals; quads need `nrows=1344`.
