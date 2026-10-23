@@ -349,3 +349,21 @@ The sparse histogram lookup (option A) stays the fallback if strips turn out slo
 
 Global fakes buffer, indexed by morphing-module slot: 216 TBPX L1 modules × 2400 ×
 ~24 B ≈ 12 MB, instead of ~230 MB with per-block indexing.
+
+## Build status 2026-10-23 (branch `phase2-digimorphing`)
+
+Area: `/eos/user/c/cgupta/phase2morph/CMSSW_20_1_X_2026-10-20-2300` (lxplus966), not committed.
+Strip morphing is implemented and **matches a whole-module host reference cluster for cluster on CPU (serial)
+and on a Tesla T4 (CUDA, compute-sanitizer: 0 errors)**. Unit test:
+`RecoLocalTracker/SiPixelClusterizer/test/alpaka/testPhase2DigiMorphing.dev.cc`. A control with a 1-column
+halo fails in 4 of 5 morphing modules, so the test catches strip-boundary bugs.
+
+Two things the estimates got wrong, both found by measurement:
+1. **Shared memory.** nvlink reserved the Phase-1 bitmaps in the Phase-2 kernel too, even though they sit in an
+   `if constexpr (not isPhase2)` branch, and every `FindClus` carries ~2.9 KB that is not in any declared
+   variable. Fix: one pair of `uint32_t[2080]` buffers declared once for both phases, so strips widen to 44
+   columns for free. Phase-2 `FindClus`: 35,728 B (sm_75); Phase-1 is unchanged at 38,200 B.
+2. **Registers.** Growing the histogram for fakes raised the block size to 448 threads, but at 143
+   registers/thread the T4 allows at most 384 (`cudaErrorLaunchOutOfResources`; the CPU backend passed).
+   Fix: no extra histogram space; in morphing modules, 1000 of the 6000 entries are kept for fakes (real
+   pixels capped at 5000 there). Block size stays 384, as on master, and `SimplePixelTopology.h` is untouched.
