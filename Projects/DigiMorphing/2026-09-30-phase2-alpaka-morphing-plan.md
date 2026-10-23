@@ -367,3 +367,33 @@ Two things the estimates got wrong, both found by measurement:
    registers/thread the T4 allows at most 384 (`cudaErrorLaunchOutOfResources`; the CPU backend passed).
    Fix: no extra histogram space; in morphing modules, 1000 of the 6000 entries are kept for fakes (real
    pixels capped at 5000 there). Block size stays 384, as on master, and `SimplePixelTopology.h` is untouched.
+
+## Validation on PU200, 2026-10-23 (Tesla T4, CUDA)
+
+Sample: `/RelValTTbar_14TeV/CMSSW_20_1_0_pre3-PU_150X_mcRun4_realistic_v1_STD_D128_RegeneratedGS_PU_20260903_192421_RV19-v1/GEN-SIM-DIGI-RAW`,
+100 events, era Phase2C26I13M9, geometry D128, GT auto:phase2_realistic_T35. Config and
+analyzer: `UserCode/Phase2MorphValidation` in the build area (validation-only commit 7e7e9e8fac9).
+Plots: [[plots]]. Numbers: `/eos/user/c/cgupta/phase2morph/plots/summary.json`.
+
+**Module sizes in D128 (measured):** TBPX L1 = 672 × 216 (one chip per module; the two 3D
+sensors are separate dets), others 672 × 434 and 1354 × 434 (big pixels add rows and columns).
+`maxRows` raised from 1344 to 1376 for that. The default region `"1,1-99,1-99"` selects
+216 modules = all of TBPX L1.
+
+**Results (21,600 L1 module-events):**
+- GPU recovered digis = exact whole-module reference in every module: 1,696,444 each, **0 differences**.
+- GPU vs CPU `SiPixelDigiMorphing` (nrows 672, ncols 216, nrocs 8): 1,630,486 in common;
+  69,844 differ, **all explained**: 55,407 at the CPU module's 27-column chunk edges (it does not
+  dilate its 1-column halo, the same bug as the halo=1 control), 10,551 on the first/last row
+  (deliberate Phase-1 GPU rule: beyond the row edge counts as filled), 3,886 CPU-only on the
+  last module column (CPU artifact), **0 elsewhere**. In all 69,844 the GPU matches the exact reference.
+- Clusters in L1: 927,589 → 897,298 with GPU morphing (−3.3%); CPU gives 897,990.
+- Max recovered digis in one module: 536 (cap 1000). Real digis per L1 module: 245 on average.
+  Recovered digis are 32% of the real ones: the closing fills the staircase steps of long clusters.
+- Morphing off: GPU clusters = 8-neighbour reference in every module; no module outside L1 changes.
+- **Morphing off = unmodified release:** stock config on the same 100 events, this branch vs a
+  pristine `CMSSW_20_1_X_2026-10-20-2300`: 100/100 events, 56,142,094 digis, cluster index,
+  charge and module bit-identical.
+
+Open: display 3 shows morphing merging a crossing cluster into a long track; check the effect on
+hit resolution/tracking before enabling by default. Not done: timing, ROCm run, endcap regions.
