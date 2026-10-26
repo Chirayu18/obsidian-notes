@@ -653,13 +653,13 @@ for (uint32_t i : independent_group_elements(acc, stripCols * wordsPerColumn)) {
       & before & after (GPU) \\
       \midrule
       clusters & 927\,589 & 897\,298 (\textbf{$-$3.3\,\%}) \\
+      clusters, CPU morphing & & 897\,990 \\
       mean pixels / cluster & 5.70 & 5.89 \\
       mean size in $y$ & 3.96 & 4.07 \\
       recovered / real digis & & +32\,\% \\
       \bottomrule
     \end{tabular}
     \end{center}
-    {\small CPU: 897\,990 clusters. Recovered pixels only join clusters.}
   \end{columns}
 \end{frame}
 
@@ -720,7 +720,7 @@ for (uint32_t i : independent_group_elements(acc, stripCols * wordsPerColumn)) {
   \end{center}
 \begin{lstlisting}[language=Python]
 process.siPixelClustersPreSplittingAlpaka.DoDigiMorphing = True
-process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TBPX L1 (not yet in any era modifier or HLT_75e33)
+process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TBPX L1
 \end{lstlisting}
 \end{frame}
 
@@ -743,7 +743,7 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
     \bottomrule
   \end{tabular}
   \end{center}
-  {\footnotesize Not changed: \code{SimplePixelTopology.h} (reverted early), the Phase-1 morphing logic, any \code{\_cff.py}. A third, validation-only commit (\code{UserCode/Phase2MorphValidation}, \code{"recovered"} product) is \textbf{not} on the pushed branch.}
+  {\footnotesize Not changed: \code{SimplePixelTopology.h}, the Phase-1 morphing logic, any \code{\_cff.py}. The validation-only commit is \textbf{not} pushed.}
 \end{frame}
 
 \begin{frame}{Why a new namespace and a new header}
@@ -787,6 +787,7 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
       \item Timing of \code{FindClus}, morphing on vs off
       \item ROCm run
       \item Endcap regions for TFPX/TEPX
+      \item Era modifier / \code{HLT\_75e33} switch (none yet)
     \end{itemize}
     \textbf{Physics questions}
     \begin{itemize}\small
@@ -796,7 +797,7 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{The full change: \code{git diff --stat a19318d617f phase2-digimorphing}}
+\begin{frame}[fragile]{The full change: \code{git diff -{}-stat a19318d617f phase2-digimorphing}}
 \begin{lstlisting}[language={},basicstyle=\ttfamily\scriptsize,keywordstyle={}]
  .../SiPixelClusterizer/plugins/alpaka/PixelClustering.h         | 233 +++++++++++++++++++--
  .../SiPixelClusterizer/plugins/alpaka/SiPixelMorphingConfig.h   |  35 ++++
@@ -812,7 +813,7 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
   \begin{itemize}\small
     \item Base: \code{a19318d617f} (merge of cms-sw/cmssw\#52208) in \code{CMSSW\_20\_1\_X\_2026-10-20-2300}
     \item Commits: \code{15e2048e532} ``Phase-2 digi morphing in the Alpaka pixel clusterizer'', \code{7dd02b835e3} ``allow modules with up to 1376 rows (big pixels)''
-    \item Without the moved region code and the test: $\approx$\,380 lines of new logic
+    \item Without the moved region code and the test: $\approx$\,380 added lines, comments included
     \item \href{https://github.com/Chirayu18/cmssw/compare/a19318d617ffe6d96535142b12027d5d50cc08c3...phase2-digimorphing}{\color{cmsblue}github.com/Chirayu18/cmssw/compare/\ldots phase2-digimorphing}
   \end{itemize}
 \end{frame}
@@ -826,9 +827,9 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
 \begin{frame}{More event displays}
   \begin{columns}[T]
     \column{0.49\textwidth}
-    \includegraphics[width=\textwidth]{display_2.png}
+    \includegraphics[width=\textwidth]{display_2_crop.png}
     \column{0.49\textwidth}
-    \includegraphics[width=\textwidth]{display_4.png}
+    \includegraphics[width=\textwidth]{display_4_crop.png}
   \end{columns}
   \vspace{4pt}
   {\small Real digis coloured by cluster before morphing (left of each), merged cluster after (right); GPU recovered = boxes, CPU recovered = crosses. True 25$\times$100\,\textmu m aspect.}

@@ -20,3 +20,7 @@ rm -rf "$T"
 python3 -I -c "
 from PIL import Image
 im=Image.open('figures/display_3.png'); w,h=im.size; im.crop((0,int(h*0.27),w,h)).save('figures/display_3_crop.png')"
+python3 -I -c "
+from PIL import Image
+for n in (2,4):
+    im=Image.open(f'figures/display_{n}.png'); w,h=im.size; im.crop((0,int(h*0.27),w,h)).save(f'figures/display_{n}_crop.png')"
