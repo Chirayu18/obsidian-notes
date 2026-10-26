@@ -1,0 +1,13 @@
+# plots live on EOS (fetch_figures.sh); workshop crops are CERN-restricted
+figures/
+*.pdf
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
