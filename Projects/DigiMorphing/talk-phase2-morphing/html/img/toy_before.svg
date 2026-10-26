@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 166 274"><g transform="translate(0,0)">
+<rect width="162" height="270" fill="#fff" stroke="#c9d6dd"/>
+<rect x="54" y="198" width="18" height="18" fill="#0b4f6c"/>
+<rect x="54" y="180" width="18" height="18" fill="#0b4f6c"/>
+<rect x="126" y="180" width="18" height="18" fill="#0b4f6c"/>
+<rect x="54" y="162" width="18" height="18" fill="#0b4f6c"/>
+<rect x="36" y="126" width="18" height="18" fill="#0b4f6c"/>
+<rect x="36" y="108" width="18" height="18" fill="#0b4f6c"/>
+<rect x="18" y="72" width="18" height="18" fill="#0b4f6c"/>
+<rect x="18" y="54" width="18" height="18" fill="#0b4f6c"/>
+<rect x="18" y="36" width="18" height="18" fill="#0b4f6c"/>
+<line x1="18" y1="0" x2="18" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="36" y1="0" x2="36" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="54" y1="0" x2="54" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="72" y1="0" x2="72" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="90" y1="0" x2="90" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="108" y1="0" x2="108" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="126" y1="0" x2="126" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="144" y1="0" x2="144" y2="270" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="18" x2="162" y2="18" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="36" x2="162" y2="36" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="54" x2="162" y2="54" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="72" x2="162" y2="72" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="90" x2="162" y2="90" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="108" x2="162" y2="108" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="126" x2="162" y2="126" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="144" x2="162" y2="144" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="162" x2="162" y2="162" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="180" x2="162" y2="180" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="198" x2="162" y2="198" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="216" x2="162" y2="216" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="234" x2="162" y2="234" stroke="#c9d6dd" stroke-width="0.8"/>
+<line x1="0" y1="252" x2="162" y2="252" stroke="#c9d6dd" stroke-width="0.8"/>
+</g></svg>
