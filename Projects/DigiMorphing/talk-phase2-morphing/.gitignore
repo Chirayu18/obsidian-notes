@@ -11,3 +11,6 @@ figures/
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+# HTML deck: images are copies of figures/ (incl. CERN-restricted crops); toy*.svg are generated and kept
+html/img/*.png
+html/*.pdf

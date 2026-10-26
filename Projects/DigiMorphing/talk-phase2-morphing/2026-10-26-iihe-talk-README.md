@@ -28,3 +28,21 @@ the kernel's rules exactly (4 clusters become 2, and the isolated pixel 3 column
 8. Configuration, the files table, why a new namespace and a new header, and `git diff --stat`
 
 Related: [[2026-09-30-phase2-alpaka-morphing-plan]], [[plots]].
+
+## HTML version, 2026-10-27
+
+`html/deck.html` uses the Higgs 2026 HTML deck style: `deck.css` and `deck.js` are copied, and the side strip text
+is changed. Run `python3 build.py` in `html/` to copy the figures into `img/` and print them to
+`phase2_morphing_html.pdf` with headless Chrome. It reports any slide whose content spills out. The PNG images in
+`html/img/` and the PDFs are gitignored. `toy*.svg` is made by `html/toy_svg.py`.
+
+The validation section mirrors the Phase-1 validation that people have already seen. That is the race-condition PR
+cms-sw/cmssw#49991 (`_Validation_PR.pdf`: count difference, cluster size in 4 panels, displays, and the fake-digi
+table) and H. Petersen et al., Tracker DPG, 13 Aug 2025 (Indico 1567986: RecHit vs SimHit with a muon gun). Each
+Phase-1 check is redone for Phase 2 with `plot_phase1style.py`, run on lxplus. Outputs are in
+`/eos/user/c/cgupta/phase2morph/plots/phase1style/`. Results:
+- Morphing off, this branch vs master: 0 of 400,000 module-events differ.
+- Per-module mean cluster size goes up by 0.25 pixels, and goes down in no module.
+- Fakes: 16,964 per event, 78.5 per module (RMS 32.3), all 216 L1 modules, and none elsewhere.
+
+The RecHit vs SimHit study is **not done yet**. Slide 27 has the plan for it.

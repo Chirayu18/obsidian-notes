@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Phase-2 digi morphing</title>
+<!-- IIHE Tracker DPG meeting, 27 Oct 2026. Internal: contains CERN-restricted workshop figures.
+     Build: python3 build.py  ->  phase2_morphing_html.pdf  (figures from ../figures via ../fetch_figures.sh) -->
+<link rel="stylesheet" href="deck.css">
+<style>
+pre.code { margin: 0; font-family: "Fira Mono", monospace; font-size: 15.4px; line-height: 1.36; background: var(--teal-soft);
+  border-radius: 14px; padding: 12px 16px; white-space: pre; color: var(--ink); }
+pre.code .c { color: #6b7780; font-style: italic; }
+pre.code .k { color: var(--teal); font-weight: 700; }
+pre.code mark { background: #ffe1c4; color: #a94f00; border-radius: 4px; padding: 0 3px; font-weight: 600; }
+code, .tt { font-family: "Fira Mono", monospace; font-size: 0.86em; }
+.mapping td:first-child { color: var(--grey); }
+.check { color: #1b8a5a; font-weight: 800; }
+.todo { color: var(--orange); font-weight: 800; }
+.strip { fill: var(--teal-soft); stroke: var(--teal-line); stroke-width: 1.5; }
+table.t.big td { font-size: 19px; padding: 6px 10px; }
+table.t.mono td:first-child { font-family: "Fira Mono", monospace; font-size: 16px; }
+.svgtext { font-family: Inter, sans-serif; }
+.cardlist ul { font-size: 19px; line-height: 1.38; }
+.cardlist h4 { font-size: 21px; margin-bottom: 6px; }
+.cardlist li { margin: 4px 0; }
+ul.refs-list li { font-size: 19px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ================================================================ 1 -->
+<section class="slide title-slide">
+  <div class="logos-tile">
+    <img src="img/CMSlogo_color.png" alt="CMS">
+    <img src="img/VUB_logo.png" alt="VUB">
+  </div>
+  <div class="title-block">
+    <h1>Pixel digi morphing for Phase&nbsp;2 in the Alpaka clusterizer</h1>
+    <p class="venue">IIHE Tracker DPG meeting · 27 October 2026</p>
+    <p class="speaker">Chirayu Gupta</p>
+    <p class="affil">Vrije Universiteit Brussel (IIHE)</p>
+  </div>
+  <div style="position:absolute; right:70px; bottom:70px; display:flex; gap:26px; align-items:center; background:rgba(255,255,255,.95); border-radius:18px; padding:16px 22px">
+    <div class="center"><img src="img/toy_before.svg" style="height:250px" alt="broken track"><div style="color:#0b4f6c; font-size:15px; font-weight:700">4 clusters</div></div>
+    <div style="font-size:40px; color:#e07a1f; font-weight:800">→</div>
+    <div class="center"><img src="img/toy_after.svg" style="height:250px" alt="after morphing"><div style="color:#0b4f6c; font-size:15px; font-weight:700">1 track + 1 pixel</div></div>
+  </div>
+</section>
+
+<!-- ================================================================ 2 -->
+<section class="slide" data-n="2">
+  <header>
+    <h2>Outline</h2>
+    <p class="sub">Run-3 bit logic, Phase-2 module sizes, same 48 KB</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 40px">
+    <div>
+      <ol class="steps" style="font-size:22px; line-height:1.45">
+        <li>What we learned at the Tracker DPG workshop</li>
+        <li>Phase-2 Inner Tracker modules and their sizes</li>
+        <li>GPU basics: blocks, threads, shared memory</li>
+        <li>How <code>FindClus</code> is launched for Phase 1 and Phase 2</li>
+        <li>Phase-1 morphing → Phase 2: variable sizes, 44-column strips</li>
+        <li>The code</li>
+        <li>Validation, <b>same checks as the Phase-1 validation</b></li>
+        <li>Configuration, files changed, status</li>
+      </ol>
+    </div>
+    <div class="stack">
+      <div class="card"><h4>In one line</h4>
+        <p style="font-size:21px; margin:0">The Run-3 1-bit bitmap morphing, applied to <b>44-column strips</b> of each Phase-2 module, inside the <b>same 48 KB</b> of shared memory.</p></div>
+      <div class="card"><h4>Where it is</h4>
+        <p class="small" style="margin:0">Branch <code>Chirayu18/cmssw:phase2-digimorphing</code> · 2 commits on <code>CMSSW_20_1_X</code> · <span class="hl">no PR yet</span></p></div>
+      <div class="card"><h4>Phase-1 history</h4>
+        <p class="small" style="margin:0">#48734 Digi morphing for HLT (Sep 2025) · #49991 race-condition fix, 2-buffer scheme (Feb 2026)</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 3 -->
+<section class="slide" data-n="3">
+  <header>
+    <h2>Why morphing: a Run-3 lesson for Phase 2</h2>
+    <p class="sub">Broken clusters from degraded charge collection</p>
+  </header>
+  <p class="ref">Tracker DPG workshop, 14–16 Oct 2026</p>
+  <div class="cols" style="grid-template-columns: 700px 1fr; gap: 30px">
+    <div class="figcol">
+      <img src="img/schulz_run3_timeline.png" style="width:700px" alt="Run-3 HLT timeline">
+      <p class="cap">J. Schulz, HLT tracking, slide 4</p>
+    </div>
+    <div class="stack">
+      <div class="box"><h3>Run 3 (2025)</h3>
+        <ul class="tight" style="margin:0">
+          <li>Degraded charge collection → <span class="hl">broken clusters</span></li>
+          <li>Fix: pixel digi morphing in the HLT GPU clusterizer</li>
+        </ul></div>
+      <div class="box"><h3>Phase 2</h3>
+        <ul class="tight small" style="margin:0">
+          <li>After 1×10<sup>16</sup>: 3D signal ≈ 5 ke vs ≈ 1 ke threshold <span class="muted">(M. Magherini)</span></li>
+          <li>Higher threshold: “edge pixels lost, <span class="hl">clusters break</span>”</li>
+          <li>Aug 2025 test beam already saw cluster splitting <span class="muted">(S. Dutta)</span></li>
+        </ul></div>
+    </div>
+  </div>
+  <p class="takeaway">Phase 2 will need the same tool; the Alpaka Phase-2 path had none</p>
+</section>
+
+<!-- ================================================================ 4 -->
+<section class="slide" data-n="4">
+  <header>
+    <h2>What the workshop fixed for the design</h2>
+    <p class="sub">Every input the kernel needs is now known</p>
+  </header>
+  <p class="ref">indico.cern.ch/event/1707530<br>(CERN-restricted)</p>
+  <div class="cols" style="grid-template-columns: 1fr">
+    <table class="t big">
+      <tr><th style="width:230px">Who</th><th>Fact</th><th style="width:330px">For morphing</th></tr>
+      <tr><td><b>A. Bocci</b> <span class="muted xs">asked in person</span></td><td>Phase-2 HLT kernels stay within <b>48 KB static shared memory</b>, as in Run 3</td><td class="hl">no whole-module bitmap</td></tr>
+      <tr><td><b>N. Bartosik</b> <span class="muted xs">geometry</span></td><td>T40 chip = <b>672 rows × 216 columns</b> of 25×100 µm; big pixels at chip seams</td><td>size differs per module type</td></tr>
+      <tr><td><b>G. Mersi</b> <span class="muted xs">data formats</span></td><td>sensor ≠ chip grid: r<sub>s</sub> = 2r<sub>c</sub> + (c<sub>c</sub> mod 2), c<sub>s</sub> = ⌊c<sub>c</sub>/2⌋</td><td>morph in <b>sensor</b> coordinates</td></tr>
+      <tr><td><b>M. Magherini</b> <span class="muted xs">IT calibration</span></td><td>TBPX L1 ≈ 2×10<sup>−3</sup> hits / pixel / BX</td><td>≈ 290 digis per L1 module: sparse</td></tr>
+      <tr><td><b>M. Musich</b> <span class="muted xs">HLT reco</span></td><td>Phase-2 HLT clustering runs on sim digis; IT RAW unpacker end 2026</td><td>validate on sim digis now</td></tr>
+      <tr><td><b>J. Schulz</b> <span class="muted xs">HLT tracking</span></td><td><code>hltPhase2SiPixelClustersSoA</code> feeds CA, mkFit, CKF, LST</td><td>reaches all HLT tracking</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ================================================================ 5 -->
+<section class="slide" data-n="5">
+  <header>
+    <h2>The Phase-2 Inner Tracker modules</h2>
+    <p class="sub">Three sizes, all bigger than a Phase-1 module</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 520px 1fr; gap: 36px">
+    <div class="figcol">
+      <img src="img/bartosik_dual_quad.png" style="width:500px" alt="dual and quad modules with big pixels">
+      <p class="cap">N. Bartosik, geometry, Tracker DPG workshop, slide 12 (T40)</p>
+    </div>
+    <div class="stack">
+      <table class="t big">
+        <tr><th>Module</th><th class="r">rows × cols</th><th class="r">pixels</th><th class="r">2 bitmaps</th></tr>
+        <tr><td>Phase 1 (fixed)</td><td class="r">160 × 416</td><td class="r">67k</td><td class="r">16.6 KB</td></tr>
+        <tr><td colspan="4" class="muted xs" style="font-style:italic">Phase 2, measured in the D128 geometry</td></tr>
+        <tr><td>TBPX L1, 1 chip</td><td class="r">672 × 216</td><td class="r">145k</td><td class="r">36 KB</td></tr>
+        <tr><td>dual, 2 chips</td><td class="r">672 × 434</td><td class="r">292k</td><td class="r">73 KB</td></tr>
+        <tr class="hi"><td>quad, 4 chips</td><td class="r">1354 × 434</td><td class="r">588k</td><td class="r"><b>149 KB</b></td></tr>
+      </table>
+      <ul class="tight small">
+        <li>Pixel 25 µm (row, x) × 100 µm (column, y)</li>
+        <li>Big pixels are <b>one index</b> each: 432 → 434 columns, 1344 → 1354 rows</li>
+        <li>Big-pixel x pitch 87.5 (Bartosik) vs 112 µm (Mersi): <i>open</i>, irrelevant in index space</li>
+      </ul>
+    </div>
+  </div>
+  <p class="takeaway">The module size has to be a run-time input</p>
+</section>
+
+<!-- ================================================================ 6 -->
+<section class="slide" data-n="6">
+  <header>
+    <h2>Variable module size in the kernel</h2>
+    <p class="sub">Phase 1: constexpr layout · Phase 2: layout from the module size</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 470px; gap: 40px">
+    <div class="stack">
+      <div class="box"><h3>Phase 1: every module is 160 × 416</h3>
+        <ul class="tight small" style="margin:0"><li>bitmap layout is <code>constexpr</code>: 5 words per column, 2080 words</li>
+        <li>edge rule uses a fixed last row and column</li></ul></div>
+      <div class="box"><h3>Phase 2: size depends on the module</h3>
+        <ul class="tight small" style="margin:0">
+          <li>read from <code>PixelTopology</code> in <code>beginRun</code></li>
+          <li>stored per morphing module as <code>rows &lt;&lt; 16 | cols</code></li>
+          <li>kernel derives the layout from it:</li></ul>
+        <p class="formula" style="margin:10px 0 4px">W = ⌈rows / 32⌉ &emsp; mask = 2<sup>rows mod 32</sup> − 1</p>
+        <p class="xs muted" style="margin:0">W = words per column (21 for 672 rows, 43 for 1354); the mask drops the rows past the module in the last word</p>
+      </div>
+    </div>
+    <svg viewBox="0 0 470 420" class="svgtext">
+      <text x="235" y="28" text-anchor="middle" font-size="18" fill="#0b4f6c" font-weight="700">one column y of the module</text>
+      <g font-size="16" fill="#1f2a30">
+        <rect x="110" y="60" width="260" height="44" rx="6" fill="#e6f0f4" stroke="#9dbdcb"/><text x="100" y="88" text-anchor="end">word 0</text>
+        <rect x="110" y="114" width="260" height="44" rx="6" fill="#e6f0f4" stroke="#9dbdcb"/><text x="100" y="142" text-anchor="end">word 1</text>
+        <text x="240" y="200" text-anchor="middle" font-size="26">⋮</text>
+        <rect x="110" y="230" width="260" height="44" rx="6" fill="#e6f0f4" stroke="#9dbdcb"/><text x="100" y="258" text-anchor="end">word W−1</text>
+        <rect x="290" y="230" width="80" height="44" rx="6" fill="#f6c9a4"/>
+        <text x="330" y="300" text-anchor="middle" font-size="14" fill="#e07a1f" font-weight="700">masked: past the</text>
+        <text x="330" y="318" text-anchor="middle" font-size="14" fill="#e07a1f" font-weight="700">last row</text>
+        <text x="240" y="52" text-anchor="middle" font-size="14" fill="#6b7780">32 rows = 32 bits</text>
+      </g>
+      <path d="M400,62 L400,272" stroke="#0b4f6c" stroke-width="3" marker-end="url(#ar6)"/>
+      <defs><marker id="ar6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b4f6c"/></marker></defs>
+      <text x="414" y="170" font-size="16" fill="#0b4f6c" font-weight="700">x (row)</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ================================================================ 7 -->
+<section class="slide" data-n="7">
+  <header>
+    <h2>GPU basics: blocks, threads, shared memory</h2>
+    <p class="sub">What one block of <code>FindClus</code> has to work with</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 520px 1fr; gap: 40px">
+    <svg viewBox="0 0 520 470" class="svgtext">
+      <text x="0" y="22" font-size="18" fill="#0b4f6c" font-weight="800">grid of blocks</text>
+      <g fill="#e6f0f4" stroke="#9dbdcb">
+        <rect x="0" y="36" width="70" height="44" rx="6"/><rect x="82" y="36" width="70" height="44" rx="6"/><rect x="164" y="36" width="70" height="44" rx="6"/><rect x="246" y="36" width="70" height="44" rx="6"/>
+        <rect x="0" y="90" width="70" height="44" rx="6" fill="#0b4f6c"/><rect x="82" y="90" width="70" height="44" rx="6"/><rect x="164" y="90" width="70" height="44" rx="6"/><rect x="246" y="90" width="70" height="44" rx="6"/>
+      </g>
+      <text x="340" y="92" font-size="24" fill="#6b7780">…</text>
+      <path d="M0,134 L0,180 M70,134 L510,180" stroke="#0b4f6c" stroke-dasharray="6 5" fill="none"/>
+      <rect x="0" y="180" width="510" height="280" rx="16" fill="#fff" stroke="#0b4f6c" stroke-width="2.5"/>
+      <text x="16" y="208" font-size="17" fill="#0b4f6c" font-weight="800">one block → one SM</text>
+      <g font-size="15" fill="#1f2a30">
+        <g fill="#0b4f6c">
+          <rect x="16" y="222" width="150" height="22" rx="4"/><rect x="16" y="252" width="150" height="22" rx="4"/><rect x="16" y="282" width="150" height="22" rx="4"/>
+        </g>
+        <text x="180" y="238">warp 0: 32 threads in lockstep</text>
+        <text x="180" y="268">warp 1</text><text x="180" y="298">warp 2</text>
+        <text x="16" y="328" fill="#6b7780">… 12 warps = 384 threads</text>
+      </g>
+      <rect x="16" y="346" width="478" height="96" rx="12" fill="#fff3e8" stroke="#e07a1f" stroke-width="2"/>
+      <text x="255" y="384" text-anchor="middle" font-size="19" fill="#e07a1f" font-weight="800">shared memory of the block: ≤ 48 KB</text>
+      <text x="255" y="414" text-anchor="middle" font-size="15" fill="#1f2a30">histogram + bitmaps for one module live here</text>
+    </svg>
+    <ul class="tight" style="font-size:20px">
+      <li><b>Work division</b> = number of blocks × threads per block</li>
+      <li>Blocks are independent; threads <i>within</i> a block share memory and wait at <code>syncBlockThreads</code></li>
+      <li><b>Shared memory</b>: on-chip, fast, per block. Run-3 and Phase-2 HLT budget: <span class="bo">48 KB</span></li>
+      <li><b>Registers</b>: per thread, they cap the block size. T4: <code>FindClus</code> uses 143 registers → at most <b>384 threads</b></li>
+      <li>Alpaka <code>independent_group_elements(acc, n)</code>: the block's threads stride over n items</li>
+    </ul>
+  </div>
+  <p class="takeaway">Everything one block needs for one module must fit in 48 KB</p>
+</section>
+
+<!-- ================================================================ 8 -->
+<section class="slide" data-n="8">
+  <header>
+    <h2>Work division of <code style="font-size:0.9em">FindClus</code>: Phase 1 vs Phase 2</h2>
+    <p class="sub">Phase 2 already ran one block per module in master; kept</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 40px; bottom: 170px">
+    <div>
+      <h3>Phase 1: 64 blocks, each loops over modules</h3>
+      <svg viewBox="0 0 560 170" class="svgtext" style="width:560px">
+        <g font-size="14" fill="#1f2a30">
+          <g fill="#0b4f6c"><rect x="0" y="10" width="86" height="30" rx="6"/><rect x="0" y="56" width="86" height="30" rx="6"/><rect x="0" y="102" width="86" height="30" rx="6"/></g>
+          <g fill="#fff" font-weight="700"><text x="43" y="30" text-anchor="middle">block 0</text><text x="43" y="76" text-anchor="middle">block 1</text><text x="43" y="122" text-anchor="middle">block 2</text></g>
+          <g fill="#e6f0f4" stroke="#9dbdcb">
+            <rect x="120" y="10" width="86" height="30" rx="6"/><rect x="214" y="10" width="86" height="30" rx="6"/><rect x="308" y="10" width="96" height="30" rx="6"/>
+            <rect x="120" y="56" width="86" height="30" rx="6"/><rect x="214" y="56" width="86" height="30" rx="6"/><rect x="308" y="56" width="96" height="30" rx="6"/>
+            <rect x="120" y="102" width="86" height="30" rx="6"/><rect x="214" y="102" width="86" height="30" rx="6"/><rect x="308" y="102" width="96" height="30" rx="6"/></g>
+          <text x="163" y="30" text-anchor="middle">mod 0</text><text x="257" y="30" text-anchor="middle">mod 64</text><text x="356" y="30" text-anchor="middle">mod 128</text>
+          <text x="163" y="76" text-anchor="middle">mod 1</text><text x="257" y="76" text-anchor="middle">mod 65</text><text x="356" y="76" text-anchor="middle">mod 129</text>
+          <text x="163" y="122" text-anchor="middle">mod 2</text><text x="257" y="122" text-anchor="middle">mod 66</text><text x="356" y="122" text-anchor="middle">mod 130</text>
+          <text x="420" y="76" font-size="22" fill="#6b7780">…</text><text x="36" y="160" font-size="22" fill="#6b7780">⋮</text>
+        </g>
+      </svg>
+      <p class="small" style="margin-top:6px">fake pixels stored <b>per block</b>: 64 × 2400</p>
+    </div>
+    <div>
+      <h3>Phase 2: 4000 blocks, one per module</h3>
+      <svg viewBox="0 0 560 170" class="svgtext" style="width:560px">
+        <g font-size="14">
+          <g fill="#0b4f6c"><rect x="0" y="10" width="100" height="30" rx="6"/><rect x="0" y="56" width="100" height="30" rx="6"/><rect x="0" y="130" width="100" height="30" rx="6"/></g>
+          <g fill="#fff" font-weight="700"><text x="50" y="30" text-anchor="middle">block 0</text><text x="50" y="76" text-anchor="middle">block 1</text><text x="50" y="150" text-anchor="middle">block 3999</text></g>
+          <g fill="#e6f0f4" stroke="#9dbdcb"><rect x="190" y="10" width="86" height="30" rx="6"/><rect x="190" y="56" width="86" height="30" rx="6"/><rect x="190" y="130" width="96" height="30" rx="6"/></g>
+          <g fill="#1f2a30"><text x="233" y="30" text-anchor="middle">mod 0</text><text x="233" y="76" text-anchor="middle">mod 1</text><text x="238" y="150" text-anchor="middle">mod 3999</text></g>
+          <g stroke="#0b4f6c" stroke-width="2"><path d="M104,25 L184,25 M104,71 L184,71 M104,145 L184,145"/></g>
+          <text x="40" y="114" font-size="22" fill="#6b7780">⋮</text>
+        </g>
+      </svg>
+      <p class="small" style="margin-top:6px">per-block fakes: 4000 × 1000 slots · <b>per morphing module</b>: 216 × 1000 ≈ <span class="bo">4.5 MB, 18× less</span></p>
+    </div>
+  </div>
+  <div style="position:absolute; left:70px; right:46px; bottom:40px">
+<pre class="code"><span class="c">// slot of this module in the sorted list of morphing modules (binary search), or -1</span>
+<span class="k">const int32_t</span> morphingIndex = enableDigiMorphing ? morphingModuleIndex(rawModuleId, ...) : -1;
+<span class="c">// Phase 1: fakes per block;  Phase 2: fakes per morphing module</span>
+<span class="k">const uint32_t</span> firstFake = maxFakesInModule * (isPhase2 ? <mark>max(morphingIndex, 0)</mark> : block);</pre>
+  </div>
+</section>
+
+<!-- ================================================================ 9 -->
+<section class="slide" data-n="9">
+  <header>
+    <h2>Phase-1 morphing: a closing on a 1-bit bitmap</h2>
+    <p class="sub">What runs in the Run-3 HLT since 2025 (#48734, #49991)</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 640px 1fr; gap: 36px">
+    <div class="figcol">
+      <img src="img/toy.svg" style="width:620px" alt="toy closing">
+      <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; width:620px; margin: 6px auto 0; font-size:16px">
+        <div><b>real pixels</b><br>4 clusters</div>
+        <div><b>1. dilate 3×3</b><br><span class="hl">candidates</span></div>
+        <div><b>2. erode, plus shape</b><br><span class="hl">recovered</span>: 2 clusters</div>
+      </div>
+      <p class="cap">Toy computed with the kernel's rules: the track is joined, the pixel 3 columns away is not</p>
+    </div>
+    <ul class="tight" style="font-size:19.5px">
+      <li><code>image</code>: 1 bit per pixel, <b>32 rows per word</b></li>
+      <li><b>dilate</b>: <code>temp</code> = empty pixels with any of the 8 neighbours set</li>
+      <li><b>erode</b>: keep a candidate if its 4 neighbours are all in image ∪ temp</li>
+      <li>recovered ("fake") pixels only <b>link</b> clusters; dropped before the output, no charge added</li>
+      <li>edge rule: beyond a row edge counts as <i>filled</i>, beyond a column edge as <i>empty</i></li>
+      <li>two buffers (#49991): read one, write the other, no race</li>
+    </ul>
+  </div>
+  <p class="takeaway">32 pixels per instruction: shifts, ORs and ANDs on whole words</p>
+</section>
+
+<!-- ================================================================ 10 -->
+<section class="slide" data-n="10">
+  <header>
+    <h2>Why it cannot be ported as it is</h2>
+    <p class="sub">A quad-module bitmap is 3× the whole budget</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 560px 1fr; gap: 44px">
+    <div>
+      <h3>Shared memory of <code>FindClus</code>, Phase 2</h3>
+      <table class="t big">
+        <tr><th>Item</th><th class="r">bytes</th></tr>
+        <tr><td>histogram <code>off</code> (1001 × 4)</td><td class="r">4 004</td></tr>
+        <tr><td>histogram <code>content</code> (6000 × 2)</td><td class="r">12 000</td></tr>
+        <tr><td>scalars, scan workspace, compiler</td><td class="r">≈ 3 000</td></tr>
+        <tr><td><b>already used</b></td><td class="r"><b>≈ 19 KB</b></td></tr>
+        <tr class="hi"><td><b>whole-module bitmaps, quad</b></td><td class="r"><b>149 KB</b></td></tr>
+      </table>
+    </div>
+    <div class="stack">
+      <h3>Options</h3>
+      <div class="box" style="padding:8px 16px"><b class="hl">✗ whole module in shared memory</b><br><span class="small">3× over budget for a quad, 36 KB even for L1</span></div>
+      <div class="box" style="padding:8px 16px"><b class="hl">✗ bitmap in global memory</b><br><span class="small">≈ 150 KB per block, slow atomics</span></div>
+      <div class="box" style="padding:8px 16px"><b class="hl">✗ sparse lookup in the column histogram</b><br><span class="small">no bitmap, but new logic to prove equal (kept as fallback)</span></div>
+      <div class="result" style="text-align:left; padding:8px 16px"><b class="bt">✓ same bitmap, one strip of columns at a time</b><br><span class="small">reuses the Phase-1 bit logic <b>and the Phase-1 buffers</b></span></div>
+    </div>
+  </div>
+  <p class="takeaway">Keep the Run-3 algorithm, shrink the area it works on</p>
+</section>
+
+<!-- ================================================================ 11 -->
+<section class="slide" data-n="11">
+  <header>
+    <h2>Strips of 44 columns with a 2-column halo</h2>
+    <p class="sub">5 strips for L1, 10 for 434-column modules</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 10px">
+    <svg viewBox="0 0 1160 210" class="svgtext">
+      <g font-size="15" fill="#1f2a30">
+        <text x="150" y="40" text-anchor="end" font-weight="700">TBPX L1</text><text x="150" y="58" text-anchor="end" fill="#6b7780">672 × 216</text>
+        <text x="150" y="150" text-anchor="end" font-weight="700">dual / quad</text><text x="150" y="168" text-anchor="end" fill="#6b7780">672 or 1354 × 434</text>
+      </g>
+      <!-- 2.2 px per column -->
+      <g>
+        <rect class="strip" x="170" y="20" width="96.8" height="46"/><rect class="strip" x="266.8" y="20" width="96.8" height="46"/><rect class="strip" x="363.6" y="20" width="96.8" height="46"/><rect class="strip" x="460.4" y="20" width="96.8" height="46"/><rect class="strip" x="557.2" y="20" width="88" height="46"/>
+        <rect x="262.4" y="20" width="4.4" height="46" fill="#f6c9a4"/><rect x="363.6" y="20" width="4.4" height="46" fill="#f6c9a4"/>
+        <rect x="262.4" y="14" width="105.6" height="58" fill="none" stroke="#e07a1f" stroke-width="3" rx="4"/>
+        <text x="315" y="96" text-anchor="middle" font-size="15" fill="#e07a1f" font-weight="700">buffer: 2 + 44 + 2 = 48 columns</text>
+      </g>
+      <g font-size="15" fill="#0b4f6c" font-weight="700" text-anchor="middle">
+        <text x="218" y="49">1</text><text x="315" y="49">2</text><text x="412" y="49">3</text><text x="509" y="49">4</text><text x="601" y="49">5</text>
+      </g>
+      <g>
+        <rect class="strip" x="170" y="130" width="96.8" height="46"/><rect class="strip" x="266.8" y="130" width="96.8" height="46"/><rect class="strip" x="363.6" y="130" width="96.8" height="46"/><rect class="strip" x="460.4" y="130" width="96.8" height="46"/><rect class="strip" x="557.2" y="130" width="96.8" height="46"/><rect class="strip" x="654" y="130" width="96.8" height="46"/><rect class="strip" x="750.8" y="130" width="96.8" height="46"/><rect class="strip" x="847.6" y="130" width="96.8" height="46"/><rect class="strip" x="944.4" y="130" width="96.8" height="46"/><rect class="strip" x="1041.2" y="130" width="83.6" height="46"/>
+      </g>
+      <g font-size="15" fill="#0b4f6c" font-weight="700" text-anchor="middle">
+        <text x="218" y="159">1</text><text x="315" y="159">2</text><text x="412" y="159">3</text><text x="509" y="159">4</text><text x="606" y="159">5</text><text x="702" y="159">6</text><text x="799" y="159">7</text><text x="896" y="159">8</text><text x="993" y="159">9</text><text x="1083" y="159">10</text>
+      </g>
+    </svg>
+    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px">
+      <div class="card"><h4>Load</h4><p class="small" style="margin:0">real pixels of 48 columns into <code>image</code>, straight from the column histogram (contiguous)</p></div>
+      <div class="card"><h4>Morph</h4><p class="small" style="margin:0">dilate the 46 inner columns, erode and <b>emit fakes for the 44 strip columns only</b>; columns outside the module stay empty</p></div>
+      <div class="card"><h4>Skip</h4><p class="small" style="margin:0">strips with no pixel within ±1 column: one comparison of <code>hist.off</code>, same decision in all threads</p></div>
+    </div>
+  </div>
+  <p class="takeaway">Same answer as a whole-module bitmap, by construction (validation)</p>
+</section>
+
+<!-- ================================================================ 12 -->
+<section class="slide" data-n="12">
+  <header>
+    <h2>Why 44 columns, and why a halo of 2</h2>
+    <p class="sub">The widest strip that fits the Phase-1 buffers</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 44px">
+    <div class="stack">
+      <div class="box">
+        <p class="formula" style="font-size:25px">(S + 2·2) × 43 ≤ 2080</p>
+        <p class="center small muted" style="margin:0">strip + halo &ensp;×&ensp; ⌈1376 / 32⌉ words &ensp;≤&ensp; Phase-1 buffer</p>
+        <p class="formula" style="font-size:25px; margin-top:12px">S ≤ 44.4 &nbsp;⇒&nbsp; <span class="bo">S = 44</span></p>
+        <p class="center small" style="margin:0">48 × 43 = 2064 words ≤ 2080</p>
+      </div>
+      <ul class="tight small">
+        <li>2080 = Phase-1 buffer (160/32 × 416)</li>
+        <li>1376 = 1354 rows rounded up to a word</li>
+        <li><b class="bt">zero extra shared memory</b>: the same two 8.3 KB arrays</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <h3>Halo 2: erosion needs the dilation of the next column</h3>
+      <svg viewBox="0 0 540 200" class="svgtext">
+        <defs><marker id="ar12" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#0b4f6c"/></marker></defs>
+        <g font-size="15" text-anchor="middle">
+          <rect x="10" y="60" width="120" height="70" rx="8" fill="#e6f0f4" stroke="#9dbdcb"/><text x="70" y="90" font-weight="700">c</text><text x="70" y="112" fill="#6b7780">last strip col</text>
+          <rect x="140" y="60" width="120" height="70" rx="8" fill="#fff3e8" stroke="#e07a1f"/><text x="200" y="90" font-weight="700">c+1</text><text x="200" y="112" fill="#6b7780">halo 1</text>
+          <rect x="270" y="60" width="120" height="70" rx="8" fill="#fff3e8" stroke="#e07a1f"/><text x="330" y="90" font-weight="700">c+2</text><text x="330" y="112" fill="#6b7780">halo 2</text>
+          <rect x="400" y="60" width="120" height="70" rx="8" fill="#fff" stroke="#c9d6dd"/><text x="460" y="90" font-weight="700" fill="#6b7780">c+3</text><text x="460" y="112" fill="#6b7780">not loaded</text>
+        </g>
+        <path d="M70,58 Q135,8 196,56" fill="none" stroke="#0b4f6c" stroke-width="2.5" marker-end="url(#ar12)"/>
+        <text x="135" y="22" text-anchor="middle" font-size="14" fill="#0b4f6c" font-weight="700">erode c reads dilated c+1</text>
+        <path d="M200,132 Q265,182 326,134" fill="none" stroke="#0b4f6c" stroke-width="2.5" marker-end="url(#ar12)"/>
+        <text x="265" y="192" text-anchor="middle" font-size="14" fill="#0b4f6c" font-weight="700">dilate c+1 reads image c+2</text>
+      </svg>
+      <ul class="tight small">
+        <li>halo 1 misses pixels at every strip edge</li>
+        <li><b>control</b>: halo = 1 <span class="hl">fails</span> in 4 of 5 morphing modules of the unit test</li>
+        <li>the CPU <code>SiPixelDigiMorphing</code> has exactly this bug (validation)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 13 -->
+<section class="slide" data-n="13">
+  <header>
+    <h2>Two limits the CPU backend could not see</h2>
+    <p class="sub">Shared memory and registers, measured on a Tesla T4</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 40px">
+    <div class="stack">
+      <div class="box"><h3>Shared memory: 52 624 B &gt; 48 KB</h3>
+        <p class="small" style="margin:0">nvlink reserved the Phase-1 bitmaps in the Phase-2 kernel, despite <code>if constexpr</code>. <b class="bt">Fix:</b> one pair of buffers declared once, for both phases.</p></div>
+      <div class="box"><h3>Registers: 448 threads &gt; 384</h3>
+        <p class="small" style="margin:0">Growing the histogram for fakes (6000 + 2400) raised the block size; at 143 registers the T4 allows 384 → <code>cudaErrorLaunchOutOfResources</code>.
+        <b class="bt">Fix:</b> in morphing modules, <b>5000 real + 1000 fake</b> entries share the 6000. <code>SimplePixelTopology.h</code> untouched.</p></div>
+    </div>
+    <div class="stack">
+      <h3>Measured <code>FindClus</code> resources (sm_75)</h3>
+      <table class="t big">
+        <tr><th></th><th class="r">Phase 1</th><th class="r">Phase 2</th></tr>
+        <tr><td>shared memory</td><td class="r">38 200 B</td><td class="r"><b>35 728 B</b></td></tr>
+        <tr><td>registers / thread</td><td class="r">–</td><td class="r">143</td></tr>
+        <tr><td>threads / block</td><td class="r">–</td><td class="r">384</td></tr>
+      </table>
+      <p class="small muted">Phase 1 unchanged w.r.t. master. Max fakes seen in one module: 536 of 1000.</p>
+    </div>
+  </div>
+  <p class="takeaway">Measure on the GPU: both failures passed on SerialSync</p>
+</section>
+
+<!-- ================================================================ 14 -->
+<section class="slide" data-n="14">
+  <header>
+    <h2>Code 1: module selection and sizes</h2>
+    <p class="sub"><code>SiPixelPhase2DigiToCluster.cc</code></p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 14px">
+<pre class="code"><span class="c">// beginRun: select the morphing modules from the geometry, and record their size</span>
+<span class="k">for</span> (<span class="k">auto const</span>* det : dets) {
+  <span class="k">if</span> (!GeomDetEnumerators::isInnerTracker(det-&gt;subDetector())) <span class="k">continue</span>;
+  DetId detId = det-&gt;geographicalId();
+  <span class="k">if</span> (<mark>siPixelMorphing::skipDetId</mark>(&amp;trackerTopology, detId, barrelRegions, endcapRegions)) <span class="k">continue</span>;
+  <span class="k">auto const</span>&amp; topology = <span class="k">dynamic_cast</span>&lt;PixelGeomDetUnit <span class="k">const</span>&amp;&gt;(*det).specificTopology();
+  <span class="k">const int</span> nRows = topology.nrows(), nCols = topology.ncolumns();
+  <span class="k">if</span> (nRows &gt; phase2Morphing::maxRows <span class="k">or</span> nCols &gt;= Phase2::clusterBinning)
+    <span class="k">throw</span> cms::Exception(<span class="hl">"Configuration"</span>) &lt;&lt; <span class="hl">"..."</span>;       <span class="c">// up to 1376 rows and 999 columns</span>
+  modules.emplace_back(detId.rawId(), <mark>phase2Morphing::packSize(nRows, nCols)</mark>);  <span class="c">// rows &lt;&lt; 16 | cols</span>
+}
+std::sort(modules.begin(), modules.end());    <span class="c">// sorted on the host: binary search on the device</span>
+<span class="c">// acquire(): both arrays are copied to the device once after each beginRun</span>
+
+<span class="c">// makePhase2ClustersAsync: same 4000-block launch as master; fakes only for morphing modules</span>
+<span class="k">auto</span> fakes_d = SiPixelDigisSoACollection(queue, doMorphing ? nMorphingModules * maxFakes : 0);</pre>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 18px">
+      <div class="box small">Phase 2 has <b>no cabling map</b>: modules come from the geometry + <code>TrackerTopology</code>, not <code>det2fedMap</code></div>
+      <div class="box small">Same region syntax as Phase 1 (<code>"layer,ladder,module"</code>), via the shared header <code>SiPixelMorphingRegions.h</code></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 15 -->
+<section class="slide" data-n="15">
+  <header>
+    <h2>Code 2: per module, and loading a strip</h2>
+    <p class="sub"><code>PixelClustering.h</code>, inside <code>FindClus</code></p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr">
+<pre class="code"><span class="k">const uint32_t</span> moduleSize = morphingModuleSizes[morphingIndex];             <span class="c">// rows &lt;&lt; 16 | cols</span>
+<span class="k">const uint32_t</span> nRows = morphing::rows(moduleSize), nCols = morphing::cols(moduleSize);
+<span class="k">const uint32_t</span> wordsPerColumn = divide_up_by(nRows, 32);
+<span class="k">const uint32_t</span> lastWordMask = (nRows % 32 == 0) ? 0xffffffff : (1u &lt;&lt; (nRows % 32)) - 1;
+<span class="c">// histogram filled with the real pixels only: hist.off[col] = first pixel of column col</span>
+<span class="k">for</span> (<span class="k">uint32_t</span> firstCol = 0; firstCol &lt; nCols; firstCol += morphing::stripCols) {
+  <span class="k">const uint32_t</span> nearFirst = (firstCol &gt; 0) ? firstCol - 1 : 0;
+  <span class="k">const uint32_t</span> nearLast = std::min(firstCol + morphing::stripCols + 1, nCols);
+  <span class="k">if</span> (hist.off[Hist::bin(nearLast)] == hist.off[Hist::bin(nearFirst)])
+    <span class="k">continue</span>;                                                 <mark>// empty strip: skip</mark>
+  <span class="k">const int32_t</span> bufferFirstCol = firstCol - morphing::halo;    <span class="c">// buffer starts 2 columns before</span>
+  <span class="c">// ... clear image and temp (48 x wordsPerColumn words) ...</span>
+  <span class="k">const uint32_t</span> jFirst = hist.off[Hist::bin(loadFirst)], jLast = hist.off[Hist::bin(loadLast)];
+  <span class="k">for</span> (<span class="k">uint32_t</span> j : independent_group_elements(acc, jFirst, jLast)) {  <span class="c">// 48 columns, contiguous</span>
+    <span class="k">auto</span> pixel = digi_view[hist.content[j] + firstPixel];
+    <span class="k">uint32_t</span> index = (pixel.yy() - bufferFirstCol) * wordsPerColumn + pixel.xx() / 32;
+    alpaka::atomicOr(acc, &amp;image[index], 1u &lt;&lt; (pixel.xx() % 32), alpaka::hierarchy::Threads{});
+  }
+  <span class="c">// ... dilate, erode (next slides) ...</span>
+}
+<span class="c">// clear the histogram and fill it again with real + recovered pixels: the rest of FindClus is unchanged</span></pre>
+  </div>
+</section>
+
+<!-- ================================================================ 16 -->
+<section class="slide" data-n="16">
+  <header>
+    <h2>Code 3: dilation, 32 rows per thread</h2>
+    <p class="sub">Identical to the Phase-1 bit logic; only the layout is dynamic</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 12px">
+<pre class="code"><span class="k">for</span> (<span class="k">uint32_t</span> i : independent_group_elements(acc, bufferWords)) {  <span class="c">// word i = 32 rows of one column</span>
+  <span class="k">uint32_t</span> col = i / wordsPerColumn, word = i % wordsPerColumn;
+  <span class="k">int32_t</span> moduleCol = bufferFirstCol + col;
+  <span class="k">if</span> (col == 0 <span class="k">or</span> col == bufferCols - 1 <span class="k">or</span> moduleCol &lt; 0 <span class="k">or</span> moduleCol &gt;= nCols)
+    <span class="k">continue</span>;                                            <mark>// outer halo column: only read</mark>
+  <span class="k">uint32_t</span> img = image[i];
+  <span class="c">// OR of this column and its two neighbours, shifted by 1 to make room for the previous row</span>
+  <span class="k">uint64_t</span> buffer = <span class="k">uint64_t</span>(img | image[i - wordsPerColumn] | image[i + wordsPerColumn]) &lt;&lt; 1;
+  <span class="k">if</span> (word &gt; 0)                                      <span class="c">// bit 0: last row of the previous word</span>
+    buffer |= ((image[i - 1] | ...) &gt;&gt; 31) &amp; 1;
+  <span class="k">if</span> (word &lt; wordsPerColumn - 1)                     <span class="c">// bit 33: first row of the next word</span>
+    buffer |= <span class="k">uint64_t</span>((image[i + 1] | ...) &amp; 1) &lt;&lt; 33;
+  <span class="k">uint32_t</span> neighbours = <span class="k">uint32_t</span>(buffer) | <span class="k">uint32_t</span>(buffer &gt;&gt; 1) | <span class="k">uint32_t</span>(buffer &gt;&gt; 2);
+  <span class="k">uint32_t</span> fake = neighbours &amp; ~img;     <span class="c">// empty, with at least one of the 8 neighbours set</span>
+  <span class="k">if</span> (word == wordsPerColumn - 1)
+    fake &amp;= lastWordMask;                                <mark>// no rows past the module</mark>
+  temp[i] = fake;
+}</pre>
+    <p class="small">L1 strip: 48 × 21 = 1008 words over 384 threads → about 3 words per thread</p>
+  </div>
+</section>
+
+<!-- ================================================================ 17 -->
+<section class="slide" data-n="17">
+  <header>
+    <h2>Code 4: erosion and the recovered pixels</h2>
+    <p class="sub">One popcount + one atomicAdd per 32 rows</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr">
+<pre class="code"><span class="k">for</span> (<span class="k">uint32_t</span> i : independent_group_elements(acc, stripCols * wordsPerColumn)) {  <span class="c">// the 44 strip columns</span>
+  <span class="k">uint32_t</span> col = halo + i / wordsPerColumn, word = i % wordsPerColumn;
+  <span class="k">uint32_t</span> index = col * wordsPerColumn + word, tmp = temp[index];
+  <span class="k">if</span> (bufferFirstCol + col &gt;= nCols <span class="k">or</span> tmp == 0) <span class="k">continue</span>;
+  <span class="k">uint32_t</span> value = image[index] | tmp;
+  <span class="k">uint32_t</span> above = image[index - wordsPerColumn] | temp[index - wordsPerColumn];   <span class="c">// column - 1</span>
+  <span class="k">uint32_t</span> below = image[index + wordsPerColumn] | temp[index + wordsPerColumn];   <span class="c">// column + 1</span>
+  <span class="k">if</span> (word == wordsPerColumn - 1) value |= ~lastWordMask;   <mark>// beyond the last row: filled</mark>
+  <span class="k">uint32_t</span> previous = (word &gt; 0) ? (... &gt;&gt; 31) : 1, next = (word &lt; wordsPerColumn - 1) ? (... &amp; 1) : 1;
+  <span class="k">uint32_t</span> left = (value &lt;&lt; 1) | previous, right = (value &gt;&gt; 1) | (next &lt;&lt; 31);
+  <span class="k">uint32_t</span> recovered = tmp &amp; left &amp; right &amp; above &amp; below;       <span class="c">// plus erosion, 32 rows at once</span>
+  <span class="k">uint32_t</span> first = alpaka::atomicAdd(acc, &amp;fakePixels, alpaka::popcount(acc, recovered), ...);
+  <span class="k">for</span> (<span class="k">uint32_t</span> k = first; recovered != 0; ++k) {                <span class="c">// one fake digi per set bit</span>
+    <span class="k">uint32_t</span> bit = alpaka::ffs(acc, <span class="k">int32_t</span>(recovered)) - 1;
+    recovered &amp;= recovered - 1;
+    <span class="k">if</span> (k &lt; maxFakesInModule) {
+      <span class="k">auto</span> fake = fakes_view[firstFake + k];
+      fake.xx() = word * 32 + bit;  fake.yy() = bufferFirstCol + col;  fake.moduleId() = thisModuleId;
+    }
+  }
+}</pre>
+  </div>
+</section>
+
+<!-- ================================================================ divider -->
+<section class="slide divider">
+  <div class="line"></div>
+  <h1>Validation</h1>
+  <p class="divsub">The same checks as the Phase-1 validation, then what is new for Phase 2</p>
+</section>
+
+<!-- ================================================================ 18 -->
+<section class="slide" data-n="18">
+  <header>
+    <h2>Validation: the Phase-1 checks, redone</h2>
+    <p class="sub">Same plots as in #49991 and the HLT validation (DPG, 13 Aug 2025)</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 380px; gap: 30px">
+    <table class="t mapping" style="font-size:17.5px; align-self:start">
+      <tr><th>Phase-1 validation</th><th>Phase-2 equivalent</th><th style="width:110px">Status</th></tr>
+      <tr><td>count difference, old vs new version</td><td>pixels and clusters per module, this branch vs master, morphing off</td><td class="check">done</td></tr>
+      <tr><td>cluster size: without, with, overlapped, difference</td><td>same four panels, TBPX L1</td><td class="check">done</td></tr>
+      <tr><td>event displays, with and without morphing</td><td>TBPX L1 modules, true pixel aspect</td><td class="check">done</td></tr>
+      <tr><td>fake-digi monitoring table (per event, module, layer)</td><td>same entries, from the GPU fakes</td><td class="check">done</td></tr>
+      <tr><td>RecHit vs SimHit: position, resolution, error, pull (muon gun)</td><td>Phase-2 IT recHits, central and forward muons</td><td class="todo">to do</td></tr>
+      <tr style="background:#e6f0f4"><td><i>new</i>: legacy CPU <code>SiPixelDigiMorphing</code></td><td>GPU vs CPU vs exact whole-module reference, pixel by pixel</td><td class="check">done</td></tr>
+    </table>
+    <div class="stack">
+      <div class="card"><h4>Sample</h4><p class="xs" style="margin:0"><code>RelValTTbar_14TeV</code>, <code>CMSSW_20_1_0_pre3</code>, PU200, D128 · 100 events · GT <code>phase2_realistic_T35</code></p></div>
+      <div class="card"><h4>Region</h4><p class="xs" style="margin:0">TBPX L1 = <b>216 modules</b>, 21 600 module-events</p></div>
+      <div class="card"><h4>Hardware</h4><p class="xs" style="margin:0">Tesla T4 (<code>lxplus905</code>), CUDA backend</p></div>
+      <div class="card"><h4>Unit test</h4><p class="xs" style="margin:0">6 synthetic modules (all sizes, rows not a multiple of 32, edges, strip boundaries) · SerialSync + CUDA · compute-sanitizer: 0 errors · halo = 1 control fails</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 19 -->
+<section class="slide" data-n="19">
+  <header>
+    <h2>Count difference: this branch vs master</h2>
+    <p class="sub">Morphing off: nothing changes</p>
+  </header>
+  <p class="ref">Phase-1 analogue: “count difference between old &amp; new version” (#49991)</p>
+  <div class="cols" style="grid-template-columns: 750px 1fr; gap: 30px">
+    <div class="figcol">
+      <img src="img/count_difference.png" style="width:740px" alt="count difference">
+      <p class="cap">Stock config on the same 100 events, all IT modules; branch vs pristine <code>CMSSW_20_1_X_2026-10-20-2300</code></p>
+    </div>
+    <div class="stack">
+      <div class="result"><div class="rlab">module-events that differ</div><div class="rval">0 / 400 000</div></div>
+      <table class="t" style="font-size:16px">
+        <tr><td>events identical</td><td class="r"><b>100 / 100</b></td></tr>
+        <tr><td>digis compared (cluster index, charge, module)</td><td class="r">56 142 094</td></tr>
+        <tr><td>GPU clusters vs 8-neighbour reference</td><td class="r">0 modules differ</td></tr>
+        <tr><td>morphing on: clusters changed outside L1</td><td class="r">0</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="takeaway">Default off = master, bit for bit</p>
+</section>
+
+<!-- ================================================================ 20 -->
+<section class="slide" data-n="20">
+  <header>
+    <h2>Cluster size without and with morphing</h2>
+    <p class="sub">TBPX L1, GPU, same four panels as the Phase-1 validation</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 760px 1fr; gap: 26px">
+    <div class="figcol"><img src="img/cluster_size_phase1style.png" style="height:500px" alt="cluster size"></div>
+    <div class="stack">
+      <table class="t" style="font-size:17px">
+        <tr><th></th><th class="r">without</th><th class="r">with</th></tr>
+        <tr><td>clusters</td><td class="r">927 589</td><td class="r">897 298</td></tr>
+        <tr><td>mean size (pixels)</td><td class="r">5.70</td><td class="r">5.89</td></tr>
+      </table>
+      <div class="result"><div class="rlab">clusters</div><div class="rval">−3.3%</div></div>
+      <ul class="tight small">
+        <li>per module: mean size <b>+0.25</b> pixels</li>
+        <li><b>no module</b> gets smaller clusters</li>
+        <li>≈ 8 700 of 21 600 module-events unchanged</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 21 -->
+<section class="slide" data-n="21">
+  <header>
+    <h2>Morphing → with and without</h2>
+    <p class="sub">Broken tracks in TBPX L1 are rejoined</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 700px 1fr; gap: 20px">
+    <div class="figcol"><img src="img/display_1.png" style="width:690px" alt="display 1"></div>
+    <div class="figcol"><img src="img/display_4_crop.png" style="width:440px; margin-top:40px" alt="display 4"></div>
+  </div>
+  <p class="takeaway">GPU recovered = boxes, CPU recovered = crosses: same pixels here</p>
+</section>
+
+<!-- ================================================================ 22 -->
+<section class="slide" data-n="22">
+  <header>
+    <h2>Fake digis</h2>
+    <p class="sub">Same entries as the Phase-1 monitoring table, 100 events</p>
+  </header>
+  <p class="ref">Phase-1 analogue: “Fake digis → with and without fix” (#49991)</p>
+  <div class="cols" style="grid-template-columns: 720px 1fr; gap: 36px">
+    <table class="t mono" style="font-size:18px; align-self:start">
+      <tr><th>Name</th><th class="r">Entries</th><th class="r">Mean</th><th class="r">RMS</th></tr>
+      <tr><td>FakeDigisPerEvent</td><td class="r">100</td><td class="r">16 964</td><td class="r">1 799</td></tr>
+      <tr><td>FakeDigisPerModule</td><td class="r">21 600</td><td class="r">78.5</td><td class="r">32.3</td></tr>
+      <tr><td>ModulesWithFakeDigis</td><td class="r">100</td><td class="r">216</td><td class="r">0</td></tr>
+      <tr><td>NFakeDigisBarrel</td><td class="r">100</td><td class="r">16 964</td><td class="r">1 799</td></tr>
+      <tr><td>NFakeDigisEndcap</td><td class="r">100</td><td class="r">0</td><td class="r">0</td></tr>
+      <tr class="hi"><td>NFakeDigisLayer1</td><td class="r">100</td><td class="r">16 964</td><td class="r">1 799</td></tr>
+      <tr><td>NFakeDigisLayer2</td><td class="r">100</td><td class="r">0</td><td class="r">0</td></tr>
+      <tr><td>NFakeDigisLayer3</td><td class="r">100</td><td class="r">0</td><td class="r">0</td></tr>
+      <tr><td>NFakeDigisLayer4</td><td class="r">100</td><td class="r">0</td><td class="r">0</td></tr>
+      <tr><td class="muted">real digis per L1 module</td><td class="r">21 600</td><td class="r">244.9</td><td class="r">76.1</td></tr>
+    </table>
+    <div class="stack">
+      <div class="result"><div class="rlab">fakes / real digis in L1</div><div class="rval">+32%</div></div>
+      <ul class="tight small">
+        <li>fakes only in the configured region: <b>all 216 L1 modules, every event</b>, nothing elsewhere</li>
+        <li>max in one module: <b>536</b>, cap 1000 never reached</li>
+        <li>fakes fill the staircase steps of long clusters (25 µm rows)</li>
+        <li>fakes are not in the output: they only join clusters</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 23 -->
+<section class="slide" data-n="23">
+  <header>
+    <h2>New for Phase 2: pixel-by-pixel comparison</h2>
+    <p class="sub">GPU vs the legacy CPU <code>SiPixelDigiMorphing</code> and vs an exact reference</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 860px 1fr; gap: 26px">
+    <div class="figcol"><img src="img/recovered_digis_gpu_vs_cpu.png" style="width:850px" alt="GPU vs CPU and exact"></div>
+    <div class="stack">
+      <div class="result"><div class="rlab">GPU vs exact whole-module reference</div><div class="rval">0 differences</div><div class="xs">1 696 444 = 1 696 444</div></div>
+      <div class="box small">vs CPU: 12.1% of modules identical; 1 630 486 in common, 69 844 differ: explained on the next slide</div>
+    </div>
+  </div>
+  <p class="takeaway">Strips give exactly the whole-module answer, in every module</p>
+</section>
+
+<!-- ================================================================ 24 -->
+<section class="slide" data-n="24">
+  <header>
+    <h2>Where GPU and CPU differ</h2>
+    <p class="sub">CPU artefacts or the deliberate Phase-1 row-edge rule; 0 elsewhere</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 820px 1fr; gap: 26px">
+    <div class="figcol"><img src="img/difference_location.png" style="width:810px" alt="difference location"></div>
+    <div class="stack small">
+      <div class="box"><b class="bt">55 407</b> on the CPU's 27-column chunk edges: the CPU does not dilate its 1-column halo (the halo = 1 bug)</div>
+      <div class="box"><b class="bt">10 551</b> on the first/last row: Phase-1 GPU rule, beyond a row edge counts as filled</div>
+      <div class="box"><b class="bt">3 886</b> CPU-only on the last module column</div>
+      <div class="result" style="text-align:left">In all 69 844 the GPU agrees with the exact reference</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 25 -->
+<section class="slide" data-n="25">
+  <header>
+    <h2>Digis and clusters per module</h2>
+    <p class="sub">TBPX L1, GPU and CPU morphing agree</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 26px">
+    <div class="figcol"><img src="img/digis_per_module.png" style="width:570px" alt="digis per module"><p class="cap">real + recovered digis per module</p></div>
+    <div class="figcol"><img src="img/clusters_per_module.png" style="width:570px" alt="clusters per module"><p class="cap">clusters: 927 589 → 897 298 (GPU), 897 990 (CPU)</p></div>
+  </div>
+</section>
+
+<!-- ================================================================ 26 -->
+<section class="slide" data-n="26">
+  <header>
+    <h2>A caveat: crossing clusters get merged</h2>
+    <p class="sub">The algorithm, not the port: CPU and GPU agree</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 760px 1fr; gap: 30px">
+    <div class="figcol"><img src="img/display_3_crop.png" style="width:750px" alt="display 3"></div>
+    <ul class="tight" style="font-size:19.5px">
+      <li>A short cluster crossing a long one is <span class="hl">merged into it</span></li>
+      <li>The closing bridges gaps of up to 2 pixels</li>
+      <li>Same on CPU (crosses) and GPU (boxes)</li>
+      <li><b>Before enabling</b>: hit resolution and track efficiency / fake rate, as in the Phase-1 HLT validation</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================================================================ 27 -->
+<section class="slide" data-n="27">
+  <header>
+    <h2>Still to do: RecHit vs SimHit, as for Phase 1</h2>
+    <p class="sub">The physics half of the Phase-1 validation (DPG, 13 Aug 2025)</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 36px">
+    <div class="stack">
+      <h3>What Phase 1 showed (layer 1)</h3>
+      <table class="t" style="font-size:17px">
+        <tr><th>Quantity</th><th>with morphing</th></tr>
+        <tr><td>initial recHit x / y resolution</td><td>better in both</td></tr>
+        <tr><td>error in x / y</td><td>slightly larger / smaller</td></tr>
+        <tr><td>pull in x / y</td><td>better in both</td></tr>
+        <tr><td>on-track recHits</td><td>more on track; x: worse mean, better resolution; y: clearly better</td></tr>
+      </table>
+      <p class="xs muted">Muon gun p<sub>T</sub> = 10 GeV, central |η| &lt; 2 and forward 2 &lt; |η| &lt; 3; closest SimHit per RecHit; DetAngle as angle proxy</p>
+    </div>
+    <div class="stack">
+      <h3>Plan for Phase 2</h3>
+      <ol class="steps">
+        <li>Muon-gun samples, central and forward, D128, PU0 and PU200</li>
+        <li>Morphing off vs TBPX L1 on; same RecHit–SimHit matching</li>
+        <li>x/y position, resolution, error, pull per layer and ring</li>
+        <li>On-track recHits after CA / mkFit; track efficiency and fakes</li>
+        <li>Check the crossing-cluster merges in the tails</li>
+      </ol>
+      <div class="box small">Needed before turning it on by default; also with irradiated thresholds once simulated</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 28 -->
+<section class="slide" data-n="28">
+  <header>
+    <h2>What can be configured</h2>
+    <p class="sub"><code>SiPixelPhase2DigiToCluster</code>, same names as Phase 1</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 14px">
+    <table class="t" style="font-size:17.5px">
+      <tr><th style="width:250px">Parameter</th><th style="width:200px">Default</th><th>Meaning</th></tr>
+      <tr><td><code>DoDigiMorphing</code></td><td><code>False</code></td><td>switch</td></tr>
+      <tr><td><code>MaxFakesInModule</code></td><td>1000</td><td>fakes per module; must be &lt; <code>maxPixInModule</code> (6000); real pixels capped at 6000 − 1000 in morphing modules</td></tr>
+      <tr><td><code>barrelRegions</code></td><td><code>["1,1-99,1-99"]</code></td><td><code>"layer,ladder,module"</code>, ranges <code>A-B</code>; default = TBPX L1 (216 modules)</td></tr>
+      <tr><td><code>endcapRegions</code></td><td><code>[]</code></td><td><code>"disk,blade,side,panel"</code>; meaning for TFPX/TEPX detids <span class="hl">still to check</span></td></tr>
+      <tr><td colspan="3" class="muted xs" style="font-style:italic">compile time, <code>::pixelClustering::phase2Morphing</code></td></tr>
+      <tr><td><code>stripCols</code> / <code>halo</code></td><td>44 / 2</td><td>strip width and halo (buffer = 48 columns)</td></tr>
+      <tr><td><code>maxRows</code></td><td>1376</td><td>largest module (1354 rows) rounded up to a word</td></tr>
+    </table>
+<pre class="code">process.siPixelClustersPreSplittingAlpaka.DoDigiMorphing = True
+process.siPixelClustersPreSplittingAlpaka.barrelRegions = [<span class="hl">"1,1-99,1-99"</span>]   <span class="c"># TBPX L1; not yet in an era modifier or HLT_75e33</span></pre>
+  </div>
+</section>
+
+<!-- ================================================================ 29 -->
+<section class="slide" data-n="29">
+  <header>
+    <h2>Files added and changed</h2>
+    <p class="sub"><code>RecoLocalTracker/SiPixelClusterizer/</code></p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 10px">
+    <table class="t" style="font-size:16.5px">
+      <tr><th style="width:430px">File</th><th class="r" style="width:90px">+ / −</th><th>What</th></tr>
+      <tr><td><code>plugins/alpaka/PixelClustering.h</code></td><td class="r">212 / 21</td><td>strip morphing in <code>FindClus</code>; <code>morphingModuleIndex</code>; shared <code>image</code>/<code>temp</code>; <code>firstFake</code>, <code>maxPixels</code></td></tr>
+      <tr><td><code>plugins/alpaka/SiPixelMorphingConfig.h</code></td><td class="r">35 / 0</td><td>new namespace <code>::pixelClustering::phase2Morphing</code>: strip constants, <code>packSize</code></td></tr>
+      <tr class="hi"><td><code>plugins/alpaka/SiPixelMorphingRegions.h</code></td><td class="r"><b>new</b> 105</td><td><code>parseRegions</code>, <code>skipDetId</code>, moved out of <code>SiPixelRawToCluster.cc</code></td></tr>
+      <tr><td><code>plugins/alpaka/SiPixelPhase2DigiToCluster.cc</code></td><td class="r">98 / 2</td><td>4 parameters; modules + sizes from the geometry in <code>beginRun</code>; device copy</td></tr>
+      <tr><td><code>plugins/alpaka/SiPixelRawToCluster.cc</code></td><td class="r">6 / 91</td><td>Phase 1: uses the shared header (pure move)</td></tr>
+      <tr><td><code>plugins/alpaka/SiPixelRawToClusterKernel.dev.cc</code></td><td class="r">21 / 8</td><td>Phase-2 launch: morphing block size, fakes per morphing module</td></tr>
+      <tr><td><code>plugins/alpaka/SiPixelRawToClusterKernel.h</code></td><td class="r">4 / 1</td><td><code>makePhase2ClustersAsync</code> signature</td></tr>
+      <tr class="hi"><td><code>test/alpaka/testPhase2DigiMorphing.dev.cc</code></td><td class="r"><b>new</b> 306</td><td>unit test vs a whole-module host reference</td></tr>
+      <tr><td><code>test/BuildFile.xml</code></td><td class="r">10 / 0</td><td>registers the test for all Alpaka backends</td></tr>
+    </table>
+    <p class="xs muted">Not changed: <code>SimplePixelTopology.h</code>, the Phase-1 morphing logic, any <code>_cff.py</code>. The validation-only commit is not pushed.</p>
+  </div>
+</section>
+
+<!-- ================================================================ 30 -->
+<section class="slide" data-n="30">
+  <header>
+    <h2>Why a new namespace and a new header</h2>
+    <p class="sub">Shared by host and device, and by Phase 1 and Phase 2</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 30px">
+    <div class="card cardlist"><h4><code>::pixelClustering::phase2Morphing</code> in <code>SiPixelMorphingConfig.h</code></h4>
+      <ul>
+        <li>needed by <b>both</b> the host producer (size check, <code>packSize</code>, default <code>MaxFakesInModule</code>) and the kernel (strip layout)</li>
+        <li>header already included by both; outside the Alpaka backend namespace, so host code can use it</li>
+        <li>next to the existing <code>::pixelClustering</code> constants (<code>invalidModuleId</code>, …)</li>
+        <li>separate from Phase-1 <code>pixelStatus</code>, whose 160×416 layout stays <code>constexpr</code> and untouched</li>
+        <li>a <code>static_assert</code> keeps the strip buffer within the Phase-1 size</li>
+      </ul></div>
+    <div class="card cardlist"><h4><code>SiPixelMorphingRegions.h</code>, namespace <code>siPixelMorphing</code></h4>
+      <ul>
+        <li><code>parseRegions</code> / <code>skipDetId</code> were private members of the Phase-1 <code>SiPixelRawToCluster</code></li>
+        <li>Phase 2 needs exactly the same region syntax and selection</li>
+        <li><b>moved, not copied</b>: one implementation for both producers (91 lines removed from Phase 1)</li>
+        <li>host-only (boost, <code>TrackerTopology</code>): kept out of the device headers</li>
+        <li>Phase-1 behaviour unchanged</li>
+      </ul></div>
+  </div>
+</section>
+
+<!-- ================================================================ 31 -->
+<section class="slide" data-n="31">
+  <header>
+    <h2>Summary and next steps</h2>
+    <p class="sub">Correct and off by default; physics validation next</p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 30px">
+    <div class="card cardlist"><h4>Done</h4>
+      <ul>
+        <li>Phase-2 digi morphing in the Alpaka clusterizer: Run-3 bit logic on <b>44-column strips</b>, any module up to 1376 rows</li>
+        <li>No extra shared memory, same block size as master</li>
+        <li>GPU = exact reference in <b>every</b> L1 module, 100 PU200 events</li>
+        <li>Phase-1 checks redone: counts, cluster size, displays, fake digis</li>
+        <li>Off = master, bit for bit</li>
+      </ul></div>
+    <div class="stack">
+      <div class="card cardlist"><h4>Before a PR</h4>
+        <ul>
+          <li>Run-3 regression: Phase-1 output with the shared kernel code</li>
+          <li>Timing of <code>FindClus</code>, on vs off · ROCm run</li>
+          <li>Endcap regions; era modifier / <code>HLT_75e33</code> switch</li>
+        </ul></div>
+      <div class="card cardlist"><h4>Physics</h4>
+        <ul>
+          <li><b>RecHit vs SimHit study</b>, as for Phase 1</li>
+          <li>Crossing-cluster merges: CPE and tracking impact</li>
+          <li>Which regions to enable once thresholds and irradiation are simulated</li>
+        </ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================ 32 -->
+<section class="slide" data-n="32">
+  <header>
+    <h2>The full change</h2>
+    <p class="sub"><code>git diff --stat a19318d617f phase2-digimorphing</code></p>
+  </header>
+  <div class="cols" style="grid-template-columns: 1fr; gap: 14px">
+<pre class="code" style="font-size:15px"> .../SiPixelClusterizer/plugins/alpaka/PixelClustering.h         | 233 +++++++++++++++++++--
+ .../SiPixelClusterizer/plugins/alpaka/SiPixelMorphingConfig.h   |  35 ++++
+ .../SiPixelClusterizer/plugins/alpaka/SiPixelMorphingRegions.h  | 105 ++++++++++
+ .../plugins/alpaka/SiPixelPhase2DigiToCluster.cc                | 100 ++++++++-
+ .../SiPixelClusterizer/plugins/alpaka/SiPixelRawToCluster.cc    |  97 +--------
+ .../plugins/alpaka/SiPixelRawToClusterKernel.dev.cc             |  29 ++-
+ .../plugins/alpaka/SiPixelRawToClusterKernel.h                  |   5 +-
+ RecoLocalTracker/SiPixelClusterizer/test/BuildFile.xml          |  10 +
+ .../test/alpaka/testPhase2DigiMorphing.dev.cc                   | 306 ++++++++++++++++++++++++++++
+ 9 files changed, 797 insertions(+), 123 deletions(-)</pre>
+    <ul class="tight small">
+      <li>Base <code>a19318d617f</code> (merge of cms-sw/cmssw#52208) in <code>CMSSW_20_1_X_2026-10-20-2300</code></li>
+      <li>Commits <code>15e2048e532</code> “Phase-2 digi morphing in the Alpaka pixel clusterizer” and <code>7dd02b835e3</code> “allow modules with up to 1376 rows (big pixels)”</li>
+      <li>Without the moved region code and the test: ≈ 380 added lines, comments included</li>
+      <li><a href="https://github.com/Chirayu18/cmssw/compare/a19318d617ffe6d96535142b12027d5d50cc08c3...phase2-digimorphing" style="color:#0b4f6c; font-weight:700">github.com/Chirayu18/cmssw/compare/…phase2-digimorphing</a></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================================================================ backup -->
+<section class="slide divider">
+  <div class="line"></div>
+  <h1>Backup</h1>
+</section>
+
+<section class="slide" data-n="B1">
+  <header><h2>More displays</h2><p class="sub">TBPX L1, true pixel aspect</p></header>
+  <div class="cols" style="grid-template-columns: 1fr 520px; gap: 26px">
+    <div class="figcol"><img src="img/display_2_crop.png" style="width:640px" alt="display 2"></div>
+    <div class="figcol"><img src="img/cluster_size_L1.png" style="width:510px" alt="cluster size in pixels and along y"><p class="cap">pixels per cluster and size along y, before and after</p></div>
+  </div>
+</section>
+
+<section class="slide" data-n="B2">
+  <header><h2>Recovered pixels per module: GPU − CPU</h2><p class="sub">GPU recovers more: the CPU misses its own chunk edges</p></header>
+  <div class="cols" style="grid-template-columns: 1fr"><div class="figcol"><img src="img/recovered_digis_difference.png" style="height:470px" alt="GPU minus CPU"></div></div>
+</section>
+
+<section class="slide" data-n="B3">
+  <header><h2>Register limit on the T4</h2><p class="sub">Measured limit, inferred reason</p></header>
+  <div class="cols" style="grid-template-columns: 1fr 1fr; gap: 30px">
+    <ul class="tight">
+      <li><code>FindClus</code>, Phase 2, sm_75: 143 registers per thread</li>
+      <li>driver reports <code>maxThreadsPerBlock</code> = <b>384</b></li>
+      <li>65 536 / (32 × 144) would allow 14 warps (448); the lower limit is likely the per-quarter register file (16k per SM sub-partition): <i>inferred, not measured</i></li>
+      <li>448 threads → <code>cudaErrorLaunchOutOfResources</code></li>
+    </ul>
+    <div class="card cardlist"><h4>How it was measured</h4><ul>
+      <li><code>cuobjdump -res-usage</code>: registers, shared memory</li>
+      <li><code>cudaFuncGetAttributes</code>: <code>maxThreadsPerBlock</code></li>
+      <li><code>compute-sanitizer</code>: 0 errors</li>
+      <li>SerialSync passed in both failing cases</li></ul></div>
+  </div>
+</section>
+
+<section class="slide" data-n="B4">
+  <header><h2>References</h2></header>
+  <div class="cols" style="grid-template-columns: 1fr">
+    <ul class="refs-list" style="font-size:18px">
+      <li>Tracker DPG workshop, 14–16 Oct 2026, indico.cern.ch/event/1707530: A. Bocci (Alpaka), N. Bartosik (geometry), G. Mersi (IT data formats), M. Magherini (IT calibration), S. Dutta (digitizer), M. Musich (HLT reco), J. Schulz / M. Grutta (HLT tracking)</li>
+      <li>Phase-1 HLT digi morphing: cms-sw/cmssw#48734; race-condition fix and 2-buffer scheme: #49991 (validation: <code>_Validation_PR.pdf</code>)</li>
+      <li>Validation of HLT pixel digi morphing, H. Petersen et al., Tracker DPG meeting, 13 Aug 2025, indico.cern.ch/event/1567986</li>
+      <li>CPU morphing: <code>RecoLocalTracker/SiPixelDigiReProducers/plugins/SiPixelDigiMorphing.cc</code></li>
+      <li>This work: github.com/Chirayu18/cmssw, branch <code>phase2-digimorphing</code></li>
+    </ul>
+  </div>
+</section>
+
+<script src="deck.js"></script>
+</body>
+</html>
