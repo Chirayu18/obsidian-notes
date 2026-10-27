@@ -599,23 +599,33 @@
 <section class="slide" data-n="18">
   <header>
     <h2>HL-LHC prospects</h2>
-    <p class="sub">What the projection assumes</p>
+    <p class="sub">Where direct searches stand, and where they could go</p>
   </header>
   <p class="ref"><a href="https://arxiv.org/abs/2504.00672">arXiv:2504.00672</a></p>
   <div class="cols" style="grid-template-columns: 610px 1fr;">
     <div>
-      <h3>The projection (ATLAS + CMS combined)</h3>
-      <ul class="big18">
-        <li>14 TeV, <b>3000 fb<sup>−1</sup></b> per experiment (≈ 20× Run 2)</li>
-        <li><b>VH(H → c<span class="ov">c</span>) only</b>: an ATLAS study, assumed to hold for CMS too</li>
-        <li>Includes recent b and c tagging gains (CMS: UParT)</li>
-      </ul>
-      <h3 style="margin-top:28px">Result</h3>
-      <ul class="big18">
-        <li><b>Expected |κ<sub>c</sub>| &lt; 1.5</b>, 30% better than the previous projection <span class="muted" style="font-size:17px">(<a href="https://doi.org/10.23731/CYRM-2019-007.221">CERN Yellow Rep. Monogr. 7 (2019) 221</a>)</span></li>
+      <h3>Direct searches: allowed |κ<sub>c</sub>|</h3>
+      <div class="bars" style="position:relative; margin-top:40px">
+        <!-- 0..4.4 on the track; width% = value / 4.4 * 100 -->
+        <div style="position:absolute; left:130px; right:0; top:-14px; bottom:0;">
+          <div style="position:absolute; left:56.8%; width:22.7%; top:0; bottom:0; background:rgba(224,122,31,.12)"></div>
+          <div style="position:absolute; left:22.7%; top:0; bottom:0; border-left:2px dashed var(--grey)"></div>
+          <span class="xs" style="position:absolute; left:22.7%; top:-20px; transform:translateX(-50%); color:var(--grey)">SM</span>
+          <span class="xs" style="position:absolute; left:68%; top:-20px; transform:translateX(-50%); color:var(--orange)">BSM |κ<sub>c</sub>| ~ 3</span>
+        </div>
+        <div class="brow"><div class="blab">Run 2, obs.</div><div class="btrack"><div class="bar" style="width:79.5%"><span>3.5</span></div></div></div>
+        <div class="brow"><div class="blab">Run 2, exp.</div><div class="btrack"><div class="bar" style="width:61.4%; background:#5f93a8"><span>2.7</span></div></div></div>
+        <div class="brow"><div class="blab">HL-LHC, exp.</div><div class="btrack"><div class="bar" style="width:34.1%; background:#e07a1f"><span>1.5</span></div></div></div>
+        <div class="axis" style="margin-left:130px; margin-top:6px">
+          <span style="left:0%">0</span><span style="left:22.7%">1</span><span style="left:45.5%">2</span><span style="left:68.2%">3</span><span style="left:90.9%">4</span>
+        </div>
+      </div>
+      <p class="cap">Run 2: <a href="https://doi.org/10.1103/9nwb-splk">Phys. Rev. Lett. 136 (2026) 011801</a> · HL-LHC: <a href="https://arxiv.org/abs/2504.00672">arXiv:2504.00672</a><br>No bar excludes κ<sub>c</sub> = 0 yet</p>
+      <ul class="big18" style="margin-top:14px">
+        <li><b>HL-LHC: |κ<sub>c</sub>| &lt; 1.5</b> exp., 30% better than the previous projection <span class="muted" style="font-size:17px">(<a href="https://doi.org/10.23731/CYRM-2019-007.221">CERN Yellow Rep. Monogr. 7 (2019) 221</a>)</span></li>
         <li>VH(H → c<span class="ov">c</span>): ≈ 1.6σ, still no observation</li>
       </ul>
-      <p class="bigq">Can we do better?</p>
+      <p class="bigq" style="margin-top:10px">Can we do better?</p>
     </div>
     <div class="figcol">
       <img src="img/Hcc_HLLHC_projection_Wuchterl.png" style="width:100%; height:auto; max-height:500px; object-fit:contain">
