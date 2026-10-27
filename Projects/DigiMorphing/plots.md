@@ -111,3 +111,31 @@ Path: /eos/user/c/cgupta/phase2morph/plots/display_4.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/phase2morph/plots/display_4.png
 
 ---
+
+### Count difference vs master, morphing off (Phase-1-style)
+
+tags: [plot]
+Date: 2026-10-27
+Description: Pixels and clusters per module, this branch minus master, stock config, 100 PU200 events: 0 of 400,000 module-events differ. Same plot as the Phase-1 PR #49991 validation.
+Path: /eos/user/c/cgupta/phase2morph/plots/phase1style/count_difference.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/phase2morph/plots/phase1style/count_difference.png
+
+---
+
+### Cluster size without, with, overlapped, per-module difference (Phase-1-style)
+
+tags: [plot]
+Date: 2026-10-27
+Description: TBPX L1 GPU clusters, 4 panels as in #49991. Mean 5.70 -> 5.89; per-module mean size +0.25 pixels, never negative.
+Path: /eos/user/c/cgupta/phase2morph/plots/phase1style/cluster_size_phase1style.png
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/phase2morph/plots/phase1style/cluster_size_phase1style.png
+
+---
+
+### IIHE Tracker DPG talk folder (slides + plots)
+
+tags: [plot]
+Date: 2026-10-27
+Description: Beamer and HTML PDFs of the 27 Oct talk, HTML sources, and all validation plots. Internal: contains CERN-restricted workshop figures.
+Path: /eos/user/c/cgupta/phase2morph/talk-2026-10-27
+Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/phase2morph/talk-2026-10-27
