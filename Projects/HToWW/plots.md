@@ -139,3 +139,10 @@ tags: [plot]
 - Description: scale-variation shapes (Higgs pT, c-jet pT, n-jets, class) and the acceptance per variation for ≥1 gen c-jet (pT>20, |η|<2.4). Ours (per-event fix) vs Run 3 γγ and Run 2 WW, 0.9–1.5M region events each, jackknife errors. Inside the region ours agrees with the references at the 1–2% level, within the spread between the two references. muR-down acceptance is about 1 point high. γγ is not usable for the c-jet/n-jet axes because GenJets include the photons.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/region
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/region
+
+### 4FS FxFx el8 gridpack validation, rebuilt vs official clean H→γγ gridpack (2026-10-28)
+tags: [plot]
+- Date: 2026-10-28
+- Description: the H+c 4FS FxFx gridpack rebuilt on el8 (MG 2.9.18) with internal reweighting kept and the python systematics step skipped, against the official clean H→γγ gridpack (MG 2.9.9). Both are showered with the same H→WW fragment, which carries the complete FxFx JetMatching block; about 10k events each after matching. The PDF replicas average to member 0 (0.999 in both, against 2.26 in the broken central samples). The scale-variation cross sections agree to within 0.7%. The 1-jet share is 0.269 against 0.268, the forward 1-jet share 0.066 against 0.072 (±0.005), and the matched σ 97.4 ± 1.6 fb against 96.5 ± 1.6 fb. Higgs pT, parton η/pT, N GenJets and leading GenJet pT all agree within statistics. summary.md has the table.
+- Path: /eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/plots
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/plots
