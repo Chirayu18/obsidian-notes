@@ -447,7 +447,7 @@ const uint32_t firstFake = maxFakesInModule * (isPhase2 ? max(morphingIndex, 0) 
     \column{0.50\textwidth}
     \textbf{Problem} (found on the T4, not on CPU)
     \begin{itemize}
-      \item Phase 1 grows the histogram for fakes: $6000 + 2400$ entries $\to$ more threads per block
+      \item Growing the histogram for 1000 fakes: 7000 entries / 16 per thread $\to$ 448 threads per block
       \item For Phase 2 that gave 448 threads; at 143 registers the T4 allows 384
       \item \con{\code{cudaErrorLaunchOutOfResources}}
     \end{itemize}
@@ -869,7 +869,7 @@ process.siPixelClustersPreSplittingAlpaka.barrelRegions = ["1,1-99,1-99"]   # TB
       \item \code{FindClus}, Phase 2, sm\_75: 143 registers/thread
       \item driver reports \code{maxThreadsPerBlock} = \textbf{384} for this kernel
       \item a plain $65\,536 / (32\times144)$ estimate gives 14 warps (448); the lower limit is likely the per-quarter split of the register file (16k per SM sub-partition): \textit{inferred, not measured}
-      \item 448 threads (histogram 6000 + 2400) $\to$ \code{cudaErrorLaunchOutOfResources}
+      \item 448 threads (histogram 6000 + 1000, 16 pixels per thread) $\to$ \code{cudaErrorLaunchOutOfResources}
     \end{itemize}
     \column{0.42\textwidth}
     \textbf{How it was measured}

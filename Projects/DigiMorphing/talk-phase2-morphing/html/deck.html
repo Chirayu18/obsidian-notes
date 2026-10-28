@@ -433,7 +433,7 @@ ul.refs-list li { font-size: 19px; margin-bottom: 10px; }
       <div class="box"><h3>Shared memory: 52 624 B &gt; 48 KB</h3>
         <p class="small" style="margin:0">nvlink reserved the Phase-1 bitmaps in the Phase-2 kernel, despite <code>if constexpr</code>. <b class="bt">Fix:</b> one pair of buffers declared once, for both phases.</p></div>
       <div class="box"><h3>Registers: 448 threads &gt; 384</h3>
-        <p class="small" style="margin:0">Growing the histogram for fakes (6000 + 2400) raised the block size; at 143 registers the T4 allows 384 → <code>cudaErrorLaunchOutOfResources</code>.
+        <p class="small" style="margin:0">Growing the histogram by 1000 fakes (7000 entries, 16 per thread) raised the block size to 448; at 143 registers the T4 allows 384 → <code>cudaErrorLaunchOutOfResources</code>.
         <b class="bt">Fix:</b> in morphing modules, <b>5000 real + 1000 fake</b> entries share the 6000. <code>SimplePixelTopology.h</code> untouched.</p></div>
     </div>
     <div class="stack">
