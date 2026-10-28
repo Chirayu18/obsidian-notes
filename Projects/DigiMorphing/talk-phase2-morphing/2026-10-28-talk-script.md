@@ -7,7 +7,7 @@ source: laptop
 
 # Talk script: Pixel digi morphing for Phase 2
 
-This script goes with `phase2-morphing-light.pdf`: 21 main slides and a backup section, about 25 minutes. The deck is
+This script goes with `phase2-morphing-light.pdf`: 21 main slides and a backup section, about 24 minutes. The deck is
 in `~/Documents/Codex/2026-10-27/continue-the-slides-from-here-https/outputs/phase2-morphing/`. Times are guides. The
 numbers in the text are the ones on the slides.
 
@@ -42,17 +42,11 @@ never add charge.
 This is the algorithm in the Run-3 HLT, from #48734 and the race-condition fix #49991, which introduced the two
 buffers. At the DPG meeting in August it improved the layer-1 hit resolution.
 
-## 4. Why Phase 2 needs cluster recovery (1:45)
+## 4. Why Phase 2 needs cluster recovery (1:00)
 
-This is the Run-3 timeline Jan Schulz showed at the workshop. In 2025, degraded charge collection broke clusters,
-and digi morphing was the answer.
-
-For Phase 2 the same thing is expected. Mauro Magherini showed that after 10^16 the 3D sensors collect about 5 ke,
-against a threshold near 1 ke. That sounds like plenty of margin, but the 5 ke is shared over several pixels.
-Individual pixels at the edge of the track can fall below the 1 ke threshold, and if the missing pixel is the one
-connecting two parts, the cluster splits. Test-beam data from August 2025 already showed cluster splitting.
-
-So the conclusion was simple: we will need morphing for Phase 2, and the Alpaka Phase-2 path had none.
+This is the Run-3 timeline that Jan Schulz showed at the workshop. In 2025, degraded charge collection gave us broken
+clusters at the HLT, and digi morphing was the fix. We faced this problem in Run 3, so we had better be ready for it
+in Phase 2, and the Alpaka Phase-2 clusterizer had no morphing at all.
 
 ## 5. GPU basics (1:45)
 
