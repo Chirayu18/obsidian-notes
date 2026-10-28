@@ -231,11 +231,20 @@ stays off by default until then. Thank you.
 
 ## Backup, for questions
 
-- **Slide 23 (GPU vs CPU morphing):**
+Backup starts at slide 22.
+
+- **Slide 23:** the Phase-1 HLT results. The y residual Std Dev went from 420 to 285 for initial RecHits, and from 264
+  to 215 on track.
+- **Slide 24:** the longer Phase-2 motivation, including the charge sharing and the 5 ke vs 1 ke threshold.
+- **Slide 25:** the comparison with the CPU morphing.
   - The CPU code borrows only one column per 52-column chunk.
   - In Phase 1 those chunks are ROC boundaries inside the module, not module edges.
   - Whether missing recoveries there is intended is a question for its authors.
-- **Slides 24 and 25:** the files changed, why the new namespace and header exist, and the full `git diff --stat`.
+- **Slide 26:** active strips per layer.
+- **Slide 27:** how registers cap threads, and threads cap the histogram size.
+- **Slides 28 to 31:** the code: module selection, layout and strip loop, dilation, recovery.
+- **Slides 32 and 33:** the files changed, and `git diff --stat`.
+- **Slide 34:** the IT unpacker code review.
 - **Likely questions:**
   - **Is the sample irradiated?** Not knowingly. It tests the implementation; the benefit needs a degraded-threshold
     sample.
