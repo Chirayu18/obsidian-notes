@@ -136,3 +136,89 @@ Bootstrap (5 replicas) sd of the Hcc-vs-QCD deltas: 1.4e-5 (kappa − wCE) and 7
 **Pre-registered go rule: NO-GO.** kappa − wCE on Hcc vs QCD is −0.00116 (required > +0.002), and the worst other class is Hgg at −0.00282 (required ≥ −0.001).
 
 **Reading:** the arms rank plain CE > weighted CE > kappa-HCE on every signal metric. Plain CE did not collapse: 45k signal jets are enough to learn from. This test therefore did not reproduce the HToWW regime (about 2k signal events, heterogeneous background class sizes, λ = 25, k_fine = 7). A faithful replica with v10/v20/v32 baselines and multiple seeds was started on 2026-10-28 (section "HToWW-regime replica", in progress).
+
+## HToWW-regime replica (pre-registered 2026-10-28, before any result)
+
+Question: does kappa-HCE beat the other HToWW losses when JetClass is cut to the HToWW training conditions (13-class profile, about 2.3k signal, one dominant dissimilar background)? The test is designed so a negative result is as reportable as a positive one. Nothing below was tuned on the test set, and nothing will be changed after results exist.
+
+### What the HToWW trainings actually did (read from their files, 2026-10-28)
+
+Sources: HToWW b-hive `/eos/user/c/cgupta/HToWW/b-hive` (read only), outputs under `/eos/user/c/cgupta/EPR_task/b-hive/output/`, and [[MVA]] / [[2026-07-01-kappa-hce-loss-math]].
+
+| Item | Value | Source |
+|---|---|---|
+| Training data (v12 to v32) | dataset `hww_multiclass_v13`, one file `file_0.lz4`, 4,076,514 events | DatasetConstructorTask histogram.npy |
+| Class counts | hplusc 2257, hplusb 2681, ggH 28476, vbf 69848, zh 54721, ggzh 104802, wh 25437, tthnonbb 37668, tthtobb 22657, tt 3180107, st 499001, diboson 38094, vjets 10765 | same |
+| Model | SimpleMLP_MultiClass 17→128→64→32→13, BatchNorm, ReLU, dropout 0.2 (about 13k parameters) | `utils/models/simple_mlp_multiclass.py` |
+| Optimizer | AdamW lr 1e-3, betas (0.95, 0.999), eps 1e-6; `epoch_lin_decay` (constant, then ×1e-2 over the last 30% of epochs); grad clip 1 | `tasks/parameter_mixins.py`, `SchedulerLoader.py`, `base_model.py` |
+| Batch, epochs | 1024; 30 epochs for v10 to v30 (incl. v20), 50 for v31 and v32 | `train_MVA.sh`, output dirs |
+| Weighting | `--loss-weighting`: per-class weights N_total/N_j normalised to max 1, inside the loss; plain CE uses `CrossEntropyLoss(weight, reduction="none").mean()` (divides by batch size, not by the weight sum) | `batches.py`, `training.py`, `base_model.py` |
+| v18h (hierarchical) | groups higgs = {hplusc, hplusb, ggH, vbf, zh, ggzh, wh}, top = {tt, st, tthtobb, tthnonbb}, diboson, vjets; fine group higgs with λ = 2; significance λ = 0 | `config/HPlusCHToWW_hierarchical.yml` |
+| v20 | same groups and fine λ = 2, plus mode `logB` λ = 1: summed −log D (signal) + log(1+D) (background), κ = softplus(r)·(1+cos)/2 with a learnable r per class | `config/HPlusCHToWW_logB.yml`, loss file |
+| kappa-HCE as now configured | λ = 25, τ = 0.3, k_fine = 7, batch-mean L_sig | branch `kappa-hce-loss` 1be29da (2026-07-01) |
+| Quoted metric | hplusc vs all background, AUC of p_s on raw counts; S/√B with raw counts (S out of 2257, B out of 4,074,257) at fixed signal efficiency | MVA.md; recomputed from prediction.npy: v32 0.97475, v20 0.97294 |
+
+**Four findings change how the HToWW lineage reads:**
+
+1. **The v10 "flat CE collapse" (AUC 0.51) was a bug, not class imbalance.** v10's dataset (`HPlusCHToWW_finegrained/hww_multiclass_v10`) has hplusb = 0 events. `compute_class_weights` divides by that zero, so the weights come out as `[0, nan, 0, …, 0]`. The stored training and validation loss is exactly 0.0 at every epoch, and the logits stay at initialisation scale. The network never trained. A weighted (or unweighted) 13-class flat CE on the real data was never run, so HToWW never showed that flat CE collapses.
+2. **The quoted v20 and v32 numbers are in-sample.** `hww_multiclass_v13` is a single file. With one file, `training.py` sets n_val = 0 and uses the training file for validation too (`files[-0:]`). The inference test dataset is the same `hww_multiclass_v13`, and prediction.npy has exactly 4,076,514 rows. Training, `best_model` selection and the quoted AUC / S/√B all use the same events.
+3. **The 0.975 did not come from λ = 25, τ = 0.3, k_fine = 7.** v32 was trained on 2026-03-17. The loss file was first committed on 2026-03-30 (ce3bdd5), so the exact code at training time is not recoverable. That nearest snapshot has λ = 1 in the config, summed L_sig, and no k_fine (= 1). Its `training.py` does not forward τ, so the loss used its default τ = 1.0 while the config said 0.3. The λ = 25 / k_fine = 7 / mean-L_sig version is from the June `hwwcom_*` runs and the July branch. At equal length, kappa-HCE v30 (30 epochs) gave 0.973, the same as v20 (30 epochs). v32's extra 0.002 came with 50 epochs.
+4. **The v32 − v20 gap (0.0018) is within the statistical error.** With 2257 signal events, the Hanley–McNeil standard error at AUC 0.974 is about 0.0023 per model (estimate). It is also one seed per loss.
+
+### Replica on JetClass
+
+**Class roles (13 → 10).** Each HToWW class goes to one JetClass class, so the training counts are the HToWW counts exactly:
+
+| JetClass | plays | train count |
+|---|---|---|
+| Hcc (signal) | hplusc | 2,257 |
+| Hbb | hplusb | 2,681 |
+| Hgg | ggH | 28,476 |
+| H4q | vbf | 69,848 |
+| Hqql | zh + ggzh + wh | 184,960 |
+| Tbqq | tthnonbb + tthtobb | 60,325 |
+| QCD | tt | 3,180,107 |
+| Tbl | st | 499,001 |
+| Zqq | diboson | 38,094 |
+| Wqq | vjets | 10,765 |
+| total | | 4,076,514 |
+
+- **Why these roles:** the signal and its b-flavoured twin are the two rarest classes, which is the HToWW situation (hplusc and hplusb are the rarest). The dominant background is the one we always measure Hcc against (QCD stands in for tt at 78%). Top-like and diboson-like classes keep their physics analogues. The three VH processes merge into the leptonic Higgs class.
+- **Manual groups:** the HToWW groups mapped by role: higgs = {Hcc, Hbb, Hgg, H4q, Hqql}, top = {QCD, Tbl, Tbqq}, diboson = {Zqq}, vjets = {Wqq}, with fine group higgs at λ = 2.
+- **Subset:** one fixed subset from `JetClass_train_100_mod`, shared by every arm and seed. Each row gets a uniform u seeded by (20261028, file index). Candidates with u < 1.05·N_c/10M are kept, then the N_c smallest u per class, so the counts are exact. Script: `htoww_replica/make_subset.py`.
+
+**Arms.** Only the loss differs. The HToWW loss and weighting files are byte-identical copies (`htoww_hce_copy.py` md5 7690b85d, `htoww_batches_copy.py` md5 0b3d6cd6), wired as `training.py` does it.
+1. `ce`: unweighted CE, the v10 analogue as v10 was meant to be.
+2. `wce`: inverse-frequency weighted CE (`loss_weighting`).
+3. `hier`: hierarchical CE with the manual groups, the v18h config. It is the same as v20 without the significance term, so arms 3 and 4 isolate that term.
+4. `v20`: hierarchical + logB discriminant-aware term, λ = 1, learnable r in the optimizer.
+5. `kappa`: kappa-HCE with λ = 25, τ = 0.3, k_fine = 7 (the version being promoted now).
+
+**Training (all arms):**
+- Model: `ParticleTransformer_NoPair_JetClass` (jet_class_ca, about 2M parameters), from scratch with `torch.manual_seed(seed)`.
+- Data: batch 1024 with the last partial batch dropped, 30 epochs = 119,400 iterations, and a seeded per-epoch permutation that is identical across arms for a given seed.
+- Optimizer: Ranger lr 1e-3, eps 1e-5, wd 0, 1k warmup then cosine. Grad clip 1, bf16 model with an fp32 loss.
+- No checkpoint selection: the final weights are evaluated.
+- Seeds 0, 1, 2 for every arm (15 runs).
+- **Deviations from HToWW, chosen for cost and stability, not for results:** a JetClass transformer replaces the 13k-parameter MLP on 17 event features. The optimizer is the one already proven on this model rather than AdamW. All arms run 30 epochs, the length of v20 and v30 (v32's 50 epochs would cost about 150 H100-hours). The test set is held out, unlike HToWW's in-sample numbers.
+
+**Evaluation:** the full JetClass test set, 20M jets, balanced.
+- **Primary (HToWW-style):**
+  - Hcc vs all background, with test jets weighted per class by N_c(train) / n_c(test). The weighted test mixture then has HToWW's absolute yields.
+  - Score p_s (the score behind the quoted 0.975).
+  - M1 = weighted AUC; M2 = S/√B at 50% signal efficiency (S = 2257·ε, B = weighted background passing). S/√B is also reported at 30% and 70%.
+- **Secondary:** the eq. 11 D score with κ = sigmoid(cos/0.3) from each arm's fc; balanced Hcc vs QCD and Hcc vs Hbb (logit differences); every class vs QCD; accuracy.
+- Code: `metrics_replica.py`, `compare_replica.py`.
+
+**Go rule (fixed now).** kappa beats both wce and v20 on both M1 and M2. For each of these four comparisons, mean(kappa) − mean(baseline) must exceed 2 × max(seed sd of the two arms) and a practical floor (M1 +0.001, M2 +1% relative). Anything less is no-go. A missing or crashed run is reported, not imputed. Plain CE and hier are reported for context.
+
+**What I will not do:**
+- Gate on flat CE collapsing. The brief asked for that as a fidelity check, but finding 1 shows HToWW never observed a real collapse, so there is nothing to reproduce. If flat CE trains normally here, that is a result, not a reason to change the class profile.
+- Run a v32-as-trained arm (λ = 1, τ = 1, summed L_sig), the 50-epoch length, or the 2k-vs-10k dose-response. Each would be a separate pre-registered follow-up.
+
+**Budget (estimate):** NoPair ran at 11.3 it/s at batch 512 on H100 NVL, so about 5.6 it/s at 1024. That gives about 6 h of training plus about 0.5 h of data load and test inference per run, so about 100 H100-hours for 15 runs.
+
+**Files:**
+- Code: `/eos/user/c/cgupta/flashjet/kappa_hce/htoww_replica/` (`replica_spec.py`, `make_subset.py`, `htoww_losses.py`, `test_htoww_losses.py`, `train_replica.py`, `metrics_replica.py`, `compare_replica.py`).
+- Condor: `~/flashjet_condor/hww_replica.sub`, `run_hww_replica.sh`.
+- **Unit test:** `logs/test_htoww_losses.log`, ALL PASS. Every arm equals the original HToWW modules exactly (max |diff| 0 for loss values and for gradients with respect to the logits, the fc weights and r) in batches with 0, 3 and 40 signal events. The kappa arm also agrees with the earlier flashjet log-space port to ≤ 3e-4 (log(p + eps) vs log-space).
