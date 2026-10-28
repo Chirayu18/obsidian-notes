@@ -115,3 +115,24 @@ Question: does kappa-HCE help once the signal is rare, which is the regime where
 **Go rule:** kappa-HCE beats weighted CE on Hcc-vs-QCD AUC by **more than 0.002**, **and** loses no more than 0.001 on any other class vs QCD. Plain CE vs weighted CE is also reported.
 
 **Code:** `flashjet/kappa_hce/`: `finetune_imb.py`, `kappa_hce_imb.py`, tests in `test_kappa_imb.py` (`test_kappa_imb.log`), evaluation in `compare_imb.py`. Condor files: `~/flashjet_condor/imb_kappa.sub` and `run_imb_kappa.sh`.
+
+## Imbalanced-JetClass test: results (2026-10-28)
+
+Condor cluster 9503546 (all three arms finished 2026-10-09/10). Each arm kept the same 45,175 Hcc training jets (1:2000). Full balanced JetClass test set, 20.0M jets; `kappa_hce/imb/compare_imb.py`, log `imb/compare_imb.log`, json `imb/compare_imb.json`.
+
+| metric | plain CE | weighted CE | kappa-HCE | kappa − wCE |
+|---|---|---|---|---|
+| 10-class accuracy | 0.77406 | 0.80091 | 0.77382 | −0.02708 |
+| **Hcc vs QCD AUC** | **0.98974** | 0.98905 | 0.98789 | **−0.00116** |
+| Hcc vs QCD rejection at 30% / 50% eff | 8416 / 1726 | 4705 / 1311 | 3606 / 1060 | −23% / −19% |
+| Hcc vs all AUC, p/(1−p) | 0.97467 | 0.97203 | 0.96668 | −0.00536 |
+| Hcc vs all AUC, D (own α) | 0.97472 | 0.97206 | 0.96751 | −0.00455 |
+| Hcc vs all rejection at 30% / 50% eff (D) | 2259 / 439 | 1789 / 349 | 1190 / 273 | |
+| Zqq / Wqq | 0.97009 / 0.97331 | 0.96881 / 0.97195 | 0.96713 / 0.97039 | −0.00168 / −0.00156 |
+| Hgg / H4q / Hbb | 0.96762 / 0.99113 / 0.99839 | 0.96658 / 0.99053 / 0.99826 | 0.96376 / 0.98917 / 0.99746 | −0.00282 / −0.00137 / −0.00079 |
+
+Bootstrap (5 replicas) sd of the Hcc-vs-QCD deltas: 1.4e-5 (kappa − wCE) and 7e-6 (CE − wCE), so every difference above is far outside resampling noise. These runs are one seed per arm, and seed-to-seed spread was not measured.
+
+**Pre-registered go rule: NO-GO.** kappa − wCE on Hcc vs QCD is −0.00116 (required > +0.002), and the worst other class is Hgg at −0.00282 (required ≥ −0.001).
+
+**Reading:** the arms rank plain CE > weighted CE > kappa-HCE on every signal metric. Plain CE did not collapse: 45k signal jets are enough to learn from. This test therefore did not reproduce the HToWW regime (about 2k signal events, heterogeneous background class sizes, λ = 25, k_fine = 7). A faithful replica with v10/v20/v32 baselines and multiple seeds was started on 2026-10-28 (section "HToWW-regime replica", in progress).
