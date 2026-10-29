@@ -247,3 +247,34 @@ Sources: HToWW b-hive `/eos/user/c/cgupta/HToWW/b-hive` (read only), outputs und
 - The hierarchical and v20 arms nearly destroy Tbl vs QCD (0.17 and 0.03, against about 0.9999 for the other arms) and degrade Tbqq vs QCD. This happens because their manual "top" group puts QCD together with Tbl and Tbqq.
 - If the seeds confirm this, kappa's win would be over the weighted baselines only, not over plain CE. That is consistent with HToWW never having had a working flat CE (finding 1).
 - The go rule is evaluated only when all 15 runs exist (`compare_replica.py`).
+
+### HToWW-regime replica: final results (2026-10-29)
+
+All 15 runs finished (condor 9612945, no missing runs). Output of `htoww_replica/compare_replica.py`, saved as `htoww_replica/compare_replica_final.log` and `runs/compare_replica.json`. Values are mean ± sd over seeds 0, 1, 2 on the full test set. "prior" means test jets weighted to the training class yields (HToWW absolute yields).
+
+| metric | plain CE | weighted CE | hier (v18h) | v20 | **kappa-HCE** |
+|---|---|---|---|---|---|
+| **M1** Hcc vs all AUC, p_s, prior | **0.98234 ± 0.00081** | 0.94310 ± 0.00568 | 0.96313 ± 0.00105 | 0.97052 ± 0.00083 | 0.97609 ± 0.00057 |
+| S/√B at 30% eff | **19.58 ± 1.15** | 10.49 ± 0.11 | 10.18 ± 0.36 | 11.41 ± 0.10 | 14.56 ± 0.23 |
+| **M2** S/√B at 50% eff | **14.13 ± 0.79** | 6.98 ± 0.24 | 8.00 ± 0.16 | 8.45 ± 0.10 | 10.22 ± 0.24 |
+| S/√B at 70% eff | **9.05 ± 0.46** | 4.04 ± 0.22 | 5.45 ± 0.06 | 6.05 ± 0.06 | 6.89 ± 0.16 |
+| background rejection at 50% eff | **640 ± 73** | 156 ± 11 | 205 ± 8 | 229 ± 5 | 334 ± 16 |
+| Hcc vs all AUC, D score, prior | **0.98197 ± 0.00091** | 0.94097 ± 0.00625 | 0.96436 ± 0.00080 | 0.97090 ± 0.00065 | 0.97595 ± 0.00069 |
+| Hcc vs QCD (balanced) | **0.98486 ± 0.00058** | 0.96962 ± 0.00172 | 0.97313 ± 0.00362 | 0.95821 ± 0.02452 | 0.97767 ± 0.00018 |
+| Hcc vs Hbb (balanced) | **0.97424 ± 0.00211** | 0.95293 ± 0.00446 | 0.96280 ± 0.00039 | 0.92310 ± 0.00429 | 0.94286 ± 0.00354 |
+| 10-class accuracy (balanced test) | 0.551 ± 0.008 | **0.765 ± 0.002** | 0.555 ± 0.034 | 0.500 ± 0.004 | 0.748 ± 0.001 |
+| Tbqq vs QCD | **0.99595** | 0.99369 | 0.659 ± 0.232 | 0.640 ± 0.359 | 0.99401 |
+| Tbl vs QCD | **0.99994** | 0.99987 | 0.439 ± 0.484 | 0.340 ± 0.542 | 0.99988 |
+
+**Pre-registered verdict: GO.** All four comparisons pass:
+- kappa − wCE: M1 +0.03299 (needed > 0.01136); M2 +3.24 (needed > 0.48).
+- kappa − v20: M1 +0.00557 (needed > 0.00166); M2 +1.76 (needed > 0.48).
+
+**What this shows, stated plainly:**
+1. **Among the losses HToWW actually compared, kappa-HCE wins clearly and reproducibly** in the HToWW regime (2257 signal against 4.07M heterogeneous background). On held-out data it beats v20 by +0.0056 AUC and +21% S/√B at 50% efficiency, with seed spreads of about 0.0006–0.0008 AUC. It also avoids the manual-group damage: hier and v20 put QCD into the "top" group, which wrecks Tbqq/Tbl vs QCD (seed-unstable, down to 0.34). kappa keeps those classes at the plain-CE level.
+2. **Unweighted plain CE beats every arm on every signal metric:** +0.0063 AUC and +38% S/√B at 50% over kappa, and about 1.9× kappa's background rejection. It does not collapse in this regime. Its only loss is 10-class accuracy on a balanced test (0.55), which is a prior effect that AUC and S/√B do not see.
+3. **The baseline HToWW never had is the strongest one.** HToWW's v10 "collapse" was the hplusb = 0 weighting bug (finding 1 above), so a working flat CE was never compared. On this evidence, the case for kappa-HCE in HToWW rests on comparing it with weighted and hierarchical CE. The comparison an analysis should make is kappa-HCE against unweighted CE on held-out events.
+
+**Caveats:** the model is a JetClass transformer (arm C), not the 13k-parameter event MLP, and all arms train 30 epochs. Whether plain CE also wins with the HToWW MLP on HToWW's own features is untested; the direct check is to retrain HToWW with unweighted 13-class CE on a held-out split.
+
+Cleanup: the 8 GB candidate directory `htoww_replica/cand/` is no longer needed and can be deleted.
