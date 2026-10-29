@@ -7,7 +7,7 @@ source: laptop
 
 # Personal AI orchestrator for CMS research, with the cern-slides workflow
 
-**Built 2026-10-29, with two changes to this plan:** no Claude bridge (Claude runs in native Claude Code, launched by `ai`; omp handles every other provider), and CERN-hosted models are last in every route, used only for restricted tasks. How to use it: `2026-10-29-ai-orchestrator-usage.md`.
+**Built 2026-10-29, with changes to this plan:** no Claude bridge (Claude runs in native Claude Code, launched by `ai`; omp handles every other provider), no data-sensitivity layer or sandbox (dropped at the user's request: Claude already handles CERN work), CERN-hosted models last in every route, and automatic Claude account switching through `cswap auto --once` before each Claude launch. How to use it: `2026-10-29-ai-orchestrator-usage.md`.
 
 This plan merges the OMP orchestrator design (reviewed with ChatGPT on 2026-10-29) with the `cern-slides` skill in `~/slide-review/skills/cern-slides`. The orchestrator is the general system; cern-slides becomes its first specialised workflow and the model for how every part of the system learns from me.
 
