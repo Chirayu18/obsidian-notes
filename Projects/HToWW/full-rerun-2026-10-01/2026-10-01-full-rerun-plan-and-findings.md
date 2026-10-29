@@ -509,3 +509,17 @@ Scripts `runall/shapes_reg.py` and `plot_reg.py`; plots in `outputs/hww_lhe_fix/
 
   Ours muR-down is ~1 percentage point above both, i.e. a ~10% relative overestimate of a ~11% effect. The muR-up variations sit within the reference spread.
 - **Verdict:** for the analysis selection, the scale uncertainties from the corrected central samples agree with the clean samples to about 1–2% in shape and about 1 point in acceptance. That is small compared with the ~10% variations themselves. The FxFx fragment issue mainly affects forward jets, which the selection removes.
+
+## 2026-10-29 — ports from Saranya's HcZZ branch (no c-tag changes), plus a rerun blocker
+Survey of `Saranya-Nandakumar/higgscharm@HcZZ-zx-estimation` (clone `~/.cache/hczz-port-survey/sn` on the laptop).
+Edits are uncommitted in the repo, with backups `*.bak_pre_hczzport_20261029`:
+- `lhescale.py`: Up/Down labels were swapped for all three scalevar nuisances (Up was the ×0.5 entry). Now Up = r(7), r(5), r(8).
+  Inside our own card this is a pure relabel (all processes flipped together), but every earlier "scalevar Down fixes X" reading is inverted.
+- `lhepdf.py`: αS is now signed, `clip(0.5·(w_0.120 − w_0.116), ±0.5)`; `np.abs` had forced Up ≥ 1 for every event. Her PDF `/99` was NOT ported: it is for MC-replica sets, and 306000 is Hessian.
+- `parquet_writer.py`: `_xrd_copy` with 4 retries for EOS "[3018] Unable to mkdir: File exists" (concurrent writers into new `sumw_records/` dirs).
+- `correctionlib_files.py`: all 10 `/latest/` paths pinned to the md5-identical dated snapshot (JERC 2026-06-05 / 2026-07-15 / 2026-07-16, electronSS 2025-12-15). No content change.
+- New `analysis/utils/eos_io.py`: `glob()` with server-side xrootd listings for `/eos` paths, because a stale FUSE listing silently drops files. Used for the merge, shift-shard, sample-discovery and sumw_records listings (`postprocess/utils.py`) and for `read_scale` in `make_combine_inputs.py`.
+  Verified on 2022postEE: identical listings, identical `get_process_dict` (55 samples), bit-identical sumw for TT and DY. Listing now takes 31 s instead of 5 s.
+- Unit-checked: scale Up/Down values, signed and capped αS.
+- **BLOCKER found:** all 10 central DY NanoAODv12 datasets in the 4 era yamls are INVALID in DBS (dasgoclient, 2026-10-29). Replace them before the rerun; ask Saranya for her replacement map.
+- Not ported: Z+X, the muon ID SF block, the 4-class MVA, GEN c-hadron sumw splits (optional for 3FS/4FS stitching), the c-tag work (per user).
