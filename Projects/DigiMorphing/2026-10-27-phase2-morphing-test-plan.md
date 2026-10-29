@@ -90,24 +90,24 @@ parameters:
 The Phase-1 race came from reading and writing the same buffer within one pass. The 2-buffer scheme fixed it.
 Phase 2 keeps that scheme but adds a new hazard: the buffers are cleared and refilled for every strip. A missing
 barrier would let the next strip's clear overwrite words that are still being eroded.
-- [ ] Run `compute-sanitizer --tool racecheck` and `--tool synccheck` on the unit test and on PU200 events.
+- [x] Run `compute-sanitizer --tool racecheck` and `--tool synccheck` on the unit test and on PU200 events.
   (memcheck was clean.)
-- [ ] Run the same events N times and check that fakes and clusters are bit-identical.
-- [ ] Compare SerialSync, CUDA and ROCm (warp of 64) on full events, not only on the unit test.
-- [ ] Force overflow with `MaxFakesInModule = 20` to 50. The atomic slot order is not deterministic, so check
+- [x] Run the same events N times and check that fakes and clusters are bit-identical.
+- [ ] Compare SerialSync, CUDA and ROCm (warp of 64) on full events, not only on the unit test. SerialSync vs CUDA done (identical); ROCm still needs an AMD GPU.
+- [x] Force overflow with `MaxFakesInModule = 20` to 50. The atomic slot order is not deterministic, so check
   whether the clusters change from run to run.
-- [ ] Test boundaries with exact coordinate sets:
+- [x] Test boundaries with exact coordinate sets:
   - columns 43/44 and 87/88
   - rows 31/32 and 63/64
   - the partial last strip: 216 = 4 × 44 + 40, and 434 = 9 × 44 + 38
   - `nRows % 32 != 0` (only 100 rows is covered so far)
   - big-pixel seams
   - modules with 0 or 1 digi
-- [ ] Inject more than 5,000 real digis into a morphing module: check the truncation and the printout, and
+- [x] Inject more than 5,000 real digis into a morphing module: check the truncation and the printout, and
   measure the real-digi loss vs master.
-- [ ] Phase-2 duplicate digis: Phase 1 removes them, the Phase-2 path does not. Count them, and decide how they
+- [ ] Phase-2 duplicate digis (0 in 20 PU200 events of simulation; real data still open): Phase 1 removes them, the Phase-2 path does not. Count them, and decide how they
   should be handled.
-- [ ] Run-3 regression: compare Phase-1 output with the shared kernel code against master, with Phase-1 morphing on
+- [x] Run-3 regression: compare Phase-1 output with the shared kernel code against master, with Phase-1 morphing on
   and off. Resources are already shown to be identical.
 
 ### Physics, as in the Phase-1 validation (H. Petersen, DPG 13 Aug 2025)
@@ -133,5 +133,7 @@ barrier would let the next strip's clear overwrite words that are still being er
   27 columns) this gives all 55,407 chunk-edge differences. Is missing those recoveries at ROC boundaries intended
   in Phase 1?
 - **Reviewers:** Should the region syntax for TFPX/TEPX use Phase-2 ring and disk fields?
+
+Results of the checked items, and a race found and fixed by synccheck/racecheck: [[2026-10-29-phase2-morphing-validation-round2]].
 
 Related: [[phase1-morphing-validation-format]], [[plots]].
