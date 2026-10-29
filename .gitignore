@@ -68,3 +68,5 @@ __pycache__/
 
 # secrets (API keys) — never commit
 .keys
+.vault-bm25-cache.json
+.vault-bm25-cache.tmp

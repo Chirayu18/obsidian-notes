@@ -38,7 +38,23 @@ def vault_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
+# Keyword arm: "bm25" (default, see bm25.py) or "rg" (the original match-count arm).
+# Set with --keyword or VAULT_SEARCH_KEYWORD; benchmark both with scripts/rag/bench.py.
+KEYWORD_ARM = os.environ.get("VAULT_SEARCH_KEYWORD", "bm25")
+
+
 def keyword_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, float], str]:
+    """Dispatch to the configured keyword arm; BM25 falls back to rg on error."""
+    if KEYWORD_ARM == "bm25":
+        from bm25 import bm25_hits
+        hits, err = bm25_hits(vault, query, limit)
+        if not err:
+            return hits, ""
+        print(f"[{err}; falling back to rg]", file=sys.stderr)
+    return rg_hits(vault, query, limit)
+
+
+def rg_hits(vault: Path, query: str, limit: int) -> tuple[dict[str, float], str]:
     """Rank files by length-normalised match count for the query's content words.
 
     Returns ({relpath: score}, error_message). Prefers ripgrep but falls
@@ -235,6 +251,7 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--build", action="store_true", help="Rebuild the index, then exit")
     ap.add_argument("--no-archive", action="store_true", help="Hide Archive/ hits")
     ap.add_argument("--paths-only", action="store_true", help="Print paths, no scores/snippets")
+    ap.add_argument("--keyword", choices=["bm25", "rg"], help="Keyword arm (default bm25, env VAULT_SEARCH_KEYWORD)")
     ap.add_argument(
         "--tier", action="append", choices=["notes", "papers", "code"],
         help="Restrict to a tier (repeatable). Default: all, notes ranked first.",
@@ -244,6 +261,9 @@ def main(argv: list[str]) -> int:
         help="Search only vault notes (skips the multi-source index)",
     )
     args = ap.parse_args(argv)
+    global KEYWORD_ARM
+    if args.keyword:
+        KEYWORD_ARM = args.keyword
 
     vault = vault_root()
     if not vault.is_dir():
