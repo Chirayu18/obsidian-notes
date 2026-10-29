@@ -222,3 +222,28 @@ Sources: HToWW b-hive `/eos/user/c/cgupta/HToWW/b-hive` (read only), outputs und
 - Code: `/eos/user/c/cgupta/flashjet/kappa_hce/htoww_replica/` (`replica_spec.py`, `make_subset.py`, `htoww_losses.py`, `test_htoww_losses.py`, `train_replica.py`, `metrics_replica.py`, `compare_replica.py`).
 - Condor: `~/flashjet_condor/hww_replica.sub`, `run_hww_replica.sh`.
 - **Unit test:** `logs/test_htoww_losses.log`, ALL PASS. Every arm equals the original HToWW modules exactly (max |diff| 0 for loss values and for gradients with respect to the logits, the fc weights and r) in batches with 0, 3 and 40 signal events. The kappa arm also agrees with the earlier flashjet log-space port to ≤ 3e-4 (log(p + eps) vs log-space).
+
+### Replica run status (2026-10-29, interim: seed 0 only, NOT the verdict)
+
+- **Subset:** built with exactly the target counts (4,076,514 jets in 41 shards, Hcc 2257; `data/manifest.json`).
+- **Smoke:** all 5 arms ran end to end on the lxplus905 T4. That was 200 iterations at batch 256, because batch 1024 in fp32 does not fit in 15 GB.
+- **Condor:** cluster **9612945**, 15 procs, H100 NVL.
+- **Measured cost:** 0.071–0.077 s/it, i.e. about 2.5 h of training and 0.26 h of test inference per run. The full grid is therefore about 42 H100-hours, against the 100 h estimate.
+- **Status:** seed 0 is done for all arms, plus ce seed 1. The other 8 runs were still queued or running when this was written.
+
+**Seed 0, full test set**
+
+| | ce | wce | hier | v20 | kappa |
+|---|---|---|---|---|---|
+| M1 prior-weighted AUC (p_s) | 0.9826 (s0, s1 mean; sd 0.0010) | 0.9496 | 0.9641 | 0.9704 | 0.9767 |
+| M2 S/√B at 50% | 14.39 (sd 0.93) | 6.82 | 8.00 | 8.45 | 10.47 |
+| Hcc vs QCD (balanced) | 0.9851 | 0.9711 | 0.9706 | 0.9731 | 0.9775 |
+| Hcc vs Hbb (balanced) | 0.9747 | 0.9545 | 0.9630 | 0.9229 | 0.9461 |
+| accuracy | 0.553 | 0.766 | 0.563 | 0.504 | 0.747 |
+
+**What seed 0 suggests (no verdict yet):**
+- At seed 0, kappa is well ahead of wce and v20 on both primary metrics.
+- Unweighted plain CE is ahead of every other arm, kappa included, on every Hcc metric.
+- The hierarchical and v20 arms nearly destroy Tbl vs QCD (0.17 and 0.03, against about 0.9999 for the other arms) and degrade Tbqq vs QCD. This happens because their manual "top" group puts QCD together with Tbl and Tbqq.
+- If the seeds confirm this, kappa's win would be over the weighted baselines only, not over plain CE. That is consistent with HToWW never having had a working flat CE (finding 1).
+- The go rule is evaluated only when all 15 runs exist (`compare_replica.py`).
