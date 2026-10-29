@@ -278,3 +278,33 @@ All 15 runs finished (condor 9612945, no missing runs). Output of `htoww_replica
 **Caveats:** the model is a JetClass transformer (arm C), not the 13k-parameter event MLP, and all arms train 30 epochs. Whether plain CE also wins with the HToWW MLP on HToWW's own features is untested; the direct check is to retrain HToWW with unweighted 13-class CE on a held-out split.
 
 Cleanup: the 8 GB candidate directory `htoww_replica/cand/` is no longer needed and can be deleted.
+
+### HToWW-regime replica: evaluation check and overfitting measurement (2026-10-29)
+
+Prompted by the user questioning how plain CE could beat weighted CE. Scripts and outputs: `htoww_replica/check/` (`prior_check.py` / `.json`, `train_vs_test.py`, `train_vs_test*.log` / `.json`).
+
+**1. The class weights are wired correctly.** The wce weight vector equals sum/N_c normalised to max 1 for every class (Hcc 1.0, Hbb 0.842, QCD 0.00071, ...).
+
+**2. The primary score was unfair to the weighted arms.** M1/M2 rank by p_s against background weighted to the training priors. A plain CE model's p_s is already calibrated to those priors. A model trained with inverse-frequency weights has posteriors for an effective prior of about uniform, so its p_s is the score for the wrong background mixture. With the Bayes prior correction (logits + log(π_c/π'_c), π' ∝ π_c·w_c):
+- weighted CE: M1 0.9431 → 0.9650 ± 0.0022; M2 6.98 → 8.78 ± 0.36.
+- For hier, v20 and kappa the same correction lowers the numbers (kappa 0.9761 → 0.9728). Their effective prior is not uniform, so their uncorrected p_s is the fairer number.
+- Plain CE needs no correction: 0.9823.
+- The balanced Hcc-vs-QCD logit difference is prior-independent and is unaffected (CE 0.9849, wCE 0.9696, kappa 0.9777).
+
+**3. Overfitting, measured.** Each arm's final model was scored on its own training jets (all 2257 Hcc plus up to 40k per other class, weighted back to training yields) and on the held-out test set. Mean over 3 seeds:
+
+| arm | Hcc vs all AUC, train | test | gap | Hcc vs QCD, train | test | gap | mean log p_s on Hcc, train → test |
+|---|---|---|---|---|---|---|---|
+| plain CE | 0.9901 | 0.9823 | +0.008 | 0.9912 | 0.9849 | +0.006 | −2.78 → −3.58 |
+| weighted CE | **0.9971** | 0.9431 | **+0.054** | **0.9976** | 0.9696 | +0.028 | −0.18 → −2.24 |
+| hier | 0.9695 | 0.9631 | +0.006 | 0.9769 | 0.9731 | +0.004 | −1.74 → −1.93 |
+| v20 | 0.9924 | 0.9705 | +0.022 | 0.9885 | 0.9582 | +0.030 | −9.9 → −13.9 |
+| kappa | 0.9937 | 0.9761 | +0.018 | 0.9929 | 0.9777 | +0.015 | −2.05 → −3.91 |
+
+**Reading:**
+- **In-sample, the ranking is the HToWW one:** weighted CE 0.9971 > kappa 0.9937 > v20 0.9924 > plain CE 0.9901 > hier 0.9695. The weighted losses look best on the events they were trained on.
+- **On held-out events the inverse-frequency-weighted losses lose most:** about 1400× weight on 2257 signal jets, seen 30 times and evaluated at the final weights (no checkpoint selection, by design), memorises the signal (wCE gives its training Hcc jets mean p_s ≈ 0.84). Plain CE overfits least among the strong arms.
+- **For HToWW,** whose v20/v32 numbers are in-sample (finding 2 above), this suggests the quoted AUCs flatter the weighted losses by a few hundredths. It also suggests their ordering might change on a held-out split.
+- **What this does not show:** that weighting is useless. Weighted CE's validation Hcc vs QCD peaked at 0.980 near 40k iterations before declining to 0.971, so early stopping or regularisation would recover part of the gap. Even at its peak it was below plain CE at the same point (0.985).
+
+**Corrected status of the GO:** the pre-registered GO stands as computed (kappa beats wCE and v20 on raw-p_s M1/M2). With the prior-corrected score for wCE, kappa still leads it (M1 0.9761 vs 0.9650; M2 10.22 vs 8.78). All of these are comparisons among losses that overfit the rare signal; unweighted CE remains best on held-out data. The decisive next test for HToWW is a held-out split with early stopping for every loss, plus a plain unweighted CE arm.
