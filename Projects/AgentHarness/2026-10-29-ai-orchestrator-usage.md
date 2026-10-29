@@ -45,8 +45,9 @@ Edit `~/ai-orchestrator/config.toml`; `ai routes` shows the result.
 |---|---|
 | physics analysis debugging | Claude Opus, Claude Sonnet, Codex, GPU node, CERN Qwen |
 | substantial coding | Claude Sonnet, Codex, GPU node, CERN Qwen |
-| code review | Codex, Claude Sonnet, GPU node, CERN Qwen |
-| routine coding, explanation, research, slides, other | Claude Sonnet, Codex, GPU node, CERN Qwen |
+| code review | Codex (gpt-6.1-sol), Claude Sonnet, GPU node, CERN Qwen |
+| routine coding, explanation | Claude Sonnet, Codex Luna (gpt-6-luna), GPU node, CERN Qwen |
+| research, slides, other | Claude Sonnet, Codex (gpt-6.1-sol), GPU node, CERN Qwen |
 | public documentation | NIM, Claude Sonnet, Codex, GPU node, CERN Qwen |
 
 ## Shared vault search
@@ -64,7 +65,7 @@ The vault is available to every agent through the `vault` MCP server (`scripts/r
 
 ## Things you still need to do once
 
-1. **Codex in omp.** `omp login openai-codex` (browser sign in with ChatGPT Plus), then `omp models openai-codex` and put the strongest id in `config.toml` under `[candidates.codex] model = "openai-codex/<id>"`.
+1. **Codex in omp: done 2026-10-29.** omp is signed in to ChatGPT Plus; `codex` = gpt-6.1-sol, `codex-luna` = gpt-6-luna, and omp's own roles use them (Sol for default, plan, review, research; Luna for workers, smol, commit). Tested: a Codex session in omp starts and resumes with its memory.
 2. **Always-on account switching (optional).** `ai` already checks before each Claude launch. To also switch during long sessions, run `cswap auto` in a spare terminal, or as a user service: create `~/.config/systemd/user/cswap-auto.service` with `ExecStart=<path of cswap> auto --interval 60 --threshold 90` and run `systemctl --user enable --now cswap-auto`.
 3. **CERN AI Gateway, personal key (optional, rarely used).** Create a key in your own sandbox team at aigw.cern.ch, `keyring set aigw_personal cgupta`, and check its limits for free with `curl -s -H "Authorization: Bearer $(keyring get aigw_personal cgupta)" https://aigw.cern.ch/key/info`. Only the free Qwen is configured.
 4. **NIM (optional).** `keyring set nvidia_nim cgupta` with an nvapi key.
