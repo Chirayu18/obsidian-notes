@@ -7,7 +7,7 @@ source: lxplus
 
 # Draft PR to cms-sw/cmssw: Phase-2 pixel digi morphing in the Alpaka clusterizer
 
-PR branch: **`Chirayu18/cmssw:phase2-digimorphing-squashed`**, one commit 3ad40f2527f on cms-sw master 43790760906
+PR branch: **`Chirayu18/cmssw:phase2-digimorphing-squashed`**, one commit 13f439c9f1b (without the unit test, dropped on 2026-11-02 since the Phase-1 morphing PRs had none; the version with the test was 3ad40f2527f) on cms-sw master 43790760906
 (the base of CMSSW_20_1_X_2026-10-29-2300). It has the same tree as the 4-commit history `phase2-digimorphing-pr`
 (147cd3c1710, e29ba092d3c, f87ef412a97, 6228b2026f5) in `/eos/user/c/cgupta/phase2morph/pr/CMSSW_20_1_X_2026-10-29-2300/src`,
 where it was built and validated; `scram b code-checks` and `code-format` give no changes. The old fork branch
@@ -31,7 +31,7 @@ Phase-2 modules are processed in 44-column strips with 2 halo columns on each si
 
 New parameters, with the Phase-1 region syntax: `DoDigiMorphing = False`, `MaxFakesInModule = 1000`, `barrelRegions = ["1,1-99,1-99"]` (all of TBPX L1) and `endcapRegions = []`.
 
-The Phase-1 region parsing and selection move unchanged into `SiPixelMorphingRegions.h`; this refactor is behaviour-neutral. The new `testPhase2DigiMorphing` compares clusters and recovered pixels against a whole-module host reference, covering random broken tracks, strip/word/module boundaries, single-pixel modules, overflow, valid-pixel truncation and storage in the correct module.
+The Phase-1 region parsing and selection move unchanged into `SiPixelMorphingRegions.h`; this refactor is behaviour-neutral.
 
 Slides with implementation details and validation plots are attached. Physics validation and the choice of default Phase-2 regions will follow; this PR does not change any workflow.
 
@@ -45,7 +45,7 @@ Phase-2 validation uses 100 to 200 TTbar PU200 events in D128 (`RelValTTbar_14Te
 
 **Phase 1:** identical clusters to master with morphing off and on over 1000 `/ZeroBias/Run2026D-v1/RAW` events.
 
-Code checks and formatting pass. The unit test passes on SerialSync and CUDA; memcheck, synccheck and initcheck are clean. Racecheck reports a hazard also present in master and an overflow-test clamp hazard matching the Phase-1 pattern.
+Code checks and formatting pass.
 
 `runTheMatrix.py -l 38434.402 --nEvents 10` passes all steps on T4 in CMSSW_20_1_X_2026-10-29-2300; step 3 also runs with morphing enabled in TBPX L1.
 
