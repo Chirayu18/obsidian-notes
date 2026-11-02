@@ -13,7 +13,8 @@ PR branch: **`Chirayu18/cmssw:phase2-digimorphing-squashed`**, one commit 3ad40f
 where it was built and validated; `scram b code-checks` and `code-format` give no changes. The old fork branch
 `phase2-digimorphing` (3 commits on a19318d617f) is left as it was. Codex review:
 `~/Documents/phase2-morphing-pr-review-codex.md` (no production bug; its cleanups are included).
-Target branch: `master`. Open from https://github.com/Chirayu18/cmssw/pull/new/phase2-digimorphing-squashed and paste
+Target branch: `master`. The same commit is pushed to **`CMSTrackerDPG/cmssw:phase2_digimorphing_20_1_X`**; open the
+PR from there: https://github.com/cms-sw/cmssw/compare/master...CMSTrackerDPG:cmssw:phase2_digimorphing_20_1_X and paste
 the text below.
 
 Title: **Phase-2 pixel digi morphing in the Alpaka clusterizer**
