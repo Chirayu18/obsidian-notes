@@ -7,9 +7,13 @@ source: lxplus
 
 # Draft PR to cms-sw/cmssw: Phase-2 pixel digi morphing in the Alpaka clusterizer
 
-Branch: `Chirayu18/cmssw:phase2-digimorphing` (commits 15e2048e532, 7dd02b835e3, e4299b3e587, on a19318d617f).
-Rebased test area: `/eos/user/c/cgupta/phase2morph/pr/CMSSW_20_1_X_2026-10-29-2300`, branch `phase2-digimorphing-pr`
-(cherry-picks clean on cms-sw master 43790760906). Target branch: `master`. Validation in
+PR branch: `phase2-digimorphing-pr` in `/eos/user/c/cgupta/phase2morph/pr/CMSSW_20_1_X_2026-10-29-2300/src`, four
+commits on cms-sw master 43790760906 (= the IB): 147cd3c1710, e29ba092d3c, f87ef412a97, 6228b2026f5 (the last one is the
+review cleanup, not yet on GitHub). The fork branch `Chirayu18/cmssw:phase2-digimorphing` still has the first three on
+the old base a19318d617f. Target branch: `master`. Codex review: `~/Documents/phase2-morphing-pr-review-codex.md`
+(no production bug; its test and comment cleanups are in 6228b2026f5).
+
+Before opening: push `phase2-digimorphing-pr` to the fork, open the PR from it, and paste the text below. Validation in
 [[2026-10-29-phase2-morphing-validation-round2]] and [[2026-10-27-phase2-morphing-test-plan]].
 
 Title: **Phase-2 pixel digi morphing in the Alpaka clusterizer**
@@ -49,7 +53,8 @@ is taken from the geometry and passed to the kernel, which checks it against the
 A new unit test, `testPhase2DigiMorphing`, compares the clusters found by `FindClus` with a whole-module host reference
 on random broken tracks, on exact pixel patterns across the strip, word and module boundaries (including 216 and
 434 columns and 1354 rows), on single-pixel modules, on overflow of `MaxFakesInModule`, and on the truncation of the
-valid pixels.
+valid pixels. It also checks that each module recovers the same pixels as the reference, each stored once in the
+slots of its own module.
 
 #### PR validation:
 
@@ -63,10 +68,11 @@ algorithm exactly (100 events, 1,696,444 recovered pixels, 0 differences). It is
 SerialSync (200/200 events, 3,364,152 recovered pixels, about 78 per L1 module). The largest number of recovered
 pixels in one module is 536 (limit 1000), and the busiest morphing module has 1,534 valid pixels (limit 5000).
 
-The unit test passes on SerialSync and CUDA, and is clean under `compute-sanitizer` memcheck, synccheck and initcheck.
-racecheck reports a hazard between the assert in `OneToManyAssocRandomAccess::finalize` and `warpPrefixScan`, which is
-also present in master, and, in the overflow test only, a write-after-read on the clamp of the recovered pixel count,
-whose read side is attributed to threads that do not execute that branch.
+`scram b code-checks` and `code-format` give no changes. The unit test passes on SerialSync and CUDA (T4), and is clean
+under `compute-sanitizer` memcheck, synccheck and initcheck. racecheck reports a hazard between the assert in
+`OneToManyAssocRandomAccess::finalize` and `warpPrefixScan`, which is also present in master, and, in the overflow test
+only, a write-after-read on the clamp of the recovered pixel count (the same pattern as the Phase-1 clamp), whose read
+side is attributed to threads that do not execute that branch.
 
 Run 3: the Phase-1 Alpaka clusterizer on 1000 events of `/ZeroBias/Run2026D-v1/RAW` gives identical clusters in master
 and in the branch, with morphing both off and on.
@@ -75,7 +81,8 @@ Registers of `FindClus` for Phase 2 increase (sm_75 128 to 143, sm_80 119 to 127
 sm_100 85 to 107, sm_120 89 to 109), while the shared memory is unchanged; Phase 1 is unchanged in both. The
 producer time per event (T4, FastTimerService) is the same within 0.4 ms for master, morphing off and morphing on.
 
-`runTheMatrix.py -l 38434.402` runs on a T4, and its step 3 also runs with the morphing switched on in L1.
+`runTheMatrix.py -l 38434.402 --nEvents 10` (TTbar D128, pixel-only Alpaka) passes all steps on a T4 in
+CMSSW_20_1_X_2026-10-29-2300, and its step 3 also runs with `DoDigiMorphing = True` in TBPX L1.
 
 The physics validation (RecHit residuals with respect to the SimHits, tracking efficiency, end-of-life thresholds)
 and the choice of the default regions for Phase 2 will follow; this PR does not change any workflow.
