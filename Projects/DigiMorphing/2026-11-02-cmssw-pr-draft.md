@@ -40,7 +40,7 @@ Phase-2 validation uses 100 to 200 TTbar PU200 events in D128 (`RelValTTbar_14Te
 
 **Morphing off:** bit-identical to master for 100/100 events and 56,142,094 digis.
 
-**Morphing on in TBPX L1:** exact agreement with the whole-module CPU reference over 100 events, with 1,696,444 recovered pixels and 0 differences. Repeated runs, 1 and 4 threads, and CUDA and SerialSync are bit-identical over 200/200 events, with 3,364,152 recovered pixels. Maximum module occupancy is 536 recovered pixels (limit 1000) and 1,534 valid pixels (limit 5000).
+**Morphing on in TBPX L1:** exact agreement with a whole-module CPU reference implementation ([link](https://github.com/Chirayu18/cmssw/blob/80723fc254c6308ea27745043042199f5a9bb59b/UserCode/Phase2MorphValidation/plugins/Phase2MorphValidation.cc#L98-L128), in a separate validation-only branch, not part of this PR) over 100 events, with 1,696,444 recovered pixels and 0 differences. Repeated runs, 1 and 4 threads, and CUDA and SerialSync are bit-identical over 200/200 events, with 3,364,152 recovered pixels. Maximum module occupancy is 536 recovered pixels (limit 1000) and 1,534 valid pixels (limit 5000).
 
 **Phase 1:** identical clusters to master with morphing off and on over 1000 `/ZeroBias/Run2026D-v1/RAW` events.
 
