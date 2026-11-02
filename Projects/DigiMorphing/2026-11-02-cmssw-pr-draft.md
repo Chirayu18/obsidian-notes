@@ -7,14 +7,14 @@ source: lxplus
 
 # Draft PR to cms-sw/cmssw: Phase-2 pixel digi morphing in the Alpaka clusterizer
 
-PR branch: `phase2-digimorphing-pr` in `/eos/user/c/cgupta/phase2morph/pr/CMSSW_20_1_X_2026-10-29-2300/src`, four
-commits on cms-sw master 43790760906 (= the IB): 147cd3c1710, e29ba092d3c, f87ef412a97, 6228b2026f5 (the last one is the
-review cleanup, not yet on GitHub). The fork branch `Chirayu18/cmssw:phase2-digimorphing` still has the first three on
-the old base a19318d617f. Target branch: `master`. Codex review: `~/Documents/phase2-morphing-pr-review-codex.md`
-(no production bug; its test and comment cleanups are in 6228b2026f5).
-
-Before opening: push `phase2-digimorphing-pr` to the fork, open the PR from it, and paste the text below. Validation in
-[[2026-10-29-phase2-morphing-validation-round2]] and [[2026-10-27-phase2-morphing-test-plan]].
+PR branch: **`Chirayu18/cmssw:phase2-digimorphing-squashed`**, one commit 3ad40f2527f on cms-sw master 43790760906
+(the base of CMSSW_20_1_X_2026-10-29-2300). It has the same tree as the 4-commit history `phase2-digimorphing-pr`
+(147cd3c1710, e29ba092d3c, f87ef412a97, 6228b2026f5) in `/eos/user/c/cgupta/phase2morph/pr/CMSSW_20_1_X_2026-10-29-2300/src`,
+where it was built and validated; `scram b code-checks` and `code-format` give no changes. The old fork branch
+`phase2-digimorphing` (3 commits on a19318d617f) is left as it was. Codex review:
+`~/Documents/phase2-morphing-pr-review-codex.md` (no production bug; its cleanups are included).
+Target branch: `master`. Open from https://github.com/Chirayu18/cmssw/pull/new/phase2-digimorphing-squashed and paste
+the text below.
 
 Title: **Phase-2 pixel digi morphing in the Alpaka clusterizer**
 
