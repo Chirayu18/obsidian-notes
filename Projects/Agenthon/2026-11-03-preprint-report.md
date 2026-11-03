@@ -1,6 +1,7 @@
 ---
 tags: [reference, agenthon, preprint]
 status: active
+updated: 2026-11-03T08:12
 date: 2026-11-03
 source: laptop
 author: paper-codex (Codex), saved by the conductor
@@ -130,3 +131,10 @@ The public terms support publication in principle. They do not settle institutio
 ## Conductor's note
 
 One correction to the report's "Where Claude and Codex differ" section: the Claude referee (paper-verify) answered the same questions separately and **also recommended narrowing to the simulator paper**, with Tracks 1 and 2 folded into a short lessons section, about 1 to 2 weeks of focused work, and no posting before the controlled benchmark exists. So the two agents agree on scope; only the current draft still carries the three-track framing. The Agenthon terms and licensing quotes were checked by the conductor on agenthon.net on 2026-11-03.
+
+
+## Update 08:12: concurrent posters change the recommendation
+
+After this report, Chirayu showed paper-codex the accepted-poster list of the Agenthon competition session at NeurIPS 2026. paper-codex (agent-reported, it read the abstracts on neurips.cc) found two posters that cover the simulator angle almost exactly: "Bit-Exact on Every Public Scenario and About 90x Faster" (Manan Gupta, Rust rewrite, byte-identical public outputs, fuzzing, paired benchmarks; https://neurips.cc/virtual/2026/160267) and "Exact First, Then Fast: An Event-for-Event C++ Rebuild of the Agenthon ABIDES Market" (Goktürk Batin Dervisoglu, static C++, reference RNG and event order, mutation testing; https://neurips.cc/virtual/2026/160270), the closest overlap. A forecasting poster ("Measuring the Incremental Value of Text in Probabilistic Financial Forecasting", Chia-Chun Liang) overlaps the Track 2 angle.
+
+Its advice: publishing independent work is still allowed and their full papers were not found, but their abstracts are already public, so racing to arXiv first would not establish priority. Claims like "first native exact-replay implementation" are out; the paper must cite them as concurrent work and find a narrower contribution our experiments actually support. The "focused simulator paper" recommendation above is therefore no longer settled. Not yet checked by the conductor or by Claude.
