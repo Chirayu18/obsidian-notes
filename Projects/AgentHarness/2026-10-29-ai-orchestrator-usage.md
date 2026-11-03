@@ -37,6 +37,10 @@ The model is chosen once per task and stays for the whole session, so routing ne
 
 Inside omp, `/tasks` and `/why` show the same.
 
+## Same setup for Claude and Codex
+
+Launched from `~/obsidian-notes`, a Claude session is plain Claude Code in the vault, so it gets the vault CLAUDE.md, your Claude Code memory, the lxplus SessionStart hook, the vault's git pull and index refresh hooks, the MCP servers and your skills. A Codex session (omp) gets the same through the ai-orchestrator omp extension: omp reads CLAUDE.md as a context file, the extension runs your Claude Code SessionStart and SessionEnd hooks (user and project settings, with `CLAUDE_PROJECT_DIR` set), and it appends the directory's Claude Code memory index to the system prompt, with the memory files readable from `~/.claude/projects/<dir>/memory/`. Tested 2026-11-03: Codex in the vault quoted the sumw-trap memory and the vault-search instruction, and the index refresh ran at session end. Memory is per directory, as in Claude Code: launch from the vault to get the vault's memory.
+
 ## Routes
 
 Edit `~/ai-orchestrator/config.toml`; `ai routes` shows the result.
