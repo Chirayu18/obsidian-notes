@@ -11,7 +11,11 @@ Follow-up to the 2026-10-29 blocker (all central DY NanoAODv12 datasets in the e
 
 **Result:** each of the 10 has a VALID re-processing of the **same** sample: same generator, same campaign, same NanoAODv12 / 130X processing, only the processing version (`-vN`) changes. The one exception is the two 2023 `4Jets_MLL-50` entries. Those used a JMENano12p5 processing that has no valid copy, so their replacement is the standard `130X` NanoAODv12 processing. The other 73 or 74 MC entries in those yamls already use that processing. No private production is needed.
 
-Nothing was edited in the analysis repo. Nothing was submitted.
+**Status (later on 2026-11-03):**
+- The query swap is applied in all 6 yamls by the `hww-dy-swap` agent; only the query strings changed, and the edit is uncommitted.
+- The 4 derived `fileset_*_lxplus.json` files are regenerated for the DY keys only.
+- The 2023 4Jets branch check passed.
+- Nothing is committed or submitted. Details are in the follow-up section at the end.
 
 ## Where the entries live
 
@@ -83,3 +87,81 @@ DYto2L-2Jets_MLL-10to50_TuneCP5_13p6TeV_amcatnloFXFX-pythia8/Run3Summer23BPixNan
 - Proxy `~/private/x509up_u151861` (valid, about 79 h left); `dasgoclient` queries run sequentially with `</dev/null`, following the 2026-10-29 note that parallel and `-json` loops returned empty results.
 - `dataset dataset=/<sample>/Run3Summer2{2,3}*/NANOAODSIM status=* | grep dataset.name, dataset.dataset_access_type` lists every processing with its status. Then `dataset.nevents, dataset.nfiles` and `site dataset=` for each old and new dataset.
 - Scripts and raw output are on lxplus in `~/private/dy_das_20261103/` (`list.sh`, `list.out`, `info.sh`, `info.out`).
+
+## Follow-up 2026-11-03: filesets regenerated, branch check
+
+### Fileset JSONs (DY keys only)
+
+`make_filesets.py --samples X` does not update keys in place. It **overwrites the whole** `fileset_<era>_nanov12_lxplus.json` with only X, so the DY-only regeneration was done in five steps:
+
+1. Back up each JSON as `fileset_<era>_nanov12_lxplus.json.bak-20261103`, next to the original.
+2. Run `python3 fetch.py --year <era> --samples <DY keys>` (the repo's own workflow: singularity coffea-dask 2025.10.1 with the `rucio_utils.py` overlay, the era `_sites.yaml` allowlist, round-robin replicas).
+3. Save the DY-only output, then restore the backup. The restore was checked to be byte-identical.
+4. Merge only the DY keys into the restored JSON, with the same `json.dump(indent=4, sort_keys=True)` the tool uses.
+5. Verify the result. Key count is unchanged per era (92 / 93 / 95 / 84). The only keys that differ from the backup are the DY ones, and every non-DY key is identical.
+
+The DY keys are `DYto2L_2Jets_50` and `DYto2L_2Jets_10to50`; 2023 also has `DYJetsToLL` (the 4Jets LO sample).
+
+| era | key | files (new) | DAS nfiles | old JSON files |
+|---|---|---|---|---|
+| 2022preEE | DYto2L_2Jets_50 | 525 | 525 | 115 |
+| 2022preEE | DYto2L_2Jets_10to50 | 448 | 448 | 140 |
+| 2022postEE | DYto2L_2Jets_50 | 1682 | 1682 | 286 |
+| 2022postEE | DYto2L_2Jets_10to50 | 1573 | 1573 | 322 |
+| 2023preBPix | DYJetsToLL (4J LO) | 457 | 457 | 149 |
+| 2023preBPix | DYto2L_2Jets_50 | 506 | 506 | 181 |
+| 2023preBPix | DYto2L_2Jets_10to50 | 657 | 657 | 658 |
+| 2023postBPix | DYJetsToLL (4J LO) | 301 | 301 | 81 |
+| 2023postBPix | DYto2L_2Jets_50 | 312 | 312 | 221 |
+| 2023postBPix | DYto2L_2Jets_10to50 | 342 | 342 | 328 |
+
+For every list:
+- it is non-empty;
+- the number of unique LFNs equals the number of entries (one replica per file);
+- every LFN carries the new processing string (0 mismatches);
+- replicas are spread over 7 to 23 xrootd hosts.
+
+The old file counts differ because the old datasets were different processings; the old lists cannot be compared file by file.
+
+The `<era>_sites.yaml` files were **not** regenerated. They are per-era allowlists, not per-sample lists. Every new DY list resolved to its full DAS count under the existing allowlist. Rebuilding them would have changed the other samples' replica choice for no gain.
+
+The `_withWH` and `_withoutWH` 2022postEE yamls have no derived JSON (`make_filesets.py` reads only `<era>_nanov12.yaml`), so nothing was regenerated for them.
+
+### 2023 4Jets (JMENano12p5 → standard 130X): branch check
+
+Verdict: **safe, no processor change needed.** Three checks, run in the same coffea-dask container with uproot:
+
+1. **Branch-set comparison.** A new `DYJetsToLL` file has 1782 branches in each of the two 2023 eras. It contains every branch of a 2023 `TTto2L2Nu` file and of a new 2J DY file from the same era; nothing is missing. TTto2L2Nu has the same standard 130X processing and the processor already runs on it.
+2. **What JMENano provided.** The old JMENano files (still readable at maite and kfki) have 175 branches the new files lack:
+   - `JetCHS_*`, `JetCalo_*`, `FatJetForJEC_*` and `GenJetAK8ForJEC_*` collections;
+   - `Jet_*Multiplicity`, `Jet_puId_*` inputs, `Jet_qgl_*` inputs, `Jet_hfEmEF`/`hfHEF`;
+   - `FatJet_*EF`/`Multiplicity`;
+   - `Electron_*_Fall17V2`, `Photon_*_Fall17V2`;
+   - `GenJet(AK8)_nConstituents`, `Pileup_pthatmax`, `SubJet_area`.
+
+   A grep of `analysis/` (filesets excluded) finds no reference to any of these collections and no reference to `JMENano`.
+3. **Every `events.<Col>.<field>` reference** in `analysis/**/*.py` (58 refs) was checked against the new file. Unresolved ones, all guarded:
+   - `Jet.chMultiplicity` and `Jet.neMultiplicity` are read only in the `nano_version == "15"` branch of `working_points.jet_id`. The v12 branch uses `jetId`, `muEF`, `chEmEF`, `neHEF` and `neEmEF`, all present.
+   - `Jet.puId` is read only on the `nano_version == "9"` path of `jet_pileup_id`.
+   - `Electron.mvaFall17V2Iso_WP80/90` sits behind `hasattr`.
+   - `fixedGridRhoFastjetAll` sits behind `hasattr(events, "Rho")`.
+   - `PuppiMET.phi_raw` is computed in `corrections/met.py`.
+
+### Observations / possible issue (not a blocker)
+
+- Opening the first replica from inside the container failed for some sites:
+  - `eos.cms.rcac.purdue.edu`: `Auth failed: No protocols left to try`
+  - `cmsdcadisk.fnal.gov`: `TLS error`
+
+  maite, kfki, ciemat and cms-xrd-global opened fine. This may only affect this interactive container and not the job environment; Purdue already served DY files in the old JSONs. Watch the first jobs for xrootd errors on those hosts, and do not answer by blacklisting (see the memory note on the memoryless blacklist).
+- Normalisation must come from the new sumw sidecar files. The DY sample is now a different processing with a different number of events.
+
+### Files
+
+- Repo (uncommitted, untracked backups): `analysis/filesets/fileset_{2022preEE,2022postEE,2023preBPix,2023postBPix}_nanov12_lxplus.json` (updated), plus `*.bak-20261103` next to each.
+- Scripts, logs and outputs on lxplus in `~/private/dy_das_20261103/`:
+  - `regen_dy.sh`, `regen_<era>.log`
+  - `dyonly_<era>.json`
+  - `merge_dy.py`
+  - `branches*.py`, `branches*.out`
+  - `jme_only_branches.txt`
