@@ -48,6 +48,16 @@ Replica protocol unchanged: same data (2257 Hcc in 4,076,514 jets), ParT NoPair,
 
 Expectation stated in advance: at natural priors the minimiser of every v2 term is the same posterior plain CE estimates, so the realistic hope is parity with CE, keeping kappa's structure, plus better Hcc vs Hbb. Beating CE would need the fine term to help with only 2257 signal jets.
 
+## Amendment 2026-11-03, before any rescue result was read: held-out sets with the training balance
+
+The validation and test sets above were the balanced JetClass sets (10% Hcc each) reweighted to the training priors. On request, no held-out set may have a different class balance from the training set. Validation with 20k Hcc jets also made checkpoint selection far better informed than a held-out split of the HToWW training data could be.
+
+- **Test:** subsamples of the JetClass test set with class counts exactly proportional to the training counts, unweighted. QCD binds (r = 0.6289): 2,563,755 jets, 1419 Hcc. Twenty subsamples (`check/rescore_natural.py`, seeds 20261103+k), every run scored on the same ones.
+- **Validation:** all QCD jets of JetClass_val, the other classes subsampled to the exact training proportions (`train_rescue.py` load_natural), about 355 Hcc. A checkpoint is saved at every validation point.
+- **Metrics:** M1 = plain AUC of Hcc vs all background (one-vs-rest logit), M2 = S/sqrt(B) at 50% signal efficiency scaled to the training normalisation. Primary value = mean over the 20 test subsamples; error = seed spread / sqrt(3). The subsample spread is reported alongside.
+- **Runs:** the 6 rescue runs that finished used the old validation for selection, so all 9 are rerun with the new validation (outputs `runs_rescue2/`). Their final weights, and all 15 original replica runs, are re-scored on the new test subsamples as a secondary, selection-free comparison.
+- **Verdict rule:** unchanged (RESCUED / BEATS CE / NOT RESCUED as above), applied to the selected checkpoints of `runs_rescue2/`.
+
 ## Runs
 
 Unit tests pass (`test_kappa_v2.log`). T4 smoke (600 iterations) ran both new arms end to end; alpha already ranked Hbb as the main look-alike (1.0, QCD 0.03). Submitted 2026-11-02 as condor cluster 9659969 (`~/flashjet_condor/kappa_rescue.sub`, outputs `htoww_replica/runs_rescue/`).
