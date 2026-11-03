@@ -45,6 +45,10 @@ Launched from `~/obsidian-notes`, a Claude session is plain Claude Code in the v
 
 The `peer` MCP server (`~/ai-orchestrator/peer_mcp.py`), registered in Claude Code and omp, gives each model a tool to consult the other: `ask_codex` in a Claude session, `ask_claude` in a Codex session, plus `list_threads`. Just ask in plain words, for example "ask Codex to review this diff before we commit", "discuss the limit discrepancy with Codex until you agree, then summarise", or in Codex "get Claude's opinion on this plan". Each thread is a persistent session per directory, so follow-ups continue the same conversation and stay cached. The consulted model works read-only in the same directory (it can read and grep, not edit) and cannot consult a third model in turn. `ask_codex` defaults to gpt-6.1-sol (`luna` for cheap questions); `ask_claude` defaults to Sonnet. Codex goes through your ChatGPT Plus in omp, Claude through Claude Code on the active cswap account. Tested 2026-11-03: Claude asked Codex through the bridge from the vault and got a file:line answer; follow-ups in a thread were remembered in both directions.
 
+## Watching all agents
+
+`ai watch` is a live view (refreshes every 3 s; `--once` for a snapshot, `--hours H` for the window, default 12) of every agent on the laptop: all Claude Code sessions in any directory, whether started by `ai` or not, omp sessions of `ai` tasks, and Claude↔Codex peer threads. Each row shows the state, time since the last activity, harness, model, directory and task name, then what it is doing now (last tool call or reply) and what it was last asked. States: WORKING (mid-turn and recently active), YOUR TURN (finished its reply and waits for you), STALLED? (still open mid-turn but silent), done (a finished headless or peer run), idle. The header shows both Claude accounts' usage and whether the cswap auto-switch service is active. It only reads transcripts and process lists; it never touches a session.
+
 ## Routes
 
 Edit `~/ai-orchestrator/config.toml`; `ai routes` shows the result.
