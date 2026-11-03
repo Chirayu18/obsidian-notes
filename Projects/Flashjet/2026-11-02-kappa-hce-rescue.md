@@ -62,6 +62,32 @@ The validation and test sets above were the balanced JetClass sets (10% Hcc each
 
 Unit tests pass (`test_kappa_v2.log`). T4 smoke (600 iterations) ran both new arms end to end; alpha already ranked Hbb as the main look-alike (1.0, QCD 0.03). Submitted 2026-11-02 as condor cluster 9659969 (`~/flashjet_condor/kappa_rescue.sub`, outputs `htoww_replica/runs_rescue/`).
 
+## Interim results (secondary, 2026-11-03)
+
+Selection-free comparison: final weights, scored on the 20 training-balance test subsamples (`check/rescore_natural.json`). Mean over seeds; error is the seed spread / sqrt(n). The subsample spread in M1 is 0.0011 to 0.0024. The original 15 runs have 3 seeds, the first rescue runs 2 (seed 2 never ran under the first protocol).
+
+| arm | weights | n | M1 | M2 | Hcc vs Hbb | Hcc vs QCD |
+|---|---|---|---|---|---|---|
+| ce | final | 3 | 0.98227 ± 0.00044 | 14.16 ± 0.45 | 0.9740 | 0.9848 |
+| wce | final | 3 | 0.94342 ± 0.00309 | 6.93 | 0.9532 | 0.9698 |
+| hier | final | 3 | 0.96331 ± 0.00058 | 8.11 | 0.9632 | 0.9731 |
+| v20 | final | 3 | 0.97043 ± 0.00056 | 8.48 | 0.9241 | 0.9581 |
+| kappa v1 | final | 3 | 0.97611 ± 0.00019 | 10.31 | 0.9437 | 0.9777 |
+| ce_es | final | 2 | 0.98250 ± 0.00039 | 14.46 | 0.9741 | 0.9851 |
+| k2n | final | 2 | 0.97576 ± 0.00006 | 11.44 | 0.9702 | 0.9793 |
+| k2t | final | 2 | 0.96735 ± 0.00255 | 9.60 | 0.9621 | 0.9767 |
+| ce_es | selected on old balanced val | 2 | 0.98337 ± 0.00059 | 14.80 | 0.9753 | 0.9857 |
+| k2n | selected on old balanced val | 2 | 0.98321 ± 0.00027 | 14.45 | 0.9749 | 0.9856 |
+| k2t | selected on old balanced val | 2 | 0.97764 ± 0.00061 | 11.52 | 0.9683 | 0.9832 |
+
+**Findings:**
+1. **The earlier conclusions survive.** The training-balance test reproduces the reweighted numbers (ce 0.98227 vs 0.98234 before; kappa v1 0.97611 vs 0.97609).
+2. **v2 at natural priors (k2n) still overfits late.** It matches CE up to about 60k iterations (validation 0.9831 vs 0.9833, mean of 2 seeds), then falls to 0.9752 while CE stays at 0.9825. Its final weights are no better than kappa v1's.
+3. **Why.** The confusability alpha settles on Hbb (2681 jets) as the signal's look-alike (alpha 1.0; QCD 0.02 to 0.09). So L_fine is effectively a second Hcc vs Hbb loss on about 5000 jets, and L_sig counts the signal again. Signal jets are counted about three times, a milder version of the same memorisation. Any term that adds emphasis on the 2257 signal jets overfits them.
+4. **With early stopping, k2n reaches parity with CE** (0.98321 vs 0.98337) but does not beat it, and does not improve Hcc vs Hbb. Tempering (k2t, beta 0.5) is worse with or without early stopping.
+
+These selected rows used the old balanced validation. The pre-registered verdict waits for `runs_rescue2/` (cluster 9662686, training-balance validation, 3 seeds).
+
 ## Results
 
-(pending)
+(pending: runs_rescue2)
