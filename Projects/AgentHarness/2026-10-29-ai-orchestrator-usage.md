@@ -41,6 +41,10 @@ Inside omp, `/tasks` and `/why` show the same.
 
 Launched from `~/obsidian-notes`, a Claude session is plain Claude Code in the vault, so it gets the vault CLAUDE.md, your Claude Code memory, the lxplus SessionStart hook, the vault's git pull and index refresh hooks, the MCP servers and your skills. A Codex session (omp) gets the same through the ai-orchestrator omp extension: omp reads CLAUDE.md as a context file, the extension runs your Claude Code SessionStart and SessionEnd hooks (user and project settings, with `CLAUDE_PROJECT_DIR` set), and it appends the directory's Claude Code memory index to the system prompt, with the memory files readable from `~/.claude/projects/<dir>/memory/`. Tested 2026-11-03: Codex in the vault quoted the sumw-trap memory and the vault-search instruction, and the index refresh ran at session end. Memory is per directory, as in Claude Code: launch from the vault to get the vault's memory.
 
+## Claude and Codex talking to each other
+
+The `peer` MCP server (`~/ai-orchestrator/peer_mcp.py`), registered in Claude Code and omp, gives each model a tool to consult the other: `ask_codex` in a Claude session, `ask_claude` in a Codex session, plus `list_threads`. Just ask in plain words, for example "ask Codex to review this diff before we commit", "discuss the limit discrepancy with Codex until you agree, then summarise", or in Codex "get Claude's opinion on this plan". Each thread is a persistent session per directory, so follow-ups continue the same conversation and stay cached. The consulted model works read-only in the same directory (it can read and grep, not edit) and cannot consult a third model in turn. `ask_codex` defaults to gpt-6.1-sol (`luna` for cheap questions); `ask_claude` defaults to Sonnet. Codex goes through your ChatGPT Plus in omp, Claude through Claude Code on the active cswap account. Tested 2026-11-03: Claude asked Codex through the bridge from the vault and got a file:line answer; follow-ups in a thread were remembered in both directions.
+
 ## Routes
 
 Edit `~/ai-orchestrator/config.toml`; `ai routes` shows the result.
