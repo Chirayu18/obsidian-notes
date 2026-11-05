@@ -117,7 +117,7 @@
         <tr><td>H → WW fraction</td><td>1.000</td><td></td></tr>
       </table>
       <p class="small">Scale variations go in opposite directions with normal size (no ×2 bug).</p>
-      <p class="small"><span class="warn">PDF:</span> neither official nor private 3FS NanoAOD stores <code>LHEPdfWeight</code> (same behaviour). At LHE level (test job, 1000 events) the replicas average to member 0 with 1.6% spread; PDF set NNPDF31_nnlo_as_0118.</p>
+      <p class="small"><span class="warn">PDF:</span> neither official nor private 3FS NanoAOD stores <code>LHEPdfWeight</code> (same behaviour: LHA 321900 is not in NanoAOD's preferred PDFs). <b>Re-NANO with 321900 added: submitted 2026-11-05, pending.</b> At LHE level (test job, 1000 events) the replicas average to member 0 with 1.6% spread; PDF set NNPDF31_nnlo_as_0118.</p>
     </div>
     <div><img class="tall" src="assets/plots3fs/3fs_w_scale.png"><div class="cap">inclusive σ<sub>var</sub>/σ<sub>nom</sub> for the 9 LHEScaleWeights</div></div>
   </div>
@@ -252,7 +252,7 @@ official 3FS H->WW, Run 2 (decay reference)
 <section id="bk-caveats" class="backup">
   <h2>Assumptions, open items, provenance</h2>
   <ul class="small">
-    <li><b>PDF weights:</b> NanoAOD has no <code>LHEPdfWeight</code> for this gridpack (official too). The LHE-level replica check comes from a 1000-event test job.</li>
+    <li><b>PDF weights:</b> NanoAOD has no <code>LHEPdfWeight</code> for this gridpack (official too). Re-NANO from the kept MiniAOD with LHA 321900 added: submitted to CRAB 2026-11-05, pending (agent-reported). The LHE-level replica check comes from a 1000-event test job.</li>
     <li><b>GenJets:</b> decay-dependent differences (slide 3fs-jets); not used as a pass/fail criterion.</li>
     <li><b>el8:</b> the gridpack is slc7 (as used centrally for H→γγ); not rebuilt on el8.</li>
     <li><b>Event numbers:</b> [N events] per era is still open.</li>

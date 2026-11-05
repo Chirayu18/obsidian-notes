@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW full rerun - 2026-11-05 (r4)</title>
+  <title>HToWW full rerun - 2026-11-05 (r5)</title>
   <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
   <style>
@@ -45,13 +45,13 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-  <p class="label">HToWW · Full rerun · Internal progress r4 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
+  <p class="label">HToWW · Full rerun · Internal progress r5 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
   <h2>Run A is committed; TRAIN/RUN is built but uncommitted; choices block submission</h2>
   <ul>
     <li><strong>Code:</strong> <code>hww-analysis</code> at <code>0850e51</code> + <code>40d0e3e</code>, unpushed. Uncommitted on top: two review fixes, <strong>TRAIN/RUN modes</strong>, two HZZ ports (11 files + new modules).</li>
     <li><strong>Tests:</strong> 35/35 after the review fixes; 49 with TRAIN/RUN and the ports (worker-reported). Three single-file smokes pass.</li>
         <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space · one m<sub>H</sub> for all Higgs cross sections.</li>
-    <li><strong>Route B:</strong> parked proposal, to be compared with A later. <strong>3FS re-NANO:</strong> ordered by you, submission in progress.</li>
+    <li><strong>Route B:</strong> parked proposal, to be compared with A later. <strong>3FS re-NANO:</strong> submitted 5 Nov, pending.</li>
   </ul>
   <p>Passing tests checks the software, not the physics model, a production or a limit.</p>
   <p class="source">Sources: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">full-fix state note</a> (worker commits 4d26800, f4475c7) · <a href="../../../2026-11-05-sol-review-unpushed-work.md">independent review</a> (vault 9aa71d5).</p>
@@ -120,9 +120,9 @@
   <ul>
     <li><strong>Status (Chirayu, 5 Nov):</strong> parked; the aim is to compare A and B, then proceed with the better route. It exists only as the EOS proposal <code>HTOWW-ROUTEB-SOL-20261105</code>. The live higgscharm tree has no stitching code, workflow or 3FS filesets, so Run A is unaffected.</li>
     <li><strong>Review:</strong> normalisation, the sum-of-weights hook and the filesets pass. Card builder, config, sinks and training weights are not integrated. Unit tests: 20/20 in the author's log, not re-executed (standing rule).</li>
-    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. You then ordered the re-NANO from the kept MiniAOD with 321900 added: 200-event local test, then CRAB submission in progress; outcome not yet recorded.</li>
+    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. <strong>Re-NANO submitted 5 Nov, pending:</strong> 5 CRAB tasks from the kept MiniAOD with 321900 added (9,937 files, 9.94M events). The 200-event test gave 101 members. Not finished or validated.</li>
   </ul>
-  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> (vault 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
+  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> · <a href="../../2026-11-05-3fs-renano-pdf321900.md">re-NANO note</a> (vault 187ce65, 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
 </section>
 
 <section id="open">

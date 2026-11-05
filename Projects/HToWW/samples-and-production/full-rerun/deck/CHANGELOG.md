@@ -7,6 +7,10 @@ source: laptop
 
 # Full rerun progress deck
 
+## r5 — 2026-11-05
+
+The 3FS PDF item now reads "re-NANO submitted 2026-11-05, pending" (worker commit `187ce65`, Chirayu's OK). Route B stays parked. Same 8 slides.
+
 ## r4 — 2026-11-05
 
 Chirayu: the slides lacked the TRAIN/RUN work, and things changed in the HToWW thread that were not recorded. The keeper read the Sol review thread in full and inspected the live higgscharm tree read-only. Changes:

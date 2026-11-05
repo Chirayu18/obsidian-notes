@@ -163,7 +163,7 @@ Route B reported that the private 3FS H→WW NanoAOD has `nLHEPdfWeight = 0` and
 ### TODO (Chirayu, 2026-11-05): 3FS PDF weights. Not a blocker.
 
 - [ ] Only if Route B is adopted: put a flat PDF lnN on the 3FS (≥1c) component, e.g. about 2%, from the 4FS PDF acceptance effect or the 1.6% LHE replica spread, and record the justification. Run A (4FS only, 101 PDF members) is not affected.
-- **Update (keeper, ~09:50):** Chirayu then ordered it: "Launch the ReNano for 3FS and go" (08:40). The worker ran a 200-event local test and began CRAB submission; the outcome is not yet recorded in the vault.
+- **Update (keeper, ~09:50):** Chirayu then ordered it: "Launch the ReNano for 3FS and go" (08:40). Submitted: 5 CRAB tasks, pending ([[Projects/HToWW/samples-and-production/2026-11-05-3fs-renano-pdf321900|re-NANO note]], `187ce65`).
 - [ ] Optional, only if a reviewer asks for a per-event PDF shape: re-run NanoAOD from the private 3FS MiniAOD with `lhaid 321900` added to `genWeightsTable.preferredPDFs`. This needs CRAB jobs and Chirayu's OK.
 
 ## Addendum: review of the Route B proposal (HTOWW-ROUTEB-SOL-20261105), read-only, agent-reported
