@@ -7,6 +7,8 @@ source: laptop
 
 # Pending worker briefs (2026-11-05): HToWW status audit and code review
 
+> Completed through Chirayu-authorised Claude subagents on 2026-11-05. Results: [[Projects/HToWW/2026-11-05-status-audit-retraining]] and [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun]]. Briefs below are retained as the original assignment; do not relaunch them. Analysis code was not changed.
+
 Chirayu asked the keeper to launch two Claude Code agents as top-level threads. Every launch attempt (`t3_thread_launch` ×2, `create_threads` ×1) failed with the T3 error `parent_not_active` ("The calling provider no longer owns an active thread run"). Neither thread exists. Paste each brief below into a new top-level thread to start it.
 
 ## Brief 1 — HToWW · status audit vs slides, open items, retraining (read-only)

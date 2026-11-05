@@ -19,6 +19,7 @@ Organization and links were checked by the keeper. This does not independently v
 
 ## Records
 
+- [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|Independent TRAIN/RUN review: integration blockers, schemas and test evidence]] — not ready for production; fixes require analysis-owner authorisation.
 - [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|Adopted HToWW correctness-review protocol]]
 - [[Projects/HToWW/framework/review/htoww-review/SKILL|HToWW review skill]] — domain review criteria, not additional execution authority.
 - [[Projects/HToWW/framework/2026-11-05-jfc-code-survey|JFC code inspection, useful practices and adoption limits]]

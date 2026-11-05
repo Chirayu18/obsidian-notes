@@ -1,0 +1,31 @@
+== R1 variation present in only some chunks
+ nominal SR sum 4.0  pileupUp SR sum 2.2 (expected 4.4); norm_raw nominal/up: 4.0 2.0
+== R2 negative bin not floored
+ SR nominal last bin: -4.0
+== R3 whole samples missing from RUN inputs
+ MC samples selected by workflow: 55  supplied: 6  -> make_process_hists raised? NO; cards would be built
+== R8 processed MC with no card mapping (would raise in build_cards): ['Data', 'WG']
+   mva groups not in process_map: ['H(125)', 'ggToZZ', 'qqToZZ']
+== R4 condor output dir
+ save into replaced path -> FileNotFoundError [Errno 2] No such file or directory: '/tmp/cgupta/tmp4sixuxp2/outputs/hww_allfix_4fs__run/2022postEE/DS/DS_1.coffea'
+== R5 pyarrow error classes
+ zero-byte: ArrowInvalid isOSError= False
+ truncated: ArrowInvalid isOSError= False
+2022preEE 54 Counter({'MC:mc': 46, 'C': 5, 'D': 3})
+  data example: [('DoubleMuonRun2022C', 'C', 'None'), ('SingleMuonRun2022C', 'C', 'None')]
+  WG: ['WGtoLNuG_PTG10to100', 'WGtoLNuG_PTG100to200', 'WGtoLNuG_PTG200to400', 'WGtoLNuG_PTG400to600', 'WGtoLNuG_PTG600']
+2022postEE 55 Counter({'MC:mc': 46, 'E': 3, 'F': 3, 'G': 3})
+  data example: [('MuonRun2022E', 'E', 'None'), ('MuonRun2022F', 'F', 'None')]
+  WG: ['WGtoLNuG_PTG10to100', 'WGtoLNuG_PTG100to200', 'WGtoLNuG_PTG200to400', 'WGtoLNuG_PTG400to600', 'WGtoLNuG_PTG600']
+2023preBPix 66 Counter({'MC:mc': 46, 'C123': 15, 'C4': 5})
+  data example: [('Muon0Run2023Cv1', 'C123', 'None'), ('Muon0Run2023Cv2', 'C123', 'None')]
+  WG: ['WGtoLNuG_PTG10to100', 'WGtoLNuG_PTG100to200', 'WGtoLNuG_PTG200to400', 'WGtoLNuG_PTG400to600', 'WGtoLNuG_PTG600']
+2023postBPix 56 Counter({'MC:mc': 46, 'D': 10})
+  data example: [('Muon0Run2023Dv1', 'D', 'None'), ('Muon0Run2023Dv2', 'D', 'None')]
+  WG: ['WGtoLNuG_PTG10to100', 'WGtoLNuG_PTG100to200', 'WGtoLNuG_PTG200to400', 'WGtoLNuG_PTG400to600', 'WGtoLNuG_PTG600']
+'None' <class 'str'>
+split_folds scale loop would raise: ValueError could not convert string to float: 'None'
+2022preEE vjets samples: 5 not negrw-configured: []
+2022postEE vjets samples: 5 not negrw-configured: []
+2023preBPix vjets samples: 5 not negrw-configured: []
+2023postBPix vjets samples: 5 not negrw-configured: []

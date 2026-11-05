@@ -11,6 +11,9 @@ keeper_review: "[[Meta/keeper/2026-11-05-fullfix-review]]"
 
 Task HTOWW-FULLFIX-RERUN-20261104.
 
+> [!warning] Later independent audits (2026-11-05, 13:53–14:05 CET)
+> [[Projects/HToWW/2026-11-05-status-audit-retraining|Status audit]]: event-MVA retraining required; negrw overlap/support/closure need checks; both lepton-SF chains need provenance; c-tag SF/edge questions remain. [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|Code review]]: 49 tests passed, but reproduced Condor output/data-handling/card-building blockers mean TRAIN/RUN is not production-ready. Analysis files remain unchanged. The review records WG-at-retraining as an existing decision. DAS progress is not PDF-weight validation. Earlier summaries and deck r5 predate these findings.
+
 > [!summary] Current state (keeper consolidation, 2026-11-05 after the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review, 9aa71d5]])
 > All agent-reported; not reviewed by Chirayu.
 > - **Code:** `hww-analysis` at `0850e51` (baseline) + `40d0e3e` (speed-ups 01–04, WH alignment), both unpushed; 77 files vs `b7f67ef`. Two review fixes (shared jet ordering, PDF-only combined variation) are **uncommitted** in the tree, backed up as `*.pre_sol_review`.
