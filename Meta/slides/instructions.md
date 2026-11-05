@@ -79,19 +79,19 @@ Each rule cites the comments it comes from. The full quotes are in §7.
 
 ## 2. Internal personal work-update decks (keeper)
 
-These are Chirayu's own progress decks, owned by the relevant leaf subproject when
-there is material worth presenting. They are not required for every new note or keeper run.
+These are Chirayu's own progress decks, owned by the relevant leaf subproject and made
+only on request (`make slides` in a commit message, or Chirayu asking).
 The authority for them is [[Meta/roles/keeper]] (Decks section) and [[Meta/roles/update-slide-style]]. The points below summarise those files; they are not new rules.
 
 - **Central navigation:** maintain [the vault-root slide index](../../index.html), listing only decks made by this keeper, with direct deck and stable-slide links. Existing decks from other sessions are not automatically included (Chirayu, 2026-11-05; [[Meta/roles/keeper]]).
-- **Threshold and length:** make slides for results, reportable work or meaningful status changes. Routine handoffs stay in notes. Keep decks short; ask Chirayu if the reporting value is unclear. His 2026-11-05 correction overrides the earlier automatic “every touched subproject” rule; see the verbatim log in [[Meta/roles/update-slide-style]].
+- **Trigger and length:** make slides only when a commit message contains `make slides` or Chirayu asks directly; otherwise notes only. Keep decks short. This (Chirayu, 2026-11-05) overrides the earlier automatic and judgment-based rules; see the verbatim log in [[Meta/roles/update-slide-style]].
 - **Location:** `<subproject>/deck/`, containing:
   - `<subproject>` means the actual leaf workstream, including nested subprojects; parent indexes link to that deck. Support folders such as assets, scripts and history are not separate deck owners (Chirayu's 2026-11-05 clarification in [[Meta/roles/keeper]]).
   - `index.html`: Reveal.js loaded from `_shared/reveal/`, no CDN;
   - `assets/`: plot previews of 300 KB or less, each with a small JSON giving the original path, script and commit;
   - `<name>_rN.pdf`;
   - `CHANGELOG.md`.
-- **First build:** only when the subproject has material worth presenting; build from its notes. Older decks move to `_history/` unconverted.
+- **First build:** the first time slides are requested for the subproject; build from its notes. Older decks move to `_history/` unconverted.
 - **Later updates:** change only the affected slides, found by their stable `<section id>`:
   - `status` first: where it stands and what needs Chirayu;
   - `result-<name>`, `decisions`, `open`, `changes`, `backup-<name>`.

@@ -24,9 +24,9 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
    recorded / implemented / tested / validated.
 3. **Chirayu's words** (decisions, corrections, preferences told to you) are recorded
    verbatim with the date in the relevant note, and outrank agent claims.
-4. **Decks:** create/update slides only for results, reportable work or meaningful
-   status changes (see Decks). Routine handoffs, bookkeeping and keeper runs need
-   notes, not automatic slide updates. Ask Chirayu when the reporting value is unclear.
+4. **Decks:** make or update slides **only when asked**: a commit under review whose
+   message contains `make slides`, or Chirayu saying so. Otherwise notes only, whatever
+   the content (Chirayu, 2026-11-05; see Decks).
 5. **Lint** (deterministic script, once it exists in `Meta/tools/`): broken links/embeds,
    orphans, notes that render blank in Obsidian (no links into dot-folders), uncited
    numbers, conflicting values without supersession, stale `active` results, stubs.
@@ -47,11 +47,10 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
   links), and merge when he is happy.
 
 ## Decks (personal work-update slides, not CMS public talks)
-- **When to make slides:** only when there are results, something to report or a
-  meaningful status update. A touched folder, new note or routine handoff alone is
-  not enough. Keep the deck as short as the content warrants; ten slides for the
-  2026-11-05 full-fix handoff was unnecessary. If unsure, ask Chirayu before building.
-  His correction is recorded verbatim in [[Meta/roles/update-slide-style]].
+- **When to make slides:** only when a commit you are reviewing has `make slides` in its
+  message, or Chirayu asks directly. Never on your own judgment, not even for results.
+  When asked, keep the deck as short as the content warrants (ten slides for the
+  2026-11-05 full-fix handoff was too many). Verbatim rule in [[Meta/roles/update-slide-style]].
 - Deck ownership follows the actual **leaf subproject**, including nested subprojects
   such as `samples-and-production/full-rerun/`; parent indexes link to those decks.
   Asset, script, attachment and `_history` directories are supporting folders, not
@@ -63,7 +62,7 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
 - One deck per subproject in `<subproject>/deck/`: `index.html` (Reveal.js from
   `_shared/reveal/`, no CDN), `assets/` (plot previews ≤300 KB, each with a small JSON:
   original path, script, commit), `<name>_rN.pdf`, `CHANGELOG.md`.
-- Built **from scratch when a subproject first has material worth presenting** (from
+- Built **from scratch the first time slides are requested for a subproject** (from
   its notes and any older decks, which move to `_history/` unconverted). From then on, update only the
   slides affected, by their stable `<section id>`: `status` (where it stands, what needs
   Chirayu), `result-<name>`, `decisions`, `open`, `changes`, `backup-<name>`.

@@ -117,6 +117,8 @@ if unsure, put it at the project top level and the keeper will file it.
   resolve it before writing.
 - **After writing:** `git add <your files> && git commit -m "<lxplus|laptop>: <what>"`.
   **Do not push** — the keeper reviews and pushes.
+  Put `make slides` in the commit message only if Chirayu asked for slides on this
+  work; the keeper makes decks only on that trigger (Chirayu, 2026-11-05).
 - Keep **regenerable** large binaries (plot PNGs, parquet, ROOT files) **out of git** —
   they stay on EOS; only the *link entries* go in the vault. Local deck previews
   and reference PDFs may remain in their project/reference folders, but **no PNG
