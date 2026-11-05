@@ -146,3 +146,13 @@ Not checked here: full-production data/MC closure, an event-ID duplicate scan ac
 4. Review the uncommitted Sol patch with `cd /afs/cern.ch/user/c/cgupta/higgscharm_thomas/higgscharm_thomas_new/higgscharm && git diff -- analysis/selections/object_selections.py analysis/corrections/lhepdf.py tests/test_allfix.py`; let the single edit owner incorporate it. Do not stage `.pre_sol_review` files.
 
 Chirayu also requested slides summarizing the recent work and this review. The commit for this note uses `make slides`; after finishing, Sol asks the existing keeper to update the appropriate internal leaf decks, preserve agent-reported status, consolidate stale active wording, and commit locally without pushing as part of this handoff.
+
+## Addendum: why the private 3FS NanoAOD has an empty `LHEPdfWeight` (2026-11-05, agent-reported)
+
+Route B reported that the private 3FS H→WW NanoAOD has `nLHEPdfWeight = 0` and an empty branch title (`proposals/HTOWW-ROUTEB-SOL-20261105/diagnostics/smoke_3fs.json`, file `…/261023_145954/0000/nanoaod_100.root`, 1000 events). Cause, checked on lxplus:
+
+- The 3FS run card uses `lhaid 321900` ([[2026-10-13-GEN-ticket-draft-HplusC-HplusB-WW]]: "3FS: 321900, maxjetflavor 3", as in the official γγ cards). LHAPDF `pdfsets.index` (`/cvmfs/sft.cern.ch/lcg/external/lhapdfsets/current`): `321900 NNPDF31_nnlo_pch_as_0118_nf_3`.
+- NanoAOD fills `LHEPdfWeight` only for a set on its `preferredPDFs` list (`CMSSW_13_3_3/src/PhysicsTools/NanoAOD/python/genWeightsTable_cfi.py`, 13 entries). 321900 is not on it, and no `nf_3` set is. 325500 (the 4FS set) is, which is why the 4FS file has 101 members.
+- So the sample's generator-level weights are not shown to be wrong. The LHE weights exist: the 2026-10-21 CRAB test saw a 1.6% replica spread, and `LHEScaleWeight` (9) and `PSWeight` are filled. The PDF weights are simply not copied into NanoAOD. The private chain kept MiniAOD ([[2026-10-28-4fs-el8-gridpack-and-3fs-production]]), and MiniAODSIM carries the `LHEEventProduct`. A NanoAOD re-run from MiniAOD with 321900 added to `preferredPDFs` should recover the branch **without regenerating GEN/SIM**. Not tested.
+- Expected for the official γγ 3FS NanoAOD too, from the same list. Not read here: there is no grid proxy in this shell, and renewing one is not allowed.
+- Effect now: `lhepdf.py` gives PDF/αS Up = Down = 1 for these events, so the ≥1c region of a Route B stitch has no PDF shape uncertainty.
