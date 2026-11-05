@@ -1,0 +1,52 @@
+mcp:launch:534e608eec40b30d1c22f71c819e6b774031bef8b3a95577b35571bfc4b85d39	◆ Lead · HToWW
+mcp:launch:bfcb888a690a866807abb83d09ba461558385474d1f39dcc3e5f5dc40600b819	◆ Lead · Conductor
+mcp:af31c022-61ff-4d16-b250-b6a4ead6c483	Conductor (ai-orchestrator)
+mcp:launch:1466670b64dbd0b757b88139aba456afc1391cdd86d632d76a5ac0cadf62fb1f	◆ Lead · Agenthon
+mcp:0df3cb71-2dbb-4575-9ad4-cdccc527cc7e	conductor-test-sonnet — T3 worker smoke test
+mcp:launch:f10b6efe4743180837f020483c95a1de065d9c885d927e86731f69f361b6479a	◆ Lead · DigiMorphing
+mcp:launch:4c369455663a9d5b2e47601b6718ce5a16e302049865d0e7b1f9250ac6c61d5b	◆ Lead · Flashjet
+mcp:e5378eea-c684-4803-b788-3c705cb1e8d1	t3test-luna — reply OK smoke test
+mcp:d5375f05-566f-4246-8eb3-54173427a649	t3-test-luna — conductor T3 wiring test
+mcp:52f77936-a93f-4ef7-b305-ff7cbc812a5e	t3-test-sonnet — conductor T3 wiring test
+mcp:b16272ae-67fc-41e1-8848-682d6084ddcb	t3test-sonnet — smoke test
+mcp:697dcee6-fcd5-4adf-9f8d-869ac4ba947e	Conductor
+import:claudeAgent:f4831488-5e23-4cfa-81f9-c3f0096db6eb	conductor obsidian-notes
+import:claudeAgent:fb0d300d-6de6-4994-8053-fc1988109f55	<system-reminder>
+import:claudeAgent:1d6fa069-2ba8-48b7-a39f-804b130435f8	<system-reminder>
+import:claudeAgent:122b4a7d-997b-4226-b442-629f8afa1f06	<system-reminder>
+import:claudeAgent:4c857fa4-75ab-4488-99b9-0459001b2f8b	<system-reminder>
+import:claudeAgent:3b969a75-ca02-447c-a076-9de26be67ae0	<system-reminder>
+import:claudeAgent:74626d23-737d-49ac-93d7-d966bfd59435	<system-reminder>
+import:claudeAgent:0716e9af-9d78-4a40-a4af-b357709e5621	<system-reminder>
+import:claudeAgent:8bb3c251-5503-40f8-a1ff-3a5d7e7266bf	<system-reminder>
+import:claudeAgent:b9ab5012-0e9b-4683-aa59-ea575e0a35f9	<system-reminder>
+import:claudeAgent:58c93721-3076-4e28-8cd9-0fb85a1b67ba	<system-reminder>
+import:claudeAgent:00e8b969-cd65-479c-bde3-8c48e94dd49e	<system-reminder>
+import:claudeAgent:bc987746-701f-4657-b27a-a3b3c0522009	<system-reminder>
+import:claudeAgent:3a0f591c-392b-4d29-8647-bd467fd90881	<system-reminder>
+import:claudeAgent:90202f30-5b1d-44c3-8503-aed553d7ab1a	<system-reminder>
+import:claudeAgent:4d7a0dc0-c8c7-4945-afe1-18ba2b293cce	<system-reminder>
+import:claudeAgent:b2e71beb-443d-4246-88e4-6bf4bf63bb2a	<system-reminder>
+import:claudeAgent:029cc12c-ca9d-4269-a9dc-3851a3887f8f	<system-reminder>
+import:claudeAgent:1b2a64f0-7635-41be-aa34-52a3fad62053	<system-reminder>
+import:claudeAgent:4cd416f7-8e44-4ee2-bb16-4a921660071b	<system-reminder>
+import:claudeAgent:eeb5c97f-2d98-481e-bb34-aeb77756c2a4	<system-reminder>
+import:claudeAgent:35c62a21-eec5-4df7-b186-5423e9f1eca3	<system-reminder>
+import:claudeAgent:ef8e6e82-a96f-435c-b087-909ca43b73de	<system-reminder>
+import:claudeAgent:279b003c-6321-4ec0-8918-b69f10fbe604	<system-reminder>
+import:claudeAgent:13314186-3b1e-42e6-b864-6797596290e8	<system-reminder>
+import:claudeAgent:ff525079-9c81-409b-a5e8-bf470538d4fd	You are 'hww-smoke', one of several AI agents coor
+import:claudeAgent:d783441f-583f-40b9-88ac-dcd9bf1c7dde	You are 'hww-dy', one of several AI agents coordin
+import:claudeAgent:ee80392e-9af1-4c16-a3f0-28032a687f05	You are 'ai-fix3', one of several AI agents coordi
+import:claudeAgent:efcf5499-277e-4726-b5c2-5936a7b53d5e	You are 'ai-review-claude', one of several AI agen
+import:claudeAgent:de361425-e0c7-4623-97ad-797ee439cbc4	You are 'ai-fix', one of several AI agents coordin
+import:claudeAgent:4d97f6e4-cc65-4fa1-8bf6-b819fb56b406	What work have I been doing recently?
+import:claudeAgent:4200c2f0-8be5-4bef-a090-745163ba74e6	You are 'kappa-status', one of several AI agents c
+import:claudeAgent:2aa57b36-2abf-4cc6-a15b-501867734048	conductor obsidian-notes
+import:claudeAgent:87f9ee22-1510-4715-ac7b-c58b4af775eb	conductor obsidian-notes
+import:claudeAgent:22d8084c-77b6-435a-bd24-553ef5b6d56d	You are 'consult-claude', one of several AI agents
+import:claudeAgent:b35af53e-b3e4-4c5a-a223-5852df8a97c9	You are 'checker', one of several AI agents coordi
+import:claudeAgent:c1055735-9cce-46e9-98f2-76bada40188f	Use the codex agent (subagent) to answer: which BM
+import:claudeAgent:f10bc783-bde4-409b-929e-f18528463cdb	Use the peer tool ask_codex (model luna, effort lo
+import:claudeAgent:dde1bf72-992e-4326-bc47-076e7e3f35ab	You are being consulted by another AI agent (Codex
+import:claudeAgent:ee4ac9d0-a9f1-4f90-b8f6-e2c46d7faa2c	What work have I been doing recently?
