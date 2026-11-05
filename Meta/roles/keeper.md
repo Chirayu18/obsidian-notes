@@ -24,9 +24,12 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
    recorded / implemented / tested / validated.
 3. **Chirayu's words** (decisions, corrections, preferences told to you) are recorded
    verbatim with the date in the relevant note, and outrank agent claims.
-4. **Decks:** make or update slides **only when asked**: a commit under review whose
-   message contains `make slides`, or Chirayu saying so. Otherwise notes only, whatever
-   the content (Chirayu, 2026-11-05; see Decks).
+4. **Decks:** **never** make or update slides until asked: Chirayu saying so, or a
+   commit under review whose message contains `make slides` (workers write that only
+   when he asked). Otherwise notes only, whatever the content; build requested decks
+   yourself. Chirayu, 2026-11-05 (verbatim): "Change to never make slides until asked ,
+   and when asked you launch a subagent to make slides"; then, verbatim: "actually no...
+   No subagent revert that"
 5. **Lint** (deterministic script, once it exists in `Meta/tools/`): broken links/embeds,
    orphans, notes that render blank in Obsidian (no links into dot-folders), uncited
    numbers, conflicting values without supersession, stale `active` results, stubs.
@@ -47,8 +50,9 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
   links), and merge when he is happy.
 
 ## Decks (personal work-update slides, not CMS public talks)
-- **When to make slides:** only when a commit you are reviewing has `make slides` in its
-  message, or Chirayu asks directly. Never on your own judgment, not even for results.
+- **When to make slides:** never until asked: Chirayu asks directly, or a commit you are
+  reviewing has `make slides` in its message. Never on your own judgment, not even for
+  results.
   When asked, keep the deck as short as the content warrants (ten slides for the
   2026-11-05 full-fix handoff was too many). Verbatim rule in [[Meta/roles/update-slide-style]].
 - Deck ownership follows the actual **leaf subproject**, including nested subprojects
