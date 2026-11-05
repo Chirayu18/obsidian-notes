@@ -7,7 +7,7 @@ source: laptop
 
 # Proposed lxplus T3 checks and project routing
 
-**Agent-reported proposal; commands below have not been executed.** This extends [the recommendation](2026-11-05-t3-connect-vs-lxplus-setup.md), without replacing it. No environment, service, credential, role brief or project configuration was changed. These instructions separate observations from setup actions; passing an observation does not authorize a setup action.
+**Agent-reported proposal.** The read-only checks were subsequently executed at Chirayu's request; see [the live results and separately approved AFS cleanup](2026-11-05-lxplus-t3-readiness-checks.md). Setup/pilot actions below remain unexecuted. This extends [the recommendation](2026-11-05-t3-connect-vs-lxplus-setup.md), without replacing it. No environment, service, credential, role brief or project configuration was changed. These instructions separate observations from setup actions; passing an observation does not authorize a setup action.
 
 Chirayu, verbatim, 2026-11-05:
 
