@@ -88,3 +88,6 @@ __pycache__/
 
 # Chirayu, 2026-11-05: every PDF stays local, including reference papers.
 *.[pP][dD][fF]
+
+# Regenerable local slide-render reports and previews.
+**/deck/.render/
