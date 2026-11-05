@@ -10,6 +10,8 @@ evidence: agent-reported
 
 **Verdict: adapt a few review instructions; do not migrate the analysis to JFC on the strength of this survey.** JFC explicitly asks reviewers to investigate implementation bugs, including wrong systematic propagation and stale numerical outputs. Its public repository supplies useful review procedures, but no demonstrated improvement over Chirayu's current code-based review and no ready-made HToWW bug detector. The hidden-truth HEPEXBENCH demonstration from the workshop is not implemented in this checkout.
 
+**Adoption follow-up, 2026-11-05:** Chirayu authorised adoption of the useful parts. They are now implemented as [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|the HToWW review protocol]] and the `$htoww-review` skill. This survey remains the code-inspection evidence; the follow-up records what was adopted and its validation limits.
+
 This is an **agent-reported code inspection with small local software checks**, not a test of JFC's agents on HToWW. No agent was run through JFC, no model endpoint was called, and no CERN data or internal analysis material was sent to an external service. The survey supplements [[Projects/CombineAgent/evaluations/2026-11-05-indico-1716863-survey|the event survey]] with implementation evidence; the event inventory remains applicable.
 
 ## Source and scope
