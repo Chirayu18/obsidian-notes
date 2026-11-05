@@ -102,3 +102,19 @@ The 3FS production is finished at 9,936,966 / 10M events. The published counts a
 ### Not yet checked
 - **Saranya comparison follow-ups (10-23 to 10-29):** not checked.
 - **"LHC paper" stitching alternative (10-28 sessions):** not found in the vault notes.
+
+## Decisions by Chirayu, 2026-11-05 (verbatim intent, recorded by the worker)
+1. **H+c normalisation: use NNLO.** This supersedes the 2026-09-30 "shape-only, NLO, no NNLO normalisation" decision (`hww-fs-decision-shape-only`). The 30% `xsec_hplusc_4FS_5FS` lnN stays dropped.
+2. **Thomas's ttH lepton-MVA working points:** adopt them for Run A, together with the ONNX evaluation from `framework/optimization`.
+3. **Framework speed-ups:** to be done by a separate agent.
+4. **Baseline commit on `hww-analysis`:** approved. It must include the untracked `lhe_norm.py`, `lhe_yukawa_fix.py`, `analysis/data/lhe_yukawa/` and `analysis/data/fs_shape/`.
+5. **Run A submission:** OK.
+6. **Run B stitching:** official LHCHWG-2026-007 split, with jet radius R = 0.4 and |η| < 2.5 for the 10 GeV c-jet split.
+7. **Source paper for the split:** to be found online and catalogued.
+8. **Private 3FS production: accepted as is,** 9,936,966 / 10M events. No resubmission of the 63 failed jobs or of the refused 2022preEE `_ext1`.
+9. **BR(H→WW) = 0.2152** used for the WH cross sections: an agent checks it against a source.
+10. **H+b scale-weight (Yukawa) fix:** an agent cross-checks it. The result goes to the existing `full-rerun` deck, built by the keeper.
+11. **GEN re-production request for the central H+c/H+b weights:** deferred.
+12. **Fixes for Saranya** (see [[Projects/HToWW/framework/2026-11-05-saranya-hczz-branch-comparison]]): recorded only, not sent.
+13. **Vault commit `9ea0bf0`:** stays as is (Co-Authored-By trailer, not amended).
+14. **Threads "Opus review HToWW organization" and "Htoww_local ⑂":** no action.
