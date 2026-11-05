@@ -109,3 +109,10 @@ written version of Bevilacqua's 23-06-26 talk. **Recommends a stitched signal** 
 ≥1 → 3FS; per-region NNLO/NLO K-factors; total → NNLO MiNNLOPS cc̄H) and says this **mitigates the need**
 for a flat 3FS-vs-4FS yield uncertainty (the O(30%) used by Run-2). All studies use H→γγ.
 Used in [[Projects/HToWW/samples-and-production/flavour-schemes/2026-09-29-fs-3FS-4FS-status|2026-09-29-fs-3FS-4FS-status]].
+
+## Higgs BR and cross-section sources (added 2026-11-05, HTOWW-BR-HWW-CHECK)
+Used in [[Projects/HToWW/samples-and-production/2026-11-05-br-hww-xsec-check|2026-11-05-br-hww-xsec-check]]. No PDFs are committed.
+- **CERN Yellow Report 4**, arXiv:1610.07922 — https://arxiv.org/abs/1610.07922. Appendix A BR tables: Table 176 (gg, γγ) and Table 177 (Zγ, WW).
+- **LHCHWG BR twiki** (YR4 update, r23, 2023-12-21) — https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageBR
+- **LHCHWG-2024-001**, 13.6 TeV Higgs cross sections, arXiv:2402.09955 — https://arxiv.org/abs/2402.09955. Table 3 gives WH and W±H.
+- **LHCHWG-2026-007**, arXiv:2608.26863 — https://arxiv.org/abs/2608.26863. The local PDF is listed above.
