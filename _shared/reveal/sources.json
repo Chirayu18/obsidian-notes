@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-05",
+  "reveal_version": "5.2.0",
+  "files": [
+    {
+      "path": "reveal.js",
+      "copied_from": "Projects/HToWW/samples-and-production/gridpacks/deck/assets/reveal/reveal.js",
+      "sha256": "46538b52db48724192f59bf46f5e851a18e302777c46f4a34c32709d010d6a29"
+    },
+    {
+      "path": "reveal.css",
+      "copied_from": "Projects/HToWW/samples-and-production/gridpacks/deck/assets/reveal/reveal.css",
+      "sha256": "68f915a11ebf7203c0446576b7e952ff61c5dd02134a8a226ffaf62ed42136d2"
+    },
+    {
+      "path": "reset.css",
+      "copied_from": "Projects/HToWW/samples-and-production/gridpacks/deck/assets/reveal/reset.css",
+      "sha256": "1aa8e84c9cabcbfe4d95b19879fe48b9c2c5e6d54574cbe679bc22edb9fe12b6"
+    },
+    {
+      "path": "markdown.js",
+      "copied_from": ".obsidian/plugins/slides-extended/plugin/markdown/markdown.js",
+      "sha256": "daef024c44fe63d26ac0a403cd1e2442dd3d15c0a46ad271ecbd11ffb8197215"
+    }
+  ]
+}

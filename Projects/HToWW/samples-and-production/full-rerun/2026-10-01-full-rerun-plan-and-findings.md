@@ -6,6 +6,8 @@ source: lxplus
 ---
 # Full rerun with all systematics — workflow `hww_combine_full` (2026-10-01)
 
+> Current rerun state: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|2026-11-05 Run A / Run B handoff]]. This note retains the earlier plan, methods and dated findings; its old status statements are snapshots, not the current execution state.
+
 Repo: `~/higgscharm_thomas/higgscharm_thomas_new/higgscharm` (uncommitted edits, all with backups).
 Outputs: `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full[_ttsyst]/<era>/`. Logs/scripts: `/eos/user/c/cgupta/higgscharm/{logs_runall,runall}/`.
 `hww_combine_2dcat` (the 1034 result, 2022postEE) is left untouched.

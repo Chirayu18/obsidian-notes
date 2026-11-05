@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HToWW full rerun - 2026-11-05</title>
+  <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
+  <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
+  <style>
+    :root { --ink: #172b42; --accent: #126782; --muted: #526374; --line: #c4d1d9; }
+    body { background: #fff; color: var(--ink); font-family: Arial, sans-serif; }
+    .reveal { font-size: 29px; line-height: 1.38; }
+    .reveal .slides { text-align: left; }
+    .reveal .slides section { box-sizing: border-box; padding: 36px 46px 26px; }
+    .reveal h1, .reveal h2 { color: var(--ink); font-weight: 700; line-height: 1.12; margin: 0 0 30px; }
+    .reveal h1 { font-size: 1.68em; }
+    .reveal h2 { font-size: 1.4em; }
+    .reveal p { margin: 0 0 21px; }
+    .reveal ul, .reveal ol { margin: 0 0 25px 1em; padding: 0; }
+    .reveal li { margin-bottom: 15px; padding-left: 5px; }
+    .reveal strong { color: var(--accent); }
+    .reveal a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; }
+    .reveal code { font-size: .83em; overflow-wrap: anywhere; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: .9em; margin-bottom: 22px; }
+    .reveal th, .reveal td { text-align: left; padding: 12px 15px 12px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .reveal th { color: var(--accent); font-weight: 700; }
+    .reveal blockquote { border-left: 5px solid var(--accent); margin: 0 0 28px; padding: 3px 0 3px 24px; }
+    .reveal .source { font-size: .57em; line-height: 1.45; color: var(--muted); margin-top: 26px; }
+    .reveal .status-label { color: var(--muted); font-size: .65em; margin-bottom: 16px; }
+    .reveal .slide-number { font: 14px Arial, sans-serif; color: var(--muted); background: transparent; }
+    .reveal .progress { color: var(--accent); height: 3px; }
+    .reveal .controls { color: var(--accent); }
+    @media print { .reveal .slides section { padding-top: 32px; } }
+  </style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<section id="status" data-markdown><script type="text/template">
+<p class="status-label">HToWW · Full rerun · Internal progress · 5 November 2026</p>
+
+# Run A awaits decisions and fresh tests
+
+- **Run A:** fixes reported implemented; latest edits have not been re-tested.
+- **Run B:** private three-flavour-scheme samples are reported produced, but absent from analysis filesets.
+- **Needs Chirayu:** signal normalisation, stitching jets, lepton selection and speed-up scope.
+
+No new analysis submission is reported. Scientific claims remain agent-reported.
+
+<p class="source">Source: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff</a>, worker commit f26a601. Keeper checks cover this record and deck, not remote physics.</p>
+</script></section>
+
+<section id="result-runa" data-markdown><script type="text/template">
+## Run A: corrections are reported in code
+
+| Area | Reported change |
+|---|---|
+| Trigger selection | SingleMuon 2022C mapping; DoubleMuon zero mask |
+| Charm-tag inputs | Derive category one-hot inputs during inference |
+| Missing transverse momentum | Correct Type-1 jet selection and sign |
+| Jets and sample weights | Re-sort after correction; enable veto map; reject nonpositive cross sections |
+
+**Implemented: agent-reported.** The DoubleMuon interpretation still needs confirmation.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff, “Run A: what is in the code”</a>. Analysis checkout: hww-analysis at b7f67ef plus uncommitted edits.</p>
+</script></section>
+
+<section id="result-validation" data-markdown><script type="text/template">
+## Earlier tests do not cover the latest edits
+
+| Evidence reported by worker | Boundary |
+|---|---|
+| 31 unit tests passed on 4 Nov | Before the latest cross-section and uncertainty edits |
+| Single-file signal, top-pair and SingleMuon runs passed | Also before those edits |
+| Current implementation and physics | Not independently checked by keeper |
+
+**Next check:** rerun the tests before proposing submission commands.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff, tests and smoke tests</a>. No tests in the analysis repository were run during this keeper review.</p>
+</script></section>
+
+<section id="result-normalisation" data-markdown><script type="text/template">
+## Signal normalisation is an open choice
+
+The worker interprets the current H+c cross section as **NLO**, while the normalisation uncertainty was removed on the recorded NNLO premise.
+
+| Worker-reported quantity | Value |
+|---|---|
+| Current cross section, including decay branching fractions | 0.0022141 pb |
+| Proposed NNLO value, same convention | About 0.00167 pb |
+
+Choose NNLO, or retain NLO with an appropriate uncertainty. **Neither choice is applied by this review.**
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff, open issue 1</a>. NLO = next-to-leading order; NNLO = next-to-next-to-leading order. Conversion and inputs remain unverified by keeper.</p>
+</script></section>
+
+<section id="result-runb" data-markdown><script type="text/template">
+## Run B: production has not reached filesets
+
+**9,936,966 / 10,000,000 events** reported in the Dataset Aggregation System (DAS), as of the worker handoff.
+
+- The 2022 post-endcap-upgrade sample needs the main dataset **and its extension**.
+- No private three-flavour-scheme samples are yet in the analysis filesets.
+- Stitching combines zero-charm-jet events from the four-flavour scheme with charm-jet events from the three-flavour scheme.
+- Jet radius and pseudorapidity acceptance remain undecided.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff, Run B and open issue 2</a>. Event count and stitching interpretation are agent-reported; no DAS query was rerun.</p>
+</script></section>
+
+<section id="decisions" data-markdown><script type="text/template">
+## Decisions recorded in the worker note
+
+> “we use NNLO normalisation now”
+
+Recorded by the worker as Chirayu's decision on **4 November 2026**; the original user message was not re-verified by keeper.
+
+- The worker removed the former normalisation uncertainty on that basis.
+- The note also records keeping jet-energy-resolution propagation to missing transverse momentum.
+- No new scientific decision was made during this keeper review.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff, “Lnn removed” and “Unchanged”</a>. NLO = next-to-leading order; NNLO = next-to-next-to-leading order in perturbation theory.</p>
+</script></section>
+
+<section id="open" data-markdown><script type="text/template">
+## Four choices before the next run
+
+1. **Normalisation:** NNLO, or NLO with an uncertainty?
+2. **Stitching:** confirm the proposed jet radius and acceptance, or ask the authors?
+3. **Lepton selection:** adopt Thomas's working points and assess retraining?
+4. **Speed-ups:** redo the interrupted assessment, or defer it?
+
+Then: rerun tests, draft commands and obtain Chirayu's **submission approval**.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">Consolidated handoff, open issues</a>, plus worker's final message at 04:17 UTC on 5 Nov. Submission approval is a separate step.</p>
+</script></section>
+
+<section id="changes" data-markdown><script type="text/template">
+## This keeper update makes the state findable
+
+- Link the new full-fix handoff from the workstream and HToWW status pages.
+- Add the missing speed-up decision and reported backup-patch location.
+- Point earlier plans and audits to the latest status; retain their evidence.
+- Build this first workstream progress deck with local shared Reveal.js.
+
+**Recorded and presented here.** Analysis code, jobs and scientific validation remain with the worker and Chirayu.
+
+<p class="source">Worker source: f26a601. Review record: <a href="../../../../../Meta/keeper/2026-11-05-fullfix-review.md">keeper review</a>. Revisions: <a href="CHANGELOG.md">deck changelog</a>.</p>
+</script></section>
+
+<section id="backup-production" data-markdown><script type="text/template">
+## Backup: other sample work has dated evidence
+
+| Record | Recorded state; not a new check |
+|---|---|
+| 3 Nov Drell–Yan replacements | Queries swapped; filesets regenerated; branch-availability checks reported passed |
+| 28 Oct four-flavour gridpack rebuild | Weight corrections and same-decay validation reported; packaging fixes recorded |
+| 28 Oct private signal production | Per-era production snapshot; use the 5 Nov handoff for the later aggregate count |
+
+<p class="source"><a href="../../2026-11-03-dy-replacements.md">Drell–Yan replacement note</a> · <a href="../../gridpacks/2026-10-28-4fs-el8-gridpack-and-3fs-production.md">gridpack and production note</a>. Older topic decks remain linked from the workstream README.</p>
+</script></section>
+
+<section id="backup-evidence" data-markdown><script type="text/template">
+## Backup: exact source and recovery locations
+
+- Analysis repository: `~/higgscharm_thomas/higgscharm_thomas_new/higgscharm`
+- Worker-reported base: `hww-analysis`, `b7f67ef`, with uncommitted edits.
+- Run A workflow: `analysis/workflows/hww_allfix_4fs.yaml`
+- Backup directory: `/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/`
+- Latest reported diff: `tracked_diff_20261105.patch` in that directory.
+
+The lepton multivariate-analysis (MVA) and speed-up helper runs stopped without recoverable EOS patches. Their scratch work is **not a delivered implementation**.
+
+<p class="source"><a href="../2026-11-05-fullfix-rerun-run-a-state.md">5 Nov handoff and cited worker thread</a>. Keeper did not inspect the analysis checkout, EOS backups or lost scratch.</p>
+</script></section>
+
+</div></div>
+<script src="../../../../../_shared/reveal/reveal.js"></script>
+<script src="../../../../../_shared/reveal/markdown.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280, height: 720, margin: 0.04, center: false,
+    hash: true, transition: 'none', backgroundTransition: 'none',
+    controls: true, progress: true, slideNumber: 'c/t',
+    pdfSeparateFragments: false, pdfMaxPagesPerSlide: 1,
+    plugins: [RevealMarkdown]
+  });
+</script>
+</body>
+</html>

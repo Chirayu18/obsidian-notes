@@ -7,9 +7,9 @@ source: laptop
 
 # HToWW
 
-Status: Active and historical records are organized by workstream.
-Validation: This pass checks file preservation and local navigation; scientific claims retain their original evidence/status.
-Needs Chirayu: see [[Meta/reorg/vault-20261105-report|keeper report]].
+Status: Latest handoff: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|Run A / Run B full-fix state, 2026-11-05]].
+Validation: Run A tests predate the latest analysis edits; implementation and numbers remain agent-reported.
+Needs Chirayu: normalisation, Run B jet definition, lepton-MVA selection and speed-up scope; see the handoff. Organisation questions remain in the [[Meta/reorg/vault-20261105-report|keeper report]].
 
 ## Workstreams
 

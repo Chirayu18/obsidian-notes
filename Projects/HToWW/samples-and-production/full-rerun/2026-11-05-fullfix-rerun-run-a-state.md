@@ -3,12 +3,17 @@ tags: [reference]
 status: active
 date: 2026-11-05
 source: laptop
+evidence: agent-reported
+source_commit: f26a601058c7ef56d3bb5e2a82840c017a919383
+keeper_review: "[[Meta/keeper/2026-11-05-fullfix-review]]"
 ---
 # Full-fix rerun (Run A / Run B): state as of 2026-11-05
 
 Task HTOWW-FULLFIX-RERUN-20261104.
 
-All of the edits below are uncommitted and unvalidated by Chirayu. Nothing has been submitted, committed, pushed or deleted. Every number is agent-reported.
+The analysis-repository edits below are uncommitted and unvalidated by Chirayu. The worker reported no analysis submission, commit, push or deletion; the vault note itself was committed as `f26a601`. Every number is agent-reported.
+
+Source: [worker handoff, 2026-11-05 04:17 UTC](t3-thread://v2/7fbb6319-2aff-454c-af0e-25d245ea222a/mcp:launch:0a085f5f6123e902dae945a412fbaac27624ff7a2dd345a25861a529c4e14fb5). Keeper review checks the record and navigation, not the remote implementation or physics. Earlier context: [[Projects/HToWW/samples-and-production/full-rerun/2026-10-01-full-rerun-plan-and-findings]] and [[Projects/HToWW/samples-and-production/full-rerun/2026-10-06-independent-review]].
 
 ## Where the files are
 - **Repo:** lxplus `~/higgscharm_thomas/higgscharm_thomas_new/higgscharm`, branch `hww-analysis`, HEAD `b7f67ef`. The working tree has uncommitted edits.
@@ -44,6 +49,7 @@ All of the edits below are uncommitted and unvalidated by Chirayu. Nothing has b
 2. **Run B stitching: jet radius and |η|.** The official split (LHCHWG-2026-007 §4.4) takes events with N(c-jets, pT > 10 GeV) = 0 from 4FS FxFx and events with ≥ 1 from 3FS. The whole sample is then rescaled to NNLO ccH. The note gives neither R nor |η| for the 10 GeV split. The proposal is R = 0.4 and |η| < 2.5, or ask the authors.
 3. **Thomas's ttH lepton-MVA working points** (branch `tvl/MVA`, commits c2da77f … 089825a, not in HEAD): adopt them for Run A or not. This changes the lepton selection, and the v11 MVA was trained without them.
 4. **Run A submit commands:** to be drafted after items 1–3, then Chirayu's OK.
+5. **Speed-up work (worker's final handoff):** redo the interrupted output-writing assessment or leave it deferred? The worker proposed applying a parquet-output change only after a single-file comparison demonstrates identical output. This is an additional decision, not permission to apply it.
 
 ## Read-only helper runs (2026-11-04)
 - **HTOWW-RUNB-INPUTS:** completed. It produced the WH and stitching numbers above.
@@ -52,6 +58,7 @@ All of the edits below are uncommitted and unvalidated by Chirayu. Nothing has b
   - TTHMVA-MERGE had a port assembled in a scratch clone and 6 unit tests passing.
   - SPEEDUP had the `dump_parquet` patch applied to a copy.
   - Both scratch locations were node-local and are not recoverable from here.
+- **Backup follow-up:** the worker's final handoff reports today's analysis-repo diff saved as `tracked_diff_20261105.patch` under the EOS backup directory above. The keeper has not inspected that patch.
 
 ## Run B (private 3FS + central 4FS)
 - **Production:** 9,936,966 / 10M events in DAS. 2022postEE needs both the main dataset and `_ext1`.

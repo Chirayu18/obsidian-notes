@@ -83,6 +83,7 @@ These are Chirayu's own progress decks, one per subproject. They are not CMS tal
 The authority for them is [[Meta/roles/keeper]] (Decks section) and [[Meta/roles/update-slide-style]]. The points below summarise those files; they are not new rules.
 
 - **Location:** `<subproject>/deck/`, containing:
+  - `<subproject>` means the actual leaf workstream, including nested subprojects; parent indexes link to that deck. Support folders such as assets, scripts and history are not separate deck owners (Chirayu's 2026-11-05 clarification in [[Meta/roles/keeper]]).
   - `index.html`: Reveal.js loaded from `_shared/reveal/`, no CDN;
   - `assets/`: plot previews of 300 KB or less, each with a small JSON giving the original path, script and commit;
   - `<name>_rN.pdf`;

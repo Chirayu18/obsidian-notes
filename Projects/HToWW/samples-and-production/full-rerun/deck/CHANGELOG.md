@@ -1,0 +1,21 @@
+---
+tags: [slides]
+status: active
+date: 2026-11-05
+source: laptop
+---
+
+# Full rerun progress deck
+
+## r1 — 2026-11-05
+
+First leaf-subproject progress deck: current status, Run A corrections and test boundary, unresolved normalisation, Run B production/filesets, recorded decisions, open choices, keeper changes, and dated production/evidence backup. Stable section IDs are kept in `index.html`; text is Markdown inside each section. Scientific content is agent-reported, primarily from worker commit `f26a601` and its final handoff. No new measured plot is invented.
+
+- HTML: [open locally](index.html).
+- Export: `full-rerun_r1.pdf` (local-only, gitignored).
+- Runtime: vault-root `_shared/reveal/`, copied from existing local assets; no CDN.
+- Build/check helper: `render.mjs`; uses installed `playwright-core` and headless Google Chrome. Run with `node Projects/HToWW/samples-and-production/full-rerun/deck/render.mjs` from the vault root; pass `--revision=N` for a later PDF revision.
+- Outputs: local PDF plus render screenshots and a machine-readable check report in the ignored `.render/` directory. Every slide is checked for overflow, JavaScript errors, failed local requests and external network requests. The PDF is also rendered with Poppler and inspected before delivery.
+- Review: [[Meta/keeper/2026-11-05-fullfix-review]].
+
+Existing flavour-scheme and gridpack decks remain with their own leaf subprojects; this deck does not replace their methods or source plots.

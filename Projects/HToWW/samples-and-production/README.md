@@ -9,14 +9,21 @@ source: laptop
 
 Background replacements, signal production, gridpacks, flavour schemes and full reruns.
 
-Status: Organized by topic; original results and evidence remain in their source notes.
-Latest dated record: [[Projects/HToWW/samples-and-production/2026-11-03-dy-replacements|DY NanoAODv12 replacements for the 10 INVALID datasets]].
-Needs Chirayu: unresolved source-note tasks remain open; see [[Meta/reorg/vault-20261105-report|keeper report]].
+Status: Run A fixes are reported implemented but await tests after the latest edits; Run B is on hold ([source](full-rerun/2026-11-05-fullfix-rerun-run-a-state.md)).
+Latest: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|2026-11-05 full-fix handoff]]; figures and implementation remain agent-reported.
+Needs Chirayu: H+c normalisation, Run B jet definition, lepton-MVA working points and whether to redo speed-up work; submission requires separate approval.
+
+![[Projects/HToWW/samples-and-production/full-rerun/deck/full-rerun_r1.pdf]]
+
+[Open the full-rerun progress deck](full-rerun/deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]] · [[Meta/keeper/2026-11-05-fullfix-review|keeper review]]
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
 
 ## Records
 
+- [[Projects/HToWW/samples-and-production/full-rerun/README|Full-rerun status and progress deck]]
+
+- [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|Full-fix rerun: current Run A / Run B state and decisions]]
 - [[Projects/HToWW/samples-and-production/2026-07-08-hplusc-hplusb-crab-status|HPlusC / HPlusB CRAB production — NanoAOD datasets & run steps]]
 - [[Projects/HToWW/samples-and-production/2026-08-12-postEE-background-audit-vs-AN|postEE background audit vs AN-23-102 (Run 2)]]
 - [[Projects/HToWW/samples-and-production/2026-08-13-wjets-jetbinned-replacement|W+jets: inclusive -> jet-binned (0J/1J/2J), 2022postEE]]

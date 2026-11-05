@@ -9,6 +9,8 @@ source: laptop
 
 Agent roles, setup, personal tooling, vault maintenance and setup history.
 
+- [[Meta/slides/decks|Deck catalogue]] — authored talks and progress decks, source variants and local PDFs.
+
 - [[Meta/AgentHarness/README|AgentHarness]]
 - [[Meta/PromptTooling/README|PromptTooling]]
 - roles: [[Meta/roles/conductor|conductor.md]]

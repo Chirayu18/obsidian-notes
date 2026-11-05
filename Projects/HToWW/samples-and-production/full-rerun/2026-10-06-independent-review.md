@@ -6,6 +6,8 @@ source: lxplus
 ---
 # Independent review of `hww_combine_full` before the 4-era reprocessing (2026-10-06)
 
+> Follow-up: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|2026-11-05 handoff]] reports fixes to several findings below. These are agent-reported implementations with tests predating the latest edits; the original audit evidence remains here.
+
 Read-only review of the repo `~/higgscharm_thomas/higgscharm_thomas_new/higgscharm` (branch `hww-analysis`, today's uncommitted fixes included), the 2022 outputs and the card wrapper. All numbers come from the existing (pre-fix) 2022 parquets or from small NanoAOD samples. Scratch scripts are in `/eos/user/c/cgupta/higgscharm/runall/review/`: `dup*.py`, `norm*.py`, `onehot_test.py`, `veto.py`, `metlep.py`, `jecinput.py`, `muiso.py`, `wcols.py`, `sort.py`.
 
 Ranked by impact. Each finding is marked **CONFIRMED** (measured, or read unambiguously in the code) or **SUSPECTED**.

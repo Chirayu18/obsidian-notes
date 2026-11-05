@@ -46,6 +46,14 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
   links), and merge when he is happy.
 
 ## Decks (personal work-update slides, not CMS public talks)
+- Deck ownership follows the actual **leaf subproject**, including nested subprojects
+  such as `samples-and-production/full-rerun/`; parent indexes link to those decks.
+  Asset, script, attachment and `_history` directories are supporting folders, not
+  separate subprojects. Build/update the touched leaf; do not duplicate its deck at
+  every ancestor. Clarification from Chirayu, 2026-11-05 (verbatim):
+  "Btw you make the deck for every final folder right? Like final final sub sub project?"
+  A project without subprojects is itself the leaf and owns `<project>/deck/`.
+  Follow-up, verbatim: "And projects without subprojects get their own deck right?"
 - One deck per subproject in `<subproject>/deck/`: `index.html` (Reveal.js from
   `_shared/reveal/`, no CDN), `assets/` (plot previews ≤300 KB, each with a small JSON:
   original path, script, commit), `<name>_rN.pdf`, `CHANGELOG.md`.
@@ -58,6 +66,8 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
 - Render-check changed slides (headless `google-chrome` screenshots), export a new PDF
   revision, update `CHANGELOG.md`. The subproject `README.md` gives 3 status lines and
   embeds the latest PDF so it shows inside Obsidian.
+- Maintain [[Meta/slides/decks]] when creating or revising decks: link the source and
+  available local exports; retain revision and evidence/approval distinctions.
 - **Style:** follow `Meta/roles/update-slide-style.md`. Record every slide comment from
   Chirayu verbatim there with the date and distil it into a rule; newer rules win.
 - Internal only. Apply CMS public-safety rules before anything is shared outside.
