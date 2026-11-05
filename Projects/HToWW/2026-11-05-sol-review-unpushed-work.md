@@ -182,3 +182,5 @@ Source: `/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/propos
 | Info | Run A shape nuisance dropped in Route B | `hpluscFSShape: []` and `xsec_hplusc_3FS_4FS` removed, following the paper ("stitching mitigates the need for the flavour-scheme uncertainty"). | – | Confirm when choosing A vs B. |
 
 Interrupted step: a temporary copy for rerunning the tests was being made under `/tmp/cgupta/tmp.*` on an lxplus node, and Chirayu stopped it. It may have left a scratch directory there. It touches no repo or EOS data.
+
+**Route B status (Chirayu, 2026-11-05): parked.** It needed to exist, not run. It exists only as the EOS proposal `proposals/HTOWW-ROUTEB-SOL-20261105/`. Checked on 2026-11-05: the live higgscharm tree has no `analysis/stitching/`, no `hww_routeb_3fs4fs.yaml`, and no 3FS fileset entries, so it is off and Run A is unaffected. Do not apply its patches until Chirayu re-enables it.
