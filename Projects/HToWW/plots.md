@@ -146,3 +146,10 @@ tags: [plot]
 - Description: the H+c 4FS FxFx gridpack rebuilt on el8 (MG 2.9.18) with internal reweighting kept and the python systematics step skipped, against the official clean H→γγ gridpack (MG 2.9.9). Both are showered with the same H→WW fragment, which carries the complete FxFx JetMatching block; about 10k events each after matching. The PDF replicas average to member 0 (0.999 in both, against 2.26 in the broken central samples). The scale-variation cross sections agree to within 0.7%. The 1-jet share is 0.269 against 0.268, the forward 1-jet share 0.066 against 0.072 (±0.005), and the matched σ 97.4 ± 1.6 fb against 96.5 ± 1.6 fb. Higgs pT, parton η/pT, N GenJets and leading GenJet pT all agree within statistics. summary.md has the table.
 - Path: /eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/plots
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/plots
+
+### H+b running-Yukawa fix cross-check, 2022 central NanoAOD (2026-11-05)
+tags: [plot]
+- Date: 2026-11-05
+- Description: cross-check of the per-event H+b scale-weight fix (P0-16), note [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-hb-yukawa-fix-crosscheck]]. `hb_xcheck_r_and_mu0.png` shows the per-event r = mean(PDF replicas)/member 0 (H+b 1.993, H+c 2.261, clean H+b 1.000) and the μ0 closure (H+b 1.0004). `hb_xcheck_scale_means.png` shows the nine scale means, inclusive and in the ≥1 gen b-jet region: fixed H+b 22/22EE against clean Run 3 γγ H+b and UL18 H+b WW, with H+c for comparison. Results JSON in the same folder; scripts in `runall/hb_xcheck_20261105/`. Agent-reported.
+- Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/hb_xcheck_20261105
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/hb_xcheck_20261105
