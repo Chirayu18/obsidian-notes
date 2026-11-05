@@ -118,3 +118,55 @@ The 3FS production is finished at 9,936,966 / 10M events. The published counts a
 12. **Fixes for Saranya** (see [[Projects/HToWW/framework/2026-11-05-saranya-hczz-branch-comparison]]): recorded only, not sent.
 13. **Vault commit `9ea0bf0`:** stays as is (Co-Authored-By trailer, not amended).
 14. **Threads "Opus review HToWW organization" and "Htoww_local ⑂":** no action.
+
+## Progress, 2026-11-05 (worker)
+
+### ttH lepton-MVA port (decision 2)
+- **Code:** `analysis/leptonmva/tth.py` builds vectorised features and scores them with ONNX Runtime 1.23.2, using the BRANCH_LT graphs plus `meta.yaml` (sha256 of the ONNX and XML files).
+  - Enabled by the `tthMVA` object correction. The scores are computed on NanoAOD-level inputs before muon/electron scale and smearing, and reused by every shift pass.
+  - The working points are in `working_points.py`; the HWW/latinos SFs are in `muon.py` and `electron.py`; the SF files are in `analysis/data/{muon_HWW,electron_HWW}`, copied from `tvl/MVA`.
+- **Validation:** ONNX vs TMVA-exact gives max |Δ| = 3.05e-7 (μ, 24,484 leptons) and 3.27e-7 (e, 25,713), including all tie-sensitive leptons. Unit test: `TestTthMVA`, against `tests/data/tthmva_ref_fixture.npz`.
+- **Fixes vs Thomas's code:**
+  - muon HWW SFs now use signed η; the tables are binned in −2.4…2.4, and Thomas passed |η|;
+  - no φ argument for the 2023 electron SFs; these JSONs have none, so his 2023 call would raise;
+  - supercluster η for the electron SF.
+- **Open questions:**
+  - SF provenance and factorisation, to check with Thomas. Is `cut_MediumID_tthMVA_Run3` measured on top of the POG Medium ID SF, which is applied as well (as in his config)?
+  - The v11 event MVA was trained with the old tight/wp80iso leptons, so it needs retraining before the limit.
+
+### Other changes and tests
+- **NNLO H+c:** the 4FS H+c xsec is 0.0016626 pb in all 4 eras (0.0022141 × 0.1664/0.2216). Backups are `*.pre_nnlo_hc`.
+- **Tests:** `tests/test_allfix.py` has 34 tests; all pass, with 1 skipped (b-hive reference, needs EOS).
+- **Smoke tests:** single-file, 2022, `hww_allfix_4fs`, all EXIT=0.
+
+  | sample | wall time | RSS | nominal rows |
+  |---|---|---|---|
+  | H+c | 51 s | 0.91 GB | 423 (563 on 11-04 with the old leptons, −25%) |
+  | TTbar | 1:57 | 1.13 GB | 5491 |
+  | SingleMuon 2022C | 1:20 | 0.98 GB | 4 (was 7) |
+
+  New SF variations (Up/nom) on H+c: `CMS_eff_m_promptMVA` 1.0036 and `CMS_eff_e_promptMVA` 1.0097.
+
+### Baseline commit
+- `hww-analysis` commit **`0850e51`**, 74 files, not pushed. The message is in `/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/commitmsg_baseline_20261105.txt`.
+- Left out: compiled `lhe_yukawa/{as2,tab}`, CSVs, root scratch scripts, `outputs/`, `CLAUDE.md` and backups.
+
+### Run B source paper (decision 7)
+- The source is LHCHWG-2026-007, arXiv:2608.26863, §4.4. Verbatim: "phase-space splitting based on the number of charm jets with pT>10 GeV"; "Nc-jet=0 from the 4FS-FxFx sample and … Nc-jet>=1 from the 3FS sample".
+- §4.4 cites no earlier paper for the split itself. It only cites arXiv:2510.18815 (the bbH NNLO/NLO K-factor) and arXiv:2107.01226 (the theory motivation).
+- The jet radius and |η| are not given. R = 0.4 and |η| < 2.5 is Chirayu's choice (decision 6).
+- The PDF is already in `References/HToWW/2026-LHCHWG-2026-007_Hc_flavour_schemes_arXiv2608.26863.pdf`.
+
+### BLOCKER for the Run A submission: EOS quota
+`eos quota /eos/user/c/cgupta`: 919 GB used of a 1.00 TB logical quota (91.9%), about 81 GB free. The last full production plus its ttsyst run used 266 GB. Space by directory:
+
+| path | size |
+|---|---|
+| `higgscharm/outputs/hww_combine_full` | 198 GB |
+| `higgscharm/outputs/hww_combine_2dcat` | 179 GB |
+| `higgscharm/outputs/hww_combine_full_ttsyst` | 68 GB |
+| `HToWW/CMSSW_13_0_13` | 78 GB |
+| `flashjet` | 163 GB |
+| `EPR_task` | 126 GB |
+
+Nothing is deleted. The submission is held until Chirayu frees or redirects the space.
