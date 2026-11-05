@@ -164,3 +164,21 @@ Route B reported that the private 3FS H→WW NanoAOD has `nLHEPdfWeight = 0` and
 
 - [ ] Only if Route B is adopted: put a flat PDF lnN on the 3FS (≥1c) component, e.g. about 2%, from the 4FS PDF acceptance effect or the 1.6% LHE replica spread, and record the justification. Run A (4FS only, 101 PDF members) is not affected.
 - [ ] Optional, only if a reviewer asks for a per-event PDF shape: re-run NanoAOD from the private 3FS MiniAOD with `lhaid 321900` added to `genWeightsTable.preferredPDFs`. This needs CRAB jobs and Chirayu's OK.
+
+## Addendum: review of the Route B proposal (HTOWW-ROUTEB-SOL-20261105), read-only, agent-reported
+
+Source: `/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/proposals/HTOWW-ROUTEB-SOL-20261105/` (`hplusc_routeb.py`, `routeb_io.py`, `patches/base.py.routeb_hook.REFERENCE.patch`, `patches/*_nanov12.yaml.patch`, `patches/hww_routeb_3fs4fs.yaml.vs_allfix.diff`). Nothing in higgscharm was edited.
+
+| Severity | Item | Evidence | Fixed? | Action |
+|---|---|---|---|---|
+| Pass | Normalisation | Per-event weight L·X·c_s·w/F_s with c_s = A_s/Σ A_s f_s reproduces the paper's two steps (region → A_s f_s, then rescale to σ_NNLO); closure Σ c_s f_s = 1. A₄/A₃ enters only as a ratio; sample NLO ratio 97.62/54.97 = 1.776 matches Table 3 (0.2216/0.1248). | – | – |
+| Pass | f_s statistical uncertainty | var f = [(1−f)² Σ_kept w² + f² Σ_notkept w²]/F² is the correct correlated-subset formula. | – | – |
+| Pass | F_s / double counting | Hook takes sumw from the full chunk before the veto in all three paths (`dump_chunk_sumw(events_full)`, TRAIN/RUN stats, stitch record). Records are keyed by partition (retry overwrites). A conflicting duplicate raises. A chunk accumulated twice makes invalid JSON and raises. Stitch `full` is cross-checked against `sumw_records` at 1e-6. Legacy coffea output is refused. | – | – |
+| Pass | Filesets | All four eras get `HplusCharm_3FS_HToWW` (non-TEST CRAB outputs), and 2022postEE also gets `_ext1`. All use xsec = 0.0016626 = 0.0022141 × 0.1664/0.2216, the same as the 4FS entry. | – | – |
+| Pass (log) | Unit tests | `diagnostics/unittest_routeb.log`: 20/20 OK. Author-run log, not re-executed (standing review rule, Chirayu 2026-11-05). | – | – |
+| Low | BR convention between H+c and WH | The H+c X carries BR(H→WW) = 0.2137 (mH 125.00, via 0.0022141); the WH entries use 0.2152 (mH 125.09). That is a 0.7% relative normalisation offset between signal and the WH background. | No (convention) | Chirayu: pick one mH for all Higgs entries. |
+| Medium | Not yet integrated | Card builder (`read_scale` × c_s), `WorkflowConfigBuilder` (the `stitching:` block), sinks and training weights are not wired in. The fileset header warns that using the 3FS entries without the hook double-counts H+c. An empty chunk after masking is untested (the patch says so). | No (open implementation) | Edit owner: implement, then smoke one file per scheme. |
+| Medium | Open physics choices (already flagged by Route B) | Scale-variation normalisation differs between regions; GenJets include H→WW leptons; 3FS Neff/N ≈ 0.04; 3FS PDF weights (see TODO above). | No (decisions) | Chirayu. |
+| Info | Run A shape nuisance dropped in Route B | `hpluscFSShape: []` and `xsec_hplusc_3FS_4FS` removed, following the paper ("stitching mitigates the need for the flavour-scheme uncertainty"). | – | Confirm when choosing A vs B. |
+
+Interrupted step: a temporary copy for rerunning the tests was being made under `/tmp/cgupta/tmp.*` on an lxplus node, and Chirayu stopped it. It may have left a scratch directory there. It touches no repo or EOS data.
