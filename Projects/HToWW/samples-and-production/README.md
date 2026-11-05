@@ -9,14 +9,14 @@ source: laptop
 
 Background replacements, signal production, gridpacks, flavour schemes and full reruns.
 
-Status: Run A code committed (`0850e51` + `40d0e3e`, unpushed) with two uncommitted review fixes; 35/35 tests pass; not submitted.
+Status: Run A code committed (`0850e51` + `40d0e3e`, unpushed) with uncommitted review fixes and TRAIN/RUN modes; not submitted. How to run: [[Projects/HToWW/framework/2026-11-05-run-framework-legacy-train-run]].
 Latest: [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|2026-11-05 independent review]] and [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|full-fix state]]; agent-reported.
 Needs Chirayu: signal PDF/αS model, lepton-SF factorisation and retraining, muon RNG/CPUs, EOS space, one mH for all Higgs xsecs (125.00 vs 125.09); submission requires separate approval.
 
-[Full-rerun progress deck r3](full-rerun/deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]].
+[Full-rerun progress deck r4](full-rerun/deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]].
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
-Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live ([[Projects/HToWW/2026-11-05-route-b-stitching-implementation|proposal]]).
+Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live; to be compared with Run A later. 3FS re-NANO ordered by Chirayu, submission in progress ([[Projects/HToWW/2026-11-05-route-b-stitching-implementation|proposal]]).
 
 ## Records
 

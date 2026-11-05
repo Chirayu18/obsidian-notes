@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW full rerun - 2026-11-05 (r3)</title>
+  <title>HToWW full rerun - 2026-11-05 (r4)</title>
   <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
   <style>
@@ -45,14 +45,13 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-  <p class="label">HToWW · Full rerun · Internal progress r3 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
-  <h2>Run A code is committed and tests pass; four choices block submission</h2>
+  <p class="label">HToWW · Full rerun · Internal progress r4 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
+  <h2>Run A is committed; TRAIN/RUN is built but uncommitted; choices block submission</h2>
   <ul>
-    <li><strong>Code:</strong> <code>hww-analysis</code> at <code>0850e51</code> + <code>40d0e3e</code>, unpushed. Two review fixes are on top, uncommitted and backed up.</li>
-    <li><strong>Tests:</strong> 35/35 unit tests pass with those fixes. H+c, TT and SingleMuon single-file smoke runs pass.</li>
-    <li><strong>Run A:</strong> not submitted. <strong>Run B:</strong> stitching not implemented.</li>
-    <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space · one m<sub>H</sub> for all Higgs cross sections.</li>
-    <li><strong>Route B</strong> (3FS+4FS stitching): <strong>parked</strong>, proposal only, not in the live code.</li>
+    <li><strong>Code:</strong> <code>hww-analysis</code> at <code>0850e51</code> + <code>40d0e3e</code>, unpushed. Uncommitted on top: two review fixes, <strong>TRAIN/RUN modes</strong>, two HZZ ports (11 files + new modules).</li>
+    <li><strong>Tests:</strong> 35/35 after the review fixes; 49 with TRAIN/RUN and the ports (worker-reported). Three single-file smokes pass.</li>
+        <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space · one m<sub>H</sub> for all Higgs cross sections.</li>
+    <li><strong>Route B:</strong> parked proposal, to be compared with A later. <strong>3FS re-NANO:</strong> ordered by you, submission in progress.</li>
   </ul>
   <p>Passing tests checks the software, not the physics model, a production or a limit.</p>
   <p class="source">Sources: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">full-fix state note</a> (worker commits 4d26800, f4475c7) · <a href="../../../2026-11-05-sol-review-unpushed-work.md">independent review</a> (vault 9aa71d5).</p>
@@ -87,6 +86,22 @@
   <p class="source">Evidence: <code>/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/sol_review_20261105/</code>.</p>
 </section>
 
+<section id="result-trainrun">
+  <p class="label">Framework · TRAIN/RUN modes and HZZ ports · implemented, uncommitted, worker-reported</p>
+  <h2>TRAIN/RUN: train on k folds, score inline, cards from templates</h2>
+  <table>
+    <tr><th>Mode</th><th>Output</th></tr>
+    <tr><td><code>--mode train</code></td><td>Slim nominal feature ntuples with fold = event mod k</td></tr>
+    <tr><td><code>--mode run</code></td><td>Each event scored by its held-out fold model; templates for all shifts</td></tr>
+  </table>
+  <ul>
+    <li><strong>Chain:</strong> TRAIN → <code>split_folds.py</code> → b-hive training (external) → <code>register_folds.py</code> → RUN → <code>build_cards_from_templates.py</code>. <code>legacy</code> stays the default. RUN refuses a model that does not match the workflow; no v11 fallback.</li>
+    <li><strong>HZZ ports:</strong> input-completeness/duplicate checks; EOS read fallback.</li>
+    <li><strong>Checked:</strong> 49 tests; seeded legacy = TRAIN = RUN nominal features and weights. <strong>Not yet:</strong> real models, a production, independent review, commit.</li>
+  </ul>
+  <p class="source">How to run: <a href="../../../framework/2026-11-05-run-framework-legacy-train-run.md">framework note</a> (keeper read the live tree, 5 Nov). Evidence: <code>…/backups/higgscharm_pre_fullfix_20261104/sol_trainrun_20261105/</code>.</p>
+</section>
+
 <section id="result-pdf-alphas">
   <p class="label">Open physics choice · agent-reported numbers</p>
   <h2>Signal PDF/αS: the current setup suppresses it, and H+c has no αS members</h2>
@@ -103,9 +118,9 @@
   <p class="label">Run B / Route B · read-only review, agent-reported</p>
   <h2>Route B is parked: a reviewed proposal, not live code</h2>
   <ul>
-    <li><strong>Status (Chirayu, 5 Nov):</strong> parked. It exists only as the EOS proposal <code>HTOWW-ROUTEB-SOL-20261105</code>. The live higgscharm tree has no stitching code, workflow or 3FS filesets, so Run A is unaffected.</li>
+    <li><strong>Status (Chirayu, 5 Nov):</strong> parked; the aim is to compare A and B, then proceed with the better route. It exists only as the EOS proposal <code>HTOWW-ROUTEB-SOL-20261105</code>. The live higgscharm tree has no stitching code, workflow or 3FS filesets, so Run A is unaffected.</li>
     <li><strong>Review:</strong> normalisation, the sum-of-weights hook and the filesets pass. Card builder, config, sinks and training weights are not integrated. Unit tests: 20/20 in the author's log, not re-executed (standing rule).</li>
-    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. If Route B returns: flat ~2% PDF lnN on the 3FS part. Optional: re-NANO from the kept MiniAOD (needs CRAB and your OK).</li>
+    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. You then ordered the re-NANO from the kept MiniAOD with 321900 added: 200-event local test, then CRAB submission in progress; outcome not yet recorded.</li>
   </ul>
   <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> (vault 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
 </section>
@@ -119,17 +134,18 @@
     <tr><td>Lepton SFs</td><td>Ask Thomas: is <code>cut_MediumID_tthMVA_Run3</code> on top of the POG Medium ID or inclusive of it?</td></tr>
     <tr><td>Event MVA</td><td>v11 was trained on the old leptons: retrain before trusting a limit</td></tr>
     <tr><td>Reproducibility</td><td>Seed muon RNG per event or accept; 2 CPUs or 1 worker per job</td></tr>
-    <tr><td>EOS space</td><td>~81 GB free vs ~266 GB needed</td></tr>
+    <tr><td>EOS space</td><td>~81 GB free vs ~266 GB needed; nothing may be removed, so a new output location is needed</td></tr>
     <tr><td>Higgs mass</td><td>One m<sub>H</sub> for all Higgs xsecs: H+c uses BR(H→WW) 0.2137 (125.00), WH uses 0.2152 (125.09), a 0.7% offset</td></tr>
-    <tr><td>Review patch</td><td>Review the two-file diff before it is committed</td></tr>
+    <tr><td>Uncommitted code</td><td>Review fixes + TRAIN/RUN: review, then commit (no independent TRAIN/RUN review yet)</td></tr>
   </table>
-  <p class="source">Already decided, not reopened: NNLO, lepton WPs, Run B split R = 0.4, |η| &lt; 2.5. Only if Route B returns: scale-variation normalisation across regions. Submission and deletions need your explicit OK.</p>
+  <p class="source">Already decided, not reopened: NNLO, lepton WPs, Run B split R = 0.4, |η| &lt; 2.5. Only if Route B returns: scale-variation normalisation across regions. Submission needs your explicit OK; nothing is removed from EOS.</p>
 </section>
 
 <section id="backup-sources">
   <p class="label">Backup · sources and history</p>
   <h2>Where things are</h2>
   <ul>
+    <li>How to run (legacy/TRAIN/RUN): <a href="../../../framework/2026-11-05-run-framework-legacy-train-run.md">framework note</a>; the July how-to is superseded.</li>
     <li>Repo: lxplus <code>~/higgscharm_thomas/higgscharm_thomas_new/higgscharm</code>, branch <code>hww-analysis</code>. Run A workflow: <code>analysis/workflows/hww_allfix_4fs.yaml</code>.</li>
     <li>Backups and review evidence: <code>/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/</code>.</li>
     <li>Also open (review): silent nominal fallbacks in <code>make_combine_inputs.py</code>, older JEC <code>pt_raw</code>/diagnostic issues, and Run B fileset entries for the 3FS samples.</li>

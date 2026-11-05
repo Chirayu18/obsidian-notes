@@ -7,12 +7,12 @@ source: laptop
 
 # Full rerun
 
-Status: `hww-analysis` at `0850e51` + `40d0e3e` (unpushed), plus two uncommitted review fixes; 35/35 tests and three smoke runs pass. Run A not submitted; Run B stitching not implemented.
+Status: `hww-analysis` at `0850e51` + `40d0e3e` (unpushed), plus uncommitted review fixes, TRAIN/RUN modes and HZZ ports (worker-reported: 35/35 and 49 tests); three smoke runs pass. How to run: [[Projects/HToWW/framework/2026-11-05-run-framework-legacy-train-run]]. Run A not submitted; Run B stitching not implemented.
 Validation: software checks only; scientific claims remain agent-reported.
 Needs Chirayu: signal PDF/αS (H+c has no αS members), lepton-SF question for Thomas and MVA retraining, muon RNG/CPUs, EOS space, one mH for all Higgs xsecs (125.00 vs 125.09); submission needs separate approval.
 
-Progress deck r3: [open](deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|changes]] · [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review]].
-Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live ([[Projects/HToWW/2026-11-05-route-b-stitching-implementation|proposal]]).
+Progress deck r4: [open](deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|changes]] · [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review]].
+Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live; to be compared with Run A later. 3FS re-NANO ordered by Chirayu, submission in progress ([[Projects/HToWW/2026-11-05-route-b-stitching-implementation|proposal]]).
 
 ## Records
 

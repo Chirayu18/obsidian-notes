@@ -55,6 +55,7 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
   results.
   When asked, keep the deck as short as the content warrants (ten slides for the
   2026-11-05 full-fix handoff was too many). Verbatim rule in [[Meta/roles/update-slide-style]].
+- **Before updating a deck or status, read the source worker threads (T3) end to end, not only the handoff note or commit,** and check the live repo state read-only where it is cheap. Record thread-only decisions, new work and orders in notes first. Chirayu, 2026-11-05 (verbatim): "Check the whole HtoWW chat, using t3, I feel there are things you havent recorded or seen that lave veen changed... Re reflect on the slides and the notes added"; and: "Slides are not shouwing me the train/run ports. Also don't you think you need yo update how to run the framework again?" When the framework's usage changes, update its how-to note.
 - Deck ownership follows the actual **leaf subproject**, including nested subprojects
   such as `samples-and-production/full-rerun/`; parent indexes link to those decks.
   Asset, script, attachment and `_history` directories are supporting folders, not

@@ -1,9 +1,13 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-11-05-run-framework-legacy-train-run]]"
 date: 2026-07-24
 source: lxplus
 ---
+
+> [!note] Superseded (keeper, 2026-11-05)
+> Current how-to, including TRAIN/RUN modes and the `hww_allfix_4fs` workflow: [[Projects/HToWW/framework/2026-11-05-run-framework-legacy-train-run]]. The steps below are the July legacy chain; its expected limits predate the full fix.
 
 # HToWW H+c — run the whole analysis (with negrw + native 2D c-tag SF)
 

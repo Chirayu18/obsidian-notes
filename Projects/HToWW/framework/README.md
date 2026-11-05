@@ -15,6 +15,8 @@ Needs Chirayu: CPU/RNG decisions and lepton-SF provenance/retraining remain in t
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
 
+- [[Projects/HToWW/framework/2026-11-05-run-framework-legacy-train-run|How to run the framework: legacy, TRAIN, RUN (current)]]
+
 ## Records
 
 - [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|Adopted HToWW correctness-review protocol]]
@@ -22,7 +24,7 @@ Organization and links were checked by the keeper. This does not independently v
 - [[Projects/HToWW/framework/2026-11-05-jfc-code-survey|JFC code inspection, useful practices and adoption limits]]
 - [[Projects/HToWW/framework/2026-11-05-saranya-hczz-branch-comparison|Saranya HcZZ comparison and recorded follow-ups]]
 - [[Projects/HToWW/framework/optimization/2026-11-05-speedup-patches|Speed-up proposals, checks and later application]]
-- [[Projects/HToWW/framework/2026-07-24-run-analysis-steps|HToWW H+c — run the whole analysis (with negrw + native 2D c-tag SF)]]
+- [[Projects/HToWW/framework/2026-07-24-run-analysis-steps|(superseded) HToWW H+c — run the whole analysis (with negrw + native 2D c-tag SF)]]
 - [[Projects/HToWW/framework/optimization/2026-10-08-framework-optimization-plan|higgscharm framework: final fixes and re-architecture plan (2026-10-08)]]
 - [[Projects/HToWW/framework/optimization/deck/2026-10-09-framework-plan-deck|higgscharm framework: the next plan]]
 

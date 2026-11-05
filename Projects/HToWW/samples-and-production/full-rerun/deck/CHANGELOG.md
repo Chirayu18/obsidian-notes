@@ -7,6 +7,15 @@ source: laptop
 
 # Full rerun progress deck
 
+## r4 — 2026-11-05
+
+Chirayu: the slides lacked the TRAIN/RUN work, and things changed in the HToWW thread that were not recorded. The keeper read the Sol review thread in full and inspected the live higgscharm tree read-only. Changes:
+- new `result-trainrun` slide (modes, chain, HZZ ports, checks and gaps);
+- `status` now lists the uncommitted TRAIN/RUN work, the 49 tests (worker-reported), Route B's A/B-comparison aim and the ordered 3FS re-NANO;
+- `result-routeb` records that the re-NANO was ordered and its submission is in progress;
+- `open`: no EOS removal (new output location needed); uncommitted code needs review and commit.
+8 slides. Render: no overflow, no errors; all 8 sections visible with scripts off. Still agent-reported.
+
 ## r3 — 2026-11-05
 
 Requested by Chirayu ("update the slides and push") after the Sol review addenda (vault `667d396`, `fec22c9`, `729a8e7`, `75a193a`, `ce9211a`). Added `result-routeb`: Route B is parked and proposal-only, the review results, and the 3FS `LHEPdfWeight` cause as a non-blocking TODO. `status` and `open` now include the one-mH decision (0.7% BR offset). Scale-variation normalisation is listed only for the case where Route B returns. 7 slides.
