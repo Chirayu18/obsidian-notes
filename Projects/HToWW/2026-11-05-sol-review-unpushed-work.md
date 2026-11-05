@@ -159,3 +159,8 @@ Route B reported that the private 3FS H→WW NanoAOD has `nLHEPdfWeight = 0` and
   - Private `nanoaod_100.root` (copied with xrdcp): title `''`, n = 0, which confirms the Route B result.
   - Private MiniAOD exists next to it (`…/261023_145954/0000/miniaod_*.root` on maite). `miniaod_1.root` contains `LHEEventProduct_externalLHEProducer__SIM` (Events) and `LHERunInfoProduct_externalLHEProducer__SIM` (Runs). So a NanoAOD re-run from MiniAOD can read the weights. That the 321900 weight group itself is in the header was not inspected here; it is inferred from the 10-21 CRAB test.
 - Effect now: `lhepdf.py` gives PDF/αS Up = Down = 1 for these events, so the ≥1c region of a Route B stitch has no PDF shape uncertainty.
+
+### TODO (Chirayu, 2026-11-05): 3FS PDF weights. Not a blocker.
+
+- [ ] Only if Route B is adopted: put a flat PDF lnN on the 3FS (≥1c) component, e.g. about 2%, from the 4FS PDF acceptance effect or the 1.6% LHE replica spread, and record the justification. Run A (4FS only, 101 PDF members) is not affected.
+- [ ] Optional, only if a reviewer asks for a per-event PDF shape: re-run NanoAOD from the private 3FS MiniAOD with `lhaid 321900` added to `genWeightsTable.preferredPDFs`. This needs CRAB jobs and Chirayu's OK.
