@@ -9,7 +9,7 @@ source: laptop
 
 Agent roles, setup, personal tooling, vault maintenance and setup history.
 
-- [[Meta/slides/decks|Deck catalogue]] — authored talks and progress decks, source variants and local PDFs.
+- [Keeper slides](../index.html) — decks created by the keeper, with direct slide links.
 
 - [[Meta/AgentHarness/README|AgentHarness]]
 - [[Meta/PromptTooling/README|PromptTooling]]

@@ -66,8 +66,12 @@ folders and `Meta/`; workers write ordinary notes and commit locally.
 - Render-check changed slides (headless `google-chrome` screenshots), export a new PDF
   revision, update `CHANGELOG.md`. The subproject `README.md` gives 3 status lines and
   embeds the latest PDF so it shows inside Obsidian.
-- Maintain [[Meta/slides/decks]] when creating or revising decks: link the source and
-  available local exports; retain revision and evidence/approval distinctions.
+- Maintain the vault-root [slide index](../../index.html) when creating or revising
+  decks. List only decks created by this keeper, with ordinary HTML links to each
+  deck and its stable slide IDs; include available local PDF exports. Older vault
+  decks are outside this index. Chirayu, 2026-11-05 (verbatim):
+  "Noo the decks.md links are not clickable... Remove it... Instead add the slides you make to a single index.html. With different slides clickable from thre (only your slides)"
+  Location, verbatim: "Keep in in the base obsidian-notes directory"
 - **Style:** follow `Meta/roles/update-slide-style.md`. Record every slide comment from
   Chirayu verbatim there with the date and distil it into a rule; newer rules win.
 - Internal only. Apply CMS public-safety rules before anything is shared outside.

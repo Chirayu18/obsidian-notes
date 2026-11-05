@@ -82,6 +82,7 @@ Each rule cites the comments it comes from. The full quotes are in §7.
 These are Chirayu's own progress decks, one per subproject. They are not CMS talks.
 The authority for them is [[Meta/roles/keeper]] (Decks section) and [[Meta/roles/update-slide-style]]. The points below summarise those files; they are not new rules.
 
+- **Central navigation:** maintain [the vault-root slide index](../../index.html), listing only decks made by this keeper, with direct deck and stable-slide links. Existing decks from other sessions are not automatically included (Chirayu, 2026-11-05; [[Meta/roles/keeper]]).
 - **Location:** `<subproject>/deck/`, containing:
   - `<subproject>` means the actual leaf workstream, including nested subprojects; parent indexes link to that deck. Support folders such as assets, scripts and history are not separate deck owners (Chirayu's 2026-11-05 clarification in [[Meta/roles/keeper]]).
   - `index.html`: Reveal.js loaded from `_shared/reveal/`, no CDN;

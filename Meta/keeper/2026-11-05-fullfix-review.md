@@ -21,7 +21,7 @@ The [[Projects/HToWW/samples-and-production/full-rerun/README|leaf status page]]
 
 Needs Chirayu: H+c normalisation versus uncertainty, Run B jet definition, Thomas's lepton working points/retraining, and speed-up scope. Submission is a separate approval after updated checks.
 
-Added [[Meta/slides/decks]], a central catalogue of 27 locally authored deck groups and their source/export variants, linked from the Meta index. Older authorship and latest/approved version status were not re-established. Templates and the search explainer are separate companions. External reference slide collections and individual plot/paper PDFs are outside the authored-deck catalogue.
+Initially added `Meta/slides/decks.md`, a central catalogue of 27 locally authored deck groups and their source/export variants. This was replaced the same day at Chirayu's request by the [vault-root HTML index](../../index.html), listing only decks made by this keeper. The earlier catalogue remains in commit `b687a74`; older decks themselves were not removed.
 
 ## Chirayu's clarification, verbatim — 2026-11-05
 
@@ -33,7 +33,17 @@ Recorded in [[Meta/roles/keeper]]: decks belong to actual leaf subprojects, incl
 
 > Create a new decks note with references to all the decks I have created by you
 
-Fulfilled by [[Meta/slides/decks]], with older provenance explicitly distinguished from the keeper-created deck.
+Initially fulfilled by `Meta/slides/decks.md`, then superseded by the HTML-only navigation request below.
+
+## Navigation correction — 2026-11-05
+
+> Noo the decks.md links are not clickable... Remove it... Instead add the slides you make to a single index.html. With different slides clickable from thre (only your slides)
+
+> Keep in in the base obsidian-notes directory
+
+Removed the Markdown catalogue and replaced it with vault-root `index.html`. It lists the one deck made by this keeper (full-rerun), with an ordinary HTML link to the presentation, its local PDF and each of the ten stable slide IDs. Root and Meta navigation link to this page. Future keeper-created decks go into this same index; older decks are not included. Deck content and the existing PDF were unchanged. The local pre-removal catalogue formatting edit was preserved in `/tmp/keeper-slide-index-20261105/decks-before-removal.md` before removal; its committed original is in Git history.
+
+Checks: all 12 local link targets exist; headless Chrome opened the presentation and clicked all ten slide links, confirming each destination section ID. Desktop and mobile renders were visually checked with no horizontal overflow, page errors, failed requests or external network requests. The local-link checker reports the same 79 legacy issues and four blank placeholders; no new broken target was introduced. The notes/papers index is refreshed after this correction so the removed Markdown catalogue is pruned and the updated navigation records are searchable.
 
 ## Possible missing information from other threads
 

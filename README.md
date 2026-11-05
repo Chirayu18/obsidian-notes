@@ -10,6 +10,7 @@ Start from [[Dashboard]] (pin it) for a live view of open work.
 ## Start here
 
 - [[Projects/README|Research projects]]
+- [Keeper slides](index.html)
 - [[References/README|External references]]
 - [[Meta/README|Agent setup and vault maintenance]]
 - [[Inbox/README|Unclassified records]]
