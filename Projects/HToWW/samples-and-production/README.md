@@ -13,15 +13,13 @@ Status: Run A fixes are reported implemented but await tests after the latest ed
 Latest: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|2026-11-05 full-fix handoff]]; figures and implementation remain agent-reported.
 Needs Chirayu: H+c normalisation, Run B jet definition, lepton-MVA working points and whether to redo speed-up work; submission requires separate approval.
 
-![[Projects/HToWW/samples-and-production/full-rerun/deck/full-rerun_r1.pdf]]
-
-[Open the full-rerun progress deck](full-rerun/deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]] · [[Meta/keeper/2026-11-05-fullfix-review|keeper review]]
+The full-fix handoff is maintained in [[Projects/HToWW/samples-and-production/full-rerun/README|notes]], not an active deck (Chirayu, 2026-11-05). [[Meta/keeper/2026-11-05-fullfix-review|Keeper review]].
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
 
 ## Records
 
-- [[Projects/HToWW/samples-and-production/full-rerun/README|Full-rerun status and progress deck]]
+- [[Projects/HToWW/samples-and-production/full-rerun/README|Full-rerun status]]
 
 - [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|Full-fix rerun: current Run A / Run B state and decisions]]
 - [[Projects/HToWW/samples-and-production/2026-07-08-hplusc-hplusb-crab-status|HPlusC / HPlusB CRAB production — NanoAOD datasets & run steps]]

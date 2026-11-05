@@ -79,17 +79,19 @@ Each rule cites the comments it comes from. The full quotes are in §7.
 
 ## 2. Internal personal work-update decks (keeper)
 
-These are Chirayu's own progress decks, one per subproject. They are not CMS talks.
+These are Chirayu's own progress decks, owned by the relevant leaf subproject when
+there is material worth presenting. They are not required for every new note or keeper run.
 The authority for them is [[Meta/roles/keeper]] (Decks section) and [[Meta/roles/update-slide-style]]. The points below summarise those files; they are not new rules.
 
 - **Central navigation:** maintain [the vault-root slide index](../../index.html), listing only decks made by this keeper, with direct deck and stable-slide links. Existing decks from other sessions are not automatically included (Chirayu, 2026-11-05; [[Meta/roles/keeper]]).
+- **Threshold and length:** make slides for results, reportable work or meaningful status changes. Routine handoffs stay in notes. Keep decks short; ask Chirayu if the reporting value is unclear. His 2026-11-05 correction overrides the earlier automatic “every touched subproject” rule; see the verbatim log in [[Meta/roles/update-slide-style]].
 - **Location:** `<subproject>/deck/`, containing:
   - `<subproject>` means the actual leaf workstream, including nested subprojects; parent indexes link to that deck. Support folders such as assets, scripts and history are not separate deck owners (Chirayu's 2026-11-05 clarification in [[Meta/roles/keeper]]).
   - `index.html`: Reveal.js loaded from `_shared/reveal/`, no CDN;
   - `assets/`: plot previews of 300 KB or less, each with a small JSON giving the original path, script and commit;
   - `<name>_rN.pdf`;
   - `CHANGELOG.md`.
-- **First build:** built from scratch from the subproject's notes. Older decks move to `_history/` unconverted.
+- **First build:** only when the subproject has material worth presenting; build from its notes. Older decks move to `_history/` unconverted.
 - **Later updates:** change only the affected slides, found by their stable `<section id>`:
   - `status` first: where it stands and what needs Chirayu;
   - `result-<name>`, `decisions`, `open`, `changes`, `backup-<name>`.
@@ -107,7 +109,7 @@ The authority for them is [[Meta/roles/keeper]] (Decks section) and [[Meta/roles
 - **Feedback:**
   - Chirayu's slide comments go verbatim, with the date, into the comment log of [[Meta/roles/update-slide-style]], and each is distilled into a rule.
   - Newer rules win.
-  - That log is empty as of 2026-11-05. The comments in §7 here come from talks, not update decks; see conflict §8.5.
+  - The log now includes Chirayu's 2026-11-05 handoff-deck correction. The comments in §7 here come from talks, not update decks.
 - **Results are agent-reported** until Chirayu or a check validates them. Slides must say which ones are recorded, implemented, tested or validated.
 - **Internal only.** Apply §4 before anything leaves the vault.
 
@@ -321,9 +323,9 @@ Source: [[Projects/HiggsCharmTalk-Higgs2026/2026-10-18-slide-review]].
    - The agent kept the gallery three slides later, because soft drop is defined in between, and asked him to decide.
    - There is no answer in the vault.
 5. **Where feedback is logged.**
-   - [[Meta/roles/keeper]] says slide comments go into the comment log in [[Meta/roles/update-slide-style]], which is still empty.
+   - [[Meta/roles/keeper]] says update-deck comments go into the comment log in [[Meta/roles/update-slide-style]], which now contains the 2026-11-05 handoff-deck correction.
    - This file holds the talk feedback.
-   - The keeper should decide whether update-deck comments go only there (with talk comments here), or whether everything comes here.
+   - Update-deck feedback is logged there and summarised here; the talk comments remain here with their sources.
 6. **Model routing for internal material.**
    - The agent design sends internal decks to CERN-hosted models and public decks to Claude.
    - The Higgs reviews used Claude (public deck).

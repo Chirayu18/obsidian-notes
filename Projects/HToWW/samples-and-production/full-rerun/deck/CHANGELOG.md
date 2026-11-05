@@ -1,11 +1,15 @@
 ---
 tags: [slides]
-status: active
+status: draft
 date: 2026-11-05
 source: laptop
 ---
 
 # Full rerun progress deck
+
+## Withdrawn from active index — 2026-11-05
+
+Chirayu said this routine handoff did not need slides and the deck was too long; his exact feedback is in [[Meta/roles/update-slide-style]]. The draft and original r1 PDF are preserved, but removed from the active root slide index and README embeds. Current status lives in the [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|handoff note]]. Likely cause of the blank render: Obsidian's HTML Page Viewer runs with scripts disabled by default, and this deck builds its slides from Markdown with JavaScript. The draft was not repaired, since it is withdrawn; future decks must be readable without scripts.
 
 ## r1 — 2026-11-05
 

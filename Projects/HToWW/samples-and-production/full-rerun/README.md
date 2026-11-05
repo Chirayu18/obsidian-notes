@@ -11,9 +11,9 @@ Status: Run A fixes are reported implemented; Run B is on hold ([worker handoff]
 Validation: Unit and smoke tests predate the latest analysis edits; scientific claims remain agent-reported.
 Needs Chirayu: normalisation, stitching jets, lepton working points and speed-up scope; submission requires separate approval.
 
-![[Projects/HToWW/samples-and-production/full-rerun/deck/full-rerun_r1.pdf]]
-
-[Open local progress deck](deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]] · [[Meta/keeper/2026-11-05-fullfix-review|keeper review]]
+This handoff is maintained in notes; Chirayu said it did not need slides (2026-11-05).
+The unnecessary deck is retained as an [unlisted draft](deck/index.html), not a current progress report.
+[[Meta/keeper/2026-11-05-fullfix-review|Keeper review]] · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|draft history]].
 
 ## Records
 

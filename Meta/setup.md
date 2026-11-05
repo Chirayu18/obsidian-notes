@@ -16,16 +16,16 @@ Everything about how the agents work lives in this vault. Change it here.
 | Keeper: organise, decks, lint, index, review + push | pinned T3 thread, Codex Sol/high, cwd `~/obsidian-notes`, on demand | [[Meta/roles/keeper]], style: [[Meta/roles/update-slide-style]] |
 
 ## Machine configuration (laptop)
-| Piece | State |
-|---|---|
-| `~/.claude/settings.json` | model `opus`; SessionStart hook `~/bin/lxplus-session-start.sh` (lxplus connect + mounts). No Hindsight hooks. |
-| Vault `.claude/settings.json` | `autoMemoryEnabled: false`; SessionStart `scripts/sync-on-start.sh` (fetch; pull --rebase on normal branches). Index rebuild moved to the keeper. |
-| Vault `.claude/settings.local.json` | local permission allowlist (not synced). |
-| MCP servers (Claude) | `vault` only (`scripts/rag/vault_mcp.py`). Removed: hindsight, peer, home-assistant/ha-mcp, legacy conductor. |
-| Search index | `scripts/rag/` — tiers notes + papers; code tier off (`VAULT_INDEX_CODE=1` re-enables). Needs Ollama `bge-m3`. |
-| Obsidian Git plugin | auto-pull every 5 min and on boot; **auto-commit off** (2026-11-05); auto-push off. |
-| Services | `lxplus-eos.service` on (EOS mount). `hindsight-api.service` stopped + disabled; data kept on disk. |
-| Quota helpers | `cswap list --json` (Claude accounts), `omp usage` (Codex). |
+| Piece                               | State                                                                                                                                             |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `~/.claude/settings.json`           | model `opus`; SessionStart hook `~/bin/lxplus-session-start.sh` (lxplus connect + mounts).                                                        |
+| Vault `.claude/settings.json`       | `autoMemoryEnabled: false`; SessionStart `scripts/sync-on-start.sh` (fetch; pull --rebase on normal branches). Index rebuild moved to the keeper. |
+| Vault `.claude/settings.local.json` | local permission allowlist (not synced).                                                                                                          |
+| MCP servers (Claude)                | `vault` only (`scripts/rag/vault_mcp.py`). Removed: hindsight, peer, home-assistant/ha-mcp, legacy conductor.                                     |
+| Search index                        | `scripts/rag/` — tiers notes + papers; code tier off (`VAULT_INDEX_CODE=1` re-enables). Needs Ollama `bge-m3`.                                    |
+| Obsidian Git plugin                 | auto-pull every 5 min and on boot; **auto-commit off** (2026-11-05); auto-push off.                                                               |
+| Services                            | `lxplus-eos.service` on (EOS mount). `hindsight-api.service` stopped + disabled; data kept on disk.                                               |
+| Quota helpers                       | `cswap list --json` (Claude accounts), `omp usage` (Codex).                                                                                       |
 
 ## Rules in one place
 - Vault is the record. One worker at a time. Only the keeper pushes, after reviewing.
