@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HToWW framework review - 2026-11-05 (r1)</title>
+  <link rel="stylesheet" href="../../../../_shared/reveal/reset.css">
+  <link rel="stylesheet" href="../../../../_shared/reveal/reveal.css">
+  <style>
+    :root { --ink: #172b42; --accent: #126782; --muted: #526374; --line: #c4d1d9; --warn: #9a4b00; }
+    body { background: #fff; color: var(--ink); font-family: Arial, sans-serif; }
+    .reveal { font-size: 27px; line-height: 1.36; }
+    .reveal .slides { text-align: left; }
+    .reveal .slides section { box-sizing: border-box; padding: 34px 46px 24px; }
+    .reveal h2 { color: var(--ink); font-size: 1.42em; font-weight: 700; line-height: 1.14; margin: 0 0 26px; }
+    .reveal p { margin: 0 0 18px; }
+    .reveal ul { margin: 0 0 20px 1em; padding: 0; list-style: disc; }
+    .reveal li { margin-bottom: 11px; padding-left: 4px; }
+    .reveal strong { color: var(--accent); }
+    .reveal a { color: var(--accent); }
+    .reveal code { font-family: monospace; font-size: .86em; overflow-wrap: anywhere; }
+    .reveal table { border-collapse: collapse; width: 100%; font-size: .82em; margin-bottom: 18px; }
+    .reveal th, .reveal td { text-align: left; padding: 9px 14px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .reveal th { color: var(--accent); }
+    .reveal .label { color: var(--muted); font-size: .62em; margin-bottom: 12px; }
+    .reveal .warn { color: var(--warn); font-weight: 700; }
+    .reveal .source { font-size: .55em; line-height: 1.4; color: var(--muted); margin-top: 20px; }
+    .reveal .slide-number { font: 14px Arial, sans-serif; color: var(--muted); background: transparent; }
+    .reveal .progress { color: var(--accent); height: 3px; }
+    .reveal .controls { color: var(--accent); }
+  </style>
+  <!-- Obsidian's HTML viewer runs with scripts off: show every slide as a plain page. -->
+  <noscript><style>
+    html, body { overflow: auto !important; height: auto !important; }
+    .reveal, .reveal .slides, .reveal .slides > section {
+      position: static !important; display: block !important; transform: none !important;
+      width: auto !important; height: auto !important; inset: auto !important;
+      overflow: visible !important; opacity: 1 !important; visibility: visible !important;
+      pointer-events: auto !important; margin: 0 !important; }
+    .reveal .slides > section { max-width: 1180px; margin: 0 auto !important;
+      border-bottom: 2px solid #c4d1d9; padding: 34px 40px !important; }
+  </style></noscript>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<section id="status">
+<p class="label">HToWW · Framework r1 · 5 Nov 2026 · agent-reported · reviewed tree: 40d0e3e + dirty changes</p>
+<h2>TRAIN/RUN is implemented; integration blocks production</h2>
+<table>
+<tr><th>Reproduced finding</th><th>Consequence</th></tr>
+<tr><td>F4 · mode-specific directory not created</td><td>Condor jobs lose required .coffea output</td></tr>
+<tr><td>F1/F3 · data eras treated as MC</td><td>Card building and training split fail</td></tr>
+<tr><td>F2 · Wγ process unmapped</td><td>Card building fails; implement the recorded inclusion decision</td></tr>
+<tr><td>F5 · final-template policy differs</td><td>Negative bins / empty object shifts break legacy parity</td></tr>
+</table>
+<p><strong>49/49 tests pass; these integration paths are outside their coverage.</strong></p>
+<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">code review, F1–F5 and saved reproducers</a>. No analysis code edited or production run by the reviewer.</p>
+</section>
+<section id="result-schemas">
+<p class="label">Outputs in the reviewed tree · all modes share the hww-analysis Git branch</p>
+<h2>TRAIN and RUN produce different outputs</h2>
+<table>
+<tr><th>Mode</th><th>Per-event output</th><th>Next consumer</th></tr>
+<tr><td>legacy</td><td>73 configured variables; weights and shifted trees</td><td>Legacy postprocess → inference → cards</td></tr>
+<tr><td>TRAIN</td><td>26 model inputs + IDs, folds, labels; nominal only</td><td>Fold splitting → external model training</td></tr>
+<tr><td>RUN</td><td>None by default; optional slim ntuple has no scores</td><td>Templates → new card builder</td></tr>
+</table>
+<ul>
+<li>RUN scores each event with its held-out fold model; the reviewed fold logic is consistent.</li>
+<li>The new setup trains on 60% per fold with cross-section/luminosity weights; v11 used 90% and raw weights.</li>
+</ul>
+<p><strong>Legacy consumers need adapters; v11 comparisons must control these differences.</strong></p>
+<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">review §3</a> · <a href="../2026-11-05-run-framework-legacy-train-run.md">framework runbook</a>.</p>
+</section>
+<section id="open">
+<p class="label">What closes the review · proposed work, not implemented</p>
+<h2>Fix the integration paths, then check one complete chain</h2>
+<ul>
+<li><strong>Completeness:</strong> require all expected datasets and full chunk coverage for each weight variation (F6/F7).</li>
+<li><strong>Models:</strong> validate trained feature/class order and era; hash external calibrations and models; record dirty-tree provenance (F8/F9/F14/F15).</li>
+<li><strong>Operations:</strong> forward a new output root and make monitoring/resubmission understand modes (F10/F11).</li>
+<li><strong>Validation:</strong> add entry-point regressions and final-template parity checks; an end-to-end job needs separate approval.</li>
+</ul>
+<p><strong>Next: authorise the analysis owner to fix the findings, then review and commit.</strong></p>
+<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">findings and evidence</a> · <a href="../../2026-11-05-status-audit-retraining.md">physics/training dependencies</a> · <a href="../../samples-and-production/full-rerun/deck/index.html#/status">Run A status deck</a> · <a href="../../../../index.html">all decks</a>.</p>
+</section>
+</div></div>
+<script src="../../../../_shared/reveal/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280, height: 720, margin: 0.04, center: false,
+    hash: true, transition: 'none', backgroundTransition: 'none',
+    controls: true, progress: true, slideNumber: 'c/t',
+    pdfSeparateFragments: false, pdfMaxPagesPerSlide: 1
+  });
+</script>
+</body>
+</html>

@@ -13,7 +13,7 @@ Needs Chirayu: signal PDF/αS (H+c has no αS members), lepton-SF question for T
 
 Latest audit: [[Projects/HToWW/2026-11-05-status-audit-retraining|MVA retraining, negrw checks and open-item dependencies]]. The audit reports 4/5 re-NANO datasets complete in DAS and the fifth near completion as of 13:57 CET; output PDF-member content is not yet checked.
 
-Progress deck r5 (predates these audits): [open](deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|changes]] · [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review]].
+Progress deck r6 (includes both audits): [open](deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|changes]] · [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review]].
 Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live; to be compared with Run A later. 3FS PDF weights: re-NANO with LHA 321900 submitted 2026-11-05, pending ([[Projects/HToWW/samples-and-production/2026-11-05-3fs-renano-pdf321900|re-NANO note]]; [[Projects/HToWW/2026-11-05-route-b-stitching-implementation|proposal]]).
 
 ## Records
@@ -26,3 +26,5 @@ Route B (3FS+4FS stitching) is parked by Chirayu: proposal only, not live; to be
 - [[Projects/HToWW/samples-and-production/full-rerun/2026-10-13-GEN-ticket-draft-HplusC-HplusB-WW|Generator ticket draft]]
 
 Related sample production and flavour-scheme work remains in the [[Projects/HToWW/samples-and-production/README|parent index]].
+
+![[Projects/HToWW/samples-and-production/full-rerun/deck/full-rerun_r6.pdf]]

@@ -7,6 +7,10 @@ source: laptop
 
 # Full rerun progress deck
 
+## r6 — 2026-11-05
+
+Requested after the completed audits. Updated status, TRAIN/RUN impact, Run A gates, dated 3FS DAS progress and sources. Eight slides retained, stable IDs preserved. Framework details are in [[Projects/HToWW/framework/deck/CHANGELOG|the new three-slide framework deck]], linked from `result-trainrun`. Models, SFs and c-tag concerns remain evidence-qualified; code was not changed. Historical tests are distinguished from the reviewer-run 49-test log.
+
 ## r5 — 2026-11-05
 
 The 3FS PDF item now reads "re-NANO submitted 2026-11-05, pending" (worker commit `187ce65`, Chirayu's OK). Route B stays parked. Same 8 slides.
@@ -47,3 +51,5 @@ First leaf-subproject progress deck: current status, Run A corrections and test 
 - Review: [[Meta/keeper/2026-11-05-fullfix-review]].
 
 Existing flavour-scheme and gridpack decks remain with their own leaf subprojects; this deck does not replace their methods or source plots.
+
+Render check (2026-11-05): headless Chrome found no slide overflow, script errors, failed requests or external requests. Scripts-disabled Chromium showed every section (3 framework / 8 full-rerun), without horizontal overflow; this emulates the viewer setting, not an inspection in Obsidian itself. Exported PDFs have 3 / 8 pages; representative rasterized pages were inspected. PDFs and render PNGs remain local-only.

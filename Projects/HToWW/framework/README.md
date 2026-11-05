@@ -9,9 +9,9 @@ source: laptop
 
 Analysis runbook, optimization and captured framework documentation.
 
-Status: Speed-up patches 01–04 are reported applied in analysis commit `40d0e3e`; a JFC-derived review protocol and discoverable skill are adopted as instructions.
-Latest: [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|Review protocol]] and [[Projects/HToWW/framework/2026-11-05-jfc-code-survey|supporting code survey]], 2026-11-05. Improved bug detection has not been benchmarked.
-Needs Chirayu: CPU/RNG decisions and lepton-SF provenance/retraining remain in the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review]]; Saranya-facing fixes are recorded, not sent.
+Status: TRAIN/RUN and the HZZ ports remain uncommitted; the independent review reproduced production blockers. Speed-up patches 01–04 are recorded in analysis commit `40d0e3e`.
+Validation: [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|Review]] records 49/49 unit tests and integration reproducers; no end-to-end production validation. Findings remain agent-reported.
+Needs Chirayu: authorise analysis-owner fixes and choose an output root; physics/training dependencies are in the [[Projects/HToWW/2026-11-05-status-audit-retraining|status audit]].
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
 
@@ -32,3 +32,9 @@ Organization and links were checked by the keeper. This does not independently v
 ## Existing decks and documents
 
 - [[Projects/HToWW/framework/optimization/deck/2026-10-09-framework-plan-deck.pdf|2026-10-09-framework-plan-deck.pdf]]
+
+## Keeper framework deck
+
+Three-slide review: [open](deck/index.html) · [[Projects/HToWW/framework/deck/CHANGELOG|changes]]. This covers framework-core modes and integration; the existing optimization deck stays with its own workstream.
+
+![[Projects/HToWW/framework/deck/framework_r1.pdf]]

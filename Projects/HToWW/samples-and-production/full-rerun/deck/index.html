@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW full rerun - 2026-11-05 (r5)</title>
+  <title>HToWW full rerun - 2026-11-05 (r6)</title>
   <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
   <style>
@@ -45,16 +45,16 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-  <p class="label">HToWW · Full rerun · Internal progress r5 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
-  <h2>Run A is committed; TRAIN/RUN is built but uncommitted; choices block submission</h2>
-  <ul>
-    <li><strong>Code:</strong> <code>hww-analysis</code> at <code>0850e51</code> + <code>40d0e3e</code>, unpushed. Uncommitted on top: two review fixes, <strong>TRAIN/RUN modes</strong>, two HZZ ports (11 files + new modules).</li>
-    <li><strong>Tests:</strong> 35/35 after the review fixes; 49 with TRAIN/RUN and the ports (worker-reported). Three single-file smokes pass.</li>
-        <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space · one m<sub>H</sub> for all Higgs cross sections.</li>
-    <li><strong>Route B:</strong> parked proposal, to be compared with A later. <strong>3FS re-NANO:</strong> submitted 5 Nov, pending.</li>
-  </ul>
-  <p>Passing tests checks the software, not the physics model, a production or a limit.</p>
-  <p class="source">Sources: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">full-fix state note</a> (worker commits 4d26800, f4475c7) · <a href="../../../2026-11-05-sol-review-unpushed-work.md">independent review</a> (vault 9aa71d5).</p>
+<p class="label">HToWW · Full rerun r6 · 5 Nov 2026 · agent-reported · review snapshot 14:05 CET</p>
+<h2>Run A is not submitted; TRAIN/RUN has integration blockers</h2>
+<ul>
+<li><strong>Code:</strong> committed baseline <code>0850e51</code> + <code>40d0e3e</code>; two review fixes and TRAIN/RUN remain uncommitted.</li>
+<li><strong>Review:</strong> 49/49 tests pass, but Condor output, data handling and card-building defects were reproduced.</li>
+<li><strong>Before training:</strong> settle physics/calibration inputs, fix and commit code. Retrain the event classifier for the new signal, leptons and MET.</li>
+<li><strong>Needs you:</strong> PDF/αS prescription, lepton scale-factor provenance, c-tag choices, output space and permission for code fixes.</li>
+</ul>
+<p class="warn">Passing unit tests does not establish production readiness.</p>
+<p class="source">Sources: <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a> · detailed framework findings: <a href="../../../framework/deck/index.html">framework deck</a> · <a href="#/backup-sources">→ backup</a>.</p>
 </section>
 
 <section id="result-code">
@@ -87,19 +87,15 @@
 </section>
 
 <section id="result-trainrun">
-  <p class="label">Framework · TRAIN/RUN modes and HZZ ports · implemented, uncommitted, worker-reported</p>
-  <h2>TRAIN/RUN: train on k folds, score inline, cards from templates</h2>
-  <table>
-    <tr><th>Mode</th><th>Output</th></tr>
-    <tr><td><code>--mode train</code></td><td>Slim nominal feature ntuples with fold = event mod k</td></tr>
-    <tr><td><code>--mode run</code></td><td>Each event scored by its held-out fold model; templates for all shifts</td></tr>
-  </table>
-  <ul>
-    <li><strong>Chain:</strong> TRAIN → <code>split_folds.py</code> → b-hive training (external) → <code>register_folds.py</code> → RUN → <code>build_cards_from_templates.py</code>. <code>legacy</code> stays the default. RUN refuses a model that does not match the workflow; no v11 fallback.</li>
-    <li><strong>HZZ ports:</strong> input-completeness/duplicate checks; EOS read fallback.</li>
-    <li><strong>Checked:</strong> 49 tests; seeded legacy = TRAIN = RUN nominal features and weights. <strong>Not yet:</strong> real models, a production, independent review, commit.</li>
-  </ul>
-  <p class="source">How to run: <a href="../../../framework/2026-11-05-run-framework-legacy-train-run.md">framework note</a> (keeper read the live tree, 5 Nov). Evidence: <code>…/backups/higgscharm_pre_fullfix_20261104/sol_trainrun_20261105/</code>.</p>
+<p class="label">Framework review · actual tree at 40d0e3e + uncommitted changes · 5 Nov, 14:05 CET</p>
+<h2>TRAIN/RUN must be repaired before production</h2>
+<ul>
+<li><strong>Reproduced:</strong> Condor never creates the mode-specific output directory; TRAIN splitting and RUN cards mishandle data eras; Wγ has no process mapping.</li>
+<li><strong>Card parity:</strong> final negative-bin handling and empty-shift policy differ from legacy. Missing samples or partial variations can silently lose yield.</li>
+<li><strong>Checked:</strong> fold assignment and generated-weight totals, including empty selections. Full end-to-end production has not been run.</li>
+</ul>
+<p>Detailed schemas, fixes and model guards belong to the <a href="../../../framework/deck/index.html">framework deck</a>.</p>
+<p class="source">Source: <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a>, F1–F11. 49/49 reviewer-run tests; their coverage misses the integration blockers.</p>
 </section>
 
 <section id="result-pdf-alphas">
@@ -120,25 +116,25 @@
   <ul>
     <li><strong>Status (Chirayu, 5 Nov):</strong> parked; the aim is to compare A and B, then proceed with the better route. It exists only as the EOS proposal <code>HTOWW-ROUTEB-SOL-20261105</code>. The live higgscharm tree has no stitching code, workflow or 3FS filesets, so Run A is unaffected.</li>
     <li><strong>Review:</strong> normalisation, the sum-of-weights hook and the filesets pass. Card builder, config, sinks and training weights are not integrated. Unit tests: 20/20 in the author's log, not re-executed (standing rule).</li>
-    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. <strong>Re-NANO submitted 5 Nov, pending:</strong> 5 CRAB tasks from the kept MiniAOD with 321900 added (9,937 files, 9.94M events). The 200-event test gave 101 members. Not finished or validated.</li>
+    <li><strong>3FS PDF re-NANO:</strong> audit at 13:57 CET found 4/5 datasets complete in DAS; 2023postBPix had 1,502,991 of 1,517,991 events (99.0%). The 101 PDF members in output files are <strong>not yet checked</strong>. This remains non-blocking for Run A.</li>
   </ul>
-  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> · <a href="../../2026-11-05-3fs-renano-pdf321900.md">re-NANO note</a> (vault 187ce65, 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
+  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> · <a href="../../2026-11-05-3fs-renano-pdf321900.md">re-NANO note</a> (vault 187ce65, 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
 </section>
 
 <section id="open">
-  <p class="label">Needs Chirayu</p>
-  <h2>Before Run A can be submitted</h2>
-  <table>
-    <tr><th>Item</th><th>What is needed</th></tr>
-    <tr><td>Signal PDF/αS</td><td>Pick (a), (b) or (c) from the previous slide</td></tr>
-    <tr><td>Lepton SFs</td><td>Ask Thomas: is <code>cut_MediumID_tthMVA_Run3</code> on top of the POG Medium ID or inclusive of it?</td></tr>
-    <tr><td>Event MVA</td><td>v11 was trained on the old leptons: retrain before trusting a limit</td></tr>
-    <tr><td>Reproducibility</td><td>Seed muon RNG per event or accept; 2 CPUs or 1 worker per job</td></tr>
-    <tr><td>EOS space</td><td>~81 GB free vs ~266 GB needed; nothing may be removed, so a new output location is needed</td></tr>
-    <tr><td>Higgs mass</td><td>One m<sub>H</sub> for all Higgs xsecs: H+c uses BR(H→WW) 0.2137 (125.00), WH uses 0.2152 (125.09), a 0.7% offset</td></tr>
-    <tr><td>Uncommitted code</td><td>Review fixes + TRAIN/RUN: review, then commit (no independent TRAIN/RUN review yet)</td></tr>
-  </table>
-  <p class="source">Already decided, not reopened: NNLO, lepton WPs, Run B split R = 0.4, |η| &lt; 2.5. Only if Route B returns: scale-variation normalisation across regions. Submission needs your explicit OK; nothing is removed from EOS.</p>
+<p class="label">Run A gates · status audit as of 5 Nov 2026 · agent-reported</p>
+<h2>Settle the inputs before generating training data</h2>
+<table>
+<tr><th>Gate</th><th>Next action</th></tr>
+<tr><td>Signal PDF/αS</td><td>Choose a prescription; H+c has no αS members</td></tr>
+<tr><td>Lepton scale factors</td><td>Ask Thomas for electron AND muon denominator/provenance</td></tr>
+<tr><td>c-tag calibration</td><td>Resolve the +43% Up effect, placeholder cells and era edges</td></tr>
+<tr><td>Models</td><td>Retrain event classifier; check negrw overlap, support and closure</td></tr>
+<tr><td>Code + reproducibility</td><td>Fix review findings, decide muon seeding/CPUs, then commit</td></tr>
+<tr><td>Production inputs</td><td>Choose a new output root; align all Higgs cross sections to one mass</td></tr>
+</table>
+<p>Selection/feature changes after TRAIN can invalidate its model hashes.</p>
+<p class="source">Source: <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a>, open-item table. WG inclusion at retraining is already decided. Submission still needs explicit approval.</p>
 </section>
 
 <section id="backup-sources">
@@ -151,7 +147,7 @@
     <li>Also open (review): silent nominal fallbacks in <code>make_combine_inputs.py</code>, older JEC <code>pt_raw</code>/diagnostic issues, and Run B fileset entries for the 3FS samples.</li>
     <li>History: the 04:17 UTC snapshot (HEAD <code>b7f67ef</code>, uncommitted, 31 tests, NLO-like H+c) is superseded and labelled in the state note. Deck r1 was withdrawn.</li>
   </ul>
-  <p class="source"><a href="CHANGELOG.md">Deck changelog</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review note</a>.</p>
+  <p class="source"><a href="#/status">← status</a> · <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a> · <a href="CHANGELOG.md">Deck changelog</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review note</a>.</p>
 </section>
 
 </div></div>
