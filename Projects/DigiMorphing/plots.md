@@ -8,7 +8,7 @@ source: lxplus
 # DigiMorphing — plots
 
 Plot links for the Phase-2 Alpaka digi morphing validation. PNGs stay on EOS. Numbers in
-`/eos/user/c/cgupta/phase2morph/plots/summary.json`. See [[2026-09-30-phase2-alpaka-morphing-plan]].
+`/eos/user/c/cgupta/phase2morph/plots/summary.json`. See [[Projects/DigiMorphing/phase2-morphing/2026-09-30-phase2-alpaka-morphing-plan|2026-09-30-phase2-alpaka-morphing-plan]].
 
 ---
 

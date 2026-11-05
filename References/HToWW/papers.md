@@ -40,7 +40,7 @@ open directly in Obsidian on the laptop.
 - **Two things we do differently:** (1) **staged NNs** — multiclass for *categorisation*, then a
   separate **binary** NN as the *discriminant* in each SR; (2) **CRs enter the fit as YIELD
   ONLY**, shapes only in the SRs — Run 3 precedent for the `CR_tt` yield-only recommendation in
-  [[2026-08-10-analysis-strategy-from-AN]] §3.
+  [[Projects/HToWW/analysis-strategy/2026-08-10-analysis-strategy-from-AN|2026-08-10-analysis-strategy-from-AN]] §3.
 - **Read with:** [[2026-08-11-mva-defined-regions-literature]] §4.
 
 ### arXiv:2011.03652 — CMS ttH/tH multilepton (the published argmax precedent)
@@ -62,16 +62,16 @@ open directly in Obsidian on the laptop.
   CvL/CvB findings and for keeping the medium WP.
 
 ### MVA_Studies (proposed Run 3 talk, Athens 2026)
-- **File:** [[MVA_Studies.pdf]] (in `References/MVA_Studies_Athens_2026/`)
+- **File:** [[Projects/HToWW/talks/athens/MVA_Studies.pdf|MVA_Studies.pdf]] (in `Projects/HToWW/talks/athens/`)
 - **Why:** the proposed Run 3 H+c (H→WW) MVA talk — κ-HCE discriminant, v11/v32. Its backup
-  flags the **autoMCStats / W+jets-DY SR-undersampling limitation** (the [[2026-06-23-automcstats-rootcause]]
+  flags the **autoMCStats / W+jets-DY SR-undersampling limitation** (the [[Projects/HToWW/combine-systematics/_history/2026-06-23-automcstats-rootcause|2026-06-23-automcstats-rootcause]]
   issue) and names the fix: cross-era template averaging = AN-23-102 §6.1's W+jets method.
 
 ### autoMCStats slides (Marp deck)
-- **Folder:** `References/HToWW/automcstats-slides/` — `2026-06-24-automcstats-slides.md` (+ embedded plot PNGs).
+- **Folder:** `Projects/HToWW/combine-systematics/_history/automcstats-talk/` — `2026-06-24-automcstats-slides.md` (+ embedded plot PNGs).
 - **Why:** the deck on the autoMCStats / DY-W+jets SR-undersampling issue and the DY-smoothing fix.
   Renders to PDF via `npx @marp-team/marp-cli ... --pdf --allow-local-files`. Source note:
-  [[2026-06-23-automcstats-rootcause]]; cites AN-23-102 §6.1 + [[MVA_Studies.pdf]].
+  [[Projects/HToWW/combine-systematics/_history/2026-06-23-automcstats-rootcause|2026-06-23-automcstats-rootcause]]; cites AN-23-102 §6.1 + [[Projects/HToWW/talks/athens/MVA_Studies.pdf|MVA_Studies.pdf]].
 
 ### Negative-weight elimination — arXiv:2109.07851  ← THE fix for our neg-weight problem
 - **URL:** https://arxiv.org/abs/2109.07851
@@ -79,7 +79,7 @@ open directly in Obsidian on the laptop.
 - **Method:** cell resampling — removes negative MC event weights while preserving all physical
   observables, process-independent, improves as sample size grows.
 - **Why it's our fix:** the autoMCStats blow-up is driven by the DY/**W+jets** +79k/−79k generator-weight
-  **cancellation** that makes SR bins like `0 ± 41` (see [[2026-06-23-automcstats-rootcause]]). This kills
+  **cancellation** that makes SR bins like `0 ± 41` (see [[Projects/HToWW/combine-systematics/_history/2026-06-23-automcstats-rootcause|2026-06-23-automcstats-rootcause]]). This kills
   the negative weights at the source → no cancellation → real per-bin MC stats. **Validated in the paper on
   W+2-jet @ NLO — literally our `WtoLNu_2Jets` sample.** Strictly better than our template smoothing
   (which only masks the symptom). Apply upstream (resample the W+jets/DY parquets) before combine.
@@ -95,8 +95,8 @@ open directly in Obsidian on the laptop.
   sample, ~70% positive weights** in the hard-Vpt region — our exact regime.
 - **Our implementation + a subtlety:** we see a finite-stat SR closure offset (~6%) and renormalize the
   reweighted vjets template per dataset — an **extension beyond** the paper (theirs closed cleanly enough
-  to skip it). Full reasoning: [[2026-07-17-closure-renormalization-decision]]. Training deck +
-  results: `Projects/HToWW/negrw-training/slides.md`.
+  to skip it). Full reasoning: [[Projects/HToWW/negative-weights/training/2026-07-17-closure-renormalization-decision|2026-07-17-closure-renormalization-decision]]. Training deck +
+  results: `Projects/HToWW/negative-weights/training/slides.md`.
 
 > Convention: reference papers/PDFs live here under `References/<Project>/` (committed); generated
 > notes live under `Projects/<Project>/`; regenerable plots/data stay on EOS and are linked.
@@ -108,4 +108,4 @@ studies for Higgs-boson production in association with charm quarks". Official L
 written version of Bevilacqua's 23-06-26 talk. **Recommends a stitched signal** (Nc-jet(pT>10)=0 → 4FS FxFx,
 ≥1 → 3FS; per-region NNLO/NLO K-factors; total → NNLO MiNNLOPS cc̄H) and says this **mitigates the need**
 for a flat 3FS-vs-4FS yield uncertainty (the O(30%) used by Run-2). All studies use H→γγ.
-Used in [[2026-09-29-fs-3FS-4FS-status]].
+Used in [[Projects/HToWW/samples-and-production/flavour-schemes/2026-09-29-fs-3FS-4FS-status|2026-09-29-fs-3FS-4FS-status]].

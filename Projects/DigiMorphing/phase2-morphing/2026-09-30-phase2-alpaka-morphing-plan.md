@@ -1,0 +1,399 @@
+---
+tags: [reference]
+status: active
+date: 2026-09-30
+source: lxplus
+---
+
+# Phase-2 digi morphing in the Alpaka clusterizer: survey and plan
+
+Surveyed on **cms-sw/cmssw master `cfc33e9`** (2026-09-30), sparse checkout at
+`/eos/user/c/cgupta/cmssw-master/cmssw`. All paths below are relative to
+`RecoLocalTracker/SiPixelClusterizer/plugins/alpaka/` unless stated otherwise.
+
+## 1. What the code does today
+
+**Phase 2 has no morphing, and no duplicate removal either.**
+
+- `PixelClustering.h:281-492`: duplicate removal *and* the whole morphing block are
+  wrapped in `if constexpr (not isPhase2)`. Phase 2 skips both.
+- `pixelStatus` (`PixelClustering.h:28-106`) hard-codes the Phase-1 module size,
+  160 × 416 pixels. That gives a 1-bit image plus a 1-bit temp bitmap in shared
+  memory, 2 × 2080 words = **16.6 KB**.
+- `SiPixelRawToClusterKernel.dev.cc:694-714` (`makePhase2ClustersAsync`) launches
+  `FindClus` with `enableDigiMorphing=false`, `nullptr`, `0`, `0`, an empty fakes
+  collection, and `maxElementsPerBlock`. It uses **4000 blocks, one per module**,
+  where Phase 1 uses 64 blocks that loop over modules.
+- `Geometry/CommonTopologies/interface/SimplePixelTopology.h:548`:
+  `Phase2::maxPixInModuleForMorphing = 0`. The histogram has no room for fakes.
+- `SiPixelPhase2DigiToCluster.cc` has no `DoDigiMorphing`, `MaxFakesInModule` or
+  region parameters. It also has **no cabling map**, so the Phase-1 way of picking
+  morphing modules (`cablingMap_->det2fedMap()` + `skipDetId`,
+  `SiPixelRawToCluster.cc:278-304`) can't be reused. It does fill
+  `rawIdArr = detid` (`:164`), so the device-side binary search on raw IDs
+  (`isMorphingModule`) works as it is.
+
+**The FindClus logic after morphing is already generic.** The fake-pixel storage,
+the histogram IDs (`>= maxPixInModule` means a fake), the neighbour search, the
+union-find with `numElements + i` IDs, and dropping fakes before the output all
+work for any topology. The Phase-1-specific part is the step that *generates* the
+fakes.
+
+## 2. Reference algorithm (what "the same thing" means)
+
+The Phase-1 GPU algorithm is a morphological **closing** that is used only to
+bridge clusters:
+
+1. Remove duplicates, then treat duplicate positions as empty.
+2. **Dilate** with a 3×3 kernel. `temp` = empty pixels that have any of their 8
+   neighbours set.
+3. **Erode** with a plus-shaped kernel. A candidate fake stays only if its
+   left, right, above and below neighbours are all in image ∪ temp.
+4. Fakes go into `fakes_view`. They only merge cluster IDs and are **not**
+   written to the output, so they add no charge.
+
+Edge rule to keep: at a module edge in **x (row)**, the missing neighbour counts
+as *present* (`edge = 1`, `:405` and `:458`). At an edge in **y (column)** it
+counts as *absent* (`above`/`below` = 0). The two directions are handled
+differently.
+
+The legacy CPU `RecoLocalTracker/SiPixelDigiReProducers/plugins/SiPixelDigiMorphing.cc`
+uses the same kernels (`kernel1={7,7,7}` for dilation, `kernel2={2,7,2}` for
+erosion). It is set by `nrows/ncols/nrocs` parameters, so it can run on Phase-2
+digis. But it differs in two ways:
+- **It adds fakes as real digis** (`fakeAdc=100`, flag 1), so they add charge.
+  Compare the two on *which real pixels end up in the same cluster*, not on
+  cluster charge.
+- It requires `ncols/nrocs + 2*iters <= 64`, and it uses one `nrows/ncols` per
+  instance. Phase-2 module types of different sizes each need their own
+  instance or a region split.
+
+## 3. Why a straight port doesn't work: the bitmap is too big
+
+A Phase-2 IT module is much larger than a Phase-1 module. CROC chip: 432 × 336
+pixels. Quad module: about 580k pixels, whichever way the 25×100 µm pitch is
+oriented. **Step 0 below confirms the real dimensions.** At about 580k pixels:
+
+| | Pixels | 2 × 1-bit buffers |
+|---|---|---|
+| Phase 1 (160×416) | 66,560 | 16.6 KB |
+| Phase-2 quad (about 580k) | ~35× more | **~145 KB** |
+
+That is above the 48 KB of static shared memory CUDA allows by default. Only an
+opt-in on A100/H100 would go that high, and that is not something to rely on in
+CMSSW. Copying the Phase-1 bitmap with larger constants will not compile to
+anything that can launch.
+
+## 4. Design options
+
+**A. Sparse morphing on the column histogram (recommended).**
+FindClus already builds `hist`, binned by column `yy`, with all real pixels of the
+module in shared memory. Every step of the morphing can be answered from it
+without a bitmap:
+- `isReal(x,y)`: scan bin `y` for `xx == x`.
+- `inDilated(x,y)`: any real pixel within Chebyshev distance 1, using bins `y-1..y+1`.
+- Generate fakes: for each real pixel `p`, loop over its 8 neighbours `c`. Keep
+  `c` if it is inside the module, is not real, and `p` is its **canonical
+  generator**, meaning the smallest real pixel in `c`'s 3×3 neighbourhood by
+  (y, x). This gives no duplicate fakes, needs no atomics except the fake
+  counter, and gives the same fake set on every run. Then apply the plus-erosion
+  test through `inDilated` on the 4 neighbours of `c`, with the edge rule from §2.
+- Then **rebuild the histogram** with real + fake pixels (zero, count, finalize,
+  fill), because `HistoContainer` can only be filled once. The rest of FindClus
+  stays the same.
+
+Cost scales with column occupancy, not module area. It needs no new shared
+memory, works for any module size, and is well suited to Phase-2's low occupancy.
+Cons: it is new logic, so it has to be *shown* equal to the bitmap version (see
+validation). It also scans up to 5 bins per candidate, which is slow in very
+dense modules. `maxFakesInModule` already puts a limit on that.
+
+**B. Dense bitmap in global memory.** Template `pixelStatus` on the module size
+and point `image`/`temp` at a per-block global scratch buffer. The Phase-1 bit
+logic is reused unchanged, so it is the same by construction and the diff is the
+smallest. Cons: 145 KB × 4000 blocks = 580 MB, so the Phase-2 launch has to drop
+to around 64–128 blocks looping over modules, as Phase 1 does. Each morphing
+module also needs a 145 KB clear and global atomics. Much more memory traffic
+than A.
+
+**C. Bounding-box bitmap in shared memory, with B as the fallback.** This is
+the fastest when occupancy is low, but it needs two code paths and a size limit
+to tune. Not worth it unless A turns out to be slow.
+
+**Recommendation:** build **B first**, as a correctness reference that is short
+and obviously correct. Then build **A** as the production version and require
+the two to agree bit for bit on the fake set. If A is fast enough, B can be
+dropped or kept behind `GPU_DEBUG`.
+
+## 5. Implementation plan
+
+**Step 0: measure, don't assume.**
+- In `SiPixelPhase2DigiToCluster::beginRun`, which already loops over IT
+  `detUnits`, record `nrows/ncols` per module type from the
+  `PixelTopology`. Confirm `max ncols < clusterBinning (1000)`, which the
+  histogram requires.
+- Pick a physics target. For Phase 1, morphing is on for L1/L2 high-|z|
+  modules only, to recover long clusters split at high |η|. For Phase 2,
+  check how often clusters split, per layer/ring, on a ttbar PU200 sample
+  with the CPU `SiPixelDigiMorphing` configured for Phase-2 sizes. This
+  decides the default regions. The default should stay **off**.
+
+**Step 1: topology constants.**
+- `SimplePixelTopology.h`: set `Phase2::maxPixInModuleForMorphing` to a
+  non-zero value, for example `maxPixInModule * 2 / 5` as in Phase 1. Check
+  shared memory (histogram content goes from 6000 to 8400 × uint16) and the
+  size of `nn[maxIter][8]` on the serial CPU backend. For Phase 1 that is
+  already 9216 × 8 × 2 B, and Phase 2 comes out the same.
+- Add module-size constants, or pass them at run time from beginRun if module
+  types differ (bounds only matter for the edge rule and for option B).
+
+**Step 2: producer (`SiPixelPhase2DigiToCluster.cc`).**
+- Add `DoDigiMorphing` (default `false`), `MaxFakesInModule`,
+  `barrelRegions`, `endcapRegions`, with the same guard against
+  `maxPixInModuleForMorphing` as `SiPixelRawToCluster.cc:213`.
+- Choose morphing modules in **beginRun** from `trackerGeometry.detUnits()` and
+  `TrackerTopology`, instead of the cabling map. Sort, then copy to a device
+  buffer once. Move `parseRegions`/`skipDetId` out of `SiPixelRawToCluster`
+  into a shared header so the two producers share one copy.
+- **Check the endcap fields:** Phase-2 TFPX/TEPX have side/disk/ring/panel/module.
+  Confirm what `pxfBlade` returns for Phase-2 detids before using the Phase-1
+  `disk,blade,side,panel` region format as is.
+- Pass `SiPixelMorphingConfig` and the device pointer into
+  `makePhase2ClustersAsync`, which needs a matching signature change in
+  `SiPixelRawToClusterKernel.h`.
+
+**Step 3: launch (`makePhase2ClustersAsync`).**
+- Use `maxElementsPerBlockMorph` when morphing is on.
+- **Fakes buffer size:** the current indexing `firstFake = maxFakesInModule * block`
+  with 4000 blocks gives 4000 × 2400 × ~24 B ≈ **230 MB per event**. Index by
+  the module's position in the morphing-module list instead: change
+  `isMorphingModule` so it returns the binary-search index. Then allocate
+  `numMorphingModules × maxFakesInModule`. Each module goes to exactly one
+  block, so the slot is unique. Phase 1 can use the same change.
+
+**Step 4: kernel (`PixelClustering.h`).**
+- Move the Phase-1 bitmap block into a helper, `morphPhase1Bitmap(...)`, so the
+  code is split by topology rather than wrapped in one large `if constexpr`.
+- Add `morphSparse(...)` (option A), and for B, `morphBitmapGlobal(...)`.
+- Phase-2 duplicates: sim digis shouldn't have any, but real Phase-2 data might.
+  Decide whether to add duplicate removal. In the sparse version it can be done
+  by scanning the same histogram column. At minimum, add a `GPU_DEBUG` count.
+- Order: fill hist with real pixels, then morph, then clear and refill hist
+  with real + fakes, then the existing nn/union-find. The Phase-1 path keeps
+  its current order.
+
+**Step 5: configuration.**
+- `siPixelClustersPreSplitting_cff.py:58` already builds the Phase-2 Alpaka
+  clusterizer from `(alpaka & phase2_tracker)`. Add
+  `(alpaka & phase2_tracker & siPixelDigiMorphing).toModify(..., DoDigiMorphing=True, barrelRegions=[...])`.
+- Check that the HLT Phase-2 menu (`HLT_75e33`) copy of the module picks up the
+  new parameters with their defaults and doesn't change.
+
+## 6. Validation
+
+1. **Unit test on synthetic digis.** Test holes of 1 pixel in x, in y and
+   diagonally, clusters in an L shape, and pixels on all four module edges (for
+   the edge rule). Check the fake set and the merged cluster IDs against a
+   simple host implementation. Run on the serial CPU backend and on CUDA/ROCm.
+2. **A vs B** on real PU200 events: the same fake set in every module, and the
+   same cluster membership.
+3. **GPU vs legacy CPU:** `SiPixelDigiMorphing` (with Phase-2 `nrows/ncols/nrocs`)
+   followed by the legacy Phase-2 clusterizer. Compare *cluster membership of
+   real pixels*, not charge (see §2).
+4. **Defaults unchanged:** with morphing off, clusters must be identical to the
+   current master (the Phase-2 relvals and the HLT_75e33 workflow).
+5. **Physics:** number of clusters and cluster size vs η per layer, and pixel
+   track efficiency and fake rate, with and without morphing on PU200 ttbar.
+6. **Timing:** FindClus time in the Phase-2 HLT, with morphing on the chosen
+   regions vs off.
+
+## Open questions for Chirayu
+- Which Phase-2 regions (physics motivation, same as for Phase 1?), or is this
+  first a "make it possible" PR with the default off?
+- Is B worth writing, or should A be validated directly against the CPU
+  `SiPixelDigiMorphing` plus a synthetic unit test?
+- Phase-2 duplicate removal: include it, or leave it for a separate PR?
+
+## Update 2026-10-15: Tracker DPG workshop (indico.cern.ch/event/1707530)
+
+**Shared memory budget, decided.** Asked A. Bocci after his Alpaka talk: Phase-2 HLT
+kernels stay within **48 KB of static shared memory, same as Run 3**. Dynamic shared
+memory above that is not the plan.
+
+**Module sizes, from the geometry XML.** Bartosik (Geometry talk, slide 12) shows
+`pixelStructureTopology.xml` for the next baseline geometry T40: `PixelROCRows=672`,
+`PixelROCCols=216` per ROC, sensor pixels 25×100 µm.
+
+| Module | Rows × cols | Pixels | Image + temp bitmaps |
+|---|---|---|---|
+| one ROC | 672 × 216 | 145,152 | 36 KB |
+| dual (1×2) | 672 × 432 | 290,304 | 73 KB |
+| quad (2×2) | 1344 × 432 | 580,608 | 145 KB |
+
+672 rows is 21 words of 32 bits, and 432 columns is below `clusterBinning = 1000`.
+
+**Consequence.** No whole-module bitmap fits, and not even one ROC, because the
+FindClus histogram already takes roughly 16 to 21 KB of the 48 KB (estimate from the
+`HistoContainer` sizes, not measured). Option B (dense bitmap) is out for production.
+The remaining choices are option A (sparse, on the column histogram, no extra shared
+memory) or a tiled bitmap of at most about half a ROC (18 KB) per pass. With L1 at
+about 580 hits per module spread over the module, most tiles would be occupied, so
+tiling means 4 to 8 passes per module. **Option A is the plan.** A bitmap version can
+still serve as a debug reference using global memory.
+
+**Big pixels exist in T40**, validated for the IT: 87.5 µm in x (normal 25), 225 µm in
+y (normal 100), at ROC boundaries. One index each, so index-space morphing works as in
+Phase 1. The Alpaka Phase-2 topology still has `isBigPixX/Y = false`; Musich (HLT reco,
+slide 14) lists "handling of edge/big pixels" as a known HLT vs offline difference.
+
+**Occupancy.** Magherini (IT calibration, slide 11): TBPX L1 about 2×10⁻³ hits/pixel/BX,
+so about 580 hits per L1 dual module. Consistent with the all-module digi histogram
+(mean 242, tail to ~1000).
+
+**Physics motivation.** Magherini, slide 9: higher thresholds mean "edge pixels lost,
+clusters break"; after 1×10¹⁶ the L1 3D signal drops to about 5 ke against a ~1 ke
+threshold. Dutta (digitizer): Aug 2025 test beam saw cluster splitting. Roguljic (Run-3
+pixel): Phase-1 morphing deployed in 2025. **First region: TBPX L1 3D.**
+
+**Input.** Phase-2 HLT clustering still runs on simulated digis; the IT RAW unpacker is
+due end of 2026 (Musich, slide 11).
+
+**Still to read:** Mersi "Dataformats" and Grutta/Schulz "HLT Tracking: Phase-2 changes"
+(16 Oct), for digi ordering and the clustering time budget.
+
+Talk PDFs are in `References/DigiMorphing/tkdpg-workshop-2026-10/`, not committed
+because the event is CERN-restricted.
+
+## Update 2026-10-23: Friday talks, verdict: buildable now
+
+**Mersi, "Dataformats" (16 Oct).**
+- Slide 14: the CROC addresses a 50×50 µm bump grid; sensors are 25×100 µm. Fixed
+  mapping, same for planar and 3D: `r_sensor = 2·r_chip + (c_chip mod 2)`,
+  `c_sensor = floor(c_chip / 2)`. Neighbours in chip space are not neighbours on the
+  sensor, so **morphing must run in sensor coordinates**. That is what the clusterizer
+  already gets (`xx`/`yy` in `SiPixelDigisSoA`); a future RAW unpacker has to convert
+  before clustering anyway.
+- Slide 14: big pixels are 25×225 along the dual seam, and for the quad also 112×100
+  and 112×225 at the centre. Bartosik's T40 XML says 87.5 µm in x, not 112. The
+  difference does not matter for index-space morphing, but someone should reconcile it
+  for the CPE.
+- Slide 16: data reaches the HLT as chip index (0 to 3), row/column and ToT. Ordering
+  and duplicates are not specified.
+- Slide 25: "What should digis represent?" is still an open question. It does not block
+  morphing, which acts after the digi to sensor-coordinate step.
+- Slides 12 and 13: in quads, chips 2 and 3 are rotated 180° relative to 0 and 1. That
+  only matters for the unpacker, not for morphing in module coordinates.
+
+**Schulz/Grutta, "HLT Tracking" (16 Oct).** Slide 4 lists Run-3 lessons: 2025 "broken
+clusters due to degraded charge collection → pixel digi morphing", and the Phase-2
+takeaway is to build the chain with failure scenarios in mind. Slide 23 (backup):
+`hltPhase2SiPixelClustersSoA` feeds everything downstream (CA, legacy clusters for
+mkFit and CKF, LST seeds), so morphing there reaches all of HLT tracking.
+
+**Verdict.** Every input the kernel needs is known: the 48 KB static budget (Bocci),
+sensor dimensions 672×216 per ROC (T40 XML), sensor-coordinate digis, and occupancy
+(about 240 per module on average, about 580 in L1). The sparse design does not depend
+on digi order. Nothing blocks building it.
+
+Open, but not blocking:
+1. Which module types to enable. Start with type 1 (TBPX L1, 3D), default off, and
+   decide from a PU200 study.
+2. Duplicate pixels: unknown for Phase-2 data. Add a cheap duplicate count under
+   `GPU_DEBUG` first.
+3. The edge rule (module edge counts as present in x, absent in y): keep the Phase-1
+   behaviour unless the L1 study says otherwise.
+4. The big-pixel pitch mismatch (87.5 vs 112 µm): pass it to the geometry people.
+
+CPU reference for validation: `SiPixelDigiMorphing` with `nrows=672, ncols=432,
+nrocs=8` (432/8 = 54 ≤ 62) works for duals; quads need `nrows=1344`.
+
+## Shared memory budget for the sparse design (computed 2026-10-23)
+
+From `OneToManyAssoc.h` (CMSSW_16_1_0_pre4): `off` is `uint32` × (NBINS+1),
+`content` is `uint16` × SIZE. Phase 2 uses NBINS = 1000 and SIZE = 6000 + F.
+
+| Item | Bytes, today | Bytes with F = 2400 |
+|---|---|---|
+| hist `off` (1001 × 4) | 4,004 | 4,004 |
+| hist `content` (SIZE × 2) | 12,000 | 16,800 |
+| `ws` (warpSize × 4, 64 on AMD) | 128–256 | 128–256 |
+| scalars (lastPixel, fakePixels, foundClusters, …) | ~16 | ~16 |
+| **total** | **~16.2 KB** | **~21.0 KB** of 48 KB |
+
+The sparse morphing adds no shared arrays. Fakes live in global memory (`fakes_view`),
+and the histogram is reused: fill with real pixels, morph, then zero and refill with
+real + fakes. Caveat: raising `maxPixInModuleForMorphing` grows the histogram even when
+morphing is off (16 to 21 KB). That is a small occupancy cost; measure it, and if it
+matters, template `FindClus` on a morphing flag.
+
+## Decision 2026-10-23: same bit trick, on column strips (supersedes "option A first")
+
+Keep the Run-3 two-plane, 1-bit bitmap and its shift/OR dilation and shift/AND erosion
+unchanged, but run it on **one column strip of the module at a time** instead of the
+whole module. Words stay 32 consecutive rows, as in Phase 1.
+
+Strip = 32 interior columns + 2 halo columns on each side (36 columns). Two halo
+columns are needed because erosion at an interior edge column looks at the dilated
+value of the next column, which depends on the column after that.
+
+| Module | Words per column | Words per strip | Image + temp | Total with hist (F=2400) |
+|---|---|---|---|---|
+| dual 672×432 | 21 | 756 | 6.0 KB | ~27 KB |
+| quad 1344×432 | 42 | 1512 | 12.1 KB | ~33 KB |
+
+Per module: 432/32 = 14 strips. Skip a strip if the column histogram has no pixel in
+its columns ±1 (free from `hist.off`). Load the strip from the histogram, which is
+contiguous by column. Emit fakes only for interior columns. Halo columns outside the
+module must be forced empty after dilation, to keep the Phase-1 edge rule (absent in y).
+The sparse histogram lookup (option A) stays the fallback if strips turn out slow.
+
+Global fakes buffer, indexed by morphing-module slot: 216 TBPX L1 modules × 2400 ×
+~24 B ≈ 12 MB, instead of ~230 MB with per-block indexing.
+
+## Build status 2026-10-23 (branch `phase2-digimorphing`)
+
+Area: `/eos/user/c/cgupta/phase2morph/CMSSW_20_1_X_2026-10-20-2300` (lxplus966), not committed.
+Strip morphing is implemented and **matches a whole-module host reference cluster for cluster on CPU (serial)
+and on a Tesla T4 (CUDA, compute-sanitizer: 0 errors)**. Unit test:
+`RecoLocalTracker/SiPixelClusterizer/test/alpaka/testPhase2DigiMorphing.dev.cc`. A control with a 1-column
+halo fails in 4 of 5 morphing modules, so the test catches strip-boundary bugs.
+
+Two things the estimates got wrong, both found by measurement:
+1. **Shared memory.** nvlink reserved the Phase-1 bitmaps in the Phase-2 kernel too, even though they sit in an
+   `if constexpr (not isPhase2)` branch, and every `FindClus` carries ~2.9 KB that is not in any declared
+   variable. Fix: one pair of `uint32_t[2080]` buffers declared once for both phases, so strips widen to 44
+   columns for free. Phase-2 `FindClus`: 35,728 B (sm_75); Phase-1 is unchanged at 38,200 B.
+2. **Registers.** Growing the histogram for fakes raised the block size to 448 threads, but at 143
+   registers/thread the T4 allows at most 384 (`cudaErrorLaunchOutOfResources`; the CPU backend passed).
+   Fix: no extra histogram space; in morphing modules, 1000 of the 6000 entries are kept for fakes (real
+   pixels capped at 5000 there). Block size stays 384, as on master, and `SimplePixelTopology.h` is untouched.
+
+## Validation on PU200, 2026-10-23 (Tesla T4, CUDA)
+
+Sample: `/RelValTTbar_14TeV/CMSSW_20_1_0_pre3-PU_150X_mcRun4_realistic_v1_STD_D128_RegeneratedGS_PU_20260903_192421_RV19-v1/GEN-SIM-DIGI-RAW`,
+100 events, era Phase2C26I13M9, geometry D128, GT auto:phase2_realistic_T35. Config and
+analyzer: `UserCode/Phase2MorphValidation` in the build area (validation-only commit 7e7e9e8fac9).
+Plots: [[Projects/DigiMorphing/plots|plots]]. Numbers: `/eos/user/c/cgupta/phase2morph/plots/summary.json`.
+
+**Module sizes in D128 (measured):** TBPX L1 = 672 × 216 (one chip per module; the two 3D
+sensors are separate dets), others 672 × 434 and 1354 × 434 (big pixels add rows and columns).
+`maxRows` raised from 1344 to 1376 for that. The default region `"1,1-99,1-99"` selects
+216 modules = all of TBPX L1.
+
+**Results (21,600 L1 module-events):**
+- GPU recovered digis = exact whole-module reference in every module: 1,696,444 each, **0 differences**.
+- GPU vs CPU `SiPixelDigiMorphing` (nrows 672, ncols 216, nrocs 8): 1,630,486 in common;
+  69,844 differ, **all explained**: 55,407 at the CPU module's 27-column chunk edges (it does not
+  dilate its 1-column halo, the same bug as the halo=1 control), 10,551 on the first/last row
+  (deliberate Phase-1 GPU rule: beyond the row edge counts as filled), 3,886 CPU-only on the
+  last module column (CPU artifact), **0 elsewhere**. In all 69,844 the GPU matches the exact reference.
+- Clusters in L1: 927,589 → 897,298 with GPU morphing (−3.3%); CPU gives 897,990.
+- Max recovered digis in one module: 536 (cap 1000). Real digis per L1 module: 245 on average.
+  Recovered digis are 32% of the real ones: the closing fills the staircase steps of long clusters.
+- Morphing off: GPU clusters = 8-neighbour reference in every module; no module outside L1 changes.
+- **Morphing off = unmodified release:** stock config on the same 100 events, this branch vs a
+  pristine `CMSSW_20_1_X_2026-10-20-2300`: 100/100 events, 56,142,094 digis, cluster index,
+  charge and module bit-identical.
+
+Open: display 3 shows morphing merging a crossing cluster into a long track; check the effect on
+hit resolution/tracking before enabling by default. Not done: timing, ROCm run, endcap regions.

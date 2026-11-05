@@ -70,3 +70,21 @@ __pycache__/
 .keys
 .vault-bm25-cache.json
 .vault-bm25-cache.tmp
+
+# Local-only deck assets/build outputs retained through keeper reorganisation (2026-11-05)
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.001.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.002.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.003.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.004.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.005.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.006.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.007.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.008.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.009.png
+/Projects/HToWW/selection-and-mva/argmax-kinematics/slide.010.png
+
+# Chirayu, 2026-11-05: PNG images stay local; do not push them.
+*.[pP][nN][gG]
+
+# Chirayu, 2026-11-05: every PDF stays local, including reference papers.
+*.[pP][dD][fF]

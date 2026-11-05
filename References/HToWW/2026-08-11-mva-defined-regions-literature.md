@@ -11,7 +11,7 @@ Literature search for analyses that use a **multiclass** classifier's `argmax` (
 highest-scoring output node) to define *both* the signal region and the control regions,
 then fit them simultaneously — i.e. the method used in `hww_combine_2dcat`.
 
-This matters because §2 of [[2026-08-10-analysis-strategy-from-AN]] flagged auditability as
+This matters because §2 of [[Projects/HToWW/analysis-strategy/2026-08-10-analysis-strategy-from-AN|2026-08-10-analysis-strategy-from-AN]] flagged auditability as
 a weakness of the argmax approach ("requires showing the composition table every time"), and
 noted that **AN-23-102 evaluates no argmax-style region definition at all**, leaving us
 without an internal baseline. The papers below are that missing baseline.
@@ -50,7 +50,7 @@ tuned to maximise CR purity. Rare-but-important classes get boosted so they are 
 swamped by the dominant one.
 
 Directly applicable to us: our `CR_vjets` and `CR_diboson` are the sparse channels driving
-the MC-stat penalty ([[2026-08-11-route-to-a-better-limit]]). A weighted argmax would let us
+the MC-stat penalty ([[Projects/HToWW/analysis-strategy/2026-08-11-route-to-a-better-limit|2026-08-11-route-to-a-better-limit]]). A weighted argmax would let us
 tune what lands in each CR without touching the training. **This is a config-level lever we
 have not tried, with published CMS precedent.**
 
@@ -168,7 +168,7 @@ auditability objection: a conventional CR gives conveners a region they can chec
 
 The 2ℓSS+0τh and 3ℓ+0τh channels are further split by lepton flavour and by **b-tagged jet
 multiplicity** — the same idea as the AN's Nc-j=1/Nc-j>1 split, which we found is currently
-blocked by V+jets MC statistics ([[2026-08-11-route-to-a-better-limit]]).
+blocked by V+jets MC statistics ([[Projects/HToWW/analysis-strategy/2026-08-11-route-to-a-better-limit|2026-08-11-route-to-a-better-limit]]).
 
 ---
 
@@ -233,7 +233,7 @@ The real consequence for us is narrower: because our discriminant *is* correlate
 content, the 50% ggH+HF uncertainty is **shape-correlated** rather than a pure normalisation.
 That is a modelling detail to handle properly (it is a sharper version of the mis-scoping we
 measured — `flavor_composition_ggH` applied to the whole merged `higgsbkg`, worth 21 units,
-see [[2026-08-11-route-to-a-better-limit]]), **not** a reason to change the training.
+see [[Projects/HToWW/analysis-strategy/2026-08-11-route-to-a-better-limit|2026-08-11-route-to-a-better-limit]]), **not** a reason to change the training.
 
 ### Their c-tagging working point
 
@@ -246,7 +246,7 @@ And they **drop CvsB entirely**:
 > (most events of which do not contain bottom quark jets), the CvsB score provides only
 > minor improvement in analysis sensitivity and hence is not used."
 
-Compare our own measurements ([[kin-cuts-vs-mva]]): **CvL carries the H+c-vs-ggH separation
+Compare our own measurements ([[Projects/HToWW/selection-and-mva/argmax-kinematics/kin-cuts-vs-mva|kin-cuts-vs-mva]]): **CvL carries the H+c-vs-ggH separation
 (AUC 0.731) while CvB does not (0.551 ≈ coin flip)** — we and CMS independently reached the
 same conclusion about CvB. Their ~30% charm efficiency also brackets our medium WP (23.1%),
 supporting the decision to keep medium rather than loosen.
@@ -289,10 +289,10 @@ Two things we do differently:
    for one task. Note this is also the cH→γγ instinct (§3): a dedicated classifier against the
    degenerate competitor.
 2. **CRs enter the fit as YIELD ONLY, not shape.** Exactly the recommendation in §3 of
-   [[2026-08-10-analysis-strategy-from-AN]] (make `CR_tt` yield-only, per AN-23-102 line 662)
+   [[Projects/HToWW/analysis-strategy/2026-08-10-analysis-strategy-from-AN|2026-08-10-analysis-strategy-from-AN]] (make `CR_tt` yield-only, per AN-23-102 line 662)
    — now with **Run 3 precedent** from an argmax-defined CR. We currently fit a 10-bin shape
    in all six channels. Given that our residual same-sign JES/JER flags are channel-migration
-   artifacts ([[2026-08-11-jes-jer-bug-fixed]]), moving the CRs to yield-only is well
+   artifacts ([[Projects/HToWW/analysis-strategy/2026-08-11-jes-jer-bug-fixed|2026-08-11-jes-jer-bug-fixed]]), moving the CRs to yield-only is well
    supported.
 
 Also: **`tt` and DY normalisations "are determined in the final fit to data"** — the same

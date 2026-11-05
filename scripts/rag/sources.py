@@ -22,7 +22,7 @@ from pathlib import Path
 TIER_WEIGHT = {"notes": 1.0, "papers": 0.7, "code": 0.5}
 
 # Recency. Tuned by sweeping half-life x floor against the 16-query topical
-# benchmark (scripts live in Projects/PromptTooling/rag-eval-2026-08-13/eval/).
+# benchmark (scripts live in Meta/PromptTooling/vault-search/eval/).
 # 240/0.50 sits in the interior of a broad plateau at hit@5 0.94 / MRR ~0.74;
 # the previous 120/0.35 sat on the steep edge and cost 0.16 MRR by pushing
 # correct-but-older notes down.
@@ -86,6 +86,10 @@ def _lxplus_code_roots() -> list[Path]:
     env = os.environ.get("VAULT_CODE_ROOTS")
     if env:
         return [Path(p).expanduser() for p in env.split(":") if p.strip()]
+    # 2026-11-05: code tier dropped by default (Chirayu). Code lives in its own
+    # repos and is searched there directly. Set VAULT_INDEX_CODE=1 to re-enable.
+    if os.environ.get("VAULT_INDEX_CODE") != "1":
+        return []
     mount = Path(os.environ.get("LXPLUS_MOUNT", "~/mnt/lxplus")).expanduser()
     names = ["higgscharm", "flashjet_condor", "negrw_condor", "Codes",
              "negrw_model", "leptonmva_model"]

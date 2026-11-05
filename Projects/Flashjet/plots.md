@@ -61,7 +61,7 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026
 ## Paper-figure reproductions (make_paper_plots.py)
 
 These are built to compare panel-by-panel with the original paper figures, using a
-toy leading-log parton shower (see [[2026-07-13-substructure-plots#The simulation]]).
+toy leading-log parton shower (see [[Projects/Flashjet/clustering-validation/2026-07-13-substructure-plots#The simulation|2026-07-13-substructure-plots#The simulation]]).
 
 ### Jet catchment areas — anti-kt paper Fig. 1
 
@@ -109,7 +109,7 @@ Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026
 
 ## flashjet on REAL CMS simulated data (UL18 QCD JMENano)
 
-These four are not toys: PF candidates from `/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/RunIISummer20UL18NanoAODv15-20UL18JMENano_150X_mc2018_realistic_v1-v3/NANOAODSIM` (via DAS/xrdcp), grouped per AK8 jet through `FatJetPFCand_jetIdx/pfCandIdx`, then clustered by **our** GPU-path flashjet (anti-kt R=0.8) and groomed by **our** F2/F3. See [[2026-07-13-cms-validation]].
+These four are not toys: PF candidates from `/QCD_Pt-15to7000_TuneCP5_Flat2018_13TeV_pythia8/RunIISummer20UL18NanoAODv15-20UL18JMENano_150X_mc2018_realistic_v1-v3/NANOAODSIM` (via DAS/xrdcp), grouped per AK8 jet through `FatJetPFCand_jetIdx/pfCandIdx`, then clustered by **our** GPU-path flashjet (anti-kt R=0.8) and groomed by **our** F2/F3. See [[Projects/Flashjet/clustering-validation/2026-07-13-cms-validation|2026-07-13-cms-validation]].
 
 ### CMS closure — reclustered AK8 pt vs CMS FatJet_pt
 
@@ -151,7 +151,7 @@ Description: Why 4.4% of jets have |Δm_SD|>0.5 GeV vs the stored subjets: 50% s
 from FatJetPFCand (effective ~0.1 GeV table floor; one-sided Δm<0, groomed-pT deficit correlates with Δm,
 δm² ≈ pT·pT_lost·ΔR²), 23% storage rounding (SubJet ~9-bit pt, rawFactor ~5-bit), 20% rounding-sensitive
 C/A trees, 7% z≈z_cut prong flips. Relative agreement ~0.1% in every mass bin — the tail is a NanoAOD
-property, not an algorithm error. See [[2026-07-17-msd-outlier-anatomy]]. HTCondor 9098953.
+property, not an algorithm error. See [[Projects/Flashjet/clustering-validation/2026-07-17-msd-outlier-anatomy|2026-07-17-msd-outlier-anatomy]]. HTCondor 9098953.
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/outlier_anatomy.png
 
@@ -182,7 +182,7 @@ tags: [plot]
 Date: 2026-07-17
 Description: New exact-match observable: our groomed split angle R_g vs the stored ΔR(SubJet1,SubJet2),
 per sample. Median Δ ≤ 2×10⁻⁴ everywhere; within 0.01 for 99.2% (QCD) / 95.9% (2L2Nu) / 87.0% (Run3 4q —
-the reduced rate is the table-floor/pileup effect, see [[2026-07-17-msd-outlier-anatomy]]).
+the reduced rate is the table-floor/pileup effect, see [[Projects/Flashjet/clustering-validation/2026-07-17-msd-outlier-anatomy|2026-07-17-msd-outlier-anatomy]]).
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_rg.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/compare_rg.png
 
@@ -265,7 +265,7 @@ the groomed jet (root→passing split), grey dashed = the 5 soft prongs grooming
 the split passing z>z_cut (its mass=m_SD, z=z_g, angle=R_g). Right = kT tree (value-sorted);
 its top merges' √d·R are the exclusive scales √d12≥√d23≥…. Shows the trees we read are the
 FULL ungroomed histories; grooming is a pruned path through the C/A tree. Script full_history3.py.
-See [[2026-07-22-full-merge-history]].
+See [[Projects/Flashjet/clustering-validation/2026-07-22-full-merge-history|2026-07-22-full-merge-history]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_tree.png
 
@@ -278,7 +278,7 @@ a boosted W→qq̄ jet (30 PF constituents, pt 507 GeV). Ungroomed mass 119.6 Ge
 radiation; soft-drop drops 4 soft prongs then lands the passing split on a balanced wide decay
 (z_g 0.49, R_g 0.34, kt jumps to 80 GeV) → groomed m_SD 83 GeV ≈ m_W. Contrast the top-jet
 example where soft-drop misfires (m_SD→3 GeV). Same two-panel dendrogram format (C/A + kT).
-Script full_history_good.py. See [[2026-07-22-full-merge-history]].
+Script full_history_good.py. See [[Projects/Flashjet/clustering-validation/2026-07-22-full-merge-history|2026-07-22-full-merge-history]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/full_history_good.png
 
@@ -290,7 +290,7 @@ Description: Four more merge-tree examples in the same two-panel format (C/A wit
 overlaid + kT). QCD (m_ung 33→m_SD 1.2, n_drop 13): green spine is a long staircase, no
 balanced hard split — why n_drop discriminates. Clean top (156→155, n_drop 1): star at the
 top, grooming barely works. Boosted (pt 629, R_g 0.26): collimated, tree compresses. b-jet
-(pt 403): single hard core, QCD-like. Script tree_gallery.py. See [[2026-07-22-ak4-and-tree-gallery]].
+(pt 403): single hard core, QCD-like. Script tree_gallery.py. See [[Projects/Flashjet/clustering-validation/2026-07-22-ak4-and-tree-gallery|2026-07-22-ak4-and-tree-gallery]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_qcd.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_qcd.png
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/tree_top.png
@@ -310,7 +310,7 @@ b jet and a light jet at the same pt have near-identical C/A trees. ak4_{mass,pr
 the 18 vars + 13 functions, b vs light, pt-reweighted — EVERY variable lands at 0.50–0.59
 (best: z of hardest emission 0.591, √d12 0.588). Confirms a kinematic merge tree cannot do
 flavour tagging (that needs IP/SV lifetime info). Scripts dump_ak4_constituents.py (FWLite),
-ak4_substructure.py, ak4_tree.py, ak4_allvars.py. See [[2026-07-22-ak4-and-tree-gallery]].
+ak4_substructure.py, ak4_tree.py, ak4_allvars.py. See [[Projects/Flashjet/clustering-validation/2026-07-22-ak4-and-tree-gallery|2026-07-22-ak4-and-tree-gallery]].
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_tree.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_tree.png
 Path: /eos/user/c/cgupta/flashjet/plots/2026-07-13-substructure/ak4_lund.png
@@ -363,7 +363,7 @@ Description: Learned-metric kT (IRC-safe EWMP GNN pair logits modulating C/A) ag
 - structure_metrics.png: prongs correct, top W pairing (C/A 0.33 → LM-kT 0.66), mass windows.
 - pair_auc.png: same-prong AUC (GNN 0.999, ΔR 0.983, LM-kT tree 0.882, C/A tree 0.869).
 - irc_harness.png: IR/C failure rate vs perturbation scale, LM-kT equal to C/A.
-See [[2026-09-24-lmkt-gnn-ceiling]].
+See [[Projects/Flashjet/learned-clustering/2026-09-24-lmkt-gnn-ceiling|2026-09-24-lmkt-gnn-ceiling]].
 Path: /eos/user/c/cgupta/flashjet/lmkt/plots/structure_metrics.png
 Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/flashjet/lmkt/plots/structure_metrics.png
 Path: /eos/user/c/cgupta/flashjet/lmkt/plots/prong_masses.png

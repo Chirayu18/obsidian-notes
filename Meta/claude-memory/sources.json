@@ -1,0 +1,1872 @@
+[
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/MEMORY.md",
+    "destination": "Meta/claude-memory/_history/source-indexes/home/MEMORY.md",
+    "source_sha256": "110a9dfca553259baa41540ea294c528fe4696e2db220f2558810e65d943c8fb",
+    "source_mtime_utc": "2026-10-07T14:03:50.552854+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "markdown",
+        "old": "meshnet-ssh-hub.md",
+        "new": "../../general/home/meshnet-ssh-hub.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "obsidian-setup.md",
+        "new": "../../workflow/home/obsidian-setup.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "machine-graphics-setup.md",
+        "new": "../../workflow/home/machine-graphics-setup.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "home-assistant-setup.md",
+        "new": "../../workflow/home/home-assistant-setup.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "home-assistant-security.md",
+        "new": "../../general/home/home-assistant-security.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "display-control.md",
+        "new": "../../general/home/display-control.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "browser-automation-preferences.md",
+        "new": "../../preferences/home/browser-automation-preferences.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "useful-pages.md",
+        "new": "../../general/home/useful-pages.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "vub-wifi-mac-block.md",
+        "new": "../../general/home/vub-wifi-mac-block.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "agenthon-t2-freeze.md",
+        "new": "../../projects/Agenthon/home/agenthon-t2-freeze.md"
+      }
+    ],
+    "imported_sha256": "2ee2d201503c088d4e25675653816838aa603f8965f3be0ac19b89f4ad1648c8"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/agenthon-t2-freeze.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/home/agenthon-t2-freeze.md",
+    "source_sha256": "b443bfdb740caaf2ecbdc62238d1e1ae47c47dcc2033afe6613f1c2c676be0d9",
+    "source_mtime_utc": "2026-10-27T15:54:08.149688+00:00",
+    "redactions": [],
+    "link_rewrites": [],
+    "imported_sha256": "b443bfdb740caaf2ecbdc62238d1e1ae47c47dcc2033afe6613f1c2c676be0d9"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/browser-automation-preferences.md",
+    "destination": "Meta/claude-memory/_history/preferences/home/browser-automation-preferences.md",
+    "source_sha256": "2c7e83a3007814c7f0ad7e37f24a47b77d922012a72f64608078b4cbac939097",
+    "source_mtime_utc": "2026-07-26T22:38:51.503456+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "home-assistant-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/home-assistant-setup|home-assistant-setup"
+      },
+      {
+        "kind": "wiki",
+        "old": "useful-pages",
+        "new": "Meta/claude-memory/_history/general/home/useful-pages|useful-pages"
+      }
+    ],
+    "imported_sha256": "f55e093d9e5ceb421a54befdcc017620fe6f5d879c271791a8e862a619438282"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/display-control.md",
+    "destination": "Meta/claude-memory/_history/general/home/display-control.md",
+    "source_sha256": "16ea3a651e0b8a57bb80221528bf363e9e4148bef76565e99e3cbc56e0b53cf1",
+    "source_mtime_utc": "2026-07-26T22:53:21.710063+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "machine-graphics-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/machine-graphics-setup|machine-graphics-setup"
+      },
+      {
+        "kind": "wiki",
+        "old": "browser-automation-preferences",
+        "new": "Meta/claude-memory/_history/preferences/home/browser-automation-preferences|browser-automation-preferences"
+      }
+    ],
+    "imported_sha256": "344fa8d381b2b8c24512290f9542cc19165dac617bd725618b41394a41a48833"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/home-assistant-security.md",
+    "destination": "Meta/claude-memory/_history/general/home/home-assistant-security.md",
+    "source_sha256": "9e07b888fc7908c810ee4ee2c2a34c5620e79eb88b8b001026c2264d66445e1c",
+    "source_mtime_utc": "2026-07-26T22:16:03.217524+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "home-assistant-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/home-assistant-setup|home-assistant-setup"
+      }
+    ],
+    "imported_sha256": "2a2fb0a15fc7cc4cab6fce70bc6651c67c6fecc1fc5ff0f3afe43064571b5677"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/home-assistant-setup.md",
+    "destination": "Meta/claude-memory/_history/workflow/home/home-assistant-setup.md",
+    "source_sha256": "4ef02c5c86ecf04025299a49e14d51ce07495f84529cb27e8c56e077f4dfcaa9",
+    "source_mtime_utc": "2026-07-27T16:45:37.069263+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "home-assistant-security",
+        "new": "Meta/claude-memory/_history/general/home/home-assistant-security|home-assistant-security"
+      }
+    ],
+    "imported_sha256": "b815b263998d11a0f7150bb2dae03dcb091268f1c0fd24d675c469bb013561a6"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/machine-graphics-setup.md",
+    "destination": "Meta/claude-memory/_history/workflow/home/machine-graphics-setup.md",
+    "source_sha256": "4e491894814549d638af727e39055a8ab05494fc4bdf105fa8ae2c1cceab9132",
+    "source_mtime_utc": "2026-06-22T12:14:35+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "obsidian-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/obsidian-setup|obsidian-setup"
+      }
+    ],
+    "imported_sha256": "0b0e90404a4e563d67ecc38cb9c94380bde3446ad5b9dc0335b298bc8398b932"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/meshnet-ssh-hub.md",
+    "destination": "Meta/claude-memory/_history/general/home/meshnet-ssh-hub.md",
+    "source_sha256": "ca3b163de54811f9960482231ddd5079876a0e1f9992bf548a09789600283a3b",
+    "source_mtime_utc": "2026-07-18T08:47:37.043459+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "machine-graphics-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/machine-graphics-setup|machine-graphics-setup"
+      }
+    ],
+    "imported_sha256": "dd9c52a73ecd19f96b0d386ae6d5382a28f2f9cc254a7fc3728e4b8f23a58b82"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/obsidian-setup.md",
+    "destination": "Meta/claude-memory/_history/workflow/home/obsidian-setup.md",
+    "source_sha256": "3a47e22498bde7c23d4ab4118b02283a4f50287ff0cdd22ac5167ed0fb701b8a",
+    "source_mtime_utc": "2026-06-22T12:14:25+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "machine-graphics-setup",
+        "new": "Meta/claude-memory/_history/workflow/home/machine-graphics-setup|machine-graphics-setup"
+      }
+    ],
+    "imported_sha256": "7b7380bbcd63e70bd44ca438fb0d8730c9e3db173e98fcc11ead358d8ed64dfa"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/useful-pages.md",
+    "destination": "Meta/claude-memory/_history/general/home/useful-pages.md",
+    "source_sha256": "73430d74477e7774180587cd8407174254ac98b5056bc9a837bb1c6a18f93dde",
+    "source_mtime_utc": "2026-07-26T22:38:57.964520+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "browser-automation-preferences",
+        "new": "Meta/claude-memory/_history/preferences/home/browser-automation-preferences|browser-automation-preferences"
+      }
+    ],
+    "imported_sha256": "81f8456e47d0dd1e4bbe9718e59449a826a8cb7d62ffb2034119d8aa0ad68aec"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta/memory/vub-wifi-mac-block.md",
+    "destination": "Meta/claude-memory/_history/general/home/vub-wifi-mac-block.md",
+    "source_sha256": "10aad5fddaefc66eb915bb07acb05de6dcf4f741b9025326b4dc95cce0a09c88",
+    "source_mtime_utc": "2026-09-29T13:45:41.986584+00:00",
+    "redactions": [],
+    "link_rewrites": [],
+    "imported_sha256": "10aad5fddaefc66eb915bb07acb05de6dcf4f741b9025326b4dc95cce0a09c88"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/MEMORY.md",
+    "destination": "Meta/claude-memory/_history/source-indexes/agenthon/MEMORY.md",
+    "source_sha256": "9cce6c7d4a3cfa4015238d70636ebc884425a644dc3203a3452ac2ce4f064664",
+    "source_mtime_utc": "2026-10-10T14:39:52.987116+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "markdown",
+        "old": "agenthon-track1-project.md",
+        "new": "../../projects/Agenthon/agenthon/agenthon-track1-project.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "never-disrupt-running-jobs.md",
+        "new": "../../projects/Agenthon/agenthon/never-disrupt-running-jobs.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "s5-design-lessons.md",
+        "new": "../../projects/Agenthon/agenthon/s5-design-lessons.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "user-career-goal.md",
+        "new": "../../projects/Agenthon/agenthon/user-career-goal.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "agenthon-track3-project.md",
+        "new": "../../projects/Agenthon/agenthon/agenthon-track3-project.md"
+      }
+    ],
+    "imported_sha256": "71ccf11e6dab8eb32a865bf0716545d8537d15d1d684355fb0d64e3fb776c37c"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/agenthon-track1-project.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track1-project.md",
+    "source_sha256": "5bca9ddff7e9198049a75657250d540c52ad3e9e5bc6bd4719fdb87b149553b7",
+    "source_mtime_utc": "2026-10-07T12:18:18.310459+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "never-disrupt-running-jobs",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/never-disrupt-running-jobs|never-disrupt-running-jobs"
+      }
+    ],
+    "imported_sha256": "e19f1f688d9323555015696633914f61a5a6227cc58fcd6a41ec7c38ac5c605a"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/agenthon-track3-project.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track3-project.md",
+    "source_sha256": "3fa9a2d8a72fb2821165f0d5029b1541380ca389d5e5090bf387f4f87f130430",
+    "source_mtime_utc": "2026-10-27T13:22:42.695275+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agenthon-track1-project",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track1-project|agenthon-track1-project"
+      },
+      {
+        "kind": "wiki",
+        "old": "never-disrupt-running-jobs",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/never-disrupt-running-jobs|never-disrupt-running-jobs"
+      }
+    ],
+    "imported_sha256": "661b8af3c8f28330632700e72eb5b02e64c0e8e9688521f0daf327089cfb39bf"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/never-disrupt-running-jobs.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/agenthon/never-disrupt-running-jobs.md",
+    "source_sha256": "f2e52d1e324a5ad8e59ef2fdc0d329e44c9b4d6e24ae3c1a405b578513e12f75",
+    "source_mtime_utc": "2026-10-01T11:09:59.713930+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agenthon-track1-project",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track1-project|agenthon-track1-project"
+      }
+    ],
+    "imported_sha256": "ce60f272819bdbf85a1b57a66c317ba19b470e407ff75b7171c6a37d080147ea"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/s5-design-lessons.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/agenthon/s5-design-lessons.md",
+    "source_sha256": "0e7a32e8265ead41b21cb356198f5edff68bae76a8af69fcc542737508baa654",
+    "source_mtime_utc": "2026-10-02T08:35:47.497727+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agenthon-track1-project",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track1-project|agenthon-track1-project"
+      }
+    ],
+    "imported_sha256": "d37f5841ec07cfbf8e70e136e3401f459e3ad63327511a325df224afe9964a85"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-agenthon-hacathon/memory/user-career-goal.md",
+    "destination": "Meta/claude-memory/_history/projects/Agenthon/agenthon/user-career-goal.md",
+    "source_sha256": "0806f6eb1f34069ca9e2192da7df47c2e053a6df3cf674e512904605d86ae726",
+    "source_mtime_utc": "2026-10-07T09:18:14.205632+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agenthon-track1-project",
+        "new": "Meta/claude-memory/_history/projects/Agenthon/agenthon/agenthon-track1-project|agenthon-track1-project"
+      }
+    ],
+    "imported_sha256": "537e49d727baf7f62b6221eab731b7c6541e78642ab1dca9978bb9d0d38a58e1"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/MEMORY.md",
+    "destination": "Meta/claude-memory/_history/source-indexes/vault/MEMORY.md",
+    "source_sha256": "aa13ccb49494e3cf54d23f14f1ef18a0ad84d979ef2aaa4553b3634c29356b6d",
+    "source_mtime_utc": "2026-11-03T07:22:53.197347+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "markdown",
+        "old": "lxplus-workflow.md",
+        "new": "../../workflow/vault/lxplus-workflow.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-eos-persistent-mount.md",
+        "new": "../../workflow/vault/lxplus-eos-persistent-mount.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-coffea-env.md",
+        "new": "../../workflow/vault/lxplus-coffea-env.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-negweight-reweight-fix.md",
+        "new": "../../projects/HToWW/vault/hww-negweight-reweight-fix.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-combine-pipeline.md",
+        "new": "../../projects/HToWW/vault/hww-combine-pipeline.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-combine-sumw-trap.md",
+        "new": "../../projects/HToWW/vault/hww-combine-sumw-trap.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-crab-drpremix-memory.md",
+        "new": "../../projects/HToWW/vault/hww-crab-drpremix-memory.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "flashjet-workflow.md",
+        "new": "../../projects/Flashjet/vault/flashjet-workflow.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-ctag2d-sf-total-decision.md",
+        "new": "../../projects/HToWW/vault/hww-ctag2d-sf-total-decision.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-signal-private-fetch-iihe.md",
+        "new": "../../projects/HToWW/vault/hww-signal-private-fetch-iihe.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-other-era-config-bugs.md",
+        "new": "../../projects/HToWW/vault/hww-other-era-config-bugs.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-proxy-and-tmux.md",
+        "new": "../../workflow/vault/lxplus-proxy-and-tmux.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-jobs-status-blacklist-memoryless.md",
+        "new": "../../projects/HToWW/vault/hww-jobs-status-blacklist-memoryless.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "an-repo-latex-broken-on-master.md",
+        "new": "../../general/vault/an-repo-latex-broken-on-master.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "an-review-verify-against-source.md",
+        "new": "../../projects/HToWW/vault/an-review-verify-against-source.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "vault-push-not-allowlisted.md",
+        "new": "../../workflow/vault/vault-push-not-allowlisted.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-afs-token-aklog.md",
+        "new": "../../workflow/vault/lxplus-afs-token-aklog.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-condor-eossubmit.md",
+        "new": "../../workflow/vault/lxplus-condor-eossubmit.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-postprocess-plot-mechanics.md",
+        "new": "../../projects/HToWW/vault/hww-postprocess-plot-mechanics.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-ssh-askpass-trap.md",
+        "new": "../../workflow/vault/lxplus-ssh-askpass-trap.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-condor-gpu-cpu-floor.md",
+        "new": "../../workflow/vault/lxplus-condor-gpu-cpu-floor.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-cmssw-build-location.md",
+        "new": "../../workflow/vault/lxplus-cmssw-build-location.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase2-it-unpacker-base-release.md",
+        "new": "../../projects/DigiMorphing/vault/phase2-it-unpacker-base-release.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "review-read-the-branch-not-head.md",
+        "new": "../../general/vault/review-read-the-branch-not-head.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase2-it-unpacker-cabling-map-gap.md",
+        "new": "../../projects/DigiMorphing/vault/phase2-it-unpacker-cabling-map-gap.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase2-it-moduleid-measured-in-range.md",
+        "new": "../../general/vault/phase2-it-moduleid-measured-in-range.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "control-must-be-able-to-falsify-setup.md",
+        "new": "../../workflow/vault/control-must-be-able-to-falsify-setup.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase2-it-watchruns-not-a-crash.md",
+        "new": "../../general/vault/phase2-it-watchruns-not-a-crash.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "review-findings-phrasing.md",
+        "new": "../../general/vault/review-findings-phrasing.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-gpu-interactive.md",
+        "new": "../../workflow/vault/lxplus-gpu-interactive.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "check-das-before-generating.md",
+        "new": "../../general/vault/check-das-before-generating.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-fs-private-results-not-for-ppt.md",
+        "new": "../../slides/vault/hww-fs-private-results-not-for-ppt.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-fs-stitching-reweight.md",
+        "new": "../../projects/HToWW/vault/hww-fs-stitching-reweight.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-fs-decision-shape-only.md",
+        "new": "../../projects/HToWW/vault/hww-fs-decision-shape-only.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-jer-split-tag-noop.md",
+        "new": "../../projects/HToWW/vault/hww-jer-split-tag-noop.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "agent-harness-claude-subs.md",
+        "new": "../../general/vault/agent-harness-claude-subs.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "acat2027-combine-agent-talk.md",
+        "new": "../../slides/vault/acat2027-combine-agent-talk.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-claude-truncated-binary.md",
+        "new": "../../workflow/vault/lxplus-claude-truncated-binary.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-central-signal-lhe-weights-broken.md",
+        "new": "../../projects/HToWW/vault/hww-central-signal-lhe-weights-broken.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase2-morphing-shared-mem-budget.md",
+        "new": "../../projects/DigiMorphing/vault/phase2-morphing-shared-mem-budget.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "alpaka-kernel-resources-measure.md",
+        "new": "../../projects/DigiMorphing/vault/alpaka-kernel-resources-measure.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "no-claude-attribution-plain-prose.md",
+        "new": "../../general/vault/no-claude-attribution-plain-prose.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "higgs2026-hcharm-talk.md",
+        "new": "../../slides/vault/higgs2026-hcharm-talk.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "slide-review-skills.md",
+        "new": "../../slides/vault/slide-review-skills.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "follow-paper-over-review.md",
+        "new": "../../research-practice/vault/follow-paper-over-review.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "check-cms-public-status.md",
+        "new": "../../general/vault/check-cms-public-status.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hc-das-inventory-minnlo-3fs.md",
+        "new": "../../general/vault/hc-das-inventory-minnlo-3fs.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "ask-before-aigw-spend.md",
+        "new": "../../general/vault/ask-before-aigw-spend.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "eval-minimal-comparisons.md",
+        "new": "../../general/vault/eval-minimal-comparisons.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "gridpack-on-eos-fuse-fails.md",
+        "new": "../../general/vault/gridpack-on-eos-fuse-fails.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-3fs-private-production.md",
+        "new": "../../projects/HToWW/vault/hww-3fs-private-production.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "higgscharm-fetch-rse-keyerror.md",
+        "new": "../../projects/HToWW/vault/higgscharm-fetch-rse-keyerror.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-4fs-el8-gridpack-rebuild.md",
+        "new": "../../projects/HToWW/vault/hww-4fs-el8-gridpack-rebuild.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-ctag2d-category-edges-wrong.md",
+        "new": "../../projects/HToWW/vault/hww-ctag2d-category-edges-wrong.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "phase1-morphing-validation-format.md",
+        "new": "../../projects/DigiMorphing/vault/phase1-morphing-validation-format.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "lxplus-gpu-profiling-and-racecheck.md",
+        "new": "../../workflow/vault/lxplus-gpu-profiling-and-racecheck.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "omp-harness-decision.md",
+        "new": "../../general/vault/omp-harness-decision.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "hww-dy-nanov12-invalid.md",
+        "new": "../../projects/HToWW/vault/hww-dy-nanov12-invalid.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "cswap-service-pr.md",
+        "new": "../../general/vault/cswap-service-pr.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "conductor-check-listagents-too.md",
+        "new": "../../general/vault/conductor-check-listagents-too.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "heldout-same-balance-as-train.md",
+        "new": "../../general/vault/heldout-same-balance-as-train.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "conductor-autonomous-notify.md",
+        "new": "../../general/vault/conductor-autonomous-notify.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "night-log-in-vault.md",
+        "new": "../../workflow/vault/night-log-in-vault.md"
+      },
+      {
+        "kind": "markdown",
+        "old": "conductor-session-hopping-todo.md",
+        "new": "../../general/vault/conductor-session-hopping-todo.md"
+      }
+    ],
+    "imported_sha256": "58130013b83efc6619336ac48fb1378a28707d703222347ffe53e2e2f74b372d"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/acat2027-combine-agent-talk.md",
+    "destination": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk.md",
+    "source_sha256": "0c750bb51efef028d82a74f8bf6be59789ce3f6eda226252268fc04e220b2258",
+    "source_mtime_utc": "2026-10-28T11:02:39.480998+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agent-harness-claude-subs",
+        "new": "Meta/claude-memory/_history/general/vault/agent-harness-claude-subs|agent-harness-claude-subs"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "198ea170ee0ca6af1b8051a92403e1e11d1c1f7be8506beea1e5490a72804de6"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/agent-harness-claude-subs.md",
+    "destination": "Meta/claude-memory/_history/general/vault/agent-harness-claude-subs.md",
+    "source_sha256": "32767147b8afbb3c9fdb46cc9f2dbf7e8e993d58ca3314f7d9db783448432c00",
+    "source_mtime_utc": "2026-10-08T21:23:07.752670+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      }
+    ],
+    "imported_sha256": "3c9a902ef1e9d4ece216e7d474e0d03808a64b9ced6de4323151d3843df448a3"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/alpaka-kernel-resources-measure.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/alpaka-kernel-resources-measure.md",
+    "source_sha256": "6e99dacc52a3857cdf47bdafd9345b277dd0aecad4e1bb556739117d1c86fbd0",
+    "source_mtime_utc": "2026-10-23T14:02:29.085227+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-gpu-interactive",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-gpu-interactive|lxplus-gpu-interactive"
+      },
+      {
+        "kind": "wiki",
+        "old": "phase2-morphing-shared-mem-budget",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-morphing-shared-mem-budget|phase2-morphing-shared-mem-budget"
+      },
+      {
+        "kind": "wiki",
+        "old": "control-must-be-able-to-falsify-setup",
+        "new": "Meta/claude-memory/_history/workflow/vault/control-must-be-able-to-falsify-setup|control-must-be-able-to-falsify-setup"
+      }
+    ],
+    "imported_sha256": "f67b9dfc1dfd99b9061bf4c77df59534edf2b8f8610beede6f7ba8969aa753f5"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/an-repo-latex-broken-on-master.md",
+    "destination": "Meta/claude-memory/_history/general/vault/an-repo-latex-broken-on-master.md",
+    "source_sha256": "71059eb8bea58975502fce80dc43e65622282865ae65fced8e939845c73fc7f1",
+    "source_mtime_utc": "2026-08-21T12:45:03.313471+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "01f38e177e1fcea854151b95b57c8d1f9f4acdd2f88886d793562169a5c06763"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/an-review-verify-against-source.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/an-review-verify-against-source.md",
+    "source_sha256": "2c7fbd46dfc1bf52fa1d474cccf818afd1767ac2f817cd35a85c523fef4c1354",
+    "source_mtime_utc": "2026-08-21T13:59:33.599965+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-ctag2d-sf-total-decision",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-ctag2d-sf-total-decision|hww-ctag2d-sf-total-decision"
+      }
+    ],
+    "imported_sha256": "2ac3f6666b55775b2ac6dd7ee8dba0f869c612f8359036b1688e7a8e80bb8104"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/ask-before-aigw-spend.md",
+    "destination": "Meta/claude-memory/_history/general/vault/ask-before-aigw-spend.md",
+    "source_sha256": "e2986b7cbfc6d407ed93879a31da2ca2ed630b8d2bdae19cca09a71512024aaa",
+    "source_mtime_utc": "2026-10-21T15:33:26.253659+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      }
+    ],
+    "imported_sha256": "94edb38ce67a9287de9f03b5a681648d1291052b1b5466d2e88130eb0b4a0eb5"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/check-cms-public-status.md",
+    "destination": "Meta/claude-memory/_history/general/vault/check-cms-public-status.md",
+    "source_sha256": "d3bf5f8838576d4379f9be77fa841dc213f76adf975a39bc9e539e4296c62300",
+    "source_mtime_utc": "2026-10-17T06:33:47.767408+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "higgs2026-hcharm-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/higgs2026-hcharm-talk|higgs2026-hcharm-talk"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      }
+    ],
+    "imported_sha256": "8dd291decbf7b8cb418b3fb76c08806d678e7e66853be348a6632ee9616043ba"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/check-das-before-generating.md",
+    "destination": "Meta/claude-memory/_history/general/vault/check-das-before-generating.md",
+    "source_sha256": "07a91198e80a6c78b0a0f005af37761e739c8f917917cb170aba29bb831c8370",
+    "source_mtime_utc": "2026-09-29T14:35:35.569877+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-signal-private-fetch-iihe",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-signal-private-fetch-iihe|hww-signal-private-fetch-iihe"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      }
+    ],
+    "imported_sha256": "70134aef10758327a3bbc894c5bb8d466437240880595b49ae17abcb490c3613"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/conductor-autonomous-notify.md",
+    "destination": "Meta/claude-memory/_history/general/vault/conductor-autonomous-notify.md",
+    "source_sha256": "05063b1750083f3417f22e0785172d2d42c40be84bb1d7611549f4f63f3c7d04",
+    "source_mtime_utc": "2026-11-03T06:29:56.652921+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "omp-harness-decision",
+        "new": "Meta/claude-memory/_history/general/vault/omp-harness-decision|omp-harness-decision"
+      }
+    ],
+    "imported_sha256": "704f6190070d8c94a8562ad701aa9032da95b8d8951d9a42a60cfe44a3488974"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/conductor-check-listagents-too.md",
+    "destination": "Meta/claude-memory/_history/general/vault/conductor-check-listagents-too.md",
+    "source_sha256": "d84b59a9788db134e8c8610669df766c8cd87a555bc811546f771b03a0b015ae",
+    "source_mtime_utc": "2026-11-03T05:54:05.884702+00:00",
+    "redactions": [],
+    "link_rewrites": [],
+    "imported_sha256": "d84b59a9788db134e8c8610669df766c8cd87a555bc811546f771b03a0b015ae"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/conductor-session-hopping-todo.md",
+    "destination": "Meta/claude-memory/_history/general/vault/conductor-session-hopping-todo.md",
+    "source_sha256": "0a1340eecf2bef9dae5a4b85ea61aa6a58b2baed5b5ac95b5e9ee89ec540b61a",
+    "source_mtime_utc": "2026-11-03T07:27:08.649497+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "conductor-autonomous-notify",
+        "new": "Meta/claude-memory/_history/general/vault/conductor-autonomous-notify|conductor-autonomous-notify"
+      },
+      {
+        "kind": "wiki",
+        "old": "cswap-service-pr",
+        "new": "Meta/claude-memory/_history/general/vault/cswap-service-pr|cswap-service-pr"
+      },
+      {
+        "kind": "wiki",
+        "old": "agent-harness-claude-subs",
+        "new": "Meta/claude-memory/_history/general/vault/agent-harness-claude-subs|agent-harness-claude-subs"
+      },
+      {
+        "kind": "wiki",
+        "old": "ask-before-aigw-spend",
+        "new": "Meta/claude-memory/_history/general/vault/ask-before-aigw-spend|ask-before-aigw-spend"
+      },
+      {
+        "kind": "wiki",
+        "old": "omp-harness-decision",
+        "new": "Meta/claude-memory/_history/general/vault/omp-harness-decision|omp-harness-decision"
+      }
+    ],
+    "imported_sha256": "95fd3af3a1d4f8b5ae300b40a014dfa6d5547d53378e3a4877efe464153b7c98"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/control-must-be-able-to-falsify-setup.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/control-must-be-able-to-falsify-setup.md",
+    "source_sha256": "1fe2e7dd7be23bd1783f9148e911016ae42349f5771bed96f6705188c17967c9",
+    "source_mtime_utc": "2026-09-21T23:17:54.426416+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "f4014f5d93e15bba8cf7c3b5c5e5af433c085adbd595f4fee898034506e881e8"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/cswap-service-pr.md",
+    "destination": "Meta/claude-memory/_history/general/vault/cswap-service-pr.md",
+    "source_sha256": "128bb7cbbd134e676fe7d5d54c1024ae896b0e8306b8811bd0b4404560ed50a9",
+    "source_mtime_utc": "2026-10-29T17:08:33.687255+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "no-claude-attribution-plain-prose",
+        "new": "Meta/claude-memory/_history/general/vault/no-claude-attribution-plain-prose|no-claude-attribution-plain-prose"
+      }
+    ],
+    "imported_sha256": "cc1b8460ec76b2df527de02e1cd944bd3494bf5cbfc35a886d9a4c0793bd8d58"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/eval-minimal-comparisons.md",
+    "destination": "Meta/claude-memory/_history/general/vault/eval-minimal-comparisons.md",
+    "source_sha256": "e0f56a0eade86b6dcb9e6dd12a05e22255da7a38f4ca9418d5aa008bc4227b89",
+    "source_mtime_utc": "2026-10-21T15:42:21.112063+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "ask-before-aigw-spend",
+        "new": "Meta/claude-memory/_history/general/vault/ask-before-aigw-spend|ask-before-aigw-spend"
+      },
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      }
+    ],
+    "imported_sha256": "3954d267afd81f88a95254e555e624af7db1da683153db19d479218b79b52a79"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/flashjet-workflow.md",
+    "destination": "Meta/claude-memory/_history/projects/Flashjet/vault/flashjet-workflow.md",
+    "source_sha256": "e8e2c9194de466862ba3fb13f2f696a47d054c02c5f3f5e9392ea0819d1036a2",
+    "source_mtime_utc": "2026-09-25T11:03:35.046654+00:00",
+    "redactions": [],
+    "link_rewrites": [],
+    "imported_sha256": "e8e2c9194de466862ba3fb13f2f696a47d054c02c5f3f5e9392ea0819d1036a2"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/follow-paper-over-review.md",
+    "destination": "Meta/claude-memory/_history/research-practice/vault/follow-paper-over-review.md",
+    "source_sha256": "42d2838dd023ecc34d3dff925dfa841a93db295c09053f431fab4f24e22ea1df",
+    "source_mtime_utc": "2026-10-16T09:42:55.520600+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "an-review-verify-against-source",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/an-review-verify-against-source|an-review-verify-against-source"
+      },
+      {
+        "kind": "wiki",
+        "old": "review-findings-phrasing",
+        "new": "Meta/claude-memory/_history/general/vault/review-findings-phrasing|review-findings-phrasing"
+      }
+    ],
+    "imported_sha256": "73000eeab9d3d6e088486c9d16cc8d5a7724f7d5351c0e2b3d030a0b8e158dd2"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/gridpack-on-eos-fuse-fails.md",
+    "destination": "Meta/claude-memory/_history/general/vault/gridpack-on-eos-fuse-fails.md",
+    "source_sha256": "6695eca51d1af1e7ae8b01fb7b132e88e0ec3154e917de14ff7d86edc4f9aade",
+    "source_mtime_utc": "2026-10-21T19:20:13.192034+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-3fs-private-production",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-3fs-private-production|hww-3fs-private-production"
+      }
+    ],
+    "imported_sha256": "261a40795ab03ca85732bc5b9f6a485dcbbd4b7155c07a414175a1f3e2cf6d3d"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hc-das-inventory-minnlo-3fs.md",
+    "destination": "Meta/claude-memory/_history/general/vault/hc-das-inventory-minnlo-3fs.md",
+    "source_sha256": "c94dc6af75cb7f453537e33b8b33b78c4535ae768b7ec04eb2359cf3038d0dc6",
+    "source_mtime_utc": "2026-10-21T13:37:17.518361+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "check-das-before-generating",
+        "new": "Meta/claude-memory/_history/general/vault/check-das-before-generating|check-das-before-generating"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-signal-private-fetch-iihe",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-signal-private-fetch-iihe|hww-signal-private-fetch-iihe"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-decision-shape-only",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-decision-shape-only|hww-fs-decision-shape-only"
+      }
+    ],
+    "imported_sha256": "f1858ff4d351f82efc6b6a25e17508652cebeff2576a1b0e6aea92fa82e6a11e"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/heldout-same-balance-as-train.md",
+    "destination": "Meta/claude-memory/_history/general/vault/heldout-same-balance-as-train.md",
+    "source_sha256": "15b3829ca26866b445b583106115e20f2392d572c37815e50a8e73b0b794a55f",
+    "source_mtime_utc": "2026-11-03T06:02:03.267686+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "flashjet-workflow",
+        "new": "Meta/claude-memory/_history/projects/Flashjet/vault/flashjet-workflow|flashjet-workflow"
+      }
+    ],
+    "imported_sha256": "28a5b6cd3a7539c511f9b32f294f0c40e45049169d9fc7f09e19b307fda3e89c"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/higgs2026-hcharm-talk.md",
+    "destination": "Meta/claude-memory/_history/slides/vault/higgs2026-hcharm-talk.md",
+    "source_sha256": "ec7b619ff32883eb00b166004bba180cad41814d4e68f8e7384da2951c656504",
+    "source_mtime_utc": "2026-10-15T10:05:42.255932+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      },
+      {
+        "kind": "wiki",
+        "old": "an-review-verify-against-source",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/an-review-verify-against-source|an-review-verify-against-source"
+      }
+    ],
+    "imported_sha256": "9df9b3f9f9b96c54642b6f0c69f3db4fb576c8b954409924fe64907efba742ac"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/higgscharm-fetch-rse-keyerror.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/higgscharm-fetch-rse-keyerror.md",
+    "source_sha256": "f2d8b7047d3568af29403e0ee99699fa15b28fdbd161bd5a96914a874b2e5b27",
+    "source_mtime_utc": "2026-10-23T11:08:04.573419+00:00",
+    "redactions": [],
+    "link_rewrites": [],
+    "imported_sha256": "f2d8b7047d3568af29403e0ee99699fa15b28fdbd161bd5a96914a874b2e5b27"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-3fs-private-production.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-3fs-private-production.md",
+    "source_sha256": "2720a24390732c608ca064c72b87a274d4371a86fbfc94a4b7be068c8a10cc3f",
+    "source_mtime_utc": "2026-11-02T00:03:22.162876+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hc-das-inventory-minnlo-3fs",
+        "new": "Meta/claude-memory/_history/general/vault/hc-das-inventory-minnlo-3fs|hc-das-inventory-minnlo-3fs"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-decision-shape-only",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-decision-shape-only|hww-fs-decision-shape-only"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-central-signal-lhe-weights-broken",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-central-signal-lhe-weights-broken|hww-central-signal-lhe-weights-broken"
+      }
+    ],
+    "imported_sha256": "78041e490e2f593a463051a58706e125306ecaa3c25b26bcc0f911b938a6ba29"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-4fs-el8-gridpack-rebuild.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-4fs-el8-gridpack-rebuild.md",
+    "source_sha256": "eb82752daea002ff8e8f8f22e0a9a4208d996df46d3a75390e77c07bf9992205",
+    "source_mtime_utc": "2026-10-28T11:06:09.766649+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-central-signal-lhe-weights-broken",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-central-signal-lhe-weights-broken|hww-central-signal-lhe-weights-broken"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-3fs-private-production",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-3fs-private-production|hww-3fs-private-production"
+      }
+    ],
+    "imported_sha256": "a602c097ee11b8289c939a6c7f2d5c186f77cd3a487432b9c5d9d1a727e9fcd9"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-central-signal-lhe-weights-broken.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-central-signal-lhe-weights-broken.md",
+    "source_sha256": "c46b5948113b3f83400ffb8e91314f45387c3f4294aa481ddf5e6ca3e5a22d37",
+    "source_mtime_utc": "2026-10-13T14:41:17.604755+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-jer-split-tag-noop",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-jer-split-tag-noop|hww-jer-split-tag-noop"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-decision-shape-only",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-decision-shape-only|hww-fs-decision-shape-only"
+      }
+    ],
+    "imported_sha256": "31dd6fdce2fc7275f6e68a20857617b4e894d23c8cbecf9e98d55f1e49de1694"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-combine-pipeline.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline.md",
+    "source_sha256": "ed624239588a4dbfb5b98220405752a8c32c3a67b2eadef35e08c30ed505d7fe",
+    "source_mtime_utc": "2026-07-16T23:22:03.463232+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-negweight-reweight-fix",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-negweight-reweight-fix|hww-negweight-reweight-fix"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-coffea-env",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-coffea-env|lxplus-coffea-env"
+      }
+    ],
+    "imported_sha256": "a8a2b2ab49bdc38148f7bf060e9213ec86894a03e724584c59473efd24e75d58"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-combine-sumw-trap.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-sumw-trap.md",
+    "source_sha256": "8af9f63dc359f1b7bfb7ae7b9e3d72d2823c034cd73a19b146aaa4a624b06ecc",
+    "source_mtime_utc": "2026-07-31T07:51:45.158374+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-negweight-reweight-fix",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-negweight-reweight-fix|hww-negweight-reweight-fix"
+      }
+    ],
+    "imported_sha256": "3bb665f5763144681348b628d5aa14fdf494e7bf4a26d0a252a1716c8a1d14c4"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-crab-drpremix-memory.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-crab-drpremix-memory.md",
+    "source_sha256": "75b0478440ef87e536040ba50db97dfd8c9991a7c9b3329d7f375bb7485394f7",
+    "source_mtime_utc": "2026-07-15T12:16:00.666561+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-negweight-reweight-fix",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-negweight-reweight-fix|hww-negweight-reweight-fix"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-coffea-env",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-coffea-env|lxplus-coffea-env"
+      }
+    ],
+    "imported_sha256": "62bfcb856e06726bd051fed71a824087576003d4fcef0488d870e6e3ef7627a7"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-ctag2d-category-edges-wrong.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-ctag2d-category-edges-wrong.md",
+    "source_sha256": "74d5640b9d8928c4bb536e5f3eab73d2e755a1f8e447f3477918ca0249392390",
+    "source_mtime_utc": "2026-10-23T14:12:09.231252+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-ctag2d-sf-total-decision",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-ctag2d-sf-total-decision|hww-ctag2d-sf-total-decision"
+      }
+    ],
+    "imported_sha256": "636ba1f319600f8b5123f3c9fa2fad22521b0a35bf8460b5f2fa16b869fd3d61"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-ctag2d-sf-total-decision.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-ctag2d-sf-total-decision.md",
+    "source_sha256": "63802b60864adcf46e5817671ca874039e29c1a9d5841b49f44c78a5a16f2e71",
+    "source_mtime_utc": "2026-07-23T02:46:15.879449+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "flashjet-workflow",
+        "new": "Meta/claude-memory/_history/projects/Flashjet/vault/flashjet-workflow|flashjet-workflow"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "2dabcaaca2e38e83cb87368c554603b6f0f4a5eef5a460cfd3968a1c88354109"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-dy-nanov12-invalid.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-dy-nanov12-invalid.md",
+    "source_sha256": "b0407be9a6618bef12660c59bea6be4898796c8295b2a28d4466227d2e0c6e08",
+    "source_mtime_utc": "2026-11-03T06:16:38.076876+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-jer-split-tag-noop",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-jer-split-tag-noop|hww-jer-split-tag-noop"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-jobs-status-blacklist-memoryless",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-jobs-status-blacklist-memoryless|hww-jobs-status-blacklist-memoryless"
+      }
+    ],
+    "imported_sha256": "e8539fe6b9e1cc37e7eed5a639e2ad00b9de59e40a1a72654a316234e5779b09"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-fs-decision-shape-only.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-decision-shape-only.md",
+    "source_sha256": "073a5206f34e3a33c244a28aac67fae92e889a923c63cf49f20426f0e1e14bb2",
+    "source_mtime_utc": "2026-09-30T16:06:30.699904+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-fs-stitching-reweight",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-stitching-reweight|hww-fs-stitching-reweight"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      }
+    ],
+    "imported_sha256": "c151308a9bc6b9b236a9942062d232f4e5f5aa5cce495c0ac16eca6e1e1de138"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-fs-private-results-not-for-ppt.md",
+    "destination": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt.md",
+    "source_sha256": "058e426f7d18fe6ffeb266ad8fbf4eb5cdd8917aee9ca183a96b6f892c3a27ba",
+    "source_mtime_utc": "2026-09-29T14:41:24.492615+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "check-das-before-generating",
+        "new": "Meta/claude-memory/_history/general/vault/check-das-before-generating|check-das-before-generating"
+      }
+    ],
+    "imported_sha256": "ae570e185b7e3c0f55c30ce205737f6b53db15ffdc642d1c25ac8798e488fe54"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-fs-stitching-reweight.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-fs-stitching-reweight.md",
+    "source_sha256": "2da16901ddaaff1d6bb31d991fb66918cf115065c1f7a8b623f982643387792f",
+    "source_mtime_utc": "2026-09-30T14:25:17.041998+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      },
+      {
+        "kind": "wiki",
+        "old": "check-das-before-generating",
+        "new": "Meta/claude-memory/_history/general/vault/check-das-before-generating|check-das-before-generating"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "748e9e516a37f9759aa37bec51394c38c8e7063c583f3c0a572a82abb0f226d9"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-jer-split-tag-noop.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-jer-split-tag-noop.md",
+    "source_sha256": "cf5d44c2ab21931367d6f8ed23ec4b1fcffa3fc08a2cf29534d42859fc2eb647",
+    "source_mtime_utc": "2026-10-06T15:24:46.815690+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-other-era-config-bugs",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-other-era-config-bugs|hww-other-era-config-bugs"
+      }
+    ],
+    "imported_sha256": "f7d47249a5d2bad3e4bada1242c592570b8926b7ae75cfb31b3f6e12d1169652"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-jobs-status-blacklist-memoryless.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-jobs-status-blacklist-memoryless.md",
+    "source_sha256": "4960314da149863136451048afdb7eeb82872e5689cdb23b0bd2a0c9a2989de7",
+    "source_mtime_utc": "2026-08-11T14:16:27.645950+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "a68a0a8004a706f8ff5671618d5c7f1223c5ec8a14b8a7ad8bd3d358e477cd66"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-negweight-reweight-fix.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-negweight-reweight-fix.md",
+    "source_sha256": "ce8168deea052f5a98e4535a8c29d5e56d7afbddeba3a03d2266cc30df656636",
+    "source_mtime_utc": "2026-07-15T12:20:50.233846+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-coffea-env",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-coffea-env|lxplus-coffea-env"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      }
+    ],
+    "imported_sha256": "b7efbecb5502720b96661d4dccea1e4a79a84acc4092a2031ea8fadd2e723438"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-other-era-config-bugs.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-other-era-config-bugs.md",
+    "source_sha256": "a0e6a7bee092270fe5824e614a46ec442ce2ffe3f45a2aa44832f2e55c2da381",
+    "source_mtime_utc": "2026-07-29T10:36:28.922388+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "hww-signal-private-fetch-iihe",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-signal-private-fetch-iihe|hww-signal-private-fetch-iihe"
+      }
+    ],
+    "imported_sha256": "4c6edb041c9db040e1b459732ee2ae0104a0f42af9f174f30beb084f17e90869"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-postprocess-plot-mechanics.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-postprocess-plot-mechanics.md",
+    "source_sha256": "85123d4b1185056bae17718873eea712611d39607ceb3becb6d5834b6335ff55",
+    "source_mtime_utc": "2026-09-10T12:20:29.087385+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-sumw-trap",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-sumw-trap|hww-combine-sumw-trap"
+      }
+    ],
+    "imported_sha256": "3f3c5909dff4db03faa1f8e2fe126c56b1368dae0f2b4d296035630b13c94d25"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/hww-signal-private-fetch-iihe.md",
+    "destination": "Meta/claude-memory/_history/projects/HToWW/vault/hww-signal-private-fetch-iihe.md",
+    "source_sha256": "c37d49f3a2e758f18abcf823b5fb025645406de978cedf10bc4b6df149f8252b",
+    "source_mtime_utc": "2026-07-28T14:49:16.816999+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      }
+    ],
+    "imported_sha256": "fcfd4cc8c6e32165e67246360e1f762274e4ddc65778e9802c01c09ea50d7ae3"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-afs-token-aklog.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-afs-token-aklog.md",
+    "source_sha256": "4f56b395306a10677e1a3383b557d77ea8a4107b9eaabaf6142faf961299a8d3",
+    "source_mtime_utc": "2026-09-07T22:23:02.722450+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      },
+      {
+        "kind": "wiki",
+        "old": "vault-push-not-allowlisted",
+        "new": "Meta/claude-memory/_history/workflow/vault/vault-push-not-allowlisted|vault-push-not-allowlisted"
+      }
+    ],
+    "imported_sha256": "d0b0d60b8ef2f90b741ad936a00be8e608b5b7444a46cb2c44a30a00333f4032"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-claude-truncated-binary.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-claude-truncated-binary.md",
+    "source_sha256": "afe2da8bf04c3bc4f4bb8761d53d4abcd45d948b8f67dd8e6e85caaf3e33e4f8",
+    "source_mtime_utc": "2026-10-12T09:10:55.971992+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-cmssw-build-location",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-cmssw-build-location|lxplus-cmssw-build-location"
+      },
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      }
+    ],
+    "imported_sha256": "970ad322dd295b252dcdbf37fdc649cb5d23e128b3cfd1830155d37f797b32b7"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-cmssw-build-location.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-cmssw-build-location.md",
+    "source_sha256": "2d3f504f9ce723157481ccc4cda780d9bcc918036b2c74339703ce7b45ac4462",
+    "source_mtime_utc": "2026-09-21T18:22:42.887417+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      }
+    ],
+    "imported_sha256": "5c9b2d7c30695ec1dcaf36a80df023c29c29279fce666e6b4316d22566ad748b"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-coffea-env.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-coffea-env.md",
+    "source_sha256": "9f0a44581d454e3a37e41815810e4b47ca8bc921130cf2e80547287f7f45ae63",
+    "source_mtime_utc": "2026-07-07T14:52:54+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      }
+    ],
+    "imported_sha256": "c9e29a993ae5cb40b28c675a9cf7dc7a4bd8425b6fd175c1c02ffc27a3df33a7"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-condor-eossubmit.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-condor-eossubmit.md",
+    "source_sha256": "b9de343577d0c7abbd2bb23f95887ce6a2d0cb4bc0d881f95c83f28a3339192c",
+    "source_mtime_utc": "2026-09-07T23:12:18.136685+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-afs-token-aklog",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-afs-token-aklog|lxplus-afs-token-aklog"
+      }
+    ],
+    "imported_sha256": "d169f87818dd68170339f3d3afd5f1fc09578fb3dbbd9aa02218c0e08bafc9e3"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-condor-gpu-cpu-floor.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-condor-gpu-cpu-floor.md",
+    "source_sha256": "f3ae7341c01a3514a59d45018ffa5a0c59004ccf092f3794fbe3acb55bef9d0c",
+    "source_mtime_utc": "2026-09-14T13:17:28.296712+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-condor-eossubmit",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-condor-eossubmit|lxplus-condor-eossubmit"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-afs-token-aklog",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-afs-token-aklog|lxplus-afs-token-aklog"
+      }
+    ],
+    "imported_sha256": "0880ca92726f6ddfcef193cb89dd4b2b4bb19453e7d92e45d1a02dee5cb51811"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-eos-persistent-mount.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-eos-persistent-mount.md",
+    "source_sha256": "143b827b2ef132e82c0e85548c24b824d4455a6a13bc6c3ebfc2f182c7e62630",
+    "source_mtime_utc": "2026-07-07T13:28:37+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      }
+    ],
+    "imported_sha256": "7bed282f5ec13caa878d096bfb0b3e666243bbf13d3f0acc2c98a387cb90ad0c"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-gpu-interactive.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-gpu-interactive.md",
+    "source_sha256": "3f53a9284c68be87168d07783c293950bd6ab88327c7f88854503035c6fe6507",
+    "source_mtime_utc": "2026-09-24T16:38:46.995127+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-ssh-askpass-trap",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-ssh-askpass-trap|lxplus-ssh-askpass-trap"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-proxy-and-tmux",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux|lxplus-proxy-and-tmux"
+      },
+      {
+        "kind": "wiki",
+        "old": "flashjet-workflow",
+        "new": "Meta/claude-memory/_history/projects/Flashjet/vault/flashjet-workflow|flashjet-workflow"
+      }
+    ],
+    "imported_sha256": "d5b0f41b551ab59edcbd104f90c5707e0bd8210994c9938f07db7a94154b9626"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-gpu-profiling-and-racecheck.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-gpu-profiling-and-racecheck.md",
+    "source_sha256": "8ae092ec36100d150b677bc8950cc2c12e3d289dfb93f3b60bd91e9332cc0cd7",
+    "source_mtime_utc": "2026-10-29T09:33:24.415490+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "control-must-be-able-to-falsify-setup",
+        "new": "Meta/claude-memory/_history/workflow/vault/control-must-be-able-to-falsify-setup|control-must-be-able-to-falsify-setup"
+      },
+      {
+        "kind": "wiki",
+        "old": "alpaka-kernel-resources-measure",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/alpaka-kernel-resources-measure|alpaka-kernel-resources-measure"
+      }
+    ],
+    "imported_sha256": "53c6990fd91c4a146fb7d7dba46f4c9b90b97520f2ed7e56cb798e84bbad4a98"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-proxy-and-tmux.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-proxy-and-tmux.md",
+    "source_sha256": "39217ba9b0abd8dfce0d116dbfd721943a096ff8df6840af7c2dea41e2824196",
+    "source_mtime_utc": "2026-09-25T16:53:00.603714+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-ssh-askpass-trap",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-ssh-askpass-trap|lxplus-ssh-askpass-trap"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-combine-pipeline",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/hww-combine-pipeline|hww-combine-pipeline"
+      }
+    ],
+    "imported_sha256": "9e5484a190e5377d71d0fe153473a0fcaf3a2ef850c130b0e6b1d64a27c75528"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-ssh-askpass-trap.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-ssh-askpass-trap.md",
+    "source_sha256": "7c8b650e2a8195b4676152e79f8f6f47dcd7314331a8837d509a37af3f102423",
+    "source_mtime_utc": "2026-09-12T13:26:00.321656+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-workflow",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow|lxplus-workflow"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-eos-persistent-mount",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-eos-persistent-mount|lxplus-eos-persistent-mount"
+      },
+      {
+        "kind": "wiki",
+        "old": "lxplus-afs-token-aklog",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-afs-token-aklog|lxplus-afs-token-aklog"
+      }
+    ],
+    "imported_sha256": "b28cd90074b9f9c78ba2af8c5610ec425d0e2cef5851ec278739d47d03e4faf0"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/lxplus-workflow.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/lxplus-workflow.md",
+    "source_sha256": "8270e3efad5fefd066b97ff5ff612a113ce0ff4c82ab79f6f44566f8555eea27",
+    "source_mtime_utc": "2026-07-07T22:45:17+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "unresolved-reference",
+        "old": "[[vault-sync-discipline]]",
+        "new": "`[[vault-sync-discipline]]` (unresolved historical reference; source absent from imported corpus)"
+      }
+    ],
+    "imported_sha256": "2a8393dc3d93bfb56de0995aee41e392d47599f0a4215c52a7e78859a04a4a26"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/night-log-in-vault.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/night-log-in-vault.md",
+    "source_sha256": "12d8863b15e437d68cbca48caf5af4cf365781f68d12573a0c70108b8b0ccc32",
+    "source_mtime_utc": "2026-11-03T07:02:32.569499+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "conductor-autonomous-notify",
+        "new": "Meta/claude-memory/_history/general/vault/conductor-autonomous-notify|conductor-autonomous-notify"
+      }
+    ],
+    "imported_sha256": "57af9db5d11c3cd4744bc4f592a57c15f6d3f277c72e8b435c3c61ab013307e6"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/no-claude-attribution-plain-prose.md",
+    "destination": "Meta/claude-memory/_history/general/vault/no-claude-attribution-plain-prose.md",
+    "source_sha256": "c9f8fbe1bd28a34a110152cf229b4ebedf10e9d039249202b1d5048d2897eb7a",
+    "source_mtime_utc": "2026-10-13T15:25:32.119985+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      }
+    ],
+    "imported_sha256": "08a1e25e67d288d1df25237f33c790b6d3ba9785761de4cededbae3ce2ecae40"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/omp-harness-decision.md",
+    "destination": "Meta/claude-memory/_history/general/vault/omp-harness-decision.md",
+    "source_sha256": "e742bf9fb69616aa3086a4a7d9d947d3ed7606fdfc8817eb2253e44fe9863095",
+    "source_mtime_utc": "2026-11-03T06:01:34.629594+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "agent-harness-claude-subs",
+        "new": "Meta/claude-memory/_history/general/vault/agent-harness-claude-subs|agent-harness-claude-subs"
+      },
+      {
+        "kind": "wiki",
+        "old": "ask-before-aigw-spend",
+        "new": "Meta/claude-memory/_history/general/vault/ask-before-aigw-spend|ask-before-aigw-spend"
+      },
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      }
+    ],
+    "imported_sha256": "0a96c50aef9290e2375807a99d6301561222d304bfcc8b36599bd9ab2a9231f8"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase1-morphing-validation-format.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase1-morphing-validation-format.md",
+    "source_sha256": "a9329ed5dc3487e090bfc62923f24f96e8600751ed38230a83b19c0f695d52f7",
+    "source_mtime_utc": "2026-10-26T23:48:24.195271+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "phase2-morphing-shared-mem-budget",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-morphing-shared-mem-budget|phase2-morphing-shared-mem-budget"
+      }
+    ],
+    "imported_sha256": "7f5d295f7b00806dd0705e9b535ebf98b92d4b46a2182c5c2ea6f6070cf68835"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-it-moduleid-measured-in-range.md",
+    "destination": "Meta/claude-memory/_history/general/vault/phase2-it-moduleid-measured-in-range.md",
+    "source_sha256": "b7cba7fdbf1ae7eb64326c564038bb7e05ddaaa3984d75d67d26fdc59035e146",
+    "source_mtime_utc": "2026-09-21T23:07:05.445925+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "phase2-it-unpacker-cabling-map-gap",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-cabling-map-gap|phase2-it-unpacker-cabling-map-gap"
+      },
+      {
+        "kind": "wiki",
+        "old": "review-read-the-branch-not-head",
+        "new": "Meta/claude-memory/_history/general/vault/review-read-the-branch-not-head|review-read-the-branch-not-head"
+      }
+    ],
+    "imported_sha256": "997899fa5dd93d5f4f841e25d9a8ec957db75a1062ef86709a5afd9c0cc1e44e"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-it-unpacker-base-release.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-base-release.md",
+    "source_sha256": "1940db778baa32de0eb193d9e0e3a7d992a8ab57d606a8775d8a3851302d6dc2",
+    "source_mtime_utc": "2026-09-21T22:12:38.900775+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-cmssw-build-location",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-cmssw-build-location|lxplus-cmssw-build-location"
+      }
+    ],
+    "imported_sha256": "8fc51704df073b5ddfb001556bb95e03cf8420a3aa1e349dd8a18a762cd4a58a"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-it-unpacker-cabling-map-gap.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-cabling-map-gap.md",
+    "source_sha256": "a6f0e1463b68b1eb1fc29f2399302f57a869d19e1f1d29a0975f4bc190e91d62",
+    "source_mtime_utc": "2026-09-21T23:06:49.390020+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "phase2-it-moduleid-measured-in-range",
+        "new": "Meta/claude-memory/_history/general/vault/phase2-it-moduleid-measured-in-range|phase2-it-moduleid-measured-in-range"
+      },
+      {
+        "kind": "wiki",
+        "old": "phase2-it-unpacker-base-release",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-base-release|phase2-it-unpacker-base-release"
+      }
+    ],
+    "imported_sha256": "dc8384dcac0a2e72c0f619f6439b29c6c120d62622d863abb2f0e55efb158253"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-it-unpacker-memorycopytraits.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-memorycopytraits.md",
+    "source_sha256": "5b4224d89acd05d285df288fefdce100f7e3b01c70952386b3609813b18cf99c",
+    "source_mtime_utc": "2026-09-21T22:31:35.578302+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "phase2-it-unpacker-base-release",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-base-release|phase2-it-unpacker-base-release"
+      }
+    ],
+    "imported_sha256": "3f4479abef934969ee62e17409403ffcb2959cdc72fb2c38d8bfa96df91014c3"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-it-watchruns-not-a-crash.md",
+    "destination": "Meta/claude-memory/_history/general/vault/phase2-it-watchruns-not-a-crash.md",
+    "source_sha256": "a42cfbf8fe0c05d2d84f231fbe087bd17ef6c6a199670e4148a10b8fcda7e369",
+    "source_mtime_utc": "2026-09-21T23:18:07.150526+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "phase2-it-moduleid-measured-in-range",
+        "new": "Meta/claude-memory/_history/general/vault/phase2-it-moduleid-measured-in-range|phase2-it-moduleid-measured-in-range"
+      },
+      {
+        "kind": "wiki",
+        "old": "control-must-be-able-to-falsify-setup",
+        "new": "Meta/claude-memory/_history/workflow/vault/control-must-be-able-to-falsify-setup|control-must-be-able-to-falsify-setup"
+      }
+    ],
+    "imported_sha256": "dae2f6696b491f0d0cff8e7982da2cd91ea84d861809da276f8688b55f6f054b"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/phase2-morphing-shared-mem-budget.md",
+    "destination": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-morphing-shared-mem-budget.md",
+    "source_sha256": "734a6d3e41b8c669f3e046e7ac0fbafb91adde9f7c5da2e8c873e36c9c3a1e35",
+    "source_mtime_utc": "2026-10-23T14:02:35.845208+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "alpaka-kernel-resources-measure",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/alpaka-kernel-resources-measure|alpaka-kernel-resources-measure"
+      },
+      {
+        "kind": "wiki",
+        "old": "phase2-it-unpacker-base-release",
+        "new": "Meta/claude-memory/_history/projects/DigiMorphing/vault/phase2-it-unpacker-base-release|phase2-it-unpacker-base-release"
+      }
+    ],
+    "imported_sha256": "af15fafc55758b767abb470e5ec3c165dea0e6a6a51b60d733386aa352613c62"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/review-findings-phrasing.md",
+    "destination": "Meta/claude-memory/_history/general/vault/review-findings-phrasing.md",
+    "source_sha256": "4c07a812a79edd757a997a378b9c3b99f884abb3a129a6f343babb59e92399c7",
+    "source_mtime_utc": "2026-09-21T23:37:21.657415+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "review-read-the-branch-not-head",
+        "new": "Meta/claude-memory/_history/general/vault/review-read-the-branch-not-head|review-read-the-branch-not-head"
+      },
+      {
+        "kind": "wiki",
+        "old": "an-review-verify-against-source",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/an-review-verify-against-source|an-review-verify-against-source"
+      }
+    ],
+    "imported_sha256": "7197e1316f91b7f6b86df45d4598d81fad398aa0f682103f450b1312fe5fca93"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/review-read-the-branch-not-head.md",
+    "destination": "Meta/claude-memory/_history/general/vault/review-read-the-branch-not-head.md",
+    "source_sha256": "a8568ebb7f4dc723cf334ceaa9c7d98faa73378001089639a176524d98bbd80b",
+    "source_mtime_utc": "2026-09-21T22:26:08.964381+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "lxplus-cmssw-build-location",
+        "new": "Meta/claude-memory/_history/workflow/vault/lxplus-cmssw-build-location|lxplus-cmssw-build-location"
+      },
+      {
+        "kind": "wiki",
+        "old": "an-review-verify-against-source",
+        "new": "Meta/claude-memory/_history/projects/HToWW/vault/an-review-verify-against-source|an-review-verify-against-source"
+      }
+    ],
+    "imported_sha256": "31fdf2e43edac9563187caf05ffbd4a7b00f01357c8f6755f70a3ff945d44dbb"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/slide-review-skills.md",
+    "destination": "Meta/claude-memory/_history/slides/vault/slide-review-skills.md",
+    "source_sha256": "e254e9f1cd967db08ce4054a0c27e97f6bf4e3f74fb6d27f10db09ebbbadda29",
+    "source_mtime_utc": "2026-10-15T20:50:30.814508+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "wiki",
+        "old": "acat2027-combine-agent-talk",
+        "new": "Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk"
+      },
+      {
+        "kind": "wiki",
+        "old": "hww-fs-private-results-not-for-ppt",
+        "new": "Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt"
+      }
+    ],
+    "imported_sha256": "3a197863fafde4313d98007f7398ef3c63e9d83ec502cb639b65b8e154e12591"
+  },
+  {
+    "source": "/home/cgupta/.claude/projects/-home-cgupta-obsidian-notes/memory/vault-push-not-allowlisted.md",
+    "destination": "Meta/claude-memory/_history/workflow/vault/vault-push-not-allowlisted.md",
+    "source_sha256": "4c65268c5bd1fece2f1ed6faf16423f4d14855555dc839fa3eb5649d817cb069",
+    "source_mtime_utc": "2026-09-12T16:48:49.575204+00:00",
+    "redactions": [],
+    "link_rewrites": [
+      {
+        "kind": "unresolved-reference",
+        "old": "[[vault-send-workflow]]",
+        "new": "`[[vault-send-workflow]]` (unresolved historical reference; source absent from imported corpus)"
+      }
+    ],
+    "imported_sha256": "0dc640da478e8a38b9764a35b6c8c808f655a2f1539c2f187dfff29ca3d383ee"
+  }
+]

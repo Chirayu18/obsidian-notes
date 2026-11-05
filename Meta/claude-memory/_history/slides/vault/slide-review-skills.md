@@ -1,0 +1,12 @@
+---
+name: slide-review-skills
+description: "Slide review setup built 2026-10-15: beamer + pptagent + own cern-slides skill in ~/slide-review, linked into ~/.claude/skills; aigw Qwen vision misreads small glyphs, verify before reporting"
+metadata:
+  type: project
+---
+
+`~/slide-review` (local git, vendor/ ignored) holds pinned clones of Noi1r/beamer-skill and icip-cas/PPTAgent (runtime in `vendor/PPTAgent/skills/pptagent/.venv`, doctor OK) plus our `skills/cern-slides` (SKILL.md, `scripts/cern_checks.py` deterministic CMS checks, `scripts/ppteval_cern.py` PPTEval with CMS rubrics on aigw `qwen3.8-27b-fp16`). All three symlinked in `~/.claude/skills/`. Research: `Projects/AgentHarness/2026-10-15-slide-review-agent-research.md`.
+
+**Why:** user wants an agentic CMS slide reviewer; nothing existing checks slides against the analysis.
+
+**How to apply:** PPTEval original rubric (v0.2.0 tag only; master is now a PPTX generator) rewards decoration, ours does not. MEASURED: Qwen 27B at 80 dpi read c-bar as "ee" and invented a neutrino-mass slide; 150 dpi + text layer fixed the invention but not the c-bar misread, so per-slide gateway findings are candidates that Claude must confirm by viewing the page. aigw only from lxplus/eduVPN; run ppteval on lxplus with the key via stdin. Shipping vault plots to aigw was blocked by the auto-mode classifier; test with synthetic images. Workflow (2026-10-15, user's design): "start a slide review" -> skill interviews him (AskUserQuestion) and writes slide-review.json next to the deck (mode public|own|internal, audience, minutes, focus, backend claude|aigw, forbidden patterns) -> layers -> report ("Your review" in his voice, then correctness) -> ALWAYS ask whether to save his opinions (reactions.jsonl). "remember my review" -> add_feedback.py on the deck version from BEFORE the review. Personal layer learns only from his own words, never agent output. Default backend is Claude everywhere (claude -p); aigw only when content must stay at CERN. Eval: v2 checklist+deck-order reviewer 16/29 of his points vs generic 10/29 (one Claude judge); v1 imitate-voice tied the control. User said NOT to run the full pipeline on Flashjet. Related: [[Meta/claude-memory/_history/slides/vault/acat2027-combine-agent-talk|acat2027-combine-agent-talk]], [[Meta/claude-memory/_history/slides/vault/hww-fs-private-results-not-for-ppt|hww-fs-private-results-not-for-ppt]].

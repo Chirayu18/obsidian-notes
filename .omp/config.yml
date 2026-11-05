@@ -1,0 +1,8 @@
+memory:
+  backend: hindsight
+hindsight:
+  apiUrl: http://127.0.0.1:8888
+  bankId: research
+  scoping: global
+  autoRecall: true
+  autoRetain: true

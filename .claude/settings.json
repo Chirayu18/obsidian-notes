@@ -1,4 +1,5 @@
 {
+  "autoMemoryEnabled": false,
   "worktree": {
     "bgIsolation": "none"
   },
@@ -8,27 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"$CLAUDE_PROJECT_DIR\" && if git rev-parse --abbrev-ref --symbolic-full-name '@{u}' >/dev/null 2>&1; then git pull --rebase --autostash 2>&1 | tail -3; else echo 'vault sync skipped: no upstream on this branch (fetch only)'; git fetch --quiet origin 2>&1 | tail -1; fi; true"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/rag/refresh-index.sh"
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/rag/refresh-index.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/scripts/sync-on-start.sh"
           }
         ]
       }

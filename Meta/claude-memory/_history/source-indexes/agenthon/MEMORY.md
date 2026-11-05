@@ -1,0 +1,5 @@
+- [Agenthon Track 1 project](../../projects/Agenthon/agenthon/agenthon-track1-project.md) — layout, constraints, hold-out, dev endpoints; full state in ~/agenthon_hacathon/STATUS.md
+- [Never disrupt running jobs](../../projects/Agenthon/agenthon/never-disrupt-running-jobs.md) — don't kill/restart/relaunch in-progress eval runs without explicit approval
+- [s5 design lessons](../../projects/Agenthon/agenthon/s5-design-lessons.md) — s3-vs-s4 post-mortem rules: depth over breadth, B only as fallback, no truncation give-up
+- [User career goal](../../projects/Agenthon/agenthon/user-career-goal.md) — targeting quant roles; ICAIF AI4F paper vs CFA
+- [Agenthon Track 3 project](../../projects/Agenthon/agenthon/agenthon-track3-project.md) — native exact simulator build, layout under ~/agenthon_hacathon/track3

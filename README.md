@@ -7,12 +7,22 @@ tags: [index]
 Physics-analysis notes (HToWW, Alpaka), synced **laptop ⇄ GitHub ⇄ lxplus** via git.
 Start from [[Dashboard]] (pin it) for a live view of open work.
 
+## Start here
+
+- [[Projects/README|Research projects]]
+- [[References/README|External references]]
+- [[Meta/README|Agent setup and vault maintenance]]
+- [[Inbox/README|Unclassified records]]
+- [[Personal/README|Personal exports]]
+
 ## Layout
 
 | Folder | What lives here |
 |---|---|
-| `Projects/<Name>/` | Your curated notes + generated work per analysis. lxplus session dumps land in dated subfolders `Projects/<Name>/lxplus-YYYY-MM-DD/`. |
-| `References/<Name>/` | Stable external inputs — papers, analysis-note **PDFs** (committed so they open offline). Catalogue them in `papers.md`. |
+| `Projects/<Name>/` | Your curated notes + generated work per analysis. Organise by topic-named subproject; dates belong in filenames. Historical handoffs and snapshots live under each workstream’s `_history/`. |
+| `References/<Name>/` | Stable external inputs — papers, analysis-note **PDFs** (kept locally for offline reading; all PNG/PDF files are gitignored). Catalogue their source links in `papers.md`. |
+| `Meta/` | Agent roles/setup, personal agent tooling, maintenance reports and setup history. |
+| `Inbox/`, `Personal/` | Unclassified records and personal exports, kept separate from research. |
 | `Daily/` | One note per day (journal + today's tasks). |
 | `Templates/` | Templater templates (Daily Note, Meeting, Plot Entry, …). |
 | `Archive/` | Frozen snapshot. **Local-only** (gitignored) and hidden from Obsidian. Don't edit. |
@@ -58,7 +68,15 @@ Plots themselves stay on **EOS** — the vault stores *links*, not binaries.
 
 ## Sync (laptop ⇄ lxplus)
 
-- See [[SYNC]] for the full setup. Short version:
+Current instructions: [[Meta/sync]] and [[Meta/setup]]. Workers commit locally; the keeper reviews and pushes.
+
+### Historical usage text (superseded 2026-11-05)
+
+The following original text is retained verbatim as history; its automatic worker-push instructions are superseded by the current roles.
+
+## Sync (laptop ⇄ lxplus)
+
+- See [[Meta/_history/SYNC|SYNC]] for the full setup. Short version:
   - **Laptop:** `git pull` / `git push` (or the **Obsidian Git** plugin to automate).
   - **lxplus:** clone the repo; Claude there follows [[CLAUDE]] — writes into
     `Projects/<Name>/` (notes) and `References/<Name>/` (PDFs), then runs

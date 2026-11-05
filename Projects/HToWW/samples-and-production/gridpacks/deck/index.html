@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- deck: hplusc-gridpacks-3fs-4fs  revision: r1 (2026-11-04)  task: HTOWW-3FS-CONTINUE-20261104 -->
+<title>H+c → WW: validated 3FS and 4FS gridpacks for a Run 3 request</title>
+<link rel="stylesheet" href="assets/reveal/reset.css">
+<link rel="stylesheet" href="assets/reveal/reveal.css" media="screen">
+<style>
+  :root { --red:#c0392b; --blue:#1f4e79; --grey:#555; }
+  .reveal { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 22px; color:#222; }
+  .reveal .slides section { text-align:left; padding: 0 10px; box-sizing:border-box; height:100%; }
+  .reveal h1 { font-size: 1.7em; color: var(--blue); margin: 0 0 .3em; line-height:1.15; }
+  .reveal h2 { font-size: 1.25em; color: var(--blue); margin: 0 0 .45em; border-bottom: 2px solid var(--blue); padding-bottom:.15em; }
+  .reveal h3 { font-size: 0.95em; color: var(--red); margin:.3em 0 .2em; }
+  .reveal ul { margin: 0 0 0 1.1em; } .reveal li { margin: .14em 0; line-height:1.3; }
+  .reveal p { margin:.25em 0; line-height:1.3; }
+  .reveal table { border-collapse: collapse; font-size: .72em; margin:.3em 0; }
+  .reveal th, .reveal td { border-bottom: 1px solid #ccc; padding: 3px 9px; text-align:center; }
+  .reveal th { background:#eef2f7; }
+  .reveal td:first-child, .reveal th:first-child { text-align:left; }
+  .reveal code { font-size:.78em; background:#f4f4f4; padding:0 3px; word-break: break-all; }
+  .reveal pre { font-size:.52em; box-shadow:none; width:100%; margin:.3em 0; }
+  .reveal pre { display:block; font-family: 'DejaVu Sans Mono', monospace; }
+  .reveal pre code { display:block; max-height: 540px; overflow:hidden; padding:8px; white-space: pre-wrap; word-break: break-all; line-height:1.38; font-size: 11.5px; background:#f4f4f4; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items:start; }
+  .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items:start; }
+  .grid2 img, .grid3 img { width:100%; margin:0; border:0; object-fit: contain; }
+  .grid3 img { height: 268px; }
+  .grid2 img { max-height: 285px; }
+  .grid2 img.tall { max-height: 520px; }
+  .cap { font-size:.62em; color: var(--grey); text-align:center; margin-top:-2px; }
+  .ok { color:#1e7d32; font-weight:bold; } .warn { color:#b35c00; font-weight:bold; }
+  .box { border-left: 5px solid var(--blue); background:#f3f6fa; padding: 6px 12px; margin:.4em 0; }
+  .boxr { border-left: 5px solid var(--red); background:#fbf1f0; padding: 6px 12px; margin:.4em 0; }
+  .small { font-size:.75em; } .tiny { font-size:.6em; color:var(--grey); }
+  .footer { position:absolute; bottom: 4px; left: 10px; right: 10px; font-size: 12px; color:#888; display:flex; justify-content:space-between; }
+  .backup h2 { color:#666; border-bottom-color:#999; }
+  .backup h2::before { content: "Backup: "; color:#999; }
+  @page { size: 1280px 720px; margin: 0; }
+  /* deterministic print layout: one slide = one 1280x720 page, independent of Reveal's print mode */
+  @media print {
+    html, body { width:1280px !important; height:auto !important; overflow:visible !important; background:#fff; }
+    .reveal, .reveal .slides { position:static !important; width:1280px !important; height:auto !important; transform:none !important;
+      zoom:1 !important; overflow:visible !important; inset:auto !important; margin:0 !important; left:auto !important; top:auto !important; }
+    .reveal .slides { counter-reset: slide; }
+    .reveal .slides > section { display:block !important; position:relative !important; width:1280px !important; height:720px !important;
+      transform:none !important; opacity:1 !important; visibility:visible !important; top:auto !important; left:auto !important;
+      padding:22px 34px 26px !important; box-sizing:border-box !important; overflow:hidden !important; counter-increment: slide; }
+    .reveal .slides > section + section { break-before:page; page-break-before:always; }
+    .reveal .slides > section::after { content: "H+c → WW gridpacks · internal · Simulation Private work   |   r1 · 2026-11-04   |   " counter(slide);
+      position:absolute; bottom:6px; right:20px; font-size:12px; color:#888; }
+    .reveal .controls, .reveal .progress, .reveal .slide-number, .footer, .reveal .backgrounds, .reveal .pause-overlay { display:none !important; }
+    .reveal > :not(.slides), body > :not(.reveal), .reveal .slides > :not(section) { display:none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- ===================== MAIN ===================== -->
+<section id="title">
+  <h1 style="margin-top:2.2em">H+c → WW: validated 3FS and 4FS gridpacks<br>for a Run 3 sample request</h1>
+  <p style="font-size:1.1em;color:#444">Gridpacks, fragments and validation for the HToWW contacts / GEN</p>
+  <p style="margin-top:2em">Chirayu Gupta · 2026-11-04 · revision r1</p>
+  <p class="tiny" style="margin-top:3em">Internal. Private-production plots ("Simulation Private work"); not CMS-approved and not for public use.</p>
+</section>
+
+<section id="summary">
+  <h2>Summary: what we are sending</h2>
+  <table style="font-size:.7em">
+    <tr><th></th><th>3FS H+c (non-FxFx)</th><th>4FS H+c FxFx</th></tr>
+    <tr><td>gridpack</td><td>official Run 3 3FS gridpack, <b>unchanged</b> (slc7, MG5_aMC 2.9.9)</td><td><b>rebuilt</b> on el8 (MG5_aMC 2.9.18, CMSSW_12_4_8) with fixed build scripts</td></tr>
+    <tr><td>what is new</td><td>H→WW fragment only (decay in Pythia)</td><td>correct scale/PDF weights + fragment with the 3 missing FxFx lines</td></tr>
+    <tr><td>validated against</td><td>official 3FS H→γγ (same gridpack), UL18 3FS H→WW (decay)</td><td>official clean 4FS H→γγ gridpack, same H→WW fragment</td></tr>
+    <tr><td>events used</td><td>500k private (out of 9.94M) vs 1.84M official</td><td>10.4k vs 10.3k (after FxFx matching)</td></tr>
+    <tr><td>σ</td><td>54.97 ± 0.32 fb (official ≈ 55 fb)</td><td>155.5 ± 0.4 fb before matching, identical to official</td></tr>
+    <tr><td>result</td><td class="ok">all decay-independent observables agree</td><td class="ok">weights and shapes agree with official</td></tr>
+  </table>
+  <div class="box small">Package (both tarballs, both fragments, SHA256SUMS, these slides):<br>
+  <code>https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11</code></div>
+  <p class="small"><b>Ask:</b> central Run 3 H+c→WW in 3FS (new) and a re-production of the 4FS (and H+b) WW requests with the rebuilt gridpack + fixed fragment.</p>
+</section>
+
+<section id="motivation">
+  <h2>Why: two problems in the central H+c/H+b → WW samples, and no 3FS WW</h2>
+  <div class="grid2">
+    <div>
+      <h3>1. LHE scale/PDF weights wrong (gridpack build)</h3>
+      <ul class="small">
+        <li>all scale variations ≈ ×2 nominal, PDF replicas / member 0 ≈ 2.26</li>
+        <li>cause: genproductions NLO workflow appends <code>reweight_scale/PDF = False</code> and runs the python <code>systematics</code> module, which ignores the running charm Yukawa of <code>_mg5amc.patch</code></li>
+      </ul>
+      <h3>2. FxFx merging misconfigured (fragment)</h3>
+      <ul class="small">
+        <li>7 WW requests lack <code>JetMatching:jetAlgorithm = 2</code>, <code>etaJetMax = 999.</code>, <code>coneRadius = 1.</code> → veto only at |η|&lt;2.5, R = 0.7</li>
+        <li>forward 1-jet events 7× rarer; not fixable by reweighting</li>
+      </ul>
+      <h3>3. No Run 3 3FS H→WW exists</h3>
+      <ul class="small"><li>DAS: Run 3 3FS H+c only for H→γγ; 3FS WW only Run 2 UL. Needed for the 3FS/4FS flavour-scheme treatment (LHCHWG-2026-007)</li></ul>
+    </div>
+    <div><img src="assets/before/fig1_weights.png"><div class="cap">Before: central H+c→WW (blue) vs clean references (2026-10-13 study)</div>
+    <img src="assets/before/fig2_merging_eta.png"><div class="cap">Before: forward-parton structure of the central WW FxFx fragment</div></div>
+  </div>
+</section>
+
+<section id="4fs-fix">
+  <h2>4FS: what was fixed in the gridpack build</h2>
+  <ul>
+    <li>Physics cards (proc, run, param, <code>_mg5amc.patch</code>, extramodels) are <b>byte-identical</b> to the official clean H→γγ 4FS gridpack. The bug is purely in the build scripts.</li>
+    <li>Patched copy of genproductions_scripts (original untouched), made by <code>mcm_grid/gp_fix_patch.py</code>:
+      <ul><li>only when the cards carry the <code>rwgt_muR_dep_fac</code> running-Yukawa patch: keep MG5_aMC internal reweighting (<code>True/True/False</code>) and use a <code>runcmsgrid.sh</code> that skips the python systematics step</li>
+      <li>exactly what the official clean gridpacks do; every other process builds as before</li></ul></li>
+    <li>Built on el8 with CMSSW_12_4_8, MG5_aMC 2.9.18. Integrated σ = <b>155.5 ± 0.4 fb</b>, identical to the official gridpack.</li>
+    <li>Two packaging slips caught by the tests and fixed (details in backup): missing <code>MetaData/</code> in the first build; <code>runcmsgrid.sh</code> not executable → repacked on 2026-10-28 with the identical file list.</li>
+    <li>Fragment: the validated Pythia settings, including the three FxFx lines (backup).</li>
+  </ul>
+  <div class="box small">The validation on the next slides ran on <b>this exact tarball</b>: SHA256 <code>62f9e155…5f6ae8</code>, validation jobs finished 2026-10-28 11:26, after the 10:34 repack.</div>
+</section>
+
+<section id="4fs-weights">
+  <h2>4FS validation: scale and PDF weights now correct</h2>
+  <div class="grid2">
+    <div>
+      <table>
+        <tr><th>quantity</th><th>new el8</th><th>official</th></tr>
+        <tr><td>events after FxFx matching</td><td>10370</td><td>10296</td></tr>
+        <tr><td>matched σ</td><td>97.4 ± 1.6 fb</td><td>96.5 ± 1.6 fb</td></tr>
+        <tr><td>negative-weight fraction</td><td>0.217</td><td>0.216</td></tr>
+        <tr><td>PDF replicas / member 0</td><td><b>0.999</b></td><td>0.999</td></tr>
+        <tr><td>PDF replica spread (rms)</td><td>0.0073</td><td>0.0074</td></tr>
+        <tr><td>μR×2 σ ratio</td><td>0.966</td><td>0.967</td></tr>
+        <tr><td>μR×0.5 σ ratio</td><td>1.049</td><td>1.044</td></tr>
+        <tr><td>all 9 scale points</td><td colspan="2">within 0.7% of official</td></tr>
+      </table>
+      <p class="small">Broken central samples for comparison: PDF ratio <b>2.26</b>, scale ×2.</p>
+    </div>
+    <div><img src="assets/plots4fs/pdf_replica_ratio.png"><div class="cap">per-event mean of PDF replicas / member 0</div>
+      <img src="assets/plots4fs/scale_shape_higgs_pt.png"><div class="cap">scale-variation shape vs Higgs p<sub>T</sub></div></div>
+  </div>
+</section>
+
+<section id="4fs-kin">
+  <h2>4FS validation: kinematics agree with the official gridpack</h2>
+  <div class="grid3">
+    <div><img src="assets/plots4fs/higgs_pt.png"><div class="cap">Higgs p<sub>T</sub>: χ²/ndf 1.4/10</div></div>
+    <div><img src="assets/plots4fs/lead_parton_pt.png"><div class="cap">leading LHE parton p<sub>T</sub>: 1.0/10</div></div>
+    <div><img src="assets/plots4fs/lead_parton_eta.png"><div class="cap">leading LHE parton η: 8.5/20</div></div>
+    <div><img src="assets/plots4fs/n_genjets.png"><div class="cap">N GenJets: 4.4/5</div></div>
+    <div><img src="assets/plots4fs/genjet1_pt.png"><div class="cap">leading GenJet p<sub>T</sub>: 4.3/6</div></div>
+    <div class="small" style="padding-top:1em">
+      <p>LHE+GEN, 10 jobs each, 2023BPix conditions, the same H→WW fragment with all FxFx lines.</p>
+      <table>
+        <tr><th></th><th>new</th><th>official</th></tr>
+        <tr><td>1-jet share</td><td>0.269 ± 0.009</td><td>0.268 ± 0.009</td></tr>
+        <tr><td>1-jet, |η<sub>parton</sub>|&gt;2.5</td><td>0.066 ± 0.005</td><td>0.072 ± 0.005</td></tr>
+      </table>
+      <p>The central WW fragment gives ≈ 0.010 for the forward 1-jet share; the fixed fragment restores ≈ 0.07.</p>
+    </div>
+  </div>
+</section>
+
+<section id="3fs-strategy">
+  <h2>3FS: gridpack reused unchanged; validated with a 10M-event private production</h2>
+  <ul>
+    <li>The official Run 3 3FS H+c gridpack (<code>p p > h c c~ [QCD]</code>, MG5_aMC 2.9.9, no MadSpin) has an <b>undecayed Higgs</b> and already skips the python systematics step → <b>clean weights</b>. Reused byte-for-byte (SHA256 <code>3cbbb8dd…a0b33db</code>).</li>
+    <li>New: only the fragment, i.e. the 3FS H→γγ fragment with <code>25:onIfMatch = 24 -24</code>, <code>24:onIfAny = 11 13 15</code> (same decay as the 4FS WW samples).</li>
+    <li>Private production with exactly this gridpack + fragment (LHE→GEN-SIM→Premix→RECO→MiniAOD→NanoAODv13), 1000 events/job:
+      <table style="font-size:.85em">
+        <tr><th>era</th><th>2022preEE</th><th>2022postEE</th><th>2023preBPix</th><th>2023postBPix</th><th>total</th></tr>
+        <tr><td>published / requested</td><td>1.262M / 1.29M</td><td>4.287M / 4.31M</td><td>2.870M / 2.87M</td><td>1.518M / 1.53M</td><td><b>9.94M / 10M</b></td></tr>
+      </table></li>
+    <li><b>Validation logic:</b> production-level quantities do not depend on the Higgs decay, so private H→WW must reproduce the <b>official 3FS H→γγ</b> NanoAOD made from the same gridpack. The decay is checked against the <b>official Run 2 UL18 3FS H→WW</b>.</li>
+    <li>Statistics used: private 500k events (4 eras), official γγ 1.84M (22EE + 23BPix), UL18 WW 1.65M. With ≈ 40% negative weights the effective statistics are ≈ 4% of that.</li>
+  </ul>
+</section>
+
+<section id="3fs-weights">
+  <h2>3FS validation: cross section and weights</h2>
+  <div class="grid2">
+    <div>
+      <table>
+        <tr><th>quantity</th><th>private H→WW</th><th>official H→γγ</th></tr>
+        <tr><td>σ (GenXsecAnalyzer, CRAB test)</td><td>54.97 ± 0.32 fb</td><td>≈ 55 fb</td></tr>
+        <tr><td>mean weight (Runs sumw/count)</td><td>54.6 fb</td><td>54.9 fb</td></tr>
+        <tr><td>negative-weight fraction</td><td>0.397</td><td>0.396</td></tr>
+        <tr><td>μR×2 (2,1)</td><td>0.808</td><td>0.806</td></tr>
+        <tr><td>μR×0.5 (0.5,1)</td><td>1.197</td><td>1.201</td></tr>
+        <tr><td>all 9 scale points</td><td colspan="2">within 0.5% of official</td></tr>
+        <tr><td>H → WW fraction</td><td>1.000</td><td></td></tr>
+      </table>
+      <p class="small">Scale variations go in opposite directions with normal size (no ×2 bug).</p>
+      <p class="small"><span class="warn">PDF:</span> neither official nor private 3FS NanoAOD stores <code>LHEPdfWeight</code> (0 entries in both; same behaviour). At LHE level (CRAB test, 1000 events) the replicas average to member 0 with 1.6% spread; PDF set NNPDF31_nnlo_as_0118.</p>
+    </div>
+    <div><img class="tall" src="assets/plots3fs/3fs_w_scale.png"><div class="cap">inclusive σ<sub>var</sub>/σ<sub>nom</sub> for the 9 LHEScaleWeights</div></div>
+  </div>
+</section>
+
+<section id="3fs-prod">
+  <h2>3FS validation: production kinematics, private H→WW = official H→γγ</h2>
+  <div class="grid3">
+    <div><img src="assets/plots3fs/3fs_prod_lhe_h_pt.png"><div class="cap">LHE Higgs p<sub>T</sub>: χ²/ndf 11.3/12</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_lhe_h_eta.png"><div class="cap">LHE Higgs η: 22.3/19</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_lhe_npart.png"><div class="cap">N outgoing LHE partons: 0.9/1 (MC@NLO real-emission events carry net negative weight)</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_lhe_c1_pt.png"><div class="cap">leading LHE charm p<sub>T</sub>: 13.4/11</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_lhe_c1_eta.png"><div class="cap">leading LHE charm η: 13.6/19</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_chad1_pt.png"><div class="cap">leading c-hadron p<sub>T</sub> (after shower): 4.8/9</div></div>
+  </div>
+</section>
+
+<section id="3fs-jets">
+  <h2>3FS validation: GenJets (decay-dependent)</h2>
+  <div class="grid3">
+    <div><img src="assets/plots3fs/3fs_prod_n_genjets.png"><div class="cap">N GenJets: χ²/ndf 9.5/5</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_genjet1_pt.png"><div class="cap">leading GenJet p<sub>T</sub>: 25.2/8</div></div>
+    <div><img src="assets/plots3fs/3fs_prod_genjet1_eta.png"><div class="cap">leading GenJet η: 28.3/17</div></div>
+  </div>
+  <ul class="small">
+    <li>GenJets are cleaned (ΔR &lt; 0.4) of prompt e/μ/γ and visible hadronic τ, but the jets still see the decay (γγ vs WW → ℓν/τν, FSR, τ remnants below 15 GeV). Bin-level differences of 5–10% with no consistent trend.</li>
+    <li>Every decay-independent quantity on the previous slide agrees, and the tarball is byte-identical. So these differences are attributed to the decay, not the gridpack. A like-for-like jet check needs a 13.6 TeV H→WW reference, which is what this request would provide.</li>
+  </ul>
+</section>
+
+<section id="3fs-decay">
+  <h2>3FS validation: H → WW → ℓν decay</h2>
+  <div class="grid2">
+    <div><img src="assets/plots3fs/3fs_dec_w_daughters.png"><div class="cap">W daughter flavours: private 13.6 TeV vs official UL18 3FS WW; all 1/6</div>
+    <img src="assets/plots3fs/3fs_dec_nlep.png" style="width:70%;margin-left:15%"><div class="cap">N prompt e/μ: χ²/ndf 4.7/3</div></div>
+    <div><img src="assets/plots3fs/3fs_dec_mll.png"><div class="cap">m<sub>ℓℓ</sub> of the two leading prompt e/μ: 13.7/9</div>
+    <img src="assets/plots3fs/3fs_dec_lep1_pt.png"><div class="cap">leading prompt e/μ p<sub>T</sub>: 11.1/10</div></div>
+  </div>
+  <p class="tiny">Reference is at 13 TeV (UL18); decay kinematics in the Higgs rest frame are almost √s-independent, the small boost difference is within statistics.</p>
+</section>
+
+<section id="3fs-eras">
+  <h2>3FS validation: consistency of the four private eras</h2>
+  <div class="grid3">
+    <div><img src="assets/plots3fs/3fs_era_lhe_h_pt.png"><div class="cap">LHE Higgs p<sub>T</sub>: 9.5, 13.2, 19.4 / 12</div></div>
+    <div><img src="assets/plots3fs/3fs_era_chad1_pt.png"><div class="cap">leading c-hadron p<sub>T</sub>: 10.8, 10.2, 11.0 / 9</div></div>
+    <div><img src="assets/plots3fs/3fs_era_n_genjets.png"><div class="cap">N GenJets: 9.6, 6.3, 14.6 / 5</div></div>
+  </div>
+  <p class="small">Each era vs 2022postEE (100–150k events each). Same gridpack and fragment in all eras; only the CMSSW release and conditions differ (12_4_20 → 13_0_13/13_0_17 for 2022, 13_0_17 for 2023). Mostly consistent; the largest values (19.4/12 and 14.6/5, both 2023postBPix) come from single low-statistics bins.</p>
+</section>
+
+<section id="request">
+  <h2>Proposed request</h2>
+  <ul>
+    <li><b>3FS H+c → WW (new):</b> official 3FS gridpack (unchanged) + <code>HPlusCharm_3FS_HToWWTo2L2Nu_13p6TeV_fragment.py</code>, for 2022, 2022EE, 2023, 2023BPix.
+      <ul class="small"><li>≈ 40% negative weights → ≈ 6× fewer effective events per generated event than 4FS FxFx in our SR; suggest <b>[N events] per era</b> (to be decided)</li></ul></li>
+    <li><b>4FS H+c FxFx → WW (re-production):</b> rebuilt el8 gridpack + fragment with the three FxFx lines, replacing HIG-Run3Summer22wmLHEGS-02684, HIG-Run3Summer22EEwmLHEGS-02600, HIG-Run3Summer23BPixwmLHEGS-02468.</li>
+    <li><b>H+b → WW (same issue):</b> HIG-Run3Summer22wmLHEGS-02697, -22EEwmLHEGS-02645, -23wmLHEGS-03356, -23BPixwmLHEGS-02517. The same build fix applies; the H+b gridpack has <b>not</b> been rebuilt or validated yet.</li>
+    <li>Other processes with a running-Yukawa patch (e.g. bbH) may carry the same weight problem.</li>
+  </ul>
+  <div class="boxr small"><b>Not covered yet:</b> the rebuilt 4FS gridpack was validated at LHE+GEN level (where gridpack problems show up), not through SIM/RECO. The 3FS chain was run end to end privately (9.94M events), but the 4FS el8 gridpack was not.</div>
+</section>
+
+<!-- ===================== BACKUP ===================== -->
+<section id="bk-paths" class="backup">
+  <h2>Gridpack and fragment paths</h2>
+  <p class="small">CERNBox = <code>https://cernbox.cern.ch/files/spaces</code> + EOS path. Request package (copies, checksums verified identical to the originals):</p>
+  <pre><code>https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11
+  3FS/HPlusCharm_3FS_MuRFScaleDynX0p50_HToGG_M125_TuneCP5_13p6TeV_amcatnlo_pythia8_slc7_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+  3FS/HPlusCharm_3FS_HToWWTo2L2Nu_13p6TeV_fragment.py
+  4FS/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+  4FS/HPlusCharm_4FS_FxFx_HToWWTo2L2Nu_13p6TeV_fragment.py
+  SHA256SUMS</code></pre>
+  <p class="small">Originals:</p>
+  <pre><code>3FS (official, cvmfs): /cvmfs/cms.cern.ch/phys_generator/gridpacks/RunIII/13p6TeV/slc7_amd64_gcc10/MadGraph5_aMCatNLO/HPlusCharm_3FS_MuRFScaleDynX0p50_HToGG_M125_TuneCP5_13p6TeV_amcatnlo_pythia8_slc7_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+4FS (rebuilt): /eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/genproductions_scripts/bin/MadGraph5_aMCatNLO/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+3FS fragment origin: /eos/user/c/cgupta/HToWW/fs_unc/gen3fs_ww/python/HPlusCharm_3FS_HToWWTo2L2Nu_13p6TeV_fragment.py
+
+SHA256
+3cbbb8dd2704316bb2e5456887beb77b8d7e165e81e1b1e20744fd0acb0a33db  3FS tarball (50.4 MB)
+62f9e155a30e2f475dc65f4514e450c7633471ba59ba6dc40908cb30a45f6ae8  4FS tarball (44.7 MB)
+e4e9fd52bd7eed19e36a7949f7d88ac5119635fc20510b4eb1bb3a662085daa5  3FS fragment
+0baa0fdd7234764846250bd6f6a690fd2f70bbdc3399add31d8c934d4da045f5  4FS fragment</code></pre>
+  <p class="tiny">The 4FS fragment's ExternalLHEProducer points at the EOS tarball; replace with the cvmfs path after upload. Old non-executable 4FS tarball kept as <code>…_tarball_noexec.tar.xz</code> (do not use).</p>
+</section>
+
+<section id="bk-fragments" class="backup">
+  <h2>Pythia processParameters of the two fragments</h2>
+  <div class="grid2">
+    <div><h3>3FS H→WW (non-FxFx)</h3>
+<pre><code>"TimeShower:nPartonsInBorn = 2",
+"25:onMode = off",
+"25:onIfMatch = 24 -24",
+"24:onMode = off",
+"24:onIfAny = 11 13 15",
+# blocks: pythia8CommonSettings, CP5 (13.6 TeV),
+#         aMCatNLOSettings, PSweightsSettings</code></pre></div>
+    <div><h3>4FS H→WW FxFx (as validated)</h3>
+<pre><code>"JetMatching:setMad = off",   "JetMatching:scheme = 1",
+"JetMatching:merge = on",
+"JetMatching:jetAlgorithm = 2",   # missing centrally
+"JetMatching:etaJetMax = 999.",   # missing centrally
+"JetMatching:coneRadius = 1.",    # missing centrally
+"JetMatching:slowJetPower = 1",  "JetMatching:qCut = 30.",
+"JetMatching:doFxFx = on",       "JetMatching:qCutME = 10.",
+"JetMatching:nQmatch = 4",       "JetMatching:nJetMax = 1",
+"SLHA:useDecayTable = off",      "25:m0 = 125",
+"25:onMode = off", "25:onIfMatch = 24 -24",
+"24:onMode = off", "24:onIfAny = 11 13 15", "24:mMin = 0.05"</code></pre></div>
+  </div>
+  <p class="tiny">4FS settings copied verbatim from <code>/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/val_NEW_cfg.py</code>; the original fragment file of that cfg was not preserved, so the package fragment was rewritten from the cfg (2026-11-04).</p>
+</section>
+
+<section id="bk-4fs-table" class="backup">
+  <h2>4FS validation: full numbers</h2>
+  <div class="grid2"><div>
+  <table>
+    <tr><th>quantity</th><th>new el8</th><th>official</th></tr>
+    <tr><td>files / events after matching</td><td>10 / 10370</td><td>10 / 10296</td></tr>
+    <tr><td>negative-weight fraction</td><td>0.217</td><td>0.216</td></tr>
+    <tr><td>PDF member 0 / nominal (median)</td><td>1.0000</td><td>1.0000</td></tr>
+    <tr><td>PDF replica mean / member 0</td><td>0.9990</td><td>0.9989</td></tr>
+    <tr><td>PDF replica σ spread (rms)</td><td>0.0073</td><td>0.0074</td></tr>
+    <tr><td>(μR,μF)=(0.5,0.5)</td><td>1.052</td><td>1.050</td></tr>
+    <tr><td>(0.5,1)</td><td>1.049</td><td>1.044</td></tr>
+    <tr><td>(0.5,2)</td><td>1.003</td><td>0.996</td></tr>
+    <tr><td>(1,0.5)</td><td>0.951</td><td>0.952</td></tr>
+    <tr><td>(1,2)</td><td>1.013</td><td>1.012</td></tr>
+    <tr><td>(2,0.5)</td><td>0.887</td><td>0.888</td></tr>
+    <tr><td>(2,1)</td><td>0.966</td><td>0.967</td></tr>
+    <tr><td>(2,2)</td><td>1.014</td><td>1.014</td></tr>
+  </table></div><div>
+  <table>
+    <tr><th>quantity</th><th>new</th><th>official</th></tr>
+    <tr><td>1-jet (NpNLO=1) share</td><td>0.269 ± 0.009</td><td>0.268 ± 0.009</td></tr>
+    <tr><td>1-jet, |η<sub>lead parton</sub>|&gt;2.5</td><td>0.0657 ± 0.0047</td><td>0.0723 ± 0.0047</td></tr>
+    <tr><td>0-jet, parton p<sub>T</sub>&gt;30, |η|&gt;2.5</td><td>0.0017 ± 0.0005</td><td>0.0010 ± 0.0004</td></tr>
+  </table>
+  <table>
+    <tr><th>distribution (normalised)</th><th>χ²/ndf</th></tr>
+    <tr><td>Higgs p<sub>T</sub></td><td>1.4/10</td></tr>
+    <tr><td>leading LHE parton η</td><td>8.5/20</td></tr>
+    <tr><td>leading LHE parton p<sub>T</sub></td><td>1.0/10</td></tr>
+    <tr><td>N GenJets (p<sub>T</sub>&gt;30, |η|&lt;4.7)</td><td>4.4/5</td></tr>
+    <tr><td>leading GenJet p<sub>T</sub></td><td>4.3/6</td></tr>
+  </table>
+  <p class="tiny">Reference: official clean <code>HPlusCharm_4FS_MuRFScaleDynX0p50_HToGG_M125_…_slc7_amd64_gcc10_CMSSW_12_4_8</code> (MG 2.9.9) from cvmfs, showered with the same H→WW fragment. Source: <code>gp_fix_4fs/validation/summary.md</code>, <code>compare.py</code>, 10 + 10 jobs <code>out/val_{NEW,REF}_10{01..10}</code>.</p>
+  </div></div>
+</section>
+
+<section id="bk-4fs-history" class="backup">
+  <h2>4FS build and validation history</h2>
+  <table style="font-size:.66em">
+    <tr><th>date</th><th>step</th><th>result</th></tr>
+    <tr><td>2026-10-23</td><td>diagnosis: cards byte-identical to official; bug in <code>prepare_run_card</code> + <code>runcmsgrid.sh</code></td><td>patched scripts in <code>gp_fix_4fs/genproductions_scripts</code></td></tr>
+    <tr><td>2026-10-23</td><td>build 1 (tmux on lxplus966)</td><td><span class="warn">broken</span>: no <code>MetaData/</code> → PDF lookup failed; 12 MB tarball, kept in <code>broken_try3/</code></td></tr>
+    <tr><td>2026-10-23</td><td>build 2</td><td>45 MB tarball, σ = 155.5 ± 0.4 fb = official</td></tr>
+    <tr><td>2026-10-23/28</td><td>validation run 1</td><td><span class="warn">all 10 new jobs failed</span>: <code>runcmsgrid.sh</code> not executable ("Permission denied"); outputs kept in <code>validation/out/broken_noexec/</code></td></tr>
+    <tr><td>2026-10-28 10:34</td><td>repack with the identical file list + execute bit; patch script fixed for future builds</td><td>tarball SHA256 62f9e155…</td></tr>
+    <tr><td>2026-10-28 11:26</td><td>validation run 2 (10 jobs new, 10 reference)</td><td class="ok">all clean; plots and summary 12:00</td></tr>
+    <tr><td>2026-11-04</td><td>checksum re-verified; copied into the request package</td><td>identical SHA256</td></tr>
+  </table>
+</section>
+
+<section id="bk-3fs-table" class="backup">
+  <h2>3FS validation: full numbers</h2>
+  <table>
+    <tr><th>quantity</th><th>private H→WW (4 eras)</th><th>official H→γγ (22EE+23BPix)</th><th>official UL18 H→WW (13 TeV)</th></tr>
+    <tr><td>events read</td><td>499,997</td><td>1,841,296</td><td>1,649,996</td></tr>
+    <tr><td>negative-weight fraction</td><td>0.3969</td><td>0.3963</td><td>0.3982</td></tr>
+    <tr><td>mean weight = σ [fb]</td><td>54.60</td><td>54.93</td><td>50.48</td></tr>
+    <tr><td>(0.5,0.5)</td><td>1.1533</td><td>1.1579</td><td>1.1593</td></tr>
+    <tr><td>(0.5,1)</td><td>1.1968</td><td>1.2011</td><td>1.1990</td></tr>
+    <tr><td>(0.5,2)</td><td>1.2424</td><td>1.2464</td><td>1.2417</td></tr>
+    <tr><td>(1,0.5)</td><td>0.9520</td><td>0.9525</td><td>0.9556</td></tr>
+    <tr><td>(1,2)</td><td>1.0404</td><td>1.0402</td><td>1.0375</td></tr>
+    <tr><td>(2,0.5)</td><td>0.7643</td><td>0.7633</td><td>0.7666</td></tr>
+    <tr><td>(2,1)</td><td>0.8077</td><td>0.8064</td><td>0.8070</td></tr>
+    <tr><td>(2,2)</td><td>0.8413</td><td>0.8398</td><td>0.8381</td></tr>
+    <tr><td>W daughters e/ν<sub>e</sub>/μ/ν<sub>μ</sub>/τ/ν<sub>τ</sub></td><td>.1662/.1662/.1671/.1671/.1667/.1667</td><td></td><td>.1666/.1665/.1672/.1672/.1662/.1662</td></tr>
+    <tr><td>H → WW</td><td>1.000</td><td></td><td>1.000</td></tr>
+  </table>
+  <p class="tiny">σ from CRAB test job (2023BPix, 1000 events, GenXsecAnalyzer): 54.97 ± 0.32 fb before and after filter; negative fraction 0.391 ± 0.006 (<code>freshprod_3fs/2023postBPix/crab_projects_2023postBPix_3fs_test/…/results/job_out.1.0.txt</code>). Mean-weight statistical precision ≈ 1% (private) / 0.6% (official). Source: <code>gridpack_val_2026-11/out/summary.json</code>.</p>
+</section>
+
+<section id="bk-3fs-datasets" class="backup">
+  <h2>3FS validation: datasets</h2>
+<pre><code>private (prod/phys03), /HPlusCharm_3FS_HToWW_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8/…/USER     [files read]
+  cgupta-Run3Summer22NanoAODv13-HToWW-133X_mcRun3_2022_realistic_ForNanov13_v1-3FS-ec802a924dd8d7e3152e70f40d9bc826          1,261,997 ev  [100]
+  cgupta-Run3Summer22EENanoAODv13-HToWW-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-3FS-89894aaf62c331e64b8cc68efccf5122  4,119,986 ev  [150]
+  cgupta-Run3Summer22EENanoAODv13-HToWW-…_postEE_ForNanov13_v1-3FS_ext1-89894aaf62c331e64b8cc68efccf5122                         166,999 ev  [-]
+  cgupta-Run3Summer23NanoAODv13-HToWW-133X_mcRun3_2023_realistic_ForNanov13_v1-3FS-666a5f9beb603dd857705c0ae1d4d5d7          2,869,993 ev  [150]
+  cgupta-Run3Summer23BPixNanoAODv13-HToWW-133X_mcRun3_2023_realistic_postBPix_ForNanov13_v2-3FS-f2b169b977ce0b70458fec69039e4581 1,517,991 ev [100]
+official 3FS H->gg
+  /HPlusCharm_3FS_MuRFScaleDynX0p50_HTo2G_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8/Run3Summer22EENanoAODv13-133X_mcRun3_2022_realistic_postEE_ForNanov13_v1-v2/NANOAODSIM
+  /HPlusCharm_3FS_MuRFScaleDynX0p50_HTo2G_M-125_TuneCP5_13p6TeV_amcatnlo-pythia8/Run3Summer23BPixNanoAODv13-133X_mcRun3_2023_realistic_postBPix_ForNanov13_v2-v2/NANOAODSIM
+official 3FS H->WW, Run 2 (decay reference)
+  /HPlusCharm_3FS_MuRFScaleDynX0p50_HToWWTo2L2Nu_M125_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL18NanoAODv9-106X_upgrade2018_realistic_v16_L1v1-v1/NANOAODSIM</code></pre>
+  <p class="small">Production status 2026-11-04 (crab status): 2023preBPix COMPLETED; 63 jobs failed overall (28 preEE, 23 postEE ext1, 12 postBPix); 2022postEE = main + ext1 datasets.</p>
+</section>
+
+<section id="bk-3fs-method" class="backup">
+  <h2>3FS validation: definitions and commands</h2>
+  <ul class="small">
+    <li><b>LHE:</b> <code>LHEPart</code> status 1; Higgs (25); leading charm (|pdgId| 4); N outgoing partons (q, g).</li>
+    <li><b>c-hadron:</b> GenPart status 2, open charm (4xx/4xxx, charmonium excluded), weakly decaying, not from a b-hadron, |η| &lt; 2.5 (same definition as <code>fs_unc/gen/derive_chad.py</code> used for the flavour-scheme systematic); first bin = none or p<sub>T</sub> &lt; 5 GeV, as in the systematic.</li>
+    <li><b>GenJets:</b> p<sub>T</sub> &gt; 30, |η| &lt; 4.7, removed within ΔR &lt; 0.4 of status-1 prompt e/μ/γ (p<sub>T</sub>&gt;5) and GenVisTau (p<sub>T</sub>&gt;15).</li>
+    <li><b>Leptons:</b> status-1 prompt or direct-τ-decay e/μ.</li>
+    <li><b>χ²:</b> normalised shapes, Σ(p<sub>1</sub>−p<sub>2</sub>)²/(σ<sub>1</sub>²+σ<sub>2</sub>²) with σ² from Σw², ndf = bins − 1.</li>
+    <li>A first pass (2026-11-04, ¼ of the statistics, no τ cleaning) gave LHE Higgs p<sub>T</sub> 28/12 and GenJet p<sub>T</sub> 33/8. With full statistics the LHE value became 11.3/12; the jet differences stayed (attributed to the decay). First-pass outputs kept in <code>out_v1/</code>.</li>
+  </ul>
+<pre><code>cd /eos/user/c/cgupta/HToWW/gridpack_val_2026-11     # lxplus957, LCG_106 (uproot 5.3.7, awkward 2.6.4)
+./run_all.sh     # python3 fill.py lists/&lt;S&gt;.txt out/&lt;S&gt;.npz &lt;maxevents&gt; {ww|gg}   (interactive, no batch jobs)
+python3 plot.py  # -> plots/*.png, out/summary.json</code></pre>
+</section>
+
+<section id="bk-caveats" class="backup">
+  <h2>Assumptions, open items, provenance</h2>
+  <ul class="small">
+    <li><b>4FS:</b> validated at LHE+GEN with 10k events and one condition set (2023BPix). Not run through SIM/RECO. A one-job CRAB chain test would close this; needs explicit OK.</li>
+    <li><b>3FS PDF:</b> NanoAOD has no <code>LHEPdfWeight</code> for this gridpack (official too). The LHE-level replica check (mean = member 0, 1.6% spread) comes from the 2026-10-21 CRAB test (<code>check_test_output.py</code>); its printed output was not archived.</li>
+    <li><b>3FS GenJets:</b> decay-dependent differences (slide 3fs-jets); not used as a pass/fail criterion.</li>
+    <li><b>3FS el8:</b> the 3FS gridpack is slc7 (as used centrally for H→γγ); not rebuilt on el8.</li>
+    <li><b>H+b:</b> same build issue expected; not rebuilt or validated.</li>
+    <li><b>Event numbers:</b> [N events] per era for the 3FS request is still open.</li>
+    <li><b>Use of private samples:</b> internal cross-checks only; they cannot replace a central sample in public results.</li>
+    <li><b>Sources:</b> 4FS <code>/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/</code>; 3FS <code>/eos/user/c/cgupta/HToWW/gridpack_val_2026-11/</code>; production <code>/eos/user/c/cgupta/HToWW/freshprod_3fs/</code>; before-figures <code>/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket/</code>.</li>
+  </ul>
+</section>
+
+</div>
+<div class="footer"><span>H+c → WW gridpacks · internal · Simulation Private work</span><span>r1 · 2026-11-04</span></div>
+</div>
+<script src="assets/reveal/reveal.js"></script>
+<script>
+  Reveal.initialize({ width: 1280, height: 720, margin: 0.03, hash: true, slideNumber: 'c/t', center: false, transition: 'none',
+                      pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false });
+</script>
+</body>
+</html>

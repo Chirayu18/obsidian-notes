@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Benchmark the vault-search keyword arms on the labelled query set.
 
-Uses the 16 queries with ground truth from Projects/PromptTooling/rag-eval-2026-08-13
+Uses the 16 queries with ground truth from Meta/PromptTooling/vault-search
 (paraphrase / partial / literal) and reports recall@5 and MRR for:
   rg, bm25           keyword arm alone
   hybrid+rg          today's ranking (semantic + rg, RRF)
@@ -24,7 +24,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE / "vendor"))
 vs = SourceFileLoader("vault_search", str(HERE / "vault-search")).load_module()
 spec = importlib.util.spec_from_file_location(
-    "eval_queries", VAULT / "Projects/PromptTooling/rag-eval-2026-08-13/eval/eval_queries.py")
+    "eval_queries", VAULT / "Meta/PromptTooling/vault-search/eval/eval_queries.py")
 eq = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(eq)
 
