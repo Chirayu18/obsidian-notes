@@ -28,6 +28,7 @@ Every number here is agent-reported. Chirayu has not reviewed it.
   - lhe_alphaS Up/nom: **1.000** vs clean **1.030**.
   - Dividing the members by the per-event r instead gives PDF 1.0205–1.0208 (close to the clean value) and αs 1.044. αs is not exact this way, because the clean Fortran weights also run m_b with the varied α_s.
   - Whether this matters depends on how the signal PDF/αs normalisation enters the cards. If it comes from lnN on the cross section, only the shape is used. **Decision for Chirayu / the FULLFIX worker.**
+  - **Later context (keeper, 2026-11-05):** the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review, 9aa71d5]] finds the H+c sample has no αS members at all (LHA 325500–325600, PDF-only symmetric Hessian), so no per-event repair can supply H+c αS; the Hessian sum correctly has no `/99`. The PDF/αS choice stays open for Chirayu.
 
 ## What was run
 

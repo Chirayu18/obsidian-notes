@@ -6,7 +6,7 @@ source: laptop
 ---
 # higgscharm speed-up patches that leave the output unchanged (HTOWW-FRAMEWORK-SPEEDUP-2, 2026-11-05)
 
-**Status: agent-reported.** The patches are written and tested locally on one file. **None is applied to the repo.** The FULLFIX worker, which is the edit owner of the higgscharm repo, applies them.
+**Status: agent-reported.** The patches are written and tested locally on one file. When this note was written none was applied. **Update (keeper, 2026-11-05):** patches 01–04 were later applied by the FULLFIX worker in `hww-analysis` commit `40d0e3e`; the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review, 9aa71d5]] checked that the combined patch reverses cleanly and reran the 19-type writer check. Patch 05 (`request_cpus`) is untested and undecided.
 
 **Inputs**
 - Plan: [[2026-10-08-framework-optimization-plan]], §1.2 and §5 P1-perf.

@@ -9,17 +9,17 @@ source: laptop
 
 Background replacements, signal production, gridpacks, flavour schemes and full reruns.
 
-Status: Run A fixes are reported implemented but await tests after the latest edits; Run B is on hold ([source](full-rerun/2026-11-05-fullfix-rerun-run-a-state.md)).
-Latest: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|2026-11-05 full-fix handoff]]; figures and implementation remain agent-reported.
-Needs Chirayu: H+c normalisation, Run B jet definition, lepton-MVA working points and whether to redo speed-up work; submission requires separate approval.
+Status: Run A code committed (`0850e51` + `40d0e3e`, unpushed) with two uncommitted review fixes; 35/35 tests pass; not submitted.
+Latest: [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|2026-11-05 independent review]] and [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|full-fix state]]; agent-reported.
+Needs Chirayu: signal PDF/αS model, lepton-SF factorisation and retraining, muon RNG/CPUs, EOS space; submission requires separate approval.
 
-The full-fix handoff is maintained in [[Projects/HToWW/samples-and-production/full-rerun/README|notes]], not an active deck (Chirayu, 2026-11-05). [[Meta/keeper/2026-11-05-fullfix-review|Keeper review]].
+[Full-rerun progress deck r2](full-rerun/deck/index.html) · [[Projects/HToWW/samples-and-production/full-rerun/deck/CHANGELOG|deck changes]].
 
 Organization and links were checked by the keeper. This does not independently validate scientific claims in the source notes.
 
 ## Records
 
-- [[Projects/HToWW/samples-and-production/full-rerun/README|Full-rerun status]]
+- [[Projects/HToWW/samples-and-production/full-rerun/README|Full-rerun status and deck]]
 
 - [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|Full-fix rerun: current Run A / Run B state and decisions]]
 - [[Projects/HToWW/samples-and-production/2026-07-08-hplusc-hplusb-crab-status|HPlusC / HPlusB CRAB production — NanoAOD datasets & run steps]]

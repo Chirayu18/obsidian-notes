@@ -11,11 +11,20 @@ keeper_review: "[[Meta/keeper/2026-11-05-fullfix-review]]"
 
 Task HTOWW-FULLFIX-RERUN-20261104.
 
-The analysis-repository edits below are uncommitted and unvalidated by Chirayu. The worker reported no analysis submission, commit, push or deletion; the vault note itself was committed as `f26a601`. Every number is agent-reported.
+> [!summary] Current state (keeper consolidation, 2026-11-05 after the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review, 9aa71d5]])
+> All agent-reported; not reviewed by Chirayu.
+> - **Code:** `hww-analysis` at `0850e51` (baseline) + `40d0e3e` (speed-ups 01–04, WH alignment), both unpushed; 77 files vs `b7f67ef`. Two review fixes (shared jet ordering, PDF-only combined variation) are **uncommitted** in the tree, backed up as `*.pre_sol_review`.
+> - **Tests:** 35/35 pass with the review fixes (34 original + 2 regressions, which failed before the fix; b-hive reference included, no skips). H+c, TT and SingleMuon single-file smoke passed before and after the fixes.
+> - **Decided (Chirayu, 11-05, below):** NNLO H+c (0.0016626 pb), Thomas's lepton WPs, Run B split with R=0.4, |η|<2.5.
+> - **Open:** signal PDF/αS prescription (H+c has **no αS members**, LHA 325500 is PDF-only); lepton-SF factorization (ask Thomas) and event-MVA retraining; deterministic muon RNG; CPUs per job; EOS space (~81 GB free vs ~266 GB needed). Run A is not submitted; Run B stitching is not implemented.
+>
+> The sections below are kept in time order. **"Where the files are" through "Read-only checks" are the 04:17 UTC handoff snapshot (HEAD `b7f67ef`, uncommitted, 31 tests, NLO-like H+c); later sections supersede them.** Correction: the WH agreement quoted as "within 0.3%" is 0.36% for W+H leptonic (review).
+
+**Historical snapshot (04:17 UTC):** the analysis-repository edits below are uncommitted and unvalidated by Chirayu. The worker reported no analysis submission, commit, push or deletion; the vault note itself was committed as `f26a601`. Every number is agent-reported.
 
 Source: [worker handoff, 2026-11-05 04:17 UTC](t3-thread://v2/7fbb6319-2aff-454c-af0e-25d245ea222a/mcp:launch:0a085f5f6123e902dae945a412fbaac27624ff7a2dd345a25861a529c4e14fb5). Keeper review checks the record and navigation, not the remote implementation or physics. Earlier context: [[Projects/HToWW/samples-and-production/full-rerun/2026-10-01-full-rerun-plan-and-findings]] and [[Projects/HToWW/samples-and-production/full-rerun/2026-10-06-independent-review]].
 
-## Where the files are
+## Where the files are (snapshot 04:17 UTC; HEAD now `40d0e3e`)
 - **Repo:** lxplus `~/higgscharm_thomas/higgscharm_thomas_new/higgscharm`, branch `hww-analysis`, HEAD `b7f67ef`. The working tree has uncommitted edits.
 - **Backups:** `/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/`. This directory holds:
   - the pre-edit diff, a snapshot tarball and the post-edit patch;
@@ -41,7 +50,7 @@ Source: [worker handoff, 2026-11-05 04:17 UTC](t3-thread://v2/7fbb6319-2aff-454c
 - **Tests:** `tests/test_allfix.py` has 31 unittest tests and passed on 11-04. They have not been re-run since the YAML and fileset edits of 11-04/05.
 - **Smoke tests:** single-file runs of H+c, TTbar and SingleMuon 2022C passed on 11-04, before the lnN and WH edits.
 
-## Open issues (Needs Chirayu)
+## Open issues as of 04:17 UTC (1–3 and 5 since decided; see Decisions and current state)
 1. **H+c normalisation does not look like NNLO.**
    - The fileset has `xsec: 0.0022141` pb (σ×BR(H→WW→2ℓ2ν)). That implies about 97 fb inclusive, which equals the NLO 4FS value of LHCHWG-2026-007 (arXiv:2608.26863, Table 3: 0.2216 fb in H→γγ, divided by BR(γγ)).
    - The NNLO MiNNLOPS 4FS value is about 73.3 fb, which gives about 0.00167 pb, roughly −24%.

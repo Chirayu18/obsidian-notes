@@ -1,11 +1,17 @@
 ---
 tags: [slides]
-status: draft
+status: active
 date: 2026-11-05
 source: laptop
 ---
 
 # Full rerun progress deck
+
+## r2 — 2026-11-05
+
+Requested: worker commits `f027bdc` and `9aa71d5` carry `make slides`, and Chirayu asked for a summary of the recent work and the independent review. Rebuilt from scratch as 6 slides (`status`, `result-code`, `result-review`, `result-pdf-alphas`, `open`, `backup-sources`). Static HTML, no Markdown plugin. A `<noscript>` layout shows every slide in Obsidian's viewer, which runs with scripts off.
+Checks: `node render.mjs --revision=2` gave 6 slides, no overflow, no errors, no external requests. The JS-disabled Chromium check showed all 6 sections, and the screenshot was inspected. Not opened in Obsidian itself.
+Sources: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state]], [[Projects/HToWW/2026-11-05-sol-review-unpushed-work]], H+b, BR and speed-up notes. All content is agent-reported.
 
 ## Withdrawn from active index — 2026-11-05
 
