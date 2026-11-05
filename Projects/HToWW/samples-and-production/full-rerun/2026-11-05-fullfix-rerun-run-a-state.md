@@ -64,3 +64,41 @@ Source: [worker handoff, 2026-11-05 04:17 UTC](t3-thread://v2/7fbb6319-2aff-454c
 - **Production:** 9,936,966 / 10M events in DAS. 2022postEE needs both the main dataset and `_ext1`.
 - **Filesets:** none of the 3FS samples are in the higgscharm filesets yet.
 - **Status:** on hold until the open issues above are settled.
+
+## Read-only checks, 2026-11-05 (conductor handover items)
+
+### 3FS CRAB tasks
+
+`crab status` was run in a cmssw-el8 container, using CMSSW_12_4_20 from `freshprod/2022preEE`. DAS was queried with `instance=prod/phys03`.
+
+The 3FS production is finished at 9,936,966 / 10M events. The published counts are unchanged since 11-04 12:41Z.
+
+| task | scheduler | failed | published | DAS events |
+|---|---|---|---|---|
+| 2022preEE_v1 | FAILED (finished) | 28/1290 | 1262 | 1,261,997 |
+| 2022preEE_ext1 | **SUBMITREFUSED** | n/a | none | no dataset |
+| 2022postEE_v1 | n/a (from DAS) | n/a | 4120 | 4,119,986 |
+| 2022postEE_ext1 | FAILED (finished) | 23/190 | 167 | 166,999 |
+| 2023preBPix_v1 | n/a (from DAS) | 0 | 2870 | 2,869,993 |
+| 2023postBPix_v1 | FAILED (finished) | 12/1530 | 1518 | 1,517,991 |
+
+- No job is running. The 2022preEE `_ext1` resubmit (10-29) was refused by CRAB and never ran.
+- Still missing: 28k events in 2022preEE, 23k in 2022postEE `_ext1` and 12k in 2023postBPix. A further resubmit needs Chirayu's OK.
+
+### Scalevar ×2 issue
+- **Analysis-side fix: wired in the working tree.** `lhe_norm.py` (Runs-tree mean normalisation) and `lhe_yukawa_fix.py` (per-event running Yukawa) are hooked into `correction_manager.py` and `lhescale.py`. They are enabled via `lhe_renorm_datasets` in `hww_allfix_4fs`.
+  - On the 11-04 H+c smoke test the scalevar ratios are 0.91–1.10, not ×2.
+  - **H+b is not validated (P0-16).**
+- **Some of these files are untracked:** `lhe_norm.py`, `lhe_yukawa_fix.py`, `analysis/data/lhe_yukawa/` and `analysis/data/fs_shape/`. A baseline commit must include them.
+- **Gridpack-side fix:** applies only to our private el8 4FS gridpack (`mcm_grid/gp_fix_4fs`). The central samples are still broken at source.
+  - The GEN re-production request was drafted (10-13 ticket, 10-21 message). Whether it was sent is not recorded here.
+
+### Conflict with an earlier decision
+- The archived memory `hww-fs-decision-shape-only` (2026-09-30, Chirayu) says: keep the 4FS FxFx NLO cross section; no stitching, no NNLO normalisation, no normalisation lnN.
+- Chirayu's 11-04 answer was "drop the 30% lnN, we use NNLO normalisation now", plus the official split for Run B.
+- The fileset still has the NLO-like 0.0022141 pb.
+- Needs Chirayu: confirm that 11-04 supersedes 09-30.
+
+### Not yet checked
+- **Saranya comparison follow-ups (10-23 to 10-29):** not checked.
+- **"LHC paper" stitching alternative (10-28 sessions):** not found in the vault notes.
