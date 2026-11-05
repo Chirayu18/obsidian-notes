@@ -28,6 +28,10 @@
     .reveal .slide-number { font: 14px Arial, sans-serif; color: var(--muted); background: transparent; }
     .reveal .progress { color: var(--accent); height: 3px; }
     .reveal .controls { color: var(--accent); }
+
+    .vault-nav { position: fixed; bottom: 10px; left: 20px; z-index: 50; font: 13px Arial, sans-serif; color: #526374; }
+    .vault-nav a { color: #126782; margin-right: 16px; }
+    @media print { .vault-nav { display: none; } }
   </style>
   <!-- Obsidian's HTML viewer runs with scripts off: show every slide as a plain page. -->
   <noscript><style>
@@ -42,6 +46,7 @@
   </style></noscript>
 </head>
 <body>
+<nav class="vault-nav" aria-label="Vault and slide navigation"><a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2FREADME.md">Open notes in Obsidian</a><a href="../../../../../index.html">All decks</a></nav>
 <div class="reveal"><div class="slides">
 
 <section id="status">
@@ -54,7 +59,7 @@
 <li><strong>Needs you:</strong> PDF/αS prescription, lepton scale-factor provenance, c-tag choices, output space and permission for code fixes.</li>
 </ul>
 <p class="warn">Passing unit tests does not establish production readiness.</p>
-<p class="source">Sources: <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a> · detailed framework findings: <a href="../../../framework/deck/index.html">framework deck</a> · <a href="#/backup-sources">→ backup</a>.</p>
+<p class="source">Sources: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a> · detailed framework findings: <a href="../../../framework/deck/index.html">framework deck</a> · <a href="#/backup-sources">→ backup</a>.</p>
 </section>
 
 <section id="result-code">
@@ -67,7 +72,7 @@
     <li><strong>H+b scale fix:</strong> cross-checked against clean samples (≤ 2.3% in the b-jet region).</li>
     <li><strong>Speed-ups 01–04 applied:</strong> −33% job time, same output in a seeded test (worker). The review reran the 19/19 writer check.</li>
   </ul>
-  <p class="source">Notes: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">state</a> · <a href="../2026-11-05-hb-yukawa-fix-crosscheck.md">H+b cross-check</a> · <a href="../../2026-11-05-br-hww-xsec-check.md">BR/xsec check</a> · <a href="../../../framework/optimization/2026-11-05-speedup-patches.md">speed-ups</a>.</p>
+  <p class="source">Notes: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2F2026-11-05-fullfix-rerun-run-a-state.md" title="Open vault note in Obsidian">state</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2F2026-11-05-hb-yukawa-fix-crosscheck.md" title="Open vault note in Obsidian">H+b cross-check</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2F2026-11-05-br-hww-xsec-check.md" title="Open vault note in Obsidian">BR/xsec check</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2Foptimization%2F2026-11-05-speedup-patches.md" title="Open vault note in Obsidian">speed-ups</a>.</p>
 </section>
 
 <section id="result-review">
@@ -95,7 +100,7 @@
 <li><strong>Checked:</strong> fold assignment and generated-weight totals, including empty selections. Full end-to-end production has not been run.</li>
 </ul>
 <p>Detailed schemas, fixes and model guards belong to the <a href="../../../framework/deck/index.html">framework deck</a>.</p>
-<p class="source">Source: <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a>, F1–F11. 49/49 reviewer-run tests; their coverage misses the integration blockers.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a>, F1–F11. 49/49 reviewer-run tests; their coverage misses the integration blockers.</p>
 </section>
 
 <section id="result-pdf-alphas">
@@ -118,7 +123,7 @@
     <li><strong>Review:</strong> normalisation, the sum-of-weights hook and the filesets pass. Card builder, config, sinks and training weights are not integrated. Unit tests: 20/20 in the author's log, not re-executed (standing rule).</li>
     <li><strong>3FS PDF re-NANO:</strong> audit at 13:57 CET found 4/5 datasets complete in DAS; 2023postBPix had 1,502,991 of 1,517,991 events (99.0%). The 101 PDF members in output files are <strong>not yet checked</strong>. This remains non-blocking for Run A.</li>
   </ul>
-  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> · <a href="../../2026-11-05-3fs-renano-pdf321900.md">re-NANO note</a> (vault 187ce65, 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
+  <p class="source">Sources: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-route-b-stitching-implementation.md" title="Open vault note in Obsidian">Route B proposal</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-sol-review-unpushed-work.md" title="Open vault note in Obsidian">review addenda</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2F2026-11-05-3fs-renano-pdf321900.md" title="Open vault note in Obsidian">re-NANO note</a> (vault 187ce65, 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
 </section>
 
 <section id="open">
@@ -134,20 +139,20 @@
 <tr><td>Production inputs</td><td>Choose a new output root; align all Higgs cross sections to one mass</td></tr>
 </table>
 <p>Selection/feature changes after TRAIN can invalidate its model hashes.</p>
-<p class="source">Source: <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a>, open-item table. WG inclusion at retraining is already decided. Submission still needs explicit approval.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a>, open-item table. WG inclusion at retraining is already decided. Submission still needs explicit approval.</p>
 </section>
 
 <section id="backup-sources">
   <p class="label">Backup · sources and history</p>
   <h2>Where things are</h2>
   <ul>
-    <li>How to run (legacy/TRAIN/RUN): <a href="../../../framework/2026-11-05-run-framework-legacy-train-run.md">framework note</a>; the July how-to is superseded.</li>
+    <li>How to run (legacy/TRAIN/RUN): <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-run-framework-legacy-train-run.md" title="Open vault note in Obsidian">framework note</a>; the July how-to is superseded.</li>
     <li>Repo: lxplus <code>~/higgscharm_thomas/higgscharm_thomas_new/higgscharm</code>, branch <code>hww-analysis</code>. Run A workflow: <code>analysis/workflows/hww_allfix_4fs.yaml</code>.</li>
     <li>Backups and review evidence: <code>/eos/user/c/cgupta/HToWW/backups/higgscharm_pre_fullfix_20261104/</code>.</li>
     <li>Also open (review): silent nominal fallbacks in <code>make_combine_inputs.py</code>, older JEC <code>pt_raw</code>/diagnostic issues, and Run B fileset entries for the 3FS samples.</li>
     <li>History: the 04:17 UTC snapshot (HEAD <code>b7f67ef</code>, uncommitted, 31 tests, NLO-like H+c) is superseded and labelled in the state note. Deck r1 was withdrawn.</li>
   </ul>
-  <p class="source"><a href="#/status">← status</a> · <a href="../../../2026-11-05-status-audit-retraining.md">status audit</a> · <a href="../../../framework/2026-11-05-review-uncommitted-trainrun.md">TRAIN/RUN review</a> · <a href="CHANGELOG.md">Deck changelog</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review note</a>.</p>
+  <p class="source"><a href="#/status">← status</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2Fdeck%2FCHANGELOG.md" title="Open vault note in Obsidian">Deck changelog</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-sol-review-unpushed-work.md" title="Open vault note in Obsidian">review note</a>.</p>
 </section>
 
 </div></div>

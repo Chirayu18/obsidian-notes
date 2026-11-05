@@ -53,3 +53,5 @@ First leaf-subproject progress deck: current status, Run A corrections and test 
 Existing flavour-scheme and gridpack decks remain with their own leaf subprojects; this deck does not replace their methods or source plots.
 
 Render check (2026-11-05): headless Chrome found no slide overflow, script errors, failed requests or external requests. Scripts-disabled Chromium showed every section (3 framework / 8 full-rerun), without horizontal overflow; this emulates the viewer setting, not an inspection in Obsidian itself. Exported PDFs have 3 / 8 pages; representative rasterized pages were inspected. PDFs and render PNGs remain local-only.
+
+Navigation, same review iteration: source-note links now use `obsidian://open` for vault `obsidian-notes`; each deck links to its owner README and root slide index. The hub links back to the vault, Dashboard and HToWW. Paths were checked locally; Obsidian URI dispatch itself was not exercised.

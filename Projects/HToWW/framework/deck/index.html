@@ -28,6 +28,10 @@
     .reveal .slide-number { font: 14px Arial, sans-serif; color: var(--muted); background: transparent; }
     .reveal .progress { color: var(--accent); height: 3px; }
     .reveal .controls { color: var(--accent); }
+
+    .vault-nav { position: fixed; bottom: 10px; left: 20px; z-index: 50; font: 13px Arial, sans-serif; color: #526374; }
+    .vault-nav a { color: #126782; margin-right: 16px; }
+    @media print { .vault-nav { display: none; } }
   </style>
   <!-- Obsidian's HTML viewer runs with scripts off: show every slide as a plain page. -->
   <noscript><style>
@@ -42,6 +46,7 @@
   </style></noscript>
 </head>
 <body>
+<nav class="vault-nav" aria-label="Vault and slide navigation"><a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2FREADME.md">Open notes in Obsidian</a><a href="../../../../index.html">All decks</a></nav>
 <div class="reveal"><div class="slides">
 
 <section id="status">
@@ -55,7 +60,7 @@
 <tr><td>F5 · final-template policy differs</td><td>Negative bins / empty object shifts break legacy parity</td></tr>
 </table>
 <p><strong>49/49 tests pass; these integration paths are outside their coverage.</strong></p>
-<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">code review, F1–F5 and saved reproducers</a>. No analysis code edited or production run by the reviewer.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">code review, F1–F5 and saved reproducers</a>. No analysis code edited or production run by the reviewer.</p>
 </section>
 <section id="result-schemas">
 <p class="label">Outputs in the reviewed tree · all modes share the hww-analysis Git branch</p>
@@ -71,7 +76,7 @@
 <li>The new setup trains on 60% per fold with cross-section/luminosity weights; v11 used 90% and raw weights.</li>
 </ul>
 <p><strong>Legacy consumers need adapters; v11 comparisons must control these differences.</strong></p>
-<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">review §3</a> · <a href="../2026-11-05-run-framework-legacy-train-run.md">framework runbook</a>.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">review §3</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-run-framework-legacy-train-run.md" title="Open vault note in Obsidian">framework runbook</a>.</p>
 </section>
 <section id="open">
 <p class="label">What closes the review · proposed work, not implemented</p>
@@ -83,7 +88,7 @@
 <li><strong>Validation:</strong> add entry-point regressions and final-template parity checks; an end-to-end job needs separate approval.</li>
 </ul>
 <p><strong>Next: authorise the analysis owner to fix the findings, then review and commit.</strong></p>
-<p class="source">Source: <a href="../2026-11-05-review-uncommitted-trainrun.md">findings and evidence</a> · <a href="../../2026-11-05-status-audit-retraining.md">physics/training dependencies</a> · <a href="../../samples-and-production/full-rerun/deck/index.html#/status">Run A status deck</a> · <a href="../../../../index.html">all decks</a>.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">findings and evidence</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">physics/training dependencies</a> · <a href="../../samples-and-production/full-rerun/deck/index.html#/status">Run A status deck</a> · <a href="../../../../index.html">all decks</a>.</p>
 </section>
 </div></div>
 <script src="../../../../_shared/reveal/reveal.js"></script>
