@@ -17,7 +17,7 @@ evidence: agent-reported
 | Audit time | 2026-11-05 13:53–14:00 CET |
 | Vault | branch `keeper/vault-organised-20261105`, HEAD `771b517` |
 | Analysis repo | lxplus938, `/afs/cern.ch/user/c/cgupta/higgscharm_thomas/higgscharm_thomas_new/higgscharm`, branch `hww-analysis`, HEAD `40d0e3e9e5f1` (on `0850e51`), unpushed |
-| Uncommitted | 11 modified files (+248/−20). Untracked: `analysis/{features,models,sinks}/`, `processing_{modes,checks}.py`, `scripts/mva/{split,register}_folds.py`, `scripts/check_train_outputs.py`, `build_cards_from_templates.py` and 2 test files. The newest mtime is `features/hww.py` at 09:03:38 CET, so nothing in the tree has changed since about 09:03. `analysis/processors/.base.py.swp` is 0 bytes and dated 2026-08-17: stale, not a live editor |
+| Uncommitted | 11 modified files (+248/−20). Untracked: `analysis/{features,models,sinks}/`, `processing_{modes,checks}.py`, `scripts/mva/{split,register}_folds.py`, `scripts/check_train_outputs.py`, `build_cards_from_templates.py` and 2 test files. The newest mtime is `features/hww.py` at 09:03:38 CET, so the inspected mtimes show no changes after about 09:03; mtimes alone do not establish an immutable snapshot. `analysis/processors/.base.py.swp` is 0 bytes and dated 2026-08-17: stale, not a live editor |
 | Workflow | `analysis/workflows/hww_allfix_4fs.yaml` (1234 lines) |
 | Event model | `hwwcom_multiclass_v11_2dcats`, `best_model.pt` (mtime 2026-07-12 05:59, sha256 prefix `9b28bcfe5adf3e47`) |
 | negrw model | `/afs/cern.ch/user/c/cgupta/negrw_model/negrw_models.joblib` (8,042,889 B, 2026-07-15 15:36) |
@@ -54,7 +54,7 @@ What has changed since then, with evidence:
 
 **Verdict:** retrain before any Run A limit is trusted. The two strongest reasons are the new signal sample and the new leptons, followed by the MET fixes. NNLO and the Yukawa fix alone would not force a retrain. Because the c-tag CRs (`CR_tt` etc.) are MVA-argmax regions, retraining also redefines the `rate_tt` control region and every other CR (section 5).
 
-## 2. negrw: retrain? **The classifier itself: probably not. Its "disjoint by construction" guarantee: no longer holds for Run A. A coverage and overlap check is needed; if it fails, retrain.**
+## 2. negrw: retrain? **The classifier itself: probably not. Its "disjoint by construction" guarantee: not established for Run A. A coverage and overlap check is needed; if it fails, retrain.**
 
 What negrw is (training-region note 2026-07-11, `hww_genrw_train.yaml`, `base.py:170–181, 276–313`):
 - It learns g(x) = 2P₊(x) − 1 from **generator-level features only** (`lhe_*`, `genparton_*`).
@@ -67,8 +67,8 @@ Against the full-fix changes:
 
 | change | effect on negrw | verdict |
 |---|---|---|
-| Leptons, JEC/MET, jet veto, jet re-sort, trigger | g(x) is a property of the generator, conditional on gen-level x. A reco selection changes only *which* x the SR samples, not P₊(x) | No retrain needed for the target function |
-| **Lepton WPs vs `veto_emu_sr`** | `hww_genrw_train.yaml` still defines the veto with the **old** leptons: muon tight/tight-iso, electron wp80iso (checked). In Run A an event can now have exactly one eμ pair under the new WPs while it did not under the old ones (e.g. an electron that fails wp80iso but passes Medium + ttH-MVA > 0.9). Such an event was a negrw *training* event and is now an SR event. `base.py:174–176` still states "disjoint-by-construction … no hold-out is needed". **This is no longer true.** It is limited to **DY in 2022postEE**, in the 35 training files only. W+jets is not affected because the jet-binned samples were never trained on | **Needs an event-ID overlap check** (training parquet `outputs/hww_genrw_train/2022postEE/` vs the new SR). If the overlap is not negligible, retrain with the new-lepton veto or with an `event mod k` hold-out |
+| Leptons, JEC/MET, jet veto, jet re-sort, trigger | The model inputs remain generator-level, but that alone does not prove that a changed reco selection preserves sign probabilities conditional on the finite feature set | No automatic retraining verdict from feature type alone; recheck support and signed-weight closure in the new selection |
+| **Lepton WPs vs `veto_emu_sr`** | `hww_genrw_train.yaml` still defines the veto with the **old** leptons: muon tight/tight-iso, electron wp80iso (checked). In Run A an event can now have exactly one eμ pair under the new WPs while it did not under the old ones (e.g. an electron that fails wp80iso but passes Medium + ttH-MVA > 0.9). An event with this pattern could occur in both sets; this audit has not identified a shared event ID. `base.py:174–176` still states "disjoint-by-construction … no hold-out is needed". **The old veto no longer proves disjointness; actual event overlap has not been measured.** The identified overlap risk concerns **DY in 2022postEE**, in the 35 training files only. W+jets is not affected because the jet-binned samples were never trained on | **Needs an event-ID overlap check** (training parquet `outputs/hww_genrw_train/2022postEE/` vs the new SR). If the overlap is not negligible, retrain with the new-lepton veto or with an `event mod k` hold-out |
 | SR coverage | The 2026-07-11 coverage gate (SR x inside the training support) was done on the old SR. The new SR is a different subset (tighter leptons, new MET) | Recheck coverage on `lhe_vpt`, `lhe_ht`, `lhe_nc` and `genparton1_pt`. Likely to pass, but unverified |
 | Closure | 07-17: closure 0.994 on the training region and 1.058 in the old SR, handled by per-dataset renormalisation | The renormalisation adapts automatically. The size of the residual in the new SR is unknown until cards are built |
 | Eras | Trained on 2022postEE, applied to all 4 eras | Holds if the generator setup is the same across campaigns. The DY replacements are the "same generator, same campaign" (2026-11-03 note). Not checked for 2023 |
@@ -131,13 +131,13 @@ Every code change in `corrections/`, `selections/`, `working_points/`, `leptonmv
 | open | EOS ~81 GB free vs ~266 GB | Still correct (91.90% at 13:56 CET) |
 | backup-sources | "silent nominal fallbacks", "JEC pt_raw" | Still open (#8, #9). The `jerc.py` JEC line numbers have moved slightly |
 
-## 5. Not considered anywhere (ranked by impact on Run A)
+## 5. Missing or underemphasised dependencies (ranked by impact on Run A)
 
 1. **Order versus the model hash.** Every open physics or code fix (PDF prescription, SF factorisation, muon RNG, JEC `pt_raw`, c-tag edges) edits files that `selection_signature` hashes. Doing any of them after TRAIN wastes the TRAIN production and the training. No note plans this order.
 2. **The CRs and `rate_tt` move with the MVA.** All 5 CRs, including the only `rateParam` region `CR_tt`, are argmax-of-MVA channels (`combine.channels`, `rate_params: [tt]`). Retraining redefines the tt control region. Earlier tt purity figures (CR_tt 99.1%, 87.9%) and the per-channel binning studies do not carry over.
 3. **c-tag SF/edges as MVA features** (N2): the +43% Up is unexplained, and the per-era edges are missing. This is the largest nuisance group, and it feeds the MVA inputs.
 4. **The muon prompt-MVA SF chain** may double-count the ID efficiency (#2). It affects every MC process, and the tt normalisation is fitted against it.
-5. **negrw disjointness** is broken by the lepton change, for DY in 2022postEE (section 2).
+5. **negrw disjointness** needs rechecking after the lepton change, for DY in 2022postEE; overlap is a source-inspection risk, not a measured result (section 2).
 6. **Nonprompt/fake leptons are taken from MC only.** There is no data-driven estimate. The 08-12 diagnostic found 0.3–0.5% nonprompt in tt with the old leptons, and the ttH-MVA cut lowers it further. W+jets in the eμ SR is still fake-driven and relies on MC (with negrw). Low priority, but a reviewer will ask.
 7. **The other Higgs cross sections use unknown mH and sources** (#6).
 8. **Trigger SFs are still disabled** (accepted gap, 2026-08-11). Leptons are tighter now, so the efficiency for the new WPs is unmeasured. This is a known gap; it is only flagged here because the selection changed.
@@ -146,6 +146,8 @@ Every code change in `corrections/`, `selections/`, `working_points/`, `leptonmv
 11. **Era coverage:** H+b and H+c are in all 4 eras. negrw and v11 are trained on 2022postEE (backgrounds) only. The c-tag one-hots use one set of edges for 2022 and 2023.
 
 Checked and **not** a problem: the negrw dataset names match all 4 era YAMLs; the ctag2d SF maps 2023preBPix/postBPix to "2023"; the EOS file count is 48%; DY replacements are the same generator.
+
+Keeper review (2026-11-05): checked this record and its evidence boundaries, not the remote implementation. Changed the negrw overlap wording to a risk pending event-ID checks; selection changes alone do not demonstrate overlap. SF concerns remain provenance questions, not demonstrated double-counting. DAS completion counts do not validate the new PDF-weight contents.
 
 ## Limits of this audit
 
