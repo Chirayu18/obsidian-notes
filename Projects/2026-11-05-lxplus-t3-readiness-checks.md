@@ -1,6 +1,7 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-11-05-lxplus-t3-pilot]]"
 date: 2026-11-05
 source: laptop
 ---
