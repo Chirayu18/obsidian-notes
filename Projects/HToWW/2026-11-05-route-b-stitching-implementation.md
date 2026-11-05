@@ -1,12 +1,15 @@
 ---
 tags: [reference]
-status: active
+status: parked
 date: 2026-11-05
 source: laptop
 evidence: agent-reported
 task: HTOWW-ROUTEB-SOL-20261105
 ---
 # Route B (private 3FS + central 4FS FxFx) stitching: proposal implemented and tested
+
+> [!warning] Parked by Chirayu (2026-11-05)
+> Route B is proposal-only: it exists only in the EOS proposal directory and is **not live** in higgscharm (checked 2026-11-05: no `analysis/stitching/`, no Route B workflow, no 3FS fileset entries). Run A is unaffected. Do not apply its patches until Chirayu re-enables it. Review: [[Projects/HToWW/2026-11-05-sol-review-unpushed-work#Addendum: review of the Route B proposal (HTOWW-ROUTEB-SOL-20261105), read-only, agent-reported|Route B review addendum]].
 
 **Status: agent-reported.** This was written by the Claude implementation child, working in parallel with Sol's TRAIN/RUN work. Chirayu has not reviewed it.
 

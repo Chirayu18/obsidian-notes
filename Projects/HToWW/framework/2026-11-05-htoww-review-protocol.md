@@ -29,7 +29,9 @@ For each material concern, connect the authoritative prescription to the impleme
 
 Keep recorded user decisions in force. Distinguish the source paper's statement from a user-selected convention. If provenance is missing or conflicting, preserve that uncertainty and continue independent work; do not silently substitute a textbook default or invent a correction.
 
-Use clear evidence states: **checked** (state precisely what a command or source establishes), **defect reproduced**, **source/physics input needed**, **not run**, or **outside this review's scope**. Passing a software check establishes only its exercised boundary. The overall research record remains agent-reported until independently validated under the vault's rules.
+**Existing test logs (standing rule, Chirayu, 2026-11-05; [[Projects/HToWW/2026-11-05-decision-review-trust-test-logs|standing decision]]):** do not rerun unit tests that were already run on the same code; cite the existing log instead. Rerun only if the code under test changed after the logged run (compare file mtimes or SHA256SUMS against the log time) or no log exists. Mark such results "author-run test log, not re-executed by the reviewer"; never call them independently verified. Chirayu, verbatim: "Trust the log... Keep it a standing decision during reviews, dont run same unit tests on the same code again".
+
+Use clear evidence states: **checked** (state precisely what a command or source establishes), **defect reproduced**, **source/physics input needed**, **author-run log (not re-executed)**, **not run**, or **outside this review's scope**. Passing a software check establishes only its exercised boundary. The overall research record remains agent-reported until independently validated under the vault's rules.
 
 ## Check the relevant parts of the implementation
 

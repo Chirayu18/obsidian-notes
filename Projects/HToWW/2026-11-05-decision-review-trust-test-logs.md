@@ -3,16 +3,6 @@ tags: [reference, decision]
 status: active
 date: 2026-11-05
 source: laptop
-task: 
----
-
-# Review rule: trust existing test logs, do not rerun the same tests
-
----
-tags: [reference, decision]
-status: active
-date: 2026-11-05
-source: laptop
 ---
 # Standing decision (Chirayu, 2026-11-05): reviewers trust existing test logs
 
@@ -22,4 +12,4 @@ During reviews of HToWW work, a reviewer **does not rerun unit tests that have a
 - In findings, mark the result "author-run test log, not re-executed by the reviewer". Do not call it independently verified.
 - Origin: Chirayu stopped a reviewer that was rerunning the Route B tests, then said: "Trust the log... Keep it a standing decision during reviews, dont run same unit tests on the same code again".
 
-Approved by Chirayu 2026-11-05. Keeper: please fold this into the HToWW review skill / evidence protocol in `Meta/`.
+Approved by Chirayu 2026-11-05. Folded in by the keeper (2026-11-05) into [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|the HToWW review protocol]] and the `htoww-review` skill (`Projects/HToWW/framework/review/htoww-review/SKILL.md`).

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW full rerun - 2026-11-05 (r2)</title>
+  <title>HToWW full rerun - 2026-11-05 (r3)</title>
   <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
   <style>
@@ -45,13 +45,14 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-  <p class="label">HToWW · Full rerun · Internal progress r2 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
+  <p class="label">HToWW · Full rerun · Internal progress r3 · 5 Nov 2026 · all agent-reported, not reviewed by Chirayu</p>
   <h2>Run A code is committed and tests pass; four choices block submission</h2>
   <ul>
     <li><strong>Code:</strong> <code>hww-analysis</code> at <code>0850e51</code> + <code>40d0e3e</code>, unpushed. Two review fixes are on top, uncommitted and backed up.</li>
     <li><strong>Tests:</strong> 35/35 unit tests pass with those fixes. H+c, TT and SingleMuon single-file smoke runs pass.</li>
     <li><strong>Run A:</strong> not submitted. <strong>Run B:</strong> stitching not implemented.</li>
-    <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space.</li>
+    <li><strong>Needs you:</strong> signal PDF/αS model · lepton-SF question to Thomas and MVA retraining · muon RNG and CPUs · EOS space · one m<sub>H</sub> for all Higgs cross sections.</li>
+    <li><strong>Route B</strong> (3FS+4FS stitching): <strong>parked</strong>, proposal only, not in the live code.</li>
   </ul>
   <p>Passing tests checks the software, not the physics model, a production or a limit.</p>
   <p class="source">Sources: <a href="../2026-11-05-fullfix-rerun-run-a-state.md">full-fix state note</a> (worker commits 4d26800, f4475c7) · <a href="../../../2026-11-05-sol-review-unpushed-work.md">independent review</a> (vault 9aa71d5).</p>
@@ -98,6 +99,17 @@
   <p class="source">Review table rows "Signal PDF normalization" and "H+c αS weights"; <code>hww_allfix_4fs.yaml:1151–1152</code>.</p>
 </section>
 
+<section id="result-routeb">
+  <p class="label">Run B / Route B · read-only review, agent-reported</p>
+  <h2>Route B is parked: a reviewed proposal, not live code</h2>
+  <ul>
+    <li><strong>Status (Chirayu, 5 Nov):</strong> parked. It exists only as the EOS proposal <code>HTOWW-ROUTEB-SOL-20261105</code>. The live higgscharm tree has no stitching code, workflow or 3FS filesets, so Run A is unaffected.</li>
+    <li><strong>Review:</strong> normalisation, the sum-of-weights hook and the filesets pass. Card builder, config, sinks and training weights are not integrated. Unit tests: 20/20 in the author's log, not re-executed (standing rule).</li>
+    <li><strong>3FS PDF weights (non-blocking TODO):</strong> <code>LHEPdfWeight</code> is empty because LHA 321900 is not in NanoAOD's preferred PDFs. The official γγ 3FS NanoAOD is the same, so the samples are not wrong. If Route B returns: flat ~2% PDF lnN on the 3FS part. Optional: re-NANO from the kept MiniAOD (needs CRAB and your OK).</li>
+  </ul>
+  <p class="source">Sources: <a href="../../../2026-11-05-route-b-stitching-implementation.md">Route B proposal</a> · <a href="../../../2026-11-05-sol-review-unpushed-work.md">review addenda</a> (vault 667d396, fec22c9, 729a8e7, 75a193a, ce9211a).</p>
+</section>
+
 <section id="open">
   <p class="label">Needs Chirayu</p>
   <h2>Before Run A can be submitted</h2>
@@ -106,11 +118,12 @@
     <tr><td>Signal PDF/αS</td><td>Pick (a), (b) or (c) from the previous slide</td></tr>
     <tr><td>Lepton SFs</td><td>Ask Thomas: is <code>cut_MediumID_tthMVA_Run3</code> on top of the POG Medium ID or inclusive of it?</td></tr>
     <tr><td>Event MVA</td><td>v11 was trained on the old leptons: retrain before trusting a limit</td></tr>
-    <tr><td>Reproducibility</td><td>Muon RNG is unseeded: require per-event seeding or accept it. Also choose 2 CPUs or 1 worker per job.</td></tr>
-    <tr><td>EOS space</td><td>~81 GB free vs ~266 GB needed. Deleting the 179 GB <code>hww_combine_2dcat</code> alone is not enough.</td></tr>
-    <tr><td>Review patch</td><td>Review the two-file diff. The edit owner commits it without the backups.</td></tr>
+    <tr><td>Reproducibility</td><td>Seed muon RNG per event or accept; 2 CPUs or 1 worker per job</td></tr>
+    <tr><td>EOS space</td><td>~81 GB free vs ~266 GB needed</td></tr>
+    <tr><td>Higgs mass</td><td>One m<sub>H</sub> for all Higgs xsecs: H+c uses BR(H→WW) 0.2137 (125.00), WH uses 0.2152 (125.09), a 0.7% offset</td></tr>
+    <tr><td>Review patch</td><td>Review the two-file diff before it is committed</td></tr>
   </table>
-  <p class="source">Already decided, not reopened: NNLO, lepton WPs, Run B split R = 0.4, |η| &lt; 2.5. Submission and deletions need your explicit OK.</p>
+  <p class="source">Already decided, not reopened: NNLO, lepton WPs, Run B split R = 0.4, |η| &lt; 2.5. Only if Route B returns: scale-variation normalisation across regions. Submission and deletions need your explicit OK.</p>
 </section>
 
 <section id="backup-sources">

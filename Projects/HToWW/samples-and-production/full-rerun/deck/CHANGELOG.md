@@ -7,6 +7,11 @@ source: laptop
 
 # Full rerun progress deck
 
+## r3 — 2026-11-05
+
+Requested by Chirayu ("update the slides and push") after the Sol review addenda (vault `667d396`, `fec22c9`, `729a8e7`, `75a193a`, `ce9211a`). Added `result-routeb`: Route B is parked and proposal-only, the review results, and the 3FS `LHEPdfWeight` cause as a non-blocking TODO. `status` and `open` now include the one-mH decision (0.7% BR offset). Scale-variation normalisation is listed only for the case where Route B returns. 7 slides.
+Checks: `render.mjs --revision=3` gave no overflow, errors or external requests. The JS-disabled check shows all 7 sections. Still agent-reported.
+
 ## r2 — 2026-11-05
 
 Requested: worker commits `f027bdc` and `9aa71d5` carry `make slides`, and Chirayu asked for a summary of the recent work and the independent review. Rebuilt from scratch as 6 slides (`status`, `result-code`, `result-review`, `result-pdf-alphas`, `open`, `backup-sources`). Static HTML, no Markdown plugin. A `<noscript>` layout shows every slide in Obsidian's viewer, which runs with scripts off.
