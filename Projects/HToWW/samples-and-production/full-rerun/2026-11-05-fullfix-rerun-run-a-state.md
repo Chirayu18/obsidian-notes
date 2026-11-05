@@ -14,7 +14,7 @@ Task HTOWW-FULLFIX-RERUN-20261104.
 > [!summary] Current state (keeper consolidation, 2026-11-05 after the [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|independent review, 9aa71d5]])
 > All agent-reported; not reviewed by Chirayu.
 > - **Code:** `hww-analysis` at `0850e51` (baseline) + `40d0e3e` (speed-ups 01–04, WH alignment), both unpushed; 77 files vs `b7f67ef`. Two review fixes (shared jet ordering, PDF-only combined variation) are **uncommitted** in the tree, backed up as `*.pre_sol_review`.
-> - **Tests:** 35/35 pass with the review fixes (34 original + 2 regressions, which failed before the fix; b-hive reference included, no skips). H+c, TT and SingleMuon single-file smoke passed before and after the fixes.
+> - **Tests:** the expanded suite reports 35/35 passing with the review fixes; the two regression checks failed before the implementation edits (b-hive reference included, no skips). The review separately reports 34/34 passing before those regression changes; these are suite snapshots, not additive counts. H+c, TT and SingleMuon single-file smoke passed before and after the fixes.
 > - **Decided (Chirayu, 11-05, below):** NNLO H+c (0.0016626 pb), Thomas's lepton WPs, Run B split with R=0.4, |η|<2.5.
 > - **Open:** signal PDF/αS prescription (H+c has **no αS members**, LHA 325500 is PDF-only); lepton-SF factorization (ask Thomas) and event-MVA retraining; deterministic muon RNG; CPUs per job; EOS space (~81 GB free vs ~266 GB needed). Run A is not submitted; Run B stitching is not implemented.
 >

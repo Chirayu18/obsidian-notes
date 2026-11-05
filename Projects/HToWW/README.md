@@ -7,9 +7,9 @@ source: laptop
 
 # HToWW
 
-Status: Latest handoff: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|Run A / Run B full-fix state, 2026-11-05]].
-Validation: Run A tests predate the latest analysis edits; implementation and numbers remain agent-reported.
-Needs Chirayu: normalisation, Run B jet definition, lepton-MVA selection and speed-up scope; see the handoff. Organisation questions remain in the [[Meta/reorg/vault-20261105-report|keeper report]].
+Status: [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|Independent review]] reports two tested fixes on top of analysis commits `0850e51` and `40d0e3e`; Run A is not submitted and Run B stitching is not implemented.
+Validation: The review reports 35/35 tests and single-file smoke checks; this establishes their software-check boundary, not a production or physics validation. Results remain agent-reported.
+Needs Chirayu: signal PDF/αS prescription, lepton-SF provenance and retraining, reproducibility/CPU choices and output space; see the [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state|current handoff]]. NNLO, lepton working points and the Run B radius/acceptance are already recorded decisions.
 
 ## Workstreams
 
@@ -24,6 +24,8 @@ Needs Chirayu: normalisation, Run B jet definition, lepton-MVA selection and spe
 
 ## Shared records
 
+- [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|Independent review of the unpushed full-fix work]]
+- [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|Adopted review protocol and evidence requirements]]
 - [[Projects/HToWW/links|HToWW — links]]
 - [[Projects/HToWW/plots|HToWW — plots]]
 

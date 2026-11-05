@@ -18,4 +18,5 @@ Agent roles, setup, personal tooling, vault maintenance and setup history.
 - [[Meta/claude-memory/README|Older Claude memory by topic]]
 
 Current authority: [[Meta/setup]]; keeper brief: [[Meta/roles/keeper]].
+Latest consolidation: [[Meta/keeper/2026-11-05-resumed-review|resumed keeper review, 2026-11-05]].
 Reorganisation: [[Meta/reorg/vault-20261105-report]]; move map: `Meta/reorg/vault-20261105.tsv`.
