@@ -170,3 +170,18 @@ The 3FS production is finished at 9,936,966 / 10M events. The published counts a
 | `EPR_task` | 126 GB |
 
 Nothing is deleted. The submission is held until Chirayu frees or redirects the space.
+
+### Agent results folded in (2026-11-05, worker)
+- **BR check** ([[Projects/HToWW/samples-and-production/2026-11-05-br-hww-xsec-check]]): BR(H→WW) = 0.2152 is the mH = 125.09 value (YR4 Table 177). H+c NNLO by ratio = 0.0016626 pb is confirmed. The remaining WH entries were aligned to the 125.09 set: `WplusH_WtoLNu` 0.006601 and `WminusH_Wto2Q` 0.008722.
+- **H+b Yukawa cross-check** ([[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-hb-yukawa-fix-crosscheck]]): the scale fix is VALIDATED (agent check).
+  - **Side finding:** PDF/αS for H+c and H+b are biased by lhe_norm + replica centring.
+    - H+b PDF Up: 1.0145 vs 1.0217 clean.
+    - H+b αS Up: 1.000 vs 1.030 clean.
+  - **Needs Chirayu**, one of three options:
+    1. per-event r normalisation for the PDF/αS members;
+    2. keep the current behaviour;
+    3. flat lnN instead.
+- **Speed-ups** ([[Projects/HToWW/framework/optimization/2026-11-05-speedup-patches]]): patches 01–04 applied. The output is byte-identical in the agent's seeded test. Job time is −33% (46.5 s → 31.1 s).
+  - Re-tested after applying: 34 unit tests pass, and the 3 smoke tests give EXIT=0. Rows: H+c 423, TT 5489 (5491 before; the muon-smearing RNG is unseeded), SingleMuon 4.
+  - Open decisions: `request_cpus = 2`, seeding the muon RNG, TRAIN/RUN mode, and gen columns only for negrw.
+- **Commit:** `hww-analysis` commit **`40d0e3e`** (speed-ups + WH alignment) on top of `0850e51`. Not pushed.
