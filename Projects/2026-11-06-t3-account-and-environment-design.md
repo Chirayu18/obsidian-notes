@@ -7,6 +7,8 @@ source: laptop
 
 # Reconsidered T3 account and environment design
 
+**Implementation follow-up:** [Native account preparation](2026-11-06-native-t3-account-preparation.md) records the second laptop entry now configured. Its sign-in is pending; cswap remains unchanged and installed. The discussion of the earlier applied configuration below describes the state at design-review time.
+
 **Recommendation: move account selection to native T3 on the laptop first; keep the established laptop-to-lxplus workflow for production; treat remote T3 execution as a separate pilot.** Keep cswap installed during verification. Retire it only after account behavior and the role briefs' quota dependency have replacements. Do not build automatic cross-machine credential synchronization.
 
 **Agent-reported design review**, with documentation/source checks against installed T3 **v0.1.6**. No further live settings, logins, services or credential stores were changed during this review. The preceding [applied setup](2026-11-06-cswap-t3-account-setup.md) remains the actual configuration; the design below is not claimed implemented.
