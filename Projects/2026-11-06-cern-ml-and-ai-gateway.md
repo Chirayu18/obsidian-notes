@@ -7,6 +7,8 @@ source: laptop
 
 # CERN ML sessions and AI Gateway in T3
 
+**Hosting follow-up:** [Persistent lxplus design](2026-11-06-persistent-lxplus-t3-design.md) incorporates Chirayu's clarified requirement for workers to act while away, the conductor-heartbeat proposal, and newly checked CERN AI/identity/network rules. This note remains the record of gateway preparation; its entry is still disabled.
+
 **Agent-reported recommendation: use CERN AI Gateway from laptop T3 first. Treat CERN ML as a candidate for restartable remote development sessions, not as a verified permanent T3 service.** No ML session, GPU allocation, Kubernetes configuration, service installation or cloud tunnel was created.
 
 Chirayu supplied <https://ml.docs.cern.ch/getting-started/#web-ui> and requested the gateway models in T3. The web fetch returned 403; a direct unauthenticated laptop HTTPS fetch returned 200. The findings below come from those public pages, read on 2026-11-06.

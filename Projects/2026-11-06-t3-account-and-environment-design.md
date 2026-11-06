@@ -1,6 +1,7 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-11-06-persistent-lxplus-t3-design]]"
 date: 2026-11-06
 source: laptop
 ---
