@@ -7,6 +7,8 @@ source: laptop
 
 # Reconsidered T3 account and environment design
 
+**CERN service follow-up:** [ML sessions and AI Gateway](2026-11-06-cern-ml-and-ai-gateway.md) records the subsequent public-document checks and separately prepared gateway provider. ML sessions have persistent file storage but documented idle culling; an uninterrupted SSH socket is not an architectural requirement for retaining T3 history.
+
 **Implementation follow-up:** [Native account preparation](2026-11-06-native-t3-account-preparation.md) records the second laptop entry now configured. Its sign-in is pending; cswap remains unchanged and installed. The discussion of the earlier applied configuration below describes the state at design-review time.
 
 **Recommendation: move account selection to native T3 on the laptop first; keep the established laptop-to-lxplus workflow for production; treat remote T3 execution as a separate pilot.** Keep cswap installed during verification. Retire it only after account behavior and the role briefs' quota dependency have replacements. Do not build automatic cross-machine credential synchronization.

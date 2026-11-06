@@ -7,6 +7,8 @@ source: laptop
 
 # lxplus Claude 2 pilot — authenticated backend ready
 
+**Lifetime update:** the bounded wrapper subsequently completed and reported `pilot_server_stopped=true` / child return code 130. The server is no longer running. [The CERN ML/Gateway follow-up](2026-11-06-cern-ml-and-ai-gateway.md) records the next design checks; no permanent deployment is claimed.
+
 **Agent-reported checks:** remote Claude profile 2 is authenticated and the bounded SSH-only T3 backend is running. Pairing and an end-to-end agent edit are still pending. Chirayu reports that the laptop account test passed; that inference result was not independently observed here.
 
 This continues the [native account preparation](2026-11-06-native-t3-account-preparation.md) and [account/environment design](2026-11-06-t3-account-and-environment-design.md). Production routing remains laptop agents using SSH, with conductor and keeper on the laptop. cswap remains unchanged.
