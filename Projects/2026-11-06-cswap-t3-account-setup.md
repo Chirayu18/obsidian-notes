@@ -7,6 +7,8 @@ source: laptop
 
 # cswap inspection and T3 account setup
 
+**Design follow-up:** Chirayu clarified that both laptop accounts should be directly accessible in T3 without needing cswap. See [the reconsidered design](2026-11-06-t3-account-and-environment-design.md) before following the recovery steps below. This file records the applied cswap-backed configuration; no migration to independent native laptop accounts is claimed.
+
 **Agent-reported status: laptop integration configured and checked; remote entries/server prepared; human sign-ins remain pending.** This supersedes the prior [pilot snapshot](2026-11-05-lxplus-t3-pilot.md) and [generic sign-in guide](2026-11-05-t3-multi-account-sign-in.md) as instructions for the setup actually chosen here. Earlier storage/deletion records remain historical evidence. No credentials were printed, exported, copied between machines or committed. No real account switch, interactive sign-in, model request, CERN credential renewal, job submission, persistent service or Git push was performed.
 
 Chirayu requested, verbatim:
