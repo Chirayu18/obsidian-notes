@@ -7,6 +7,8 @@ source: laptop
 
 # Native T3 account preparation — migration not completed
 
+**Remote follow-up:** [Claude 2 pilot readiness](2026-11-06-lxplus-claude2-pilot.md) records the subsequently verified remote sign-in and restarted bounded backend. This file's unsigned remote status below describes the earlier check.
+
 **Agent-reported implementation record. Recommendation: move explicit account selection into T3, retain cswap during transition, and keep it if same-thread Claude account switching is required.** Separate Claude config homes cannot continue the same thread. Native T3 usage displays also do not yet replace the agent-readable quota checks in the current role briefs. See the [design review](2026-11-06-t3-account-and-environment-design.md).
 
 Chirayu requested “continue”, then asked whether to use or move away from cswap. No further account changes or pilot restart were made after that question. This record supersedes the [preceding applied configuration](2026-11-06-cswap-t3-account-setup.md); its remote preparation details remain historical evidence.
