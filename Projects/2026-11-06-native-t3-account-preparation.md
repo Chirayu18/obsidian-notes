@@ -25,6 +25,8 @@ The remote pilot server is stopped: remote port 3783 was closed. Laptop port 378
 
 ## Remaining decisions and human steps
 
+**Follow-up verification (2026-11-06):** after Chirayu reported seeing both laptop Claude entries and a ChatGPT/Codex account, sanitized direct CLI checks confirmed both laptop Claude profiles have `loggedIn=true`, use `claude.ai`, and report different email identities. This verifies separate laptop authentication; no model inference or thread-continuity test was performed. ChatGPT visibility is user-reported, with no independent authentication/inference check here. The existing SSH master still reaches lxplus977; both remote profiles report `loggedIn=false`, the remote pilot port is closed, and a local listener remains. Remote sign-in is the next prerequisite; the pilot was not restarted.
+
 1. Decide whether fresh-thread Claude account handoffs are acceptable. If not, keep cswap as the active switching mechanism.
 2. For native account 2, run `bash scripts/t3/login-laptop-claude2.sh` from the vault in a laptop terminal, selecting the intended second account. Keep OAuth codes in the terminal/browser. Then verify the reported identities differ and check per-account T3 Usage → Limits before a bounded test.
 3. Additional ChatGPT connections require the user-controlled **Settings → Providers → Add ChatGPT account** flow. Existing Codex configuration was preserved. Do not bulk-authorize accounts on temporary lxplus state.
