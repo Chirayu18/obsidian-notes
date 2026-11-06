@@ -20,6 +20,7 @@ Consolidated slide instructions (all decks, CMS talks, reviewing, talk feedback 
   appear blank in Obsidian's HTML viewer with scripts disabled. Keep content readable
   without scripts and distinguish browser checks from checks in Obsidian (keeper
   implementation response to the rendering report below; Obsidian itself was not controlled).
+- When detailed slides are explicitly requested, explain mechanisms, consequences and evidence in plain language; keep finding inventories in backup. This is a task-specific expansion, not an automatic length increase (6 Nov feedback below).
 - Remaining defaults: status first when relevant; one result per slide with its plot;
   few words; exact tables and sources in backup when needed.
 
@@ -32,3 +33,13 @@ Consolidated slide instructions (all decks, CMS talks, reviewing, talk feedback 
 ### 2026-11-05 — when to make slides
 
 > Actually dont make slides unless a commit contains make slides
+
+### 2026-11-05/06 — detailed framework follow-up
+
+Reported in the implementation worker’s 6 November handoff; source: [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes]]. Chirayu, verbatim:
+
+> After you are done update the keeper and ask it to update the slides
+
+> And ask the keeper to make more detailed slides on this btw once you done
+
+> Yes detailed and more human readable slides

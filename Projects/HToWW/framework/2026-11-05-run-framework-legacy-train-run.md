@@ -8,6 +8,9 @@ evidence: agent-reported
 
 # How to run the higgscharm HWW framework (legacy, TRAIN, RUN): state on 2026-11-05
 
+> [!warning] Updated 2026-11-06 from the implementation handoff
+> [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes|Latest fixes and evidence]] supersede the old integration status below. Code remains uncommitted and not independently validated. One test fold is held out; b-hive owns internal validation. Use the guarded per-fold handoff, not the stock driver. No real processing, training or Combine was run.
+
 **Status: agent-reported, not reviewed by Chirayu.** The TRAIN/RUN modes and the HZZ safety ports are implemented in the higgscharm working tree but are **uncommitted**. Neither mode has been run as a production, and no production model exists yet. Run A has not been submitted. This note replaces [[Projects/HToWW/framework/2026-07-24-run-analysis-steps]] as the current how-to. The legacy chain in that note still works, but its workflow (`hww_combine_2dcat`), v11 model and expected limits are from before the full fix.
 
 Written by the keeper from a read-only inspection of the live tree (lxplus, 2026-11-05 ~09:50 CET: `git status`, `git diff`, and the argument parsers of the files below) and from the implementing thread: <t3-thread://v2/7fbb6319-2aff-454c-af0e-25d245ea222a/mcp:63909997-e3a4-4f8d-a68e-53b5c2c8bbc3>. The test counts are as reported there, not rerun by the keeper.
@@ -34,7 +37,7 @@ Written by the keeper from a read-only inspection of the live tree (lxplus, 2026
 | `run` | **coffea** accumulators holding inline-scored templates for nominal and all shifts. Each event is scored by the model of its held-out fold. `--slim_ntuple` also keeps per-shift features and weights as insurance | production templates for cards, without the parquet → inference → template steps |
 
 Common flags:
-- `--folds k` (default 5; minimum 2, and `split_folds.py` needs k ≥ 3). The fold is `event mod k`.
+- `--folds k` (default 5; minimum 2, and the outer splitter now reserves only a test fold). The fold is `event mod k`.
 - `--model_manifest <meta.yaml>`: RUN only, and required. There is **no fallback to the old v11 model**.
 - `--allow_diagnostic_model`: local tests only. Combined with `--submit`, it is refused.
 
@@ -52,14 +55,21 @@ Guards (`processing_modes.validate`):
    ```bash
    python3 runner.py --workflow hww_allfix_4fs --year <era> --submit --eos --mode train --folds 5
    python3 scripts/check_train_outputs.py --coffea <TRAIN .coffea files> --parquets <TRAIN parquet shards>
-   python3 scripts/mva/split_folds.py --inputs <TRAIN parquet shards> --coffea <all TRAIN .coffea, incl. zero-selection chunks> --output <dir> --folds 5
+   python3 scripts/mva/split_folds.py -w hww_allfix_4fs --inputs <TRAIN parquet shards> --coffea <all TRAIN .coffea, incl. zero-selection chunks> --output <dir> --folds 5
    ```
-   `split_folds.py` writes, for each model i, the test fold i, the validation fold (i+1) mod k and the remaining training folds. No data or unlabelled process enters a supervised file list.
-4. **Train the k fold models** externally in b-hive, one per held-out fold. Export them to ONNX and check the ONNX against torch (max |Δ| ≤ 1e-5). This step is not automated here.
+   `split_folds.py` now writes, for each model i, test fold i and all other folds as `train.txt`. There is no `valid.txt`: b-hive internally splits the training list, default 85/15 by constructed files. No data or unlabelled process enters supervised lists. Schema-2 manifests record the split and list hashes.
+4. **Prepare guarded commands, then train externally in b-hive** (requires approval):
+   ```bash
+   python3 scripts/mva/bhive_fold_commands.py --split <SPLIT> --output <CMDS>
+   # In the approved b-hive environment, after source setup.sh:
+   bash <CMDS>/run_folds.sh
+   ```
+   The helper creates unique dataset/training versions per fold and split hash, and refuses existing constructed datasets. The stock driver hard-codes its test version and must not be reused across folds unchanged. Current b-hive 2dcats uses class weights only; it ignores event-weight columns. Export each fold to ONNX and record per-fold torch/ONNX agreement. `law` CLI parsing and real training remain untested.
 5. **Freeze the models:**
    ```bash
    python3 scripts/mva/register_folds.py -w hww_allfix_4fs --split_manifest <split manifest> \
-     --models fold_0.onnx … fold_4.onnx --eras <eras> --validation <onnx-vs-torch.json> --output <meta.yaml>
+     --models fold_0.onnx … fold_4.onnx --eras <eras> --validation <onnx-vs-torch.json> \
+     --bhive_config <b-hive>/config/HPlusCHToWW_2dcats.yml --bhive_runs <CMDS>/bhive_runs.json --output <MODEL>
    ```
 6. **RUN:**
    ```bash
@@ -89,5 +99,7 @@ The ZZ-specific selections, the c-tag changes and the wider production machinery
   - a full TRAIN production;
   - real fold models;
   - a RUN production or card;
-  - an independent review of TRAIN/RUN and the HZZ ports. Sol reviewed Route B, but the reverse review, a second Claude reviewer, was not started: Chirayu said "Actually let that agent only continue";
+  - a post-fix independent review. The earlier TRAIN/RUN review is historical; the later implementation record reports 31/31 new/affected tests plus synthetic card checks;
   - committing these changes.
+
+Latest operational options: `--output_root <ABSOLUTE_ROOT>` and, for appropriate non-user EOS roots, `--output_root_url <URL>`. No production location is selected. `jobs_status.py` now needs the matching `--mode` and `--output_root`. The full current commands, exclusions/applicability options and approval gates are in [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes|the implementation handoff §6]].

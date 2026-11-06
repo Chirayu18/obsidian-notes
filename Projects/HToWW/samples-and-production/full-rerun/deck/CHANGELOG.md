@@ -7,6 +7,12 @@ source: laptop
 
 # Full rerun progress deck
 
+## r7 — 2026-11-06
+
+Updated status, TRAIN/RUN impact and code-review gate for the implementation handoff (9ef65a9). Same eight slides and stable IDs. Detailed explanation stays in the framework deck. No live re-NANO/status refresh is claimed; its earlier progress is dated.
+
+Checks for r7: 8 slides / PDF pages; headless Chromium reports zero overflow, script errors, failed requests or external requests. Every slide was inspected (changed slides for the full-rerun deck); representative PDF raster inspected. Scripts-disabled Chromium shows all sections without horizontal overflow; not opened in Obsidian itself. All source-note targets and slide anchors were checked. PNG/PDF exports remain gitignored.
+
 ## r6 — 2026-11-05
 
 Requested after the completed audits. Updated status, TRAIN/RUN impact, Run A gates, dated 3FS DAS progress and sources. Eight slides retained, stable IDs preserved. Framework details are in [[Projects/HToWW/framework/deck/CHANGELOG|the new three-slide framework deck]], linked from `result-trainrun`. Models, SFs and c-tag concerns remain evidence-qualified; code was not changed. Historical tests are distinguished from the reviewer-run 49-test log.

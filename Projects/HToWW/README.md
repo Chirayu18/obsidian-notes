@@ -24,7 +24,8 @@ Needs Chirayu: signal PDF/αS prescription, lepton-SF provenance and retraining,
 
 ## Shared records
 
-- [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|TRAIN/RUN code review: reproduced Condor, data and card-building blockers]] — 49 tests pass but do not cover these integration paths; analysis code unchanged.
+- [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes|Latest TRAIN/RUN fixes: b-hive validation, evidence and remaining decisions]]
+- [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|TRAIN/RUN code review: reproduced Condor, data and card-building blockers]] — historical pre-fix tree; later implementation is linked above.
 - [[Projects/HToWW/2026-11-05-status-audit-retraining|Status audit: MVA retraining, negrw overlap risk and open-item dependencies]] (agent-reported; code review complete below)
 - [[Projects/HToWW/2026-11-05-sol-review-unpushed-work|Independent review of the unpushed full-fix work]]
 - [[Projects/HToWW/framework/2026-11-05-htoww-review-protocol|Adopted review protocol and evidence requirements]]

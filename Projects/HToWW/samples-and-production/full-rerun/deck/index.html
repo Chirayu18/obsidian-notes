@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW full rerun - 2026-11-05 (r6)</title>
+  <title>HToWW full rerun - 2026-11-06 (r7)</title>
   <link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
   <style>
@@ -50,16 +50,16 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-<p class="label">HToWW · Full rerun r6 · 5 Nov 2026 · agent-reported · review snapshot 14:05 CET</p>
-<h2>Run A is not submitted; TRAIN/RUN has integration blockers</h2>
+<p class="label">HToWW · Full rerun r7 · 6 Nov 2026 · agent-reported · latest implementation handoff 6 Nov</p>
+<h2>Run A is not submitted; TRAIN/RUN fixes await real-processing checks</h2>
 <ul>
 <li><strong>Code:</strong> committed baseline <code>0850e51</code> + <code>40d0e3e</code>; two review fixes and TRAIN/RUN remain uncommitted.</li>
-<li><strong>Review:</strong> 49/49 tests pass, but Condor output, data handling and card-building defects were reproduced.</li>
-<li><strong>Before training:</strong> settle physics/calibration inputs, fix and commit code. Retrain the event classifier for the new signal, leptons and MET.</li>
-<li><strong>Needs you:</strong> PDF/αS prescription, lepton scale-factor provenance, c-tag choices, output space and permission for code fixes.</li>
+<li><strong>Review:</strong> worker reports integration fixes, 31/31 tests passing and synthetic cards for 46 simulation samples. Real processing/training is not tested.</li>
+<li><strong>Before training:</strong> settle physics/calibration inputs, review and commit code. Retrain the event classifier for the new signal, leptons and MET.</li>
+<li><strong>Needs you:</strong> PDF/αS prescription, lepton scale-factor provenance, c-tag choices, output space and remaining training/hash/policy choices.</li>
 </ul>
 <p class="warn">Passing unit tests does not establish production readiness.</p>
-<p class="source">Sources: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a> · detailed framework findings: <a href="../../../framework/deck/index.html">framework deck</a> · <a href="#/backup-sources">→ backup</a>.</p>
+<p class="source">Sources: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation handoff</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">status audit</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a> · detailed framework findings: <a href="../../../framework/deck/index.html">framework deck</a> · <a href="#/backup-sources">→ backup</a>.</p>
 </section>
 
 <section id="result-code">
@@ -92,15 +92,16 @@
 </section>
 
 <section id="result-trainrun">
-<p class="label">Framework review · actual tree at 40d0e3e + uncommitted changes · 5 Nov, 14:05 CET</p>
-<h2>TRAIN/RUN must be repaired before production</h2>
+<p class="label">HToWW · Full rerun r7 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>TRAIN/RUN integration fixes are implemented, still uncommitted</h2>
 <ul>
-<li><strong>Reproduced:</strong> Condor never creates the mode-specific output directory; TRAIN splitting and RUN cards mishandle data eras; Wγ has no process mapping.</li>
-<li><strong>Card parity:</strong> final negative-bin handling and empty-shift policy differ from legacy. Missing samples or partial variations can silently lose yield.</li>
-<li><strong>Checked:</strong> fold assignment and generated-weight totals, including empty selections. Full end-to-end production has not been run.</li>
+<li><strong>Validation:</strong> one held-out test fold; b-hive splits the other four folds internally. Unique per-fold datasets guard against cached-data reuse.</li>
+<li><strong>Production plumbing:</strong> mode-specific output paths, data classification, Wγ mapping and final-template handling are repaired (worker-reported).</li>
+<li><strong>Coverage:</strong> missing simulation samples/files and partial weight variations now fail explicitly.</li>
+<li><strong>Remaining:</strong> patch review, output root and model/calibration choices, then a real smoke test. No processing or model training was run.</li>
 </ul>
-<p>Detailed schemas, fixes and model guards belong to the <a href="../../../framework/deck/index.html">framework deck</a>.</p>
-<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">TRAIN/RUN review</a>, F1–F11. 49/49 reviewer-run tests; their coverage misses the integration blockers.</p>
+<p class="take"><a href="../../../framework/deck/index.html#/status">Detailed framework deck → split, evidence, all findings and decisions</a></p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §§1–6</p>
 </section>
 
 <section id="result-pdf-alphas">
@@ -135,7 +136,7 @@
 <tr><td>Lepton scale factors</td><td>Ask Thomas for electron AND muon denominator/provenance</td></tr>
 <tr><td>c-tag calibration</td><td>Resolve the +43% Up effect, placeholder cells and era edges</td></tr>
 <tr><td>Models</td><td>Retrain event classifier; check negrw overlap, support and closure</td></tr>
-<tr><td>Code + reproducibility</td><td>Fix review findings, decide muon seeding/CPUs, then commit</td></tr>
+<tr><td>Code + reproducibility</td><td>Review implemented fixes, decide muon seeding/CPUs, then commit</td></tr>
 <tr><td>Production inputs</td><td>Choose a new output root; align all Higgs cross sections to one mass</td></tr>
 </table>
 <p>Selection/feature changes after TRAIN can invalidate its model hashes.</p>

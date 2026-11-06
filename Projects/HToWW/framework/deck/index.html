@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HToWW framework review - 2026-11-05 (r1)</title>
+  <title>HToWW framework review - 2026-11-06 (r2)</title>
   <link rel="stylesheet" href="../../../../_shared/reveal/reset.css">
   <link rel="stylesheet" href="../../../../_shared/reveal/reveal.css">
   <style>
@@ -32,6 +32,16 @@
     .vault-nav { position: fixed; bottom: 10px; left: 20px; z-index: 50; font: 13px Arial, sans-serif; color: #526374; }
     .vault-nav a { color: #126782; margin-right: 16px; }
     @media print { .vault-nav { display: none; } }
+    .reveal .take { color: #126782; font-weight: 600; }
+    .reveal .compact { font-size: .70em; }
+    .reveal .compact td, .reveal .compact th { padding-top: 5px; padding-bottom: 5px; }
+    .reveal .bar { display: flex; height: 48px; margin: 12px 0 8px; font-size: .8em; }
+    .reveal .bar span { display: flex; align-items: center; justify-content: center; }
+    .reveal .train { background: #126782; color: white; }
+    .reveal .valid { background: #d9a441; color: #172b42; }
+    .reveal .test { background: #74b6ad; color: #172b42; }
+    .reveal .unused { background: #d8dfe4; color: #172b42; }
+    .reveal .legend { font-size: .72em; color: #526374; }
   </style>
   <!-- Obsidian's HTML viewer runs with scripts off: show every slide as a plain page. -->
   <noscript><style>
@@ -50,45 +60,125 @@
 <div class="reveal"><div class="slides">
 
 <section id="status">
-<p class="label">HToWW · Framework r1 · 5 Nov 2026 · agent-reported · reviewed tree: 40d0e3e + dirty changes</p>
-<h2>TRAIN/RUN is implemented; integration blocks production</h2>
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>TRAIN/RUN fixes are implemented; production checks remain</h2>
+<ul>
+<li><strong>What changed:</strong> one owner for validation, fold-specific b-hive datasets, safer job outputs and stricter card-building checks.</li>
+<li><strong>What was tested:</strong> 31 tests pass; a synthetic chain writes cards for all 46 expected simulation samples in 2022postEE.</li>
+<li><strong>What remains unvalidated:</strong> actual NanoAOD processing, model training, model export and Combine inference.</li>
+<li><strong>Code status:</strong> 19 edited files on lxplus, still uncommitted on <code>hww-analysis</code> at <code>40d0e3e</code>.</li>
+</ul>
+<p class="take">Review the patch and settle the remaining choices before a production run.</p>
+<p><a href="#/result-validation">Split explanation</a> · <a href="#/decisions">Decisions</a> · <a href="#/backup-findings-core">All F1–F18</a></p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a>, manifest and §3</p>
+</section>
+<section id="result-validation">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>b-hive now owns validation; the outer split only holds out test events</h2>
+<p>Each event has a fixed fold: <code>event_number % 5</code>. Model <em>i</em> never trains or validates on fold <em>i</em>.</p>
+<p><strong>Before:</strong> a separate validation fold was written but ignored by b-hive.</p>
+<div class="bar" role="img" aria-label="Before, approximate shares: 51 percent training, 9 validation, 20 unused, 20 test"><span class="train" style="width:51%">51% train</span><span class="valid" style="width:9%">9%</span><span class="unused" style="width:20%">20% unused</span><span class="test" style="width:20%">20% test</span></div>
+<p><strong>After:</strong> b-hive splits the other four folds internally, 85% / 15%.</p>
+<div class="bar" role="img" aria-label="After, approximate shares: 68 percent training, 12 validation, 20 test"><span class="train" style="width:68%">68% train</span><span class="valid" style="width:12%">12% valid</span><span class="test" style="width:20%">20% test</span></div>
+<p class="legend">Blue = training · gold = validation · grey = unused · green = held-out test. Illustrative fractions: b-hive splits constructed files, so event fractions need not match exactly.</p>
+<p class="take">RUN uses model <em>i</em> to score fold <em>i</em>, including shifted copies of those events.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §1.1–1.2; split manifest schema 2</p>
+</section>
+<section id="result-cache">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>A different file list alone does not give b-hive a different dataset</h2>
 <table>
-<tr><th>Reproduced finding</th><th>Consequence</th></tr>
-<tr><td>F4 · mode-specific directory not created</td><td>Condor jobs lose required .coffea output</td></tr>
-<tr><td>F1/F3 · data eras treated as MC</td><td>Card building and training split fail</td></tr>
-<tr><td>F2 · Wγ process unmapped</td><td>Card building fails; implement the recorded inclusion decision</td></tr>
-<tr><td>F5 · final-template policy differs</td><td>Negative bins / empty object shifts break legacy parity</td></tr>
+<tr><th>Hazard found</th><th>Protection added</th></tr>
+<tr><td>b-hive caches by dataset version; the file list is absent from its identity</td><td>Unique training and test dataset versions for each fold and split hash</td></tr>
+<tr><td>The stock driver hard-codes the test dataset version</td><td>Generated commands name the correct held-out dataset for every model</td></tr>
+<tr><td>Old constructed data could be reused for another fold</td><td>Refuse an existing target dataset directory; verify file-list hashes</td></tr>
 </table>
-<p><strong>49/49 tests pass; these integration paths are outside their coverage.</strong></p>
-<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">code review, F1–F5 and saved reproducers</a>. No analysis code edited or production run by the reviewer.</p>
+<p>Without these guards, model 1 could reuse fold 0’s training data and see its own test events.</p>
+<p class="take">The helper writes a guarded training script. No b-hive code was edited or training started.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §1.3; <code>bhive_fold_commands.py</code>; <a href="../review/evidence/trainrun-blockerfix-20261106/bhive_handoff_check.txt">handoff log</a></p>
+</section>
+<section id="result-weights">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>The current b-hive model ignores event weights</h2>
+<ul>
+<li><strong>Corrected review claim:</strong> writing a normalised <code>weight</code> column does not make this model consume it.</li>
+<li><strong>What the current processor reads:</strong> input features and class labels. The merged training weight is a class-abundance weight.</li>
+<li><strong>Practical consequence:</strong> generator sign and physics normalisation do not enter the training loss. A negative-weight simulation event is treated like any other event of its class.</li>
+<li><strong>v11 used the same convention.</strong> This work records it; it does not decide whether to change it.</li>
+</ul>
+<p class="take">Training weights need a physics decision. Template normalisation is a separate step.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §1.3, b-hive <code>LZ4TTCCProcessor</code> and <code>merge_datasets</code></p>
 </section>
 <section id="result-schemas">
-<p class="label">Outputs in the reviewed tree · all modes share the hww-analysis Git branch</p>
-<h2>TRAIN and RUN produce different outputs</h2>
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>TRAIN prepares model inputs; RUN produces fit templates</h2>
 <table>
-<tr><th>Mode</th><th>Per-event output</th><th>Next consumer</th></tr>
-<tr><td>legacy</td><td>73 configured variables; weights and shifted trees</td><td>Legacy postprocess → inference → cards</td></tr>
-<tr><td>TRAIN</td><td>26 model inputs + IDs, folds, labels; nominal only</td><td>Fold splitting → external model training</td></tr>
-<tr><td>RUN</td><td>None by default; optional slim ntuple has no scores</td><td>Templates → new card builder</td></tr>
+<tr><th>Mode</th><th>What it saves</th><th>What happens next</th></tr>
+<tr><td>legacy</td><td>73 configured variables, weights and shifted event trees</td><td>Separate postprocessing, inference and cards</td></tr>
+<tr><td>TRAIN</td><td>26 model inputs, event IDs, folds and labels; nominal only</td><td>Split lists → guarded b-hive training commands</td></tr>
+<tr><td>RUN</td><td>Scored histograms/templates; event ntuple optional</td><td>Merge all chunks → normalise → build cards</td></tr>
 </table>
 <ul>
-<li>RUN scores each event with its held-out fold model; the reviewed fold logic is consistent.</li>
-<li>The new setup trains on 60% per fold with cross-section/luminosity weights; v11 used 90% and raw weights.</li>
+<li>The held-out fold chooses the model for every event; no old v11 fallback.</li>
+<li>New checks require expected simulation samples, input files and complete variation coverage.</li>
 </ul>
-<p><strong>Legacy consumers need adapters; v11 comparisons must control these differences.</strong></p>
-<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">review §3</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-run-framework-legacy-train-run.md" title="Open vault note in Obsidian">framework runbook</a>.</p>
+<p class="take">The modes share one Git branch, but their outputs and consumers differ.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §2 and §4; <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md">historical review</a> §3 (weight claim corrected above) · <a href="#/backup-findings-core">→ finding details</a></p>
+</section>
+<section id="result-evidence">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>The saved tests cover synthetic integration, not a production</h2>
+<table>
+<tr><th>Evidence</th><th>Observed result</th><th>Boundary</th></tr>
+<tr><td>New + affected suites</td><td>31/31 pass after edits</td><td>Worker-run logs; not rerun by keeper</td></tr>
+<tr><td>17 new tests on reconstructed old tree</td><td>All fail/error</td><td>Some expose behaviour; many detect missing APIs</td></tr>
+<tr><td>Synthetic card chain</td><td>46 simulation samples + 1 data sample; 1,626 histograms written</td><td>Real writer/config; invented event contents</td></tr>
+<tr><td>Failure checks</td><td>Missing sample or input file rejected</td><td>Explicit sample exclusion is also exercised</td></tr>
+<tr><td>Training handoff</td><td>200 events → 160/40 per model; shell syntax passes</td><td><code>law</code> argument parsing not run</td></tr>
+</table>
+<p class="take">No real processing, training, model export or Combine run has happened.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §3; <a href="../review/evidence/trainrun-blockerfix-20261106/unittest_after.txt">tests</a> · <a href="../review/evidence/trainrun-blockerfix-20261106/chain_repro.txt">synthetic cards</a> · <a href="../review/evidence/trainrun-blockerfix-20261106/unittest_before_pre_tree.txt">before-edit log</a></p>
+</section>
+<section id="decisions">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>Choices needed before generating training data</h2>
+<table>
+<tr><th>Choice</th><th>Current behaviour / question</th></tr>
+<tr><td>Output location</td><td>Configurable now; choose an actual root with enough space</td></tr>
+<tr><td>Training weights</td><td>Keep class-only weights, or change b-hive to consume physics weights?</td></tr>
+<tr><td>Empty shifted channel</td><td>Legacy fallback uses nominal and logs it; choose that policy or error/review</td></tr>
+<tr><td>Model-validity hash (F14)</td><td>Choose external models/calibrations to include before TRAIN</td></tr>
+<tr><td>Validation reproducibility</td><td>b-hive’s internal file shuffle is unseeded; authorise seeding?</td></tr>
+</table>
+<p>Other Run A gates remain: signal PDF/αS, lepton scale factors, muon randomness, c-tag calibration and negrw overlap/closure.</p>
+<p class="take">These are recorded open choices. The worker did not choose them for you.</p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §5; <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md">status audit</a> · <a href="#/backup-findings-remaining">→ finding details</a></p>
 </section>
 <section id="open">
-<p class="label">What closes the review · proposed work, not implemented</p>
-<h2>Fix the integration paths, then check one complete chain</h2>
-<ul>
-<li><strong>Completeness:</strong> require all expected datasets and full chunk coverage for each weight variation (F6/F7).</li>
-<li><strong>Models:</strong> validate trained feature/class order and era; hash external calibrations and models; record dirty-tree provenance (F8/F9/F14/F15).</li>
-<li><strong>Operations:</strong> forward a new output root and make monitoring/resubmission understand modes (F10/F11).</li>
-<li><strong>Validation:</strong> add entry-point regressions and final-template parity checks; an end-to-end job needs separate approval.</li>
-</ul>
-<p><strong>Next: authorise the analysis owner to fix the findings, then review and commit.</strong></p>
-<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-review-uncommitted-trainrun.md" title="Open vault note in Obsidian">findings and evidence</a> · <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-05-status-audit-retraining.md" title="Open vault note in Obsidian">physics/training dependencies</a> · <a href="../../samples-and-production/full-rerun/deck/index.html#/status">Run A status deck</a> · <a href="../../../../index.html">all decks</a>.</p>
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>Next checks, in order, after approval</h2>
+<ol>
+<li><strong>Review and commit the patch:</strong> isolate this worker’s changes from earlier uncommitted work.</li>
+<li><strong>One-dataset smoke per mode:</strong> exercise the real job path and output metadata, with approved credentials and output root.</li>
+<li><strong>Full TRAIN:</strong> check sample/file coverage, then build the held-out fold lists.</li>
+<li><strong>Train and freeze models:</strong> run guarded b-hive commands, export each model and compare exported scores.</li>
+<li><strong>RUN → cards:</strong> check templates, coverage and the recorded empty-shift/floor policy before inference.</li>
+</ol>
+<p class="take">Each next step needs approval. No production readiness is claimed.</p>
+<p><a href="#/backup-findings-core">→ F1–F9 details</a> · <a href="#/backup-findings-remaining">→ F10–F18 details</a> · <a href="../../samples-and-production/full-rerun/deck/index.html#/status">Run A deck</a></p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §6; patch SHA256 prefix <code>6003421f</code></p>
+</section>
+<section id="backup-findings-core">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>Backup: F1–F9 disposition</h2>
+<table class="compact"><colgroup><col style="width:7%"><col style="width:19%"><col style="width:74%"></colgroup><tr><th>ID</th><th>Worker status</th><th>What changed</th></tr><tr><td>F1</td><td>Fixed</td><td>Data run letters classified correctly; data skipped, cards use Asimov observations</td></tr><tr><td>F2</td><td>Fixed</td><td>Wγ mapped into diboson for training and cards, applying the recorded decision</td></tr><tr><td>F3</td><td>Fixed</td><td>Data skipped before reading cross section in the split command</td></tr><tr><td>F4</td><td>Fixed</td><td>Mode-specific output directory created; save path exercised by stubs</td></tr><tr><td>F5</td><td>Fixed / policy open</td><td>Final-bin floor and empty-shift handling match legacy policy; applications logged</td></tr><tr><td>F6</td><td>Fixed</td><td>Expected samples and files required; exclusions must have a reason</td></tr><tr><td>F7</td><td>Fixed</td><td>Every weight variation must cover all nominal chunks</td></tr><tr><td>F8</td><td>Fixed</td><td>Training config order and exported-model dimensions checked</td></tr><tr><td>F9</td><td>Fixed</td><td>RUN rejects an era absent from training provenance</td></tr></table><p class="take">Implemented with recorded checks; independent validation remains pending.</p><p><a href="#/status">← status</a> · <a href="#/result-schemas">← outputs</a></p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §2, tests and chain reproducer</p>
+</section>
+<section id="backup-findings-remaining">
+<p class="label">HToWW · Framework r2 · 6 Nov 2026 · agent-reported, not independently validated</p>
+<h2>Backup: F10–F18 disposition</h2>
+<table class="compact"><colgroup><col style="width:7%"><col style="width:19%"><col style="width:74%"></colgroup><tr><th>ID</th><th>Worker status</th><th>What changed / why deferred</th></tr><tr><td>F10</td><td>Fixed / input open</td><td>Output root forwarded through job chain; no real location selected</td></tr><tr><td>F11</td><td>Fixed</td><td>Mode-aware monitoring/resubmission; unsafe non-legacy reset refused</td></tr><tr><td>F12</td><td>Fixed</td><td>Truncated EOS reads also retry from the server</td></tr><tr><td>F13</td><td>Fixed</td><td>Option-generation failure stops the wrapper instead of defaulting to legacy</td></tr><tr><td>F14</td><td>Deferred</td><td>External model/calibration hash scope needs a pre-TRAIN decision</td></tr><tr><td>F15</td><td>Implemented</td><td>Dirty state and diff hash recorded; not separately unit-tested</td></tr><tr><td>F16</td><td>Deferred</td><td>Cross-dataset duplicate files can double-count yield</td></tr><tr><td>F17</td><td>Kept</td><td>Preparation stops on a failed dataset; documented intentional behaviour</td></tr><tr><td>F18</td><td>Deferred</td><td>Nominal-only correction dispatch still relies on a shift-name convention</td></tr></table><p><a href="#/decisions">← choices</a> · <a href="#/open">← next steps</a></p>
+<p class="source">Source: <a href="obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fframework%2F2026-11-05-trainrun-blocker-fixes.md">implementation note</a> §2; underlying patch remains uncommitted</p>
 </section>
 </div></div>
 <script src="../../../../_shared/reveal/reveal.js"></script>

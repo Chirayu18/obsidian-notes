@@ -11,6 +11,9 @@ keeper_review: "[[Meta/keeper/2026-11-05-fullfix-review]]"
 
 Task HTOWW-FULLFIX-RERUN-20261104.
 
+> [!summary] Later implementation handoff, 2026-11-06
+> [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes|TRAIN/RUN fixes]]: one validation owner in b-hive, per-fold dataset guards, and fixes for F1–F13/F15 (with remaining caveats). 31/31 new/affected tests and synthetic cards are reported. No real processing, training or Combine run; analysis changes uncommitted. F14/F16/F18 deferred, F17 retained. Training weights, output root, empty-shift policy, hash scope and b-hive seeding remain decisions. Earlier summaries below are dated snapshots.
+
 > [!warning] Later independent audits (2026-11-05, 13:53–14:05 CET)
 > [[Projects/HToWW/2026-11-05-status-audit-retraining|Status audit]]: event-MVA retraining required; negrw overlap/support/closure need checks; both lepton-SF chains need provenance; c-tag SF/edge questions remain. [[Projects/HToWW/framework/2026-11-05-review-uncommitted-trainrun|Code review]]: 49 tests passed, but reproduced Condor output/data-handling/card-building blockers mean TRAIN/RUN is not production-ready. Analysis files remain unchanged. The review records WG-at-retraining as an existing decision. DAS progress is not PDF-weight validation. Earlier summaries and deck r5 predate these findings.
 

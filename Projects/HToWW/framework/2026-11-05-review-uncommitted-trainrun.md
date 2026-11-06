@@ -1,10 +1,14 @@
 ---
 tags: [reference, review]
-status: active
+status: superseded
+superseded_by: "[[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes]]"
 date: 2026-11-05
 source: laptop
 evidence: agent-reported
 ---
+
+> [!warning] Historical review of the pre-fix tree
+> [[Projects/HToWW/framework/2026-11-05-trainrun-blocker-fixes|The later implementation record]] reports fixes and corrects the weight/validation claims in §3. This note preserves what was reviewed on 5 November; it is not the current readiness assessment.
 
 # Review of the uncommitted higgscharm TRAIN/RUN code, Sol fixes and HZZ ports (2026-11-05)
 
