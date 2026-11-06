@@ -65,6 +65,8 @@ Private settings backup: `~/.t3/userdata/account-setup-backups/settings-before-c
 
 Requested the key using T3's private secret card, file delivery, request ID `cern-aigw-key-20261106-1`. Chirayu can create it in the [gateway key UI](https://aigw.cern.ch/ui/?page=api-keys), selecting the intended team and **All Team Models**, with an optional token cap. Do not paste it into chat. After private delivery, store it only in the owner-only key file, check the actual key's model inventory, retain only the approved on-premises choices, and enable the provider only after tests pass.
 
+The private request subsequently **timed out** without delivering a key. No API-key file was populated and the provider remains disabled. A fresh private request is needed when Chirayu is ready; the expired request ID must not be reused.
+
 Implementation sources checked against installed versions: [T3 Pi provider](https://github.com/pingdotgg/t3code/blob/v0.1.6/docs/user/providers-pi.md), [T3 Pi settings schema](https://github.com/pingdotgg/t3code/blob/v0.1.6/packages/provider-pi/src/settings.ts), [OMP 18.13.3 provider configuration](https://github.com/can1357/oh-my-pi/blob/v18.13.3/docs/models.md).
 
 The earlier bounded lxplus T3 wrapper has now completed successfully and reported `pilot_server_stopped=true`, server child return code 130. It was not restarted for gateway setup.
