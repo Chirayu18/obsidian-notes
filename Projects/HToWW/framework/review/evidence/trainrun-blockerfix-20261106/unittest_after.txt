@@ -1,0 +1,41 @@
+# 2026-11-06T14:16:56+01:00 lxplus977.cern.ch; cmd: apptainer exec -B /afs -B /cvmfs -B /eos -B /tmp -B /run/user --env PYTHONDONTWRITEBYTECODE=1 /cvmfs/unpacked.cern.ch/registry.hub.docker.com/coffeateam/coffea-base-almalinux9:0.7.30-py3.10 python3 -m unittest -v tests.test_trainrun_blockers tests.test_processing_modes tests.test_hzz_safety_ports
+test_commands_hold_out_fold_and_use_unique_versions (tests.test_trainrun_blockers.TestBhiveHandoff) ... ok
+test_data_skipped_and_wg_lands_in_diboson (tests.test_trainrun_blockers.TestCardBuilder) ... ok
+test_final_policy_matches_legacy_order_exactly (tests.test_trainrun_blockers.TestCardBuilder)
+F5 parity: same inputs through the legacy main() sequence and finalize_templates. ... ok
+test_object_shift_real_zero_vs_missing (tests.test_trainrun_blockers.TestCardBuilder) ... ok
+test_partial_weight_variation_raises (tests.test_trainrun_blockers.TestCardBuilder) ... ok
+test_output_root_rules (tests.test_trainrun_blockers.TestCondorPreparation) ... ok
+test_prepared_job_saves_into_created_mode_directory (tests.test_trainrun_blockers.TestCondorPreparation) ... ok
+test_missing_extra_stale_and_file_gaps_raise (tests.test_trainrun_blockers.TestCoverage) ... ok
+test_store_path_is_replica_independent (tests.test_trainrun_blockers.TestCoverage) ... ok
+test_truncated_eos_file_retries_from_server (tests.test_trainrun_blockers.TestEosParquetFallback) ... ok
+test_prepared_job_mode_and_output_must_match (tests.test_trainrun_blockers.TestJobsStatus) ... ok
+test_bhive_config_and_onnx_io_checks (tests.test_trainrun_blockers.TestRegistryGuards) ... ok
+test_run_refuses_untrained_era (tests.test_trainrun_blockers.TestRegistryGuards) ... ok
+test_all_workflow_mc_processes_map_to_one_card_class_and_label (tests.test_trainrun_blockers.TestSampleClassification)
+F2: every MC process the workflow runs (incl. WG) maps once, consistently. ... ok
+test_every_era_entry_is_mc_or_data (tests.test_trainrun_blockers.TestSampleClassification) ... ok
+test_four_folds_train_one_fold_test_no_external_validation (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit) ... ok
+test_normalization_skips_real_data_eras_and_enforces_coverage (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit)
+F3: the __main__ normalization path with a real data sample (era E, xsec 'None'). ... ok
+test_dataset_partition_resolution (tests.test_processing_modes.TestFeaturesAndSplits) ... ok
+test_features_are_ordered_and_missing_is_fatal (tests.test_processing_modes.TestFeaturesAndSplits) ... ok
+test_folds_preserve_uint64_and_chunk_independence (tests.test_processing_modes.TestFeaturesAndSplits) ... ok
+test_split_filelists_are_disjoint_and_exclude_data (tests.test_processing_modes.TestFeaturesAndSplits) ... ok
+test_corrupt_model_and_missing_fold_are_rejected (tests.test_processing_modes.TestFrozenModels) ... ok
+test_diagnostic_and_mismatched_signatures_are_rejected (tests.test_processing_modes.TestFrozenModels) ... ok
+test_model_uses_exact_heldout_fold_and_survives_pickle (tests.test_processing_modes.TestFrozenModels) ... ok
+test_era_names_match_existing_wrapper_without_mutating_config (tests.test_processing_modes.TestObjectShiftTemplates) ... ok
+test_object_shift_has_nominal_weight_without_a_second_nominal_slice (tests.test_processing_modes.TestObjectShiftTemplates) ... ok
+test_nonfinite_weights_raise_and_last_edge_is_kept (tests.test_processing_modes.TestTemplateAccumulation) ... ok
+test_variance_and_negrw_normalize_after_chunk_merge (tests.test_processing_modes.TestTemplateAccumulation) ... ok
+test_parquet_read_falls_back_and_preserves_required_columns (tests.test_hzz_safety_ports.TestEosSafety) ... ok
+test_server_stat_errors_are_not_absent_files (tests.test_hzz_safety_ports.TestEosSafety) ... ok
+test_train_row_coverage_counts_empty_chunks_and_rejects_missing_rows (tests.test_hzz_safety_ports.TestEosSafety) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 13.766s
+
+OK
+exit=0

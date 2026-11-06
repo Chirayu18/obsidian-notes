@@ -1,0 +1,203 @@
+# 2026-11-06T14:22:29+01:00 lxplus977.cern.ch: NEW tests run against the reconstructed PRE-EDIT tree (/tmp/cgupta_blockerfix_20261106/pre_tree; my 17 pre-existing files restored to verified pre-edit content, bhive_fold_commands.py absent). Failures are expected.
+test_commands_hold_out_fold_and_use_unique_versions (tests.test_trainrun_blockers.TestBhiveHandoff) ... ERROR
+/usr/local/lib/python3.10/site-packages/uproot/extras.py:15: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+test_data_skipped_and_wg_lands_in_diboson (tests.test_trainrun_blockers.TestCardBuilder) ... ERROR
+test_final_policy_matches_legacy_order_exactly (tests.test_trainrun_blockers.TestCardBuilder)
+F5 parity: same inputs through the legacy main() sequence and finalize_templates. ... ERROR
+test_object_shift_real_zero_vs_missing (tests.test_trainrun_blockers.TestCardBuilder) ... ERROR
+test_partial_weight_variation_raises (tests.test_trainrun_blockers.TestCardBuilder) ... FAIL
+test_output_root_rules (tests.test_trainrun_blockers.TestCondorPreparation) ... ERROR
+test_prepared_job_saves_into_created_mode_directory (tests.test_trainrun_blockers.TestCondorPreparation) ... ERROR
+test_missing_extra_stale_and_file_gaps_raise (tests.test_trainrun_blockers.TestCoverage) ... ERROR
+test_store_path_is_replica_independent (tests.test_trainrun_blockers.TestCoverage) ... ERROR
+test_truncated_eos_file_retries_from_server (tests.test_trainrun_blockers.TestEosParquetFallback) ... ERROR
+test_prepared_job_mode_and_output_must_match (tests.test_trainrun_blockers.TestJobsStatus) ... ERROR
+test_bhive_config_and_onnx_io_checks (tests.test_trainrun_blockers.TestRegistryGuards) ... ERROR
+test_run_refuses_untrained_era (tests.test_trainrun_blockers.TestRegistryGuards) ... ERROR
+test_all_workflow_mc_processes_map_to_one_card_class_and_label (tests.test_trainrun_blockers.TestSampleClassification)
+F2: every MC process the workflow runs (incl. WG) maps once, consistently. ... ERROR
+test_every_era_entry_is_mc_or_data (tests.test_trainrun_blockers.TestSampleClassification) ... ERROR
+test_four_folds_train_one_fold_test_no_external_validation (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit) ... FAIL
+test_normalization_skips_real_data_eras_and_enforces_coverage (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit)
+F3: the __main__ normalization path with a real data sample (era E, xsec 'None'). ... ERROR
+
+======================================================================
+ERROR: test_commands_hold_out_fold_and_use_unique_versions (tests.test_trainrun_blockers.TestBhiveHandoff)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 340, in test_commands_hold_out_fold_and_use_unique_versions
+    gen = import_script('bhive_fold_commands', 'scripts/mva/bhive_fold_commands.py')
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 32, in import_script
+    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
+  File "<frozen importlib._bootstrap_external>", line 879, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1016, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1073, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/cgupta_blockerfix_20261106/pre_tree/scripts/mva/bhive_fold_commands.py'
+
+======================================================================
+ERROR: test_data_skipped_and_wg_lands_in_diboson (tests.test_trainrun_blockers.TestCardBuilder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 223, in test_data_skipped_and_wg_lands_in_diboson
+    hists, variations, shapes, _ = self.mod.make_process_hists(out, self.cfg, YEAR, policy=policy)
+TypeError: make_process_hists() got an unexpected keyword argument 'policy'
+
+======================================================================
+ERROR: test_final_policy_matches_legacy_order_exactly (tests.test_trainrun_blockers.TestCardBuilder)
+F5 parity: same inputs through the legacy main() sequence and finalize_templates.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 283, in test_final_policy_matches_legacy_order_exactly
+    self.mod.finalize_templates(b, {'smooth_shapes': smooth}, names, ['JES'], policy)
+AttributeError: module 'build_cards' has no attribute 'finalize_templates'
+
+======================================================================
+ERROR: test_object_shift_real_zero_vs_missing (tests.test_trainrun_blockers.TestCardBuilder)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 240, in test_object_shift_real_zero_vs_missing
+    hists, *_ = self.mod.make_process_hists(out, self.cfg, YEAR)
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/scripts/combine/build_cards_from_templates.py", line 84, in make_process_hists
+    raise ValueError(f'{sample}: process {info["process"]!r} has no unique card mapping')
+ValueError: WGtoLNuG_PTG10to100: process 'WG' has no unique card mapping
+
+======================================================================
+ERROR: test_output_root_rules (tests.test_trainrun_blockers.TestCondorPreparation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 416, in test_output_root_rules
+    from analysis.utils.output_dir_maker import parquet_output_location, output_workflow_name
+ImportError: cannot import name 'parquet_output_location' from 'analysis.utils.output_dir_maker' (/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/utils/output_dir_maker.py)
+
+======================================================================
+ERROR: test_prepared_job_saves_into_created_mode_directory (tests.test_trainrun_blockers.TestCondorPreparation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 378, in test_prepared_job_saves_into_created_mode_directory
+    subprocess.run([sys.executable, str(ROOT / 'submit_condor.py'), '-w', WF, '-y', YEAR,
+  File "/usr/local/lib/python3.10/subprocess.py", line 526, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/local/bin/python3', '/tmp/cgupta_blockerfix_20261106/pre_tree/submit_condor.py', '-w', 'hww_allfix_4fs', '-y', '2022postEE', '-d', 'TTto2L2Nu', '--mode', 'train', '--output_root', '/tmp/cgupta/tmp79fud5sc/outroot']' returned non-zero exit status 2.
+
+======================================================================
+ERROR: test_missing_extra_stale_and_file_gaps_raise (tests.test_trainrun_blockers.TestCoverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 143, in test_missing_extra_stale_and_file_gaps_raise
+    from analysis.processing_checks import check_dataset_coverage
+ImportError: cannot import name 'check_dataset_coverage' from 'analysis.processing_checks' (/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/processing_checks.py)
+
+======================================================================
+ERROR: test_store_path_is_replica_independent (tests.test_trainrun_blockers.TestCoverage)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 164, in test_store_path_is_replica_independent
+    from analysis.processing_checks import store_path
+ImportError: cannot import name 'store_path' from 'analysis.processing_checks' (/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/processing_checks.py)
+
+======================================================================
+ERROR: test_truncated_eos_file_retries_from_server (tests.test_trainrun_blockers.TestEosParquetFallback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 458, in test_truncated_eos_file_retries_from_server
+    self.assertEqual(eio.read_parquet(str(bad))['x'].to_pylist(), [1, 2])
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/utils/eos_io.py", line 145, in read_parquet
+    return pq.read_table(path, columns=columns)
+  File "/usr/local/lib/python3.10/site-packages/pyarrow/parquet/core.py", line 1793, in read_table
+    dataset = ParquetDataset(
+  File "/usr/local/lib/python3.10/site-packages/pyarrow/parquet/core.py", line 1371, in __init__
+    self._dataset = ds.dataset(path_or_paths, filesystem=filesystem,
+  File "/usr/local/lib/python3.10/site-packages/pyarrow/dataset.py", line 794, in dataset
+    return _filesystem_dataset(source, **kwargs)
+  File "/usr/local/lib/python3.10/site-packages/pyarrow/dataset.py", line 486, in _filesystem_dataset
+    return factory.finish(schema)
+  File "pyarrow/_dataset.pyx", line 3138, in pyarrow._dataset.DatasetFactory.finish
+  File "pyarrow/error.pxi", line 155, in pyarrow.lib.pyarrow_internal_check_status
+  File "pyarrow/error.pxi", line 92, in pyarrow.lib.check_status
+pyarrow.lib.ArrowInvalid: Error creating dataset. Could not read schema from '/tmp/cgupta/tmp246tgrn9/bad.parquet'. Is this a 'parquet' file?: Could not open Parquet input source '/tmp/cgupta/tmp246tgrn9/bad.parquet': Parquet file size is 0 bytes
+
+======================================================================
+ERROR: test_prepared_job_mode_and_output_must_match (tests.test_trainrun_blockers.TestJobsStatus)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 438, in test_prepared_job_mode_and_output_must_match
+    js.check_prepared_jobs(job_dir, out, 'run')
+AttributeError: module 'jobs_status' has no attribute 'check_prepared_jobs'
+
+======================================================================
+ERROR: test_bhive_config_and_onnx_io_checks (tests.test_trainrun_blockers.TestRegistryGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 320, in test_bhive_config_and_onnx_io_checks
+    self.assertEqual(len(reg.check_bhive_config(BHIVE_CONFIG, classes)), 64)
+AttributeError: module 'register_folds' has no attribute 'check_bhive_config'
+
+======================================================================
+ERROR: test_run_refuses_untrained_era (tests.test_trainrun_blockers.TestRegistryGuards)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 313, in test_run_refuses_untrained_era
+    FoldModels(path, 'f', 's', list('abcdef'), year='2022postEE')
+TypeError: FoldModels.__init__() got an unexpected keyword argument 'year'
+
+======================================================================
+ERROR: test_all_workflow_mc_processes_map_to_one_card_class_and_label (tests.test_trainrun_blockers.TestSampleClassification)
+F2: every MC process the workflow runs (incl. WG) maps once, consistently.
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 125, in test_all_workflow_mc_processes_map_to_one_card_class_and_label
+    from analysis.processing_checks import expected_mc_samples
+ImportError: cannot import name 'expected_mc_samples' from 'analysis.processing_checks' (/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/processing_checks.py)
+
+======================================================================
+ERROR: test_every_era_entry_is_mc_or_data (tests.test_trainrun_blockers.TestSampleClassification)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 112, in test_every_era_entry_is_mc_or_data
+    from analysis.processing_checks import sample_kind
+ImportError: cannot import name 'sample_kind' from 'analysis.processing_checks' (/tmp/cgupta_blockerfix_20261106/pre_tree/analysis/processing_checks.py)
+
+======================================================================
+ERROR: test_normalization_skips_real_data_eras_and_enforces_coverage (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit)
+F3: the __main__ normalization path with a real data sample (era E, xsec 'None').
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 94, in test_normalization_skips_real_data_eras_and_enforces_coverage
+    saved = pc.expected_mc_samples, pc.fileset_files
+AttributeError: module 'analysis.processing_checks' has no attribute 'expected_mc_samples'
+
+======================================================================
+FAIL: test_partial_weight_variation_raises (tests.test_trainrun_blockers.TestCardBuilder)
+----------------------------------------------------------------------
+ValueError: WGtoLNuG_PTG10to100: process 'WG' has no unique card mapping
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 234, in test_partial_weight_variation_raises
+    with self.assertRaisesRegex(ValueError, 'covers 1 of 2 nominal chunks'):
+AssertionError: "covers 1 of 2 nominal chunks" does not match "WGtoLNuG_PTG10to100: process 'WG' has no unique card mapping"
+
+======================================================================
+FAIL: test_four_folds_train_one_fold_test_no_external_validation (tests.test_trainrun_blockers.TestSingleValidationOwnerSplit)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/cgupta_blockerfix_20261106/pre_tree/tests/test_trainrun_blockers.py", line 61, in test_four_folds_train_one_fold_test_no_external_validation
+    self.assertEqual(sorted(x.name for x in mdir.iterdir()), ['test.txt', 'train.txt'])
+AssertionError: Lists differ: ['test.txt', 'train.txt', 'valid.txt'] != ['test.txt', 'train.txt']
+
+First list contains 1 additional elements.
+First extra element 2:
+'valid.txt'
+
+- ['test.txt', 'train.txt', 'valid.txt']
+?                         -------------
+
++ ['test.txt', 'train.txt']
+
+----------------------------------------------------------------------
+Ran 17 tests in 9.917s
+
+FAILED (failures=2, errors=15)
+exit=1

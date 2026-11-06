@@ -1,0 +1,12 @@
+# 2026-11-06T14:18:34+01:00 lxplus977.cern.ch; apptainer exec ... --env PYTHONPATH=$REPO python3 chain_repro.py /tmp/cgupta_blockerfix_20261106/chain (cwd = repo)
+expected MC samples: 46  WG: ['WGtoLNuG_PTG100to200', 'WGtoLNuG_PTG10to100'] ...
+[cards_full] exit=0 /tmp/cgupta_blockerfix_20261106/chain/cards_full/datacard.txt
+ policy: nominal_bins_floored = 1  data skipped = ['EGammaRun2022E']  empty-shift fallbacks = 0
+ n histograms: 1626  SR vjets nominal last bin: 1e-06 ['SR_hplusc_vjets']
+ min bin over all non-data templates: 1e-06
+ datacard lines: 58 | JES row present: True
+[cards_missing_sample] exit=1 ValueError: 2022postEE: 1 expected MC samples have no output: ['WGtoLNuG_PTG100to200']
+[cards_with_exclusion] exit=0 /tmp/cgupta_blockerfix_20261106/chain/cards_with_exclusion/datacard.txt
+[cards_file_gap] exit=1 ValueError: DYto2L_2Jets_10to50: 1 fileset files unprocessed, 0 processed files not in the fileset
+CHAIN REPRO DONE
+exit=0

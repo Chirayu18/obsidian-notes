@@ -1,0 +1,1716 @@
+diff -ruN a/analysis/models/registry.py b/analysis/models/registry.py
+--- a/analysis/models/registry.py	2026-11-06 14:22:04.448750581 +0100
++++ b/analysis/models/registry.py	2026-11-06 14:22:04.573570247 +0100
+@@ -8,7 +8,7 @@
+ 
+ class FoldModels:
+     def __init__(self, manifest, features_hash, selection_hash, classes, folds=5,
+-                 allow_diagnostic=False):
++                 allow_diagnostic=False, year=None):
+         self.path = Path(manifest).resolve()
+         self.meta = yaml.safe_load(self.path.read_text())
+         m = self.meta
+@@ -28,6 +28,9 @@
+             provenance = m.get('training_data', {})
+             if any(not provenance.get(k) for k in ('workflow', 'eras', 'git_commit', 'filelist_sha256')):
+                 raise ValueError('Production model needs a training-data manifest')
++            # Neither hash contains the era: refuse to score an era the model never saw.
++            if year is not None and year not in provenance['eras']:
++                raise ValueError(f'Model trained on eras {provenance["eras"]}; refusing to score {year}')
+         records = m.get('models', [])
+         if len(records) != folds or {x['fold'] for x in records} != set(range(folds)):
+             raise ValueError('Exactly one model for each held-out fold is required')
+diff -ruN a/analysis/processing_checks.py b/analysis/processing_checks.py
+--- a/analysis/processing_checks.py	2026-11-06 14:22:04.281532919 +0100
++++ b/analysis/processing_checks.py	2026-11-06 14:22:04.345542572 +0100
+@@ -27,8 +27,103 @@
+         actual = output.get('samples', {}).get(sample, {}).get('events_read', 0)
+         if actual != n:
+             raise ValueError(f'{sample}: processed {actual} entries, expected {n}')
++    # 'files' (sample -> logical /store paths) lets downstream consumers prove that
++    # every fileset file of every expected sample was processed by some job.
++    files = {}
++    for dataset, paths in partition.items():
++        sample, _ = dataset_info(dataset, get_dataset_config(year))
++        files.setdefault(sample, set()).update(store_path(x) for x in paths)
+     return {'expected_entries': sum(expected.values()),
+-            'processed_entries': sum(output['samples'][s]['events_read'] for s in expected)}
++            'processed_entries': sum(output['samples'][s]['events_read'] for s in expected),
++            'files': files}
++
++
++def store_path(path):
++    """Replica-independent identity of an input file (the /store/... LFN)."""
++    path = str(path)
++    i = path.find('/store/')
++    return path[i:] if i >= 0 else path
++
++
++def sample_kind(sample, info):
++    """'mc' or 'data' from the era fileset entry; anything else is an error.
++
++    Simulation is era mc/signal. Collision data carries a run-letter era (C, D,
++    E, F, G, C123, C4, ...) and process 'Data'. Never test era == 'data'.
++    """
++    era = str(info.get('era', '')).strip()
++    if era in ('mc', 'signal'):
++        return 'mc'
++    if str(info.get('process', '')).strip() == 'Data':
++        return 'data'
++    raise ValueError(f'{sample}: cannot classify era={era!r} process={info.get("process")!r} as MC or data')
++
++
++def load_exclusions(path):
++    """YAML {sample: reason}. Every exclusion needs a non-empty provenance reason."""
++    if not path:
++        return {}
++    import yaml
++    data = yaml.safe_load(Path(path).read_text()) or {}
++    if not isinstance(data, dict):
++        raise ValueError(f'{path}: exclusions must map sample -> reason')
++    for sample, reason in data.items():
++        if not isinstance(reason, str) or not reason.strip():
++            raise ValueError(f'{path}: exclusion of {sample} needs a provenance reason')
++    return data
++
++
++def expected_mc_samples(workflow, year):
++    from analysis.filesets.utils import get_dataset_config, get_datasets_to_run_over
++    config = get_dataset_config(year)
++    return {s for s in get_datasets_to_run_over(workflow, year) if sample_kind(s, config[s]) == 'mc'}
++
++
++def fileset_files(year, fileset_json=None):
++    import json
++    from analysis.filesets.utils import get_nano_version
++    if fileset_json is None:
++        fileset_json = (Path.cwd() / 'analysis' / 'filesets' /
++                        f'fileset_{year}_nanov{get_nano_version(year)}_lxplus.json')
++    data = json.loads(Path(fileset_json).read_text())
++    return {k: {store_path(x) for x in v} for k, v in data.items()}
++
++
++def check_dataset_coverage(workflow, year, present, processed_files, exclusions=None,
++                           fileset_json=None, expected=None):
++    """Every MC sample the workflow runs over is present and fully processed.
++
++    present: samples found in the supplied outputs. processed_files: sample ->
++    set of /store paths recorded in execution_checks. Excluded samples must be
++    listed explicitly with a reason; stale exclusions are errors too.
++    """
++    exclusions = exclusions or {}
++    expected = expected_mc_samples(workflow, year) if expected is None else set(expected)
++    stale = set(exclusions) - expected
++    if stale:
++        raise ValueError(f'Exclusions name samples the workflow does not run over: {sorted(stale)}')
++    overlap = set(exclusions) & set(present)
++    if overlap:
++        raise ValueError(f'Excluded samples are present in the inputs: {sorted(overlap)}')
++    missing = expected - set(exclusions) - set(present)
++    if missing:
++        raise ValueError(f'{year}: {len(missing)} expected MC samples have no output: {sorted(missing)}')
++    unexpected = set(present) - expected
++    if unexpected:
++        raise ValueError(f'{year}: outputs contain MC samples outside the workflow: {sorted(unexpected)}')
++    reference = fileset_files(year, fileset_json)
++    for sample in sorted(set(present)):
++        if sample not in reference:
++            raise ValueError(f'{sample}: absent from the {year} fileset JSON')
++        got = processed_files.get(sample)
++        if got is None:
++            raise ValueError(f'{sample}: outputs carry no execution_checks file record')
++        lost = reference[sample] - got
++        extra = got - reference[sample]
++        if lost or extra:
++            raise ValueError(f'{sample}: {len(lost)} fileset files unprocessed, '
++                             f'{len(extra)} processed files not in the fileset')
++    return {'expected': sorted(expected), 'excluded': dict(sorted(exclusions.items()))}
+ 
+ 
+ def check_train_rows(accumulators, parquet_files):
+diff -ruN a/analysis/processing_modes.py b/analysis/processing_modes.py
+--- a/analysis/processing_modes.py	2026-11-06 14:22:04.364767906 +0100
++++ b/analysis/processing_modes.py	2026-11-06 14:22:04.428552646 +0100
+@@ -23,7 +23,7 @@
+     return out
+ 
+ 
+-def validate(config, mode, folds, manifest=None, diagnostic=False):
++def validate(config, mode, folds, manifest=None, diagnostic=False, year=None):
+     if folds < 2 or folds > 32767:
+         raise ValueError('folds must be in [2, 32767]')
+     if mode not in ('legacy', 'train', 'run'):
+@@ -43,5 +43,9 @@
+         return None
+     if not manifest:
+         raise ValueError('RUN requires --model_manifest; no fallback to the old v11 model')
++    if year is None:
++        raise ValueError('RUN validation needs the processing year (model era coverage)')
++    if list(config.mva['labels']['process_groups']) != list(config.combine['classes']):
++        raise ValueError('mva.labels.process_groups order differs from combine.classes')
+     return FoldModels(manifest, signature(config), selection_signature(config),
+-                      config.combine['classes'], folds, diagnostic)
++                      config.combine['classes'], folds, diagnostic, year=year)
+diff -ruN a/analysis/processors/base.py b/analysis/processors/base.py
+--- a/analysis/processors/base.py	2026-11-06 14:22:04.592669674 +0100
++++ b/analysis/processors/base.py	2026-11-06 14:22:04.719587970 +0100
+@@ -51,7 +51,7 @@
+         self.workflow_config = config_builder.build_workflow_config()
+         from analysis.processing_modes import validate
+         from analysis.features.hww import signature, selection_signature
+-        self._models = validate(self.workflow_config, mode, folds, model_manifest, allow_diagnostic_model)
++        self._models = validate(self.workflow_config, mode, folds, model_manifest, allow_diagnostic_model, year=year)
+         self._feature_hash = signature(self.workflow_config) if mode != "legacy" else None
+         self._selection_hash = selection_signature(self.workflow_config) if mode != "legacy" else None
+         if mode == "train":
+@@ -92,6 +92,11 @@
+             entry = output.setdefault("samples", {}).setdefault(sample, {})
+             entry.update(stats)
+             entry.setdefault("selected_events", 0)
++            if self.mode == "run":
++                # Which object shifts were evaluated on this chunk (before any selection),
++                # so the card builder can tell a real zero-yield shift from a missing one.
++                key = stats["chunks"]
++                entry["evaluated_shifts"] = {s: set(key) for _, s in shifts if s is not None}
+             output["provenance"] = {"mode": {self.mode}, "year": {self.year},
+                                     "features_hash": {self._feature_hash},
+                                     "selection_hash": {self._selection_hash}, "folds": {self.folds}}
+@@ -238,8 +243,12 @@
+                                      combine.get("negrw_shape_name", "CMS_negrw_vjets")
+                                      if combine.get("negrw_uncertainty", True) else None,
+                                      nominal_weight=nominal)
++            chunk = events.behavior["__events_factory__"]._partition_key
+             for record in records.values():
+                 record["kind"] = {"weight" if shift is None else "object"}
++                # Chunk coverage per variation: a weight variation must cover exactly
++                # the nominal's chunks (checked when building cards).
++                record["chunks"] = {chunk}
+             entry = output.setdefault("samples", {}).setdefault(sample, {})
+             entry.setdefault("templates", {})[category] = records
+             # Control histograms are nominal-only; templates contain every variation.
+diff -ruN a/analysis/utils/eos_io.py b/analysis/utils/eos_io.py
+--- a/analysis/utils/eos_io.py	2026-11-06 14:22:04.739441633 +0100
++++ b/analysis/utils/eos_io.py	2026-11-06 14:22:04.801597924 +0100
+@@ -140,10 +140,13 @@
+ 
+ 
+ def read_parquet(path, columns=None):
++    import pyarrow as pa
+     import pyarrow.parquet as pq
+     try:
+         return pq.read_table(path, columns=columns)
+-    except OSError:
++    except (OSError, pa.ArrowInvalid):
++        # A stale/truncated FUSE view raises ArrowInvalid (not OSError); retry from
++        # the server for /eos paths only. A server-side failure still raises.
+         if not _is_eos(path):
+             raise
+         return pq.read_table(io.BytesIO(read_bytes(path, prefer_server=True)), columns=columns)
+diff -ruN a/analysis/utils/output_dir_maker.py b/analysis/utils/output_dir_maker.py
+--- a/analysis/utils/output_dir_maker.py	2026-11-06 14:22:04.820423041 +0100
++++ b/analysis/utils/output_dir_maker.py	2026-11-06 14:22:04.900609942 +0100
+@@ -1,14 +1,47 @@
+ from analysis.utils.path_handler import Paths
+ 
+ 
+-def make_output_directory(args) -> str:
+-    """builds output directories. Returns output path"""
+-    paths = Paths(eos=args.eos)
++def output_workflow_name(workflow, mode="legacy"):
++    """Directory name for a processing mode: legacy keeps the bare workflow name."""
++    return workflow if mode in (None, "legacy") else f"{workflow}__{mode}"
++
++
++def make_output_directory(args, workflow_name=None) -> str:
++    """builds output directories. Returns output path
++
++    workflow_name overrides args.workflow for the directory (TRAIN/RUN use
++    '<workflow>__<mode>'), so the directory that is CREATED is the one jobs save
++    into. args.output_root (optional) replaces the default root path.
++    """
++    paths = Paths(eos=args.eos, root=getattr(args, "output_root", None))
+     path_args = {}
+     for arg in ["workflow", "year", "dataset"]:
+         if arg in args:
+             path_args[arg] = vars(args)[arg]
+         else:
+             path_args[arg] = None
++    if workflow_name is not None:
++        path_args["workflow"] = workflow_name
+     workflow_output_path = paths.workflow_path(**path_args)
+     return str(workflow_output_path)
++
++
++def parquet_output_location(args) -> str:
++    """Root URL/path under which parquet shards are written (always ends in '/outputs/').
++
++    Default (no output_root): unchanged legacy behaviour. With output_root the
++    parquet location is derived from the same root as the .coffea outputs; an EOS
++    user-space root is written through the eosuser xrootd endpoint, as before.
++    Any other /eos root needs an explicit output_root_url (no guessed endpoint).
++    """
++    root = getattr(args, "output_root", None)
++    if not root:
++        return None  # submit.py keeps its existing --eos / AFS default
++    url = getattr(args, "output_root_url", None)
++    if url:
++        return url.rstrip("/") + "/outputs/"
++    if root.startswith("/eos/user/"):
++        return "root://eosuser.cern.ch/" + root.rstrip("/") + "/outputs/"
++    if root.startswith("/eos/"):
++        raise ValueError(f"{root}: give --output_root_url (xrootd endpoint) for non-user EOS roots")
++    return root.rstrip("/") + "/outputs/"
+diff -ruN a/analysis/utils/path_handler.py b/analysis/utils/path_handler.py
+--- a/analysis/utils/path_handler.py	2026-11-06 14:22:04.920364360 +0100
++++ b/analysis/utils/path_handler.py	2026-11-06 14:22:05.003622444 +0100
+@@ -4,8 +4,14 @@
+ 
+ class Paths:
+ 
+-    def __init__(self, eos: bool) -> None:
+-        if eos:
++    def __init__(self, eos: bool, root: str = None) -> None:
++        if root:
++            # explicit output root (--output_root); must be absolute and is never guessed
++            root_path = pathlib.Path(root)
++            if not root_path.is_absolute():
++                raise ValueError(f"--output_root must be an absolute path: {root}")
++            self.root_path = root_path
++        elif eos:
+             # finds the /eos user directory
+             user = os.environ["USER"]
+             self.root_path = pathlib.Path(f"/eos/user/{user[0]}/{user}/higgscharm")
+diff -ruN a/analysis/workflows/hww_allfix_4fs.yaml b/analysis/workflows/hww_allfix_4fs.yaml
+--- a/analysis/workflows/hww_allfix_4fs.yaml	2026-11-06 14:22:05.024068509 +0100
++++ b/analysis/workflows/hww_allfix_4fs.yaml	2026-11-06 14:22:05.158641266 +0100
+@@ -1021,7 +1021,9 @@
+       higgsbkg: [H+b, ggH, VBF, ZH, ggZH, WH, ttHnonBB, ttHtoBB, H(125)]
+       tt:       [tt]
+       st:       [Single Top]
+-      diboson:  [WW, WZ, ZZ, qqToZZ, ggToZZ]
++      # WG (W+gamma) added to diboson at retraining: Chirayu 2026-10-02, "ADD IT (to
++      # diboson, in training and in process_map) WHEN RETRAINING". Same in process_map.
++      diboson:  [WW, WZ, ZZ, qqToZZ, ggToZZ, WG]
+       vjets:    [DY+Jets, V+Jets]
+     # 13-class finegrained scheme (v32 / kappa-HCE): Higgs split into sub-classes.
+     # Class keys = b-hive HPlusCHToWW_kappa_hce.yml `truths` minus the `is_` prefix
+@@ -1122,7 +1124,8 @@
+     higgsbkg: [H+b, VBF, ZH, WH, ggH, ggZH, ttHnonBB, ttHtoBB]
+     tt:       [tt]
+     st:       [Single Top]
+-    diboson:  [WW, WZ, ZZ]
++    # WG added 2026-11-05 per the 2026-10-02 retraining decision (see mva.labels).
++    diboson:  [WW, WZ, ZZ, WG]
+     vjets:    [DY+Jets, V+Jets]
+   # weight-based shape nuisances (read weight_<name>Up/Down columns from parquet).
+   shape_systematics:
+diff -ruN a/condor/submit.sh b/condor/submit.sh
+--- a/condor/submit.sh	2026-11-06 14:22:05.177298238 +0100
++++ b/condor/submit.sh	2026-11-06 14:22:05.270654866 +0100
+@@ -34,10 +34,10 @@
+ echo $OPTS
+ 
+ cd $BASEDIR
+-# Mode flags are optional for old prepared jobs. Use an array to preserve paths with spaces.
+-MODE_OPTS=()
+-while IFS= read -r -d '' value; do MODE_OPTS+=("$value"); done < <(
+-python3 - "$WORKDIR/arguments.json" <<'PYMODE'
++# Mode/output flags are optional for old prepared jobs. Write them NUL-separated to a
++# file and check the helper's exit status: a failure inside a process substitution is
++# invisible to `bash -e` and would silently run legacy mode into a __mode path.
++python3 - "$WORKDIR/arguments.json" "$WORKDIR/mode_opts.bin" <<'PYMODE'
+ import json, sys
+ args = json.load(open(sys.argv[1]))
+ items = ['--mode', args.get('mode', 'legacy'), '--folds', str(args.get('folds', 5))]
+@@ -45,7 +45,11 @@
+     items += ['--model_manifest', args['model_manifest']]
+ for key in ('allow_diagnostic_model', 'slim_ntuple'):
+     if args.get(key): items.append('--' + key)
+-sys.stdout.buffer.write(b'\0'.join(x.encode() for x in items) + b'\0')
++if args.get('output_location'):
++    items += ['--output_location', args['output_location']]
++open(sys.argv[2], 'wb').write(b'\0'.join(x.encode() for x in items) + b'\0')
+ PYMODE
+-)
+-python3 submit.py $OPTS "${MODE_OPTS[@]}"
+\ No newline at end of file
++MODE_OPTS=()
++while IFS= read -r -d '' value; do MODE_OPTS+=("$value"); done < "$WORKDIR/mode_opts.bin"
++[ "${#MODE_OPTS[@]}" -ge 4 ] || { echo "mode options missing" >&2; exit 1; }
++python3 submit.py $OPTS "${MODE_OPTS[@]}"
+diff -ruN a/jobs_status.py b/jobs_status.py
+--- a/jobs_status.py	2026-11-06 14:22:05.288899555 +0100
++++ b/jobs_status.py	2026-11-06 14:22:05.354665066 +0100
+@@ -11,6 +11,7 @@
+ from collections import defaultdict
+ 
+ from analysis.utils import make_output_directory
++from analysis.utils.output_dir_maker import output_workflow_name
+ from analysis.filesets.xrootd_sites import xroot_to_site
+ from analysis.filesets.utils import (
+     divide_list,
+@@ -75,6 +76,17 @@
+         help="Delete all job outputs, logs, and filesets for this workflow/year and rerun",
+     )
+     parser.add_argument(
++        "--mode",
++        choices=["legacy", "train", "run"],
++        default="legacy",
++        help="processing mode of the prepared jobs (TRAIN/RUN live under <workflow>__<mode>)",
++    )
++    parser.add_argument(
++        "--output_root",
++        default=None,
++        help="the --output_root used when preparing the jobs (unset: default area)",
++    )
++    parser.add_argument(
+         "--single_fetch",
+         action="store_true",
+         help="Run fetch.py only once by merging all failing sites and datasets into a single group",
+@@ -452,6 +464,11 @@
+ def main():
+     args = parse_args()
+ 
++    if args.reset and args.mode != "legacy":
++        # --reset deletes job artifacts and reruns runner.py without mode/model options.
++        raise SystemExit("--reset is only supported for legacy jobs; prepare TRAIN/RUN jobs explicitly")
++    job_workflow = output_workflow_name(args.workflow, args.mode)
++
+     # Optional full reset
+     if args.reset:
+         print("------------------------------------------------------------")
+@@ -489,17 +506,20 @@
+         ]
+         if args.eos:
+             reset_cmd.append("--eos")
++        if args.output_root:
++            reset_cmd += ["--output_root", args.output_root]
+ 
+         print("Re-running full workflow via runner.py...")
+         subprocess.run(reset_cmd, check=True)
+         print("Reset complete.\n")
+ 
+     # Directory setup
+-    output_dir = Path(make_output_directory(args))
++    output_dir = Path(make_output_directory(args, workflow_name=job_workflow))
+     base_dir = Path.cwd()
+     condor_dir = base_dir / "condor"
+-    job_dir = condor_dir / args.workflow / args.year
+-    log_dir = condor_dir / "logs" / args.workflow / args.year
++    job_dir = condor_dir / job_workflow / args.year
++    log_dir = condor_dir / "logs" / job_workflow / args.year
++    check_prepared_jobs(job_dir, output_dir, args.mode)
+     fileset_dir = base_dir / "analysis" / "filesets"
+ 
+     # Discover job state
+@@ -551,10 +571,28 @@
+             job_dir,
+             jobnum_missing,
+             datasets_with_missing_jobs,
+-            args.workflow,
++            job_workflow,
+             args.year,
+         )
+ 
+ 
++def check_prepared_jobs(job_dir, output_dir, mode):
++    """Prepared jobs must match the monitored mode and output directory.
++
++    Otherwise completion would be judged in the wrong place (a TRAIN job's
++    .coffea is not in the legacy directory, or vice versa).
++    """
++    if not job_dir.is_dir():
++        raise SystemExit(f"No prepared jobs at {job_dir}")
++    for args_json in sorted(job_dir.glob("*/arguments.json")):
++        prepared = json.loads(args_json.read_text())
++        if prepared.get("mode", "legacy") != mode:
++            raise SystemExit(f"{args_json}: prepared for mode {prepared.get('mode', 'legacy')!r}, not {mode!r}")
++        expected = output_dir / args_json.parent.name
++        if Path(prepared["output_path"]) != expected:
++            raise SystemExit(f"{args_json}: output_path {prepared['output_path']} != monitored {expected}; "
++                             "pass the same --output_root/--eos used at preparation")
++
++
+ if __name__ == "__main__":
+     main()
+diff -ruN a/runner.py b/runner.py
+--- a/runner.py	2026-11-06 14:22:05.372768168 +0100
++++ b/runner.py	2026-11-06 14:22:05.435674902 +0100
+@@ -70,12 +70,23 @@
+         default="2000",
+         help="Requested memory (in MB) for the condor job",
+     )
++    parser.add_argument(
++        "--output_root",
++        default=None,
++        help="absolute root replacing the default output area for .coffea and parquet outputs "
++             "(<root>/outputs/<workflow>[__<mode>]/<year>/<dataset>). Unset: unchanged default.",
++    )
++    parser.add_argument(
++        "--output_root_url",
++        default=None,
++        help="xrootd URL of --output_root for parquet writes (needed for non-/eos/user EOS roots)",
++    )
+     add_mode_arguments(parser)
+     args = parser.parse_args()
+     from analysis.processing_modes import validate
+     from analysis.workflows.config import WorkflowConfigBuilder
+     validate(WorkflowConfigBuilder(args.workflow).build_workflow_config(), args.mode, args.folds,
+-             args.model_manifest, args.allow_diagnostic_model)
++             args.model_manifest, args.allow_diagnostic_model, year=args.year)
+     if args.mode != "legacy":
+         args.output_format = "parquet" if args.mode == "train" else "coffea"
+     if args.mode == "run" and args.allow_diagnostic_model and getattr(args, "submit", False):
+@@ -108,4 +119,8 @@
+             cmd_args.append("--submit")
+         if args.eos:
+             cmd_args.append("--eos")
++        if args.output_root:
++            cmd_args += ["--output_root", args.output_root]
++        if args.output_root_url:
++            cmd_args += ["--output_root_url", args.output_root_url]
+         subprocess.run(cmd + cmd_args + mode_arguments(args), check=True)
+diff -ruN a/scripts/combine/build_cards_from_templates.py b/scripts/combine/build_cards_from_templates.py
+--- a/scripts/combine/build_cards_from_templates.py	2026-11-06 14:22:05.822051093 +0100
++++ b/scripts/combine/build_cards_from_templates.py	2026-11-06 14:22:05.869727603 +0100
+@@ -3,9 +3,15 @@
+ 
+ Normalization happens after all files/chunks are merged, including zero-selection
+ chunks. Missing shapes require an explicit per-sample not-applicable declaration.
++Every MC sample the workflow runs over must be present and fully processed, or
++be excluded explicitly with a reason. Signed per-chunk records stay signed; the
++approved legacy final-template policy (make_combine_inputs.main: empty
++object-shift fallback, coordinated non-positive-bin floor, optional smoothing and
++re-floor) is applied once, to the final summed templates, in the legacy order.
+ This command never runs Combine or submits jobs.
+ """
+ import argparse
++import json
+ from pathlib import Path
+ import sys
+ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+@@ -16,8 +22,10 @@
+ from coffea.util import load
+ from analysis.filesets.utils import get_dataset_config
+ from analysis.features.hww import signature, selection_signature
++from analysis.processing_checks import sample_kind, check_dataset_coverage, load_exclusions
+ from analysis.workflows.config import WorkflowConfigBuilder
+-from make_combine_inputs import write_root, write_data_obs, write_datacard, load_lumi
++from make_combine_inputs import (write_root, write_data_obs, write_datacard, load_lumi,
++                                 clip_negative_bins, smooth_shape_variations)
+ 
+ 
+ def configure_era(config, year):
+@@ -53,7 +61,15 @@
+     files = [Path(p).resolve() for p in files]
+     if len(set(files)) != len(files) or not files:
+         raise ValueError('Supply nonempty, distinct RUN output files')
+-    result = processor.accumulate(load(str(p)) for p in files)
++
++    def checked():
++        for p in files:
++            out = load(str(p))
++            # Written only when the job's entry-count check passed (submit.py).
++            if 'files' not in out.get('execution_checks', {}):
++                raise ValueError(f'{p}: no execution_checks file record; incomplete or pre-fix job output')
++            yield out
++    result = processor.accumulate(checked())
+     for name, values in result.get('provenance', {}).items():
+         if len(values) != 1:
+             raise ValueError(f'Incompatible RUN provenance: {name}={values}')
+@@ -65,33 +81,46 @@
+     return result
+ 
+ 
+-def make_process_hists(output, config, year, not_applicable=None):
++def _syst(var):
++    return var[:-2] if var.endswith('Up') else var[:-4] if var.endswith('Down') else ''
++
++
++def make_process_hists(output, config, year, not_applicable=None, policy=None):
++    """Sum normalized templates per (channel, class, variation).
++
++    policy (optional dict) receives an audit log of every explicit decision.
++    """
+     not_applicable = not_applicable or {}
++    policy = {} if policy is None else policy
++    log = policy.setdefault('declared_not_applicable_used', [])
+     combine = config.combine
+     category = next(iter(config.event_selection['categories']))
+     classes, channels = combine['classes'], list(combine['channels'])
+     edges = np.asarray(combine['binning']['edges'], dtype=float)
+     datasets, lumi = get_dataset_config(year), load_lumi(year)
+     mapped = {}
+-    discovered = set()
+-    object_variations = set()
++    evaluated = set()
++    data_skipped = []
+     for sample, entry in output['samples'].items():
+         info = datasets[sample]
+-        if info['era'] == 'data':
++        if sample_kind(sample, info) == 'data':
++            data_skipped.append(sample)  # cards use Asimov data_obs; data never enters templates
+             continue
+         names = [p for p, procs in combine['process_map'].items() if info['process'].strip() in procs and p in classes]
+         if len(names) != 1:
+             raise ValueError(f'{sample}: process {info["process"]!r} has no unique card mapping')
+         records = entry.get('templates', {}).get(category, {})
+         mapped[sample] = (names[0], records)
+-        discovered.update(records)
+-        object_variations.update(v for v, rec in records.items() if rec.get("kind") == {"object"})
++        if 'evaluated_shifts' not in entry:
++            raise ValueError(f'{sample}: RUN output lacks evaluated_shifts; reprocess with the fixed code')
++        evaluated.update(entry['evaluated_shifts'])
++    policy['data_samples_skipped'] = sorted(data_skipped)
+     weight_shapes = list(combine['shape_systematics'])
+     negrw = combine.get('negrw_shape_name', 'CMS_negrw_vjets')
+     if combine.get('negrw_uncertainty', True) and 'vjets' in classes:
+         weight_shapes += [negrw]
+-    object_shapes = sorted({v[:-2] for v in object_variations if v.endswith('Up')
+-                            and v[:-2] not in weight_shapes and v[:-2] + 'Down' in discovered})
++    object_shapes = sorted({v[:-2] for v in evaluated if v.endswith('Up')
++                            and v[:-2] not in weight_shapes and v[:-2] + 'Down' in evaluated})
+     variations = ['nominal'] + [s + d for s in weight_shapes + object_shapes for d in ('Up', 'Down')]
+     result = {ch: {p: {v: (np.zeros(len(edges)-1), np.zeros(len(edges)-1)) for v in variations}
+                    for p in classes} for ch in channels}
+@@ -106,18 +135,39 @@
+             continue
+         if 'nominal' not in records:
+             raise ValueError(f'{sample}: variations exist without nominal')
++        nominal_chunks = records['nominal']['chunks']
+         seen.add(process)
+         for var in variations:
+-            syst = var[:-2] if var.endswith('Up') else var[:-4] if var.endswith('Down') else ''
+-            excluded = (syst in not_applicable.get(sample, [])
++            syst = _syst(var)
++            declared = syst in not_applicable.get(sample, [])
++            excluded = (declared
+                         or (syst.startswith('scalevar') and process in combine.get('no_scalevar', []))
+                         or (syst.startswith(('scalevar', 'ps_')) and process in combine.get('no_theory', []))
+                         or (syst == negrw and process != 'vjets'))
+             record = records.get(var)
+-            if record is None:
++            if syst in object_shapes:
++                done = entry['evaluated_shifts'].get(var, set())
++                if done == entry['chunks']:
++                    # Evaluated on every chunk: an absent record is a real zero yield
++                    # (all shifted events left the selection), never nominal.
++                    if record is None:
++                        continue
++                elif declared and not done:
++                    record = records['nominal']
++                    log.append([sample, var])
++                else:
++                    raise ValueError(f'{sample}: object shift {var} evaluated on {len(done)} of '
++                                     f'{len(entry["chunks"])} chunks; declare not-applicable explicitly')
++            elif record is None:
+                 if not excluded:
+                     raise ValueError(f'{sample}: missing required variation {var}; declare not-applicable explicitly')
++                if declared:
++                    log.append([sample, var])
+                 record = records['nominal']
++            elif var != 'nominal' and record['chunks'] != nominal_chunks:
++                # A weight variation present in only some chunks is an incomplete template.
++                raise ValueError(f'{sample}: variation {var} covers {len(record["chunks"])} of '
++                                 f'{len(nominal_chunks)} nominal chunks')
+             normalized = normalize_record(record, lumi * xsec / sumw)
+             for ch, (counts, sumw2) in normalized.items():
+                 result[ch][process][var][0][:] += counts
+@@ -128,6 +178,41 @@
+     return result, variations, object_shapes, edges
+ 
+ 
++def finalize_templates(hists, combine, variations, object_shapes, policy=None):
++    """Approved legacy final-template policy, same order as make_combine_inputs.main.
++
++    1. empty object shift for a (channel, process) with nominal > 0 -> nominal
++       (legacy rule; each application is logged; combine.object_shift_empty_fallback:
++       'error' refuses instead);
++    2. coordinated floor of non-positive bins (clip_negative_bins, floor 1e-6);
++    3. if combine.smooth_shapes: smooth_shape_variations, then re-floor.
++    Applies to final summed templates only; per-chunk records stay signed.
++    """
++    policy = {} if policy is None else policy
++    channels, processes = list(hists), list(next(iter(hists.values())))
++    mode = combine.get('object_shift_empty_fallback', 'nominal')
++    if mode not in ('nominal', 'error'):
++        raise ValueError(f'object_shift_empty_fallback must be nominal or error, not {mode!r}')
++    shift_vars = [s + d for s in object_shapes for d in ('Up', 'Down')]
++    applied = policy.setdefault('object_shift_empty_fallback', [])
++    for ch in channels:
++        for cp in processes:
++            nom_c, nom_s2 = hists[ch][cp]['nominal']
++            for vn in shift_vars:
++                c, _ = hists[ch][cp][vn]
++                if c.sum() <= 0 < nom_c.sum():
++                    if mode == 'error':
++                        raise ValueError(f'{ch}/{cp}: object shift {vn} is empty with nominal {nom_c.sum():.4g}')
++                    applied.append([ch, cp, vn, float(nom_c.sum())])
++                    hists[ch][cp][vn] = (nom_c.copy(), nom_s2.copy())
++    pairs = [(v, '') for v in variations]
++    policy['nominal_bins_floored'] = clip_negative_bins(hists, channels, processes, pairs)
++    if combine.get('smooth_shapes'):
++        policy['smoothed'] = smooth_shape_variations(hists, channels, processes, pairs)
++        clip_negative_bins(hists, channels, processes, pairs)
++    return hists
++
++
+ def main():
+     p = argparse.ArgumentParser(description=__doc__)
+     p.add_argument('-w', '--workflow', required=True)
+@@ -135,6 +220,8 @@
+     p.add_argument('--inputs', nargs='+', required=True)
+     p.add_argument('--output', required=True, help='new output directory')
+     p.add_argument('--not_applicable', help='YAML sample -> list of inapplicable nuisance names')
++    p.add_argument('--exclusions', help='YAML sample -> reason for MC samples deliberately absent')
++    p.add_argument('--fileset_json', help='override the era fileset JSON used for file coverage')
+     a = p.parse_args()
+     dest = Path(a.output)
+     if dest.exists():
+@@ -145,9 +232,17 @@
+     if (prov['year'] != {a.year} or prov['features_hash'] != {signature(cfg)}
+             or prov['selection_hash'] != {selection_signature(cfg)}):
+         raise ValueError('Workflow/year differs from RUN output provenance')
++    datasets = get_dataset_config(a.year)
++    mc = {s for s in output['samples'] if sample_kind(s, datasets[s]) == 'mc'}
++    exclusions = load_exclusions(a.exclusions)
++    coverage = check_dataset_coverage(a.workflow, a.year, mc,
++                                      {s: v for s, v in output['execution_checks']['files'].items() if s in mc},
++                                      exclusions, a.fileset_json)
+     na = yaml.safe_load(Path(a.not_applicable).read_text()) if a.not_applicable else {}
+     cfg = configure_era(cfg, a.year)
+-    hists, variations, object_shapes, edges = make_process_hists(output, cfg, a.year, na)
++    policy = {'coverage': coverage}
++    hists, variations, object_shapes, edges = make_process_hists(output, cfg, a.year, na, policy)
++    finalize_templates(hists, cfg.combine, variations, object_shapes, policy)
+     dest.mkdir(parents=True)
+     root, card = dest/'templates.root', dest/'datacard.txt'
+     write_root(root, hists, list(cfg.combine['channels']), cfg.combine['classes'],
+@@ -155,6 +250,7 @@
+     write_data_obs(root, hists, list(cfg.combine['channels']),
+                    [p for p in cfg.combine['classes'] if p != cfg.combine['signal']], edges)
+     write_datacard(card, root.name, cfg.combine, hists, edges, object_shapes)
++    (dest/'template_policy.json').write_text(json.dumps(policy, indent=2, sort_keys=True) + '\n')
+     # Read every written object back; malformed histograms are fatal.
+     import uproot
+     with uproot.open(root) as f:
+diff -ruN a/scripts/mva/bhive_fold_commands.py b/scripts/mva/bhive_fold_commands.py
+--- a/scripts/mva/bhive_fold_commands.py	1970-01-01 01:00:00.000000000 +0100
++++ b/scripts/mva/bhive_fold_commands.py	2026-11-06 14:22:05.803719589 +0100
+@@ -0,0 +1,100 @@
++#!/usr/bin/env python3
++"""Write (never run) the per-fold b-hive commands for a split_folds.py output.
++
++For model i: b-hive constructs a dataset from model_i/train.txt (four folds for
++k=5) and its TrainingTask splits those constructed files into training and
++validation itself (train_val_split). model_i/test.txt (fold i only) is
++constructed as a separate test dataset for InferenceTask/ROC; it never enters
++training or validation.
++
++b-hive stores a constructed dataset under
++$DATA_PATH/DatasetConstructorTask/<config>/<dataset_version>; the filelist is
++not part of that path (luigi significant=False). Reusing a dataset version
++across folds would silently reuse another fold's data, so every version here is
++unique per split hash and fold, and the script refuses to start if a target
++already exists. The stock train_v11_2dcats.sh is not used: it cannot set the
++test dataset version, which would reuse one test dataset for every fold.
++"""
++import argparse
++import hashlib
++import json
++from pathlib import Path
++import shlex
++
++
++def build(split_dir, config, model, epochs, batch_size, lr, workers, chunk_size,
++          train_val_split, prefix):
++    split_dir = Path(split_dir).resolve()
++    manifest = json.loads((split_dir / 'split_manifest.json').read_text())
++    if manifest.get('schema_version') != 2:
++        raise ValueError('split manifest predates the single-validation-owner scheme')
++    k = manifest['folds']
++    tag = manifest['filelist_sha256'][:8]
++    runs, lines = {}, []
++    for i in range(k):
++        m = manifest['models'][str(i)]
++        train, test = split_dir / m['train_list'], split_dir / m['test_list']
++        for path, key in ((train, 'train_list_sha256'), (test, 'test_list_sha256')):
++            if hashlib.sha256(path.read_bytes()).hexdigest() != m[key]:
++                raise ValueError(f'{path} changed after the split manifest was written')
++        train_set = set(train.read_text().split())
++        test_set = set(test.read_text().split())
++        if train_set & test_set or not test_set or not train_set:
++            raise ValueError(f'model {i}: train/test lists overlap or are empty')
++        if any(f'_fold_{i}.parquet' not in p for p in test_set) or any(f'_fold_{i}.parquet' in p for p in train_set):
++            raise ValueError(f'model {i}: test list must hold exactly fold {i}')
++        ds, ts, tv = f'{prefix}_{tag}_f{i}_train', f'{prefix}_{tag}_f{i}_test', f'{prefix}_{tag}_f{i}'
++        runs[i] = dict(dataset_version=ds, test_dataset_version=ts, training_version=tv,
++                       config=config, model_name=model, epochs=epochs,
++                       train_val_split=train_val_split, train_list=str(train), test_list=str(test))
++        q = shlex.quote
++        common = f'--config {q(config)}'
++        train_args = (f'{common} --filelist {q(str(train))} --dataset-version {ds} '
++                      f'--training-version {tv} --model-name {q(model)} --epochs {epochs} '
++                      f'--batch-size {batch_size} --learning-rate {lr}')
++        lines += [
++            f'# ---- model {i}: train/validate on folds {m["train_folds"]} (b-hive internal '
++            f'{train_val_split:g}/{1-train_val_split:g}), test fold {i} ----',
++            f'guard {q(config)} {ds}; guard {q(config)} {ts}',
++            f'law run DatasetConstructorTask {common} --filelist {q(str(train))} '
++            f'--dataset-version {ds} --coffea-worker {workers} --chunk-size {chunk_size}',
++            f'law run DatasetConstructorTask {common} --filelist {q(str(test))} '
++            f'--dataset-version {ts} --coffea-worker {workers} --chunk-size {chunk_size}',
++            f'law run TrainingTask {train_args} --train-val-split {train_val_split} --loss-weighting',
++            f'law run InferenceTask {train_args} --test-dataset-version {ts} --test-filelist {q(str(test))}',
++            '',
++        ]
++    header = ['#!/bin/bash', '# Generated by scripts/mva/bhive_fold_commands.py. Run from the b-hive',
++              '# checkout after `source setup.sh`. Needs explicit approval: this is model training.',
++              'set -euo pipefail', ': "${DATA_PATH:?source b-hive setup.sh first}"',
++              'guard() { if [ -e "$DATA_PATH/DatasetConstructorTask/$1/$2" ]; then',
++              '  echo "refusing: $DATA_PATH/DatasetConstructorTask/$1/$2 exists (stale fold data)" >&2; exit 1; fi; }',
++              '']
++    return '\n'.join(header + lines) + '\n', runs
++
++
++if __name__ == '__main__':
++    p = argparse.ArgumentParser(description=__doc__)
++    p.add_argument('--split', required=True, help='split_folds.py output directory')
++    p.add_argument('--output', required=True, help='new directory for run_folds.sh and bhive_runs.json')
++    p.add_argument('--config', default='HPlusCHToWW_2dcats')
++    p.add_argument('--model', default='SimpleMLP_MultiClass')
++    p.add_argument('--epochs', type=int, default=30)
++    p.add_argument('--batch_size', type=int, default=1024)
++    p.add_argument('--lr', type=float, default=1e-3)
++    p.add_argument('--workers', type=int, default=4)
++    p.add_argument('--chunk_size', type=int, default=300)
++    p.add_argument('--train_val_split', type=float, default=0.85)
++    p.add_argument('--prefix', default='hwwtrainrun')
++    a = p.parse_args()
++    if not 0 < a.train_val_split < 1:
++        raise ValueError('train_val_split must leave a non-empty validation share')
++    out = Path(a.output)
++    if out.exists():
++        raise FileExistsError(out)
++    script, runs = build(a.split, a.config, a.model, a.epochs, a.batch_size, a.lr, a.workers,
++                         a.chunk_size, a.train_val_split, a.prefix)
++    out.mkdir(parents=True)
++    (out / 'run_folds.sh').write_text(script)
++    (out / 'bhive_runs.json').write_text(json.dumps(runs, indent=2) + '\n')
++    print(out / 'run_folds.sh')
+diff -ruN a/scripts/mva/register_folds.py b/scripts/mva/register_folds.py
+--- a/scripts/mva/register_folds.py	2026-11-06 14:22:05.689327843 +0100
++++ b/scripts/mva/register_folds.py	2026-11-06 14:22:05.737711574 +0100
+@@ -5,6 +5,11 @@
+ This records the declared held-out folds; it cannot independently prove how an
+ external training command used its inputs. The frozen training manifest remains
+ part of the review record.
++
++Split schema 2: model i was trained by b-hive on model_i/train.txt (all folds
++except i; b-hive's TrainingTask owns the internal validation split) and is
++evaluated/scored only on held-out fold i. The b-hive config actually used is
++checked against FEATURES and the class order, and its hash is frozen.
+ """
+ import argparse
+ import hashlib
+@@ -20,6 +25,33 @@
+ from analysis.workflows.config import WorkflowConfigBuilder
+ 
+ 
++def check_bhive_config(path, classes):
++    cfg = yaml.safe_load(Path(path).read_text())
++    if list(cfg.get('global_features', [])) != FEATURES:
++        raise ValueError(f'{path}: global_features differ from analysis FEATURES order')
++    if list(cfg.get('truths', [])) != ['is_' + c for c in classes]:
++        raise ValueError(f'{path}: truths {cfg.get("truths")} differ from classes {list(classes)}')
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def check_onnx_io(path, n_features, n_classes):
++    import onnxruntime as ort
++    sess = ort.InferenceSession(str(path), providers=['CPUExecutionProvider'])
++    inputs, outputs = sess.get_inputs(), sess.get_outputs()
++    if len(inputs) != 1 or inputs[0].shape[-1] != n_features:
++        raise ValueError(f'{path}: expected one input with {n_features} features, got {[i.shape for i in inputs]}')
++    if outputs[0].shape[-1] != n_classes:
++        raise ValueError(f'{path}: expected {n_classes} output classes, got {outputs[0].shape}')
++
++
++def git_state():
++    root = Path(__file__).resolve().parents[2]
++    run = lambda *c: subprocess.check_output(['git', *c], text=True, cwd=root)
++    status = run('status', '--porcelain', '--untracked-files=no')
++    return dict(git_commit=run('rev-parse', 'HEAD').strip(), git_dirty=bool(status.strip()),
++                git_diff_sha256=hashlib.sha256(run('diff', 'HEAD').encode()).hexdigest())
++
++
+ def main():
+     p=argparse.ArgumentParser(description=__doc__)
+     p.add_argument('-w','--workflow',required=True)
+@@ -27,20 +59,38 @@
+     p.add_argument('--models',nargs='+',required=True,help='fold_0.onnx ... fold_k-1.onnx in held-out-fold order')
+     p.add_argument('--eras',nargs='+',required=True)
+     p.add_argument('--validation',required=True,help='JSON with max_abs_onnx_torch_diff <= 1e-5 for each exported fold')
++    p.add_argument('--bhive_config',required=True,help='the b-hive config YAML used for every fold')
++    p.add_argument('--bhive_runs',help='optional JSON recording each fold\'s b-hive training/dataset versions')
++    p.add_argument('--allow_dirty',action='store_true',help='record (do not refuse) an uncommitted analysis tree')
+     p.add_argument('--output',required=True)
+     a=p.parse_args()
+     output=Path(a.output)
+     if output.exists():raise FileExistsError(f'Refusing to overwrite frozen model: {output}')
+     cfg=WorkflowConfigBuilder(a.workflow).build_workflow_config()
++    classes=list(cfg.combine['classes'])
++    if list(cfg.mva['labels']['process_groups']) != classes:
++        raise ValueError('mva.labels.process_groups order differs from combine.classes')
+     split=json.loads(Path(a.split_manifest).read_text())
++    if split.get('schema_version') != 2 or split.get('validation', {}).get('owner') != 'b-hive TrainingTask':
++        raise ValueError('Split manifest predates the single-validation-owner scheme; regenerate it')
+     k=split['folds']
+     if split['features_hash'] != signature(cfg) or split['selection_hash'] != selection_signature(cfg):
+         raise ValueError('TRAIN split differs from current workflow features/selection')
++    for i in range(k):
++        m=split['models'][str(i)]
++        if m['test_fold']!=i or i in m['train_folds'] or sorted(m['train_folds']+[i])!=list(range(k)):
++            raise ValueError(f'Split manifest model {i} does not hold out exactly fold {i}')
+     if len(a.models)!=k:raise ValueError('Exactly one ONNX model per held-out fold is required')
+     validation=json.loads(Path(a.validation).read_text())
+     diffs=validation.get('max_abs_onnx_torch_diff',[])
+     if len(diffs)!=k or any(not 0 <= x <= 1e-5 for x in diffs):
+         raise ValueError('Every fold needs a recorded ONNX/training-code equivalence result <=1e-5')
++    bhive_sha=check_bhive_config(a.bhive_config, classes)
++    for src in a.models:
++        check_onnx_io(src, len(FEATURES), len(classes))
++    git=git_state()
++    if git['git_dirty'] and not a.allow_dirty:
++        raise ValueError('Analysis tree has uncommitted changes; commit first or pass --allow_dirty to record them')
+     output.mkdir(parents=True)
+     records=[]
+     for i,src in enumerate(a.models):
+@@ -48,14 +98,18 @@
+         records.append(dict(fold=i,excluded_fold=i,path=dest.name,sha256=hashlib.sha256(dest.read_bytes()).hexdigest()))
+     shutil.copy2(a.split_manifest,output/'split_manifest.json')
+     shutil.copy2(a.validation,output/'export_validation.json')
++    shutil.copy2(a.bhive_config,output/'bhive_config.yml')
++    if a.bhive_runs:
++        shutil.copy2(a.bhive_runs,output/'bhive_runs.json')
+     meta=dict(schema_version=1,features=FEATURES,features_hash=signature(cfg),
+-              selection_hash=selection_signature(cfg),classes=cfg.combine['classes'],
++              selection_hash=selection_signature(cfg),classes=classes,
+               fold_field='event',folds=k,diagnostic_only=False,models=records,
+               training_data=dict(workflow=a.workflow,eras=a.eras,
+-                                 git_commit=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),
+-                                 filelist_sha256=split['filelist_sha256']))
++                                 filelist_sha256=split['filelist_sha256'],
++                                 split_schema=2,validation_owner=split['validation']['owner'],
++                                 bhive_config_sha256=bhive_sha,**git))
+     path=output/'meta.yaml';path.write_text(yaml.safe_dump(meta,sort_keys=False))
+-    FoldModels(path,signature(cfg),selection_signature(cfg),cfg.combine['classes'],k)
++    FoldModels(path,signature(cfg),selection_signature(cfg),classes,k)
+     print(path)
+ 
+ 
+diff -ruN a/scripts/mva/split_folds.py b/scripts/mva/split_folds.py
+--- a/scripts/mva/split_folds.py	2026-11-06 14:22:05.624683708 +0100
++++ b/scripts/mva/split_folds.py	2026-11-06 14:22:05.672703681 +0100
+@@ -1,9 +1,18 @@
+ #!/usr/bin/env python3
+-"""Split TRAIN shards into mutually exclusive held-out folds for b-hive.
++"""Split TRAIN shards into event-modulo-k held-out folds for b-hive.
+ 
+-For model i: test fold i; validation fold (i+1)%k; train all other folds.
+-k>=3 is required to keep validation separate by whole fold.
+-No data or unlabelled process is added to a supervised filelist.
++One validation owner (2026-11-05). For model i the outer fold i (event % k == i)
++is the held-out TEST/scoring fold: it never enters model i's training or
++validation, and RUN scores fold i with model i only. The other k-1 folds (80% for
++k=5) form model_i/train.txt. b-hive owns validation: its TrainingTask splits the
++constructed files of that list internally (train_val_split, default 0.85), so
++the effective fractions are about 68/12/20 by constructed-file fraction, not an
++exact event count. No external validation fold is written.
++
++No data or unlabelled process is added to a supervised filelist. The appended
++`weight` column (weight_nominal*lumi*xsec/sumw) is provided for weighted
++studies; b-hive config HPlusCHToWW_2dcats does not read it (class re-weighting
++from unweighted counts), which split_manifest.json records.
+ """
+ import argparse
+ import hashlib
+@@ -12,15 +21,28 @@
+ import sys
+ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+ import numpy as np
++import pyarrow as pa
+ import pyarrow.parquet as pq
+ from analysis.features.hww import event_folds, FEATURES
+ 
++ROLES = ('train', 'test')
++VALIDATION = {
++    'owner': 'b-hive TrainingTask',
++    'mechanism': 'shuffles the constructed LZ4 files of model_<i>/train.txt and keeps '
++                 'int(n*train_val_split) for training, the rest for validation',
++    'train_val_split_default': 0.85,
++    'reference': 'b-hive tasks/training.py TrainingTask.train_val_split and run()',
++    'approx_fractions_k5': {'train': 0.68, 'validation': 0.12, 'test': 0.20},
++    'fraction_basis': 'constructed-file fraction inside the 80% training list; not an event count',
++}
++
+ 
+ def split_files(inputs, output, k=5, scales=None):
+     if scales is None:
+         raise ValueError("Provide preselection sumw normalization from all TRAIN coffea outputs")
+     if k < 3:
+-        raise ValueError('Use at least 3 folds for disjoint train, validation and test sets')
++        # k=2 would give b-hive only half the events; keep the established minimum.
++        raise ValueError('Use at least 3 folds')
+     output = Path(output)
+     if output.exists():
+         raise FileExistsError(f'Refusing to overwrite split directory: {output}')
+@@ -42,13 +64,13 @@
+             key = (md[b'year'].decode(), md[b'sample'].decode())
+             if key not in scales:
+                 raise ValueError(f'Missing full-sample normalization for {key}')
+-            import pyarrow as pa
+             table = table.append_column('weight', pa.array(table['weight_nominal'].to_numpy() * scales[key]))
+             tables.append((filename, table))
+     if not metadata or len(set(metadata)) != 1 or any(x is None for x in metadata[0]):
+         raise ValueError('TRAIN inputs have missing or inconsistent feature/selection metadata')
+     output.mkdir(parents=True)
+-    lists = {i: {s: [] for s in ('train', 'valid', 'test')} for i in range(k)}
++    lists = {i: {s: [] for s in ROLES} for i in range(k)}
++    counts = {i: {s: 0 for s in ROLES} for i in range(k)}
+     for index, (filename, table) in enumerate(tables):
+         fold, label = table['fold'].to_numpy(), table['label'].to_numpy()
+         # Store each event only once. Filelists, not data copies, define model i's roles.
+@@ -57,49 +79,65 @@
+             if not mask.any():
+                 continue
+             dest = output / f'shard_{index:06d}_fold_{f}.parquet'
+-            import pyarrow as pa
+             pq.write_table(table.filter(pa.array(mask)), dest)
+             for heldout in range(k):
+-                role = 'test' if f == heldout else ('valid' if f == (heldout+1) % k else 'train')
++                role = 'test' if f == heldout else 'train'
+                 lists[heldout][role].append(str(dest.resolve()))
++                counts[heldout][role] += int(mask.sum())
+     for f, roles in lists.items():
++        if not roles['train'] or not roles['test']:
++            raise ValueError(f'Model {f} has an empty train or test list')
+         d = output / f'model_{f}'; d.mkdir()
+         for role, paths in roles.items():
+-            (d / (role + '.txt')).write_text('\n'.join(paths) + ('\n' if paths else ''))
+-    info = {'folds': k, 'fold_field': 'event', 'features_hash': metadata[0][0].decode(),
++            # b-hive stops reading a filelist at the first empty line: no blank lines.
++            (d / (role + '.txt')).write_text('\n'.join(paths) + '\n')
++    info = {'schema_version': 2, 'folds': k, 'fold_field': 'event',
++            'features_hash': metadata[0][0].decode(),
+             'selection_hash': metadata[0][1].decode(),
+-            'inputs': [{'path': str(Path(p).resolve()), 'sha256': hashlib.sha256(Path(p).read_bytes()).hexdigest()} for p in sorted(set(map(str, inputs)))],
+-            'models': {i: {'excluded_fold': i, 'validation_fold': (i+1)%k} for i in range(k)}}
++            'inputs': [{'path': str(Path(p).resolve()), 'sha256': hashlib.sha256(Path(p).read_bytes()).hexdigest()}
++                       for p in sorted(set(map(str, inputs)))],
++            'validation': VALIDATION,
++            'weight_column': {'name': 'weight',
++                              'definition': 'weight_nominal*lumi*xsec/sumw(all TRAIN chunks, pre-selection)',
++                              'consumed_by_bhive_2dcats': False,
++                              'note': 'HPlusCHToWW_2dcats uses reweighting_mode=class from unweighted class counts'},
++            'models': {i: {'test_fold': i, 'excluded_fold': i,
++                           'train_folds': [f for f in range(k) if f != i],
++                           'rows': counts[i],
++                           'train_list': f'model_{i}/train.txt', 'test_list': f'model_{i}/test.txt'}
++                       for i in range(k)}}
+     info['filelist_sha256'] = hashlib.sha256(json.dumps(info['inputs'], sort_keys=True).encode()).hexdigest()
++    for i in range(k):
++        for role in ROLES:
++            info['models'][i][role + '_list_sha256'] = hashlib.sha256(
++                (output / f'model_{i}' / f'{role}.txt').read_bytes()).hexdigest()
+     (output / 'split_manifest.json').write_text(json.dumps(info, indent=2) + '\n')
+     return info
+ 
+ 
+-if __name__ == '__main__':
+-    p = argparse.ArgumentParser(description=__doc__)
+-    p.add_argument('--inputs', nargs='+', required=True, help='TRAIN parquet shards (shell globs allowed)')
+-    p.add_argument('--output', required=True)
+-    p.add_argument('--coffea', nargs='+', required=True, help='all TRAIN job accumulators, including zero-selection chunks')
+-    p.add_argument('--folds', type=int, default=5)
+-    a = p.parse_args()
+-    import glob
+-    files = [p for pattern in a.inputs for p in glob.glob(pattern, recursive=True)]
+-    from coffea import processor
+-    from coffea.util import load
+-    from analysis.filesets.utils import get_dataset_config
+-    from pathlib import Path
++def check_label_order(cfg):
++    groups = list(cfg.mva['labels']['process_groups'])
++    if groups != list(cfg.combine['classes']):
++        raise ValueError(f'mva.labels.process_groups order {groups} != combine.classes {cfg.combine["classes"]}')
++
++
++def normalization(accumulators, workflow, exclusions=None, fileset_json=None):
++    """(year, sample) -> lumi*xsec/sumw for MC; enforces dataset/file coverage.
++
++    exclusions: {year: {sample: reason}} for deliberately absent MC samples.
++    """
+     import yaml
+-    if len(set(map(str, a.coffea))) != len(a.coffea):
+-        raise ValueError('Duplicate TRAIN coffea inputs')
+-    samples = {}
+-    chunks = {}
+-    loaded = []
+-    for filename in a.coffea:
+-        acc = load(filename)
+-        loaded.append(acc)
++    from analysis.filesets.utils import get_dataset_config
++    from analysis.processing_checks import sample_kind, check_dataset_coverage
++    samples, chunks, files = {}, {}, {}
++    for acc in accumulators:
+         if acc['provenance']['mode'] != {'train'} or len(acc['provenance']['year']) != 1:
+             raise ValueError('Supply TRAIN job accumulators')
+         year = next(iter(acc['provenance']['year']))
++        if 'files' not in acc.get('execution_checks', {}):
++            raise ValueError('TRAIN accumulator lacks execution_checks file records')
++        for sample, paths in acc['execution_checks']['files'].items():
++            files.setdefault(year, {}).setdefault(sample, set()).update(paths)
+         for sample, entry in acc['samples'].items():
+             key = (year, sample)
+             if key in chunks and chunks[key] & entry['chunks']:
+@@ -108,15 +146,65 @@
+             samples[key] = samples.get(key, 0.) + entry['sumw']
+     with open(Path(__file__).resolve().parents[2] / 'analysis/postprocess/luminosity.yaml') as f:
+         lumi = yaml.safe_load(f)
+-    scales = {}
++    scales, present = {}, {}
+     for (year, sample), sumw in samples.items():
+         info = get_dataset_config(year)[sample]
+-        if info['era'] == 'data':
+-            continue
++        if sample_kind(sample, info) == 'data':
++            continue  # data never enters supervised lists; its xsec is the string 'None'
++        present.setdefault(year, set()).add(sample)
+         xsec = float(info['xsec'])
+         if not np.isfinite(sumw) or sumw == 0 or not xsec > 0:
+             raise ValueError(f'Invalid normalization {year}/{sample}')
+         scales[(year, sample)] = lumi[year] * xsec / sumw
++    exclusions = exclusions or {}
++    for year in sorted(present):
++        check_dataset_coverage(workflow, year, present[year],
++                               {s: v for s, v in files.get(year, {}).items() if s in present[year]},
++                               exclusions.get(year, {}), fileset_json)
++    return scales
++
++
++def load_year_exclusions(path):
++    import yaml
++    if not path:
++        return {}
++    raw = yaml.safe_load(Path(path).read_text()) or {}
++    for year, entries in raw.items():
++        for sample, reason in (entries or {}).items():
++            if not isinstance(reason, str) or not reason.strip():
++                raise ValueError(f'exclusion {year}/{sample} needs a provenance reason')
++    return {year: dict(entries or {}) for year, entries in raw.items()}
++
++
++if __name__ == '__main__':
++    p = argparse.ArgumentParser(description=__doc__)
++    p.add_argument('-w', '--workflow', required=True, help='workflow whose datasets define completeness')
++    p.add_argument('--inputs', nargs='+', required=True, help='TRAIN parquet shards (shell globs allowed)')
++    p.add_argument('--output', required=True)
++    p.add_argument('--coffea', nargs='+', required=True, help='all TRAIN job accumulators, including zero-selection chunks')
++    p.add_argument('--folds', type=int, default=5)
++    p.add_argument('--exclusions', help='YAML {year: {sample: reason}} of deliberately absent MC samples')
++    a = p.parse_args()
++    import glob
++    from coffea.util import load
++    from analysis.workflows.config import WorkflowConfigBuilder
++    from analysis.features.hww import signature, selection_signature
+     from analysis.processing_checks import check_train_rows
++    files = [f for pattern in a.inputs for f in glob.glob(pattern, recursive=True)]
++    if len(set(map(str, a.coffea))) != len(a.coffea):
++        raise ValueError('Duplicate TRAIN coffea inputs')
++    cfg = WorkflowConfigBuilder(a.workflow).build_workflow_config()
++    check_label_order(cfg)
++    exclusions = load_year_exclusions(a.exclusions)
++    loaded = [load(f) for f in a.coffea]
++    for acc in loaded:
++        prov = acc['provenance']
++        if prov.get('features_hash') != {signature(cfg)} or prov.get('selection_hash') != {selection_signature(cfg)}:
++            raise ValueError('TRAIN accumulator features/selection differ from the current workflow')
++    scales = normalization(loaded, a.workflow, exclusions)
+     check_train_rows(loaded, files)
+-    split_files(files, a.output, a.folds, scales)
++    info = split_files(files, a.output, a.folds, scales)
++    info['workflow'] = a.workflow
++    info['exclusions'] = exclusions
++    (Path(a.output) / 'split_manifest.json').write_text(json.dumps(info, indent=2) + '\n')
++    print(Path(a.output) / 'split_manifest.json')
+diff -ruN a/submit_condor.py b/submit_condor.py
+--- a/submit_condor.py	2026-11-06 14:22:05.536816880 +0100
++++ b/submit_condor.py	2026-11-06 14:22:05.606695667 +0100
+@@ -5,6 +5,7 @@
+ import subprocess
+ from pathlib import Path
+ from analysis.utils import make_output_directory
++from analysis.utils.output_dir_maker import output_workflow_name, parquet_output_location
+ from analysis.filesets.utils import divide_list, get_nano_version, fileset_checker
+ 
+ 
+@@ -103,12 +104,23 @@
+         default="2000",
+         help="Requested memory (in MB) for the condor job",
+     )
++    parser.add_argument(
++        "--output_root",
++        default=None,
++        help="absolute root replacing the default output area for .coffea and parquet outputs "
++             "(<root>/outputs/<workflow>[__<mode>]/<year>/<dataset>). Unset: unchanged default.",
++    )
++    parser.add_argument(
++        "--output_root_url",
++        default=None,
++        help="xrootd URL of --output_root for parquet writes (needed for non-/eos/user EOS roots)",
++    )
+     add_mode_arguments(parser)
+     args = parser.parse_args()
+     from analysis.processing_modes import validate
+     from analysis.workflows.config import WorkflowConfigBuilder
+     validate(WorkflowConfigBuilder(args.workflow).build_workflow_config(), args.mode, args.folds,
+-             args.model_manifest, args.allow_diagnostic_model)
++             args.model_manifest, args.allow_diagnostic_model, year=args.year)
+     if args.mode != "legacy":
+         args.output_format = "parquet" if args.mode == "train" else "coffea"
+     if args.mode == "run" and args.allow_diagnostic_model and getattr(args, "submit", False):
+@@ -118,7 +130,7 @@
+     fileset_checker(samples=[args.dataset], year=args.year)
+ 
+     print(f"Creating {args.workflow}-{args.year}-{args.dataset} condor file")
+-    job_workflow = args.workflow if args.mode == "legacy" else args.workflow + "__" + args.mode
++    job_workflow = output_workflow_name(args.workflow, args.mode)
+     jobname = f"{job_workflow}_{args.dataset}"
+ 
+     # make condor and log directories
+@@ -158,9 +170,9 @@
+         print(*jobnum_list, sep="\n", file=f)
+ 
+     # build and save arguments json
+-    args.output_path = make_output_directory(args)
+-    if args.mode != "legacy":
+-        args.output_path = args.output_path.replace("/" + args.workflow + "/", "/" + args.workflow + "__" + args.mode + "/")
++    # Create the directory the job will actually save into (mode-suffixed for TRAIN/RUN).
++    args.output_path = make_output_directory(args, workflow_name=job_workflow)
++    args.output_location = parquet_output_location(args)
+     if args.model_manifest:
+         args.model_manifest = str(Path(args.model_manifest).resolve())
+     args.user = os.environ["USER"]
+diff -ruN a/submit.py b/submit.py
+--- a/submit.py	2026-11-06 14:22:05.453957546 +0100
++++ b/submit.py	2026-11-06 14:22:05.518684981 +0100
+@@ -88,7 +88,7 @@
+     from analysis.processing_modes import validate
+     from analysis.workflows.config import WorkflowConfigBuilder
+     validate(WorkflowConfigBuilder(args.workflow).build_workflow_config(), args.mode, args.folds,
+-             args.model_manifest, args.allow_diagnostic_model)
++             args.model_manifest, args.allow_diagnostic_model, year=args.year)
+     if args.mode != "legacy":
+         args.output_format = "parquet" if args.mode == "train" else "coffea"
+     if args.mode == "run" and args.allow_diagnostic_model and getattr(args, "submit", False):
+@@ -130,6 +130,10 @@
+     if args.mode != "legacy":
+         from analysis.processing_checks import check_input_entries
+         out["execution_checks"] = check_input_entries(partition_fileset, out, args.year)
++    # coffea.util.save does not create directories; make sure the target exists.
++    if not args.output_path:
++        parser.error("--output_path is required to save the job output")
++    Path(args.output_path).mkdir(parents=True, exist_ok=True)
+     savepath = f"{args.output_path}/{args.dataset}"
+     if args.output_format in ["coffea", "parquet"]:
+         save(out, f"{savepath}.coffea")
+diff -ruN a/tests/test_processing_modes.py b/tests/test_processing_modes.py
+--- a/tests/test_processing_modes.py	2026-11-06 14:22:05.880728939 +0100
++++ b/tests/test_processing_modes.py	2026-11-06 14:22:05.925734403 +0100
+@@ -56,14 +56,14 @@
+             mod.split_files([p], Path(d)/'split', 5, {('2022postEE', 'Hc'): 3.})
+             for fold in range(5):
+                 sets = {}
+-                for role in ('train', 'valid', 'test'):
++                # Single validation owner: b-hive splits train.txt internally; no valid.txt.
++                self.assertFalse((Path(d)/'split'/f'model_{fold}'/'valid.txt').exists())
++                for role in ('train', 'test'):
+                     paths = (Path(d)/'split'/f'model_{fold}'/f'{role}.txt').read_text().splitlines()
+                     rows = [pq.read_table(f).to_pydict() for f in paths]
+                     sets[role] = set(x for t in rows for x in t['event'])
+                     self.assertTrue(all(w == 3 for t in rows for w in t['weight']))
+-                self.assertFalse(sets['train'] & sets['valid'])
+                 self.assertFalse(sets['train'] & sets['test'])
+-                self.assertFalse(sets['valid'] & sets['test'])
+                 self.assertEqual(set.union(*sets.values()), set(range(25)))
+                 self.assertTrue(all(x % 5 == fold for x in sets['test']))
+ 
+diff -ruN a/tests/test_trainrun_blockers.py b/tests/test_trainrun_blockers.py
+--- a/tests/test_trainrun_blockers.py	1970-01-01 01:00:00.000000000 +0100
++++ b/tests/test_trainrun_blockers.py	2026-11-06 14:22:06.014745211 +0100
+@@ -0,0 +1,464 @@
++"""Regression tests for the 2026-11-05 TRAIN/RUN blocker fixes (F1-F13).
++
++Run from the repository root inside the coffea 0.7.30 container. Synthetic
++inputs plus the real workflow/era YAMLs; no production data, no jobs.
++"""
++from copy import deepcopy
++import hashlib
++import importlib.util
++import json
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import tempfile
++import types
++import unittest
++import numpy as np
++import pyarrow as pa
++import pyarrow.parquet as pq
++import yaml
++from analysis.features.hww import FEATURES, event_folds
++
++ROOT = Path(__file__).resolve().parents[1]
++WF = 'hww_allfix_4fs'
++YEAR = '2022postEE'
++BHIVE_CONFIG = Path('/eos/user/c/cgupta/HToWW/b-hive/config/HPlusCHToWW_2dcats.yml')
++
++
++def import_script(name, path):
++    spec = importlib.util.spec_from_file_location(name, ROOT / path)
++    mod = importlib.util.module_from_spec(spec); spec.loader.exec_module(mod)
++    return mod
++
++
++def workflow():
++    from analysis.workflows.config import WorkflowConfigBuilder
++    return WorkflowConfigBuilder(WF).build_workflow_config()
++
++
++def train_shard(path, events, label, sample='S', year=YEAR):
++    arrays = {k: np.ones(len(events), dtype=np.float32) for k in FEATURES}
++    arrays.update(event=np.asarray(events, dtype=np.uint64), fold=event_folds(np.asarray(events, dtype=np.uint64)),
++                  label=np.asarray(label, dtype=np.int16), weight_nominal=np.ones(len(events)))
++    table = pa.table(arrays).replace_schema_metadata({
++        b'processing_mode': b'train', b'features_hash': b'h', b'selection_hash': b's', b'folds': b'5',
++        b'year': year.encode(), b'sample': sample.encode()})
++    pq.write_table(table, path)
++
++
++class TestSingleValidationOwnerSplit(unittest.TestCase):
++    def test_four_folds_train_one_fold_test_no_external_validation(self):
++        mod = import_script('split_folds', 'scripts/mva/split_folds.py')
++        with tempfile.TemporaryDirectory() as d:
++            p = Path(d) / 'in.parquet'
++            train_shard(p, np.arange(100), np.r_[np.zeros(90), np.full(10, -1)])
++            info = mod.split_files([p], Path(d) / 'split', 5, {(YEAR, 'S'): 2.})
++            labelled = set(range(90))
++            for i in range(5):
++                mdir = Path(d) / 'split' / f'model_{i}'
++                self.assertEqual(sorted(x.name for x in mdir.iterdir()), ['test.txt', 'train.txt'])
++                ev = {}
++                for role in ('train', 'test'):
++                    files = (mdir / f'{role}.txt').read_text().splitlines()
++                    self.assertNotIn('', files)
++                    ev[role] = {int(x) for f in files for x in pq.read_table(f)['event'].to_pylist()}
++                self.assertFalse(ev['train'] & ev['test'])
++                self.assertEqual(ev['test'], {x for x in labelled if x % 5 == i})
++                self.assertEqual(ev['train'], {x for x in labelled if x % 5 != i})
++                m = info['models'][i]
++                self.assertEqual((m['test_fold'], m['train_folds']), (i, [f for f in range(5) if f != i]))
++                self.assertNotIn('validation_fold', m)
++                self.assertEqual(m['rows'], {'train': 72, 'test': 18})
++            self.assertEqual(info['schema_version'], 2)
++            self.assertEqual(info['validation']['owner'], 'b-hive TrainingTask')
++            self.assertFalse(info['weight_column']['consumed_by_bhive_2dcats'])
++            on_disk = json.loads((Path(d) / 'split' / 'split_manifest.json').read_text())
++            self.assertEqual(on_disk['models']['0']['train_list_sha256'],
++                             hashlib.sha256((Path(d) / 'split/model_0/train.txt').read_bytes()).hexdigest())
++
++    def test_normalization_skips_real_data_eras_and_enforces_coverage(self):
++        """F3: the __main__ normalization path with a real data sample (era E, xsec 'None')."""
++        mod = import_script('split_folds2', 'scripts/mva/split_folds.py')
++        import analysis.processing_checks as pc
++        from analysis.filesets.utils import get_dataset_config
++        cfg = get_dataset_config(YEAR)
++        data = next(s for s, v in cfg.items() if v['era'] not in ('mc', 'signal'))
++        mc = next(s for s, v in cfg.items() if v['era'] == 'mc' and v['process'] == 'tt')
++
++        def acc(sample):
++            return {'provenance': {'mode': {'train'}, 'year': {YEAR}},
++                    'execution_checks': {'files': {sample: {f'/store/{sample}/a.root'}}},
++                    'samples': {sample: {'sumw': 10., 'chunks': {f'{sample}-c0'}}}}
++        saved = pc.expected_mc_samples, pc.fileset_files
++        try:
++            pc.expected_mc_samples = lambda w, y: {mc}
++            pc.fileset_files = lambda y, f=None: {mc: {f'/store/{mc}/a.root'}}
++            scales = mod.normalization([acc(data), acc(mc)], WF)
++            self.assertEqual(set(scales), {(YEAR, mc)})
++            pc.expected_mc_samples = lambda w, y: {mc, 'Other'}
++            with self.assertRaisesRegex(ValueError, 'expected MC samples have no output'):
++                mod.normalization([acc(mc)], WF)
++            scales = mod.normalization([acc(mc)], WF, {YEAR: {'Other': 'not produced in this era (test)'}})
++            self.assertEqual(set(scales), {(YEAR, mc)})
++        finally:
++            pc.expected_mc_samples, pc.fileset_files = saved
++
++
++class TestSampleClassification(unittest.TestCase):
++    def test_every_era_entry_is_mc_or_data(self):
++        from analysis.filesets.utils import get_dataset_config
++        from analysis.processing_checks import sample_kind
++        for year in ('2022preEE', '2022postEE', '2023preBPix', '2023postBPix'):
++            cfg = get_dataset_config(year)
++            kinds = {s: sample_kind(s, v) for s, v in cfg.items()}
++            self.assertEqual({s for s, k in kinds.items() if k == 'data'},
++                             {s for s, v in cfg.items() if v['process'] == 'Data'})
++            self.assertTrue(all(v['era'] != 'data' for v in cfg.values()))  # the old test never matched
++        with self.assertRaises(ValueError):
++            sample_kind('x', {'era': 'Z', 'process': 'tt'})
++
++    def test_all_workflow_mc_processes_map_to_one_card_class_and_label(self):
++        """F2: every MC process the workflow runs (incl. WG) maps once, consistently."""
++        from analysis.filesets.utils import get_dataset_config
++        from analysis.processing_checks import expected_mc_samples
++        c = workflow()
++        groups = c.mva['labels']['process_groups']
++        self.assertEqual(list(groups), c.combine['classes'])
++        for year in ('2022preEE', '2022postEE', '2023preBPix', '2023postBPix'):
++            cfg = get_dataset_config(year)
++            procs = {cfg[s]['process'].strip() for s in expected_mc_samples(WF, year)}
++            self.assertIn('WG', procs)
++            for proc in procs:
++                card = [k for k, v in c.combine['process_map'].items() if proc in v]
++                label = [k for k, v in groups.items() if proc in v]
++                self.assertEqual(len(card), 1, (year, proc, card))
++                self.assertEqual(card, label, (year, proc))
++        self.assertEqual([k for k, v in groups.items() if 'WG' in v], ['diboson'])
++
++
++class TestCoverage(unittest.TestCase):
++    def test_missing_extra_stale_and_file_gaps_raise(self):
++        from analysis.processing_checks import check_dataset_coverage
++        import analysis.processing_checks as pc
++        saved = pc.fileset_files
++        try:
++            pc.fileset_files = lambda y, f=None: {'A': {'/store/a1', '/store/a2'}, 'B': {'/store/b1'}}
++            ok = {'A': {'/store/a1', '/store/a2'}, 'B': {'/store/b1'}}
++            check_dataset_coverage(WF, YEAR, {'A', 'B'}, ok, expected={'A', 'B'})
++            with self.assertRaisesRegex(ValueError, 'no output'):
++                check_dataset_coverage(WF, YEAR, {'A'}, ok, expected={'A', 'B'})
++            check_dataset_coverage(WF, YEAR, {'A'}, ok, {'B': 'approved: absent in era'}, expected={'A', 'B'})
++            with self.assertRaisesRegex(ValueError, 'does not run over'):
++                check_dataset_coverage(WF, YEAR, {'A', 'B'}, ok, {'C': 'r'}, expected={'A', 'B'})
++            with self.assertRaisesRegex(ValueError, 'unprocessed'):
++                check_dataset_coverage(WF, YEAR, {'A', 'B'}, {'A': {'/store/a1'}, 'B': {'/store/b1'}},
++                                       expected={'A', 'B'})
++            with self.assertRaisesRegex(ValueError, 'outside the workflow'):
++                check_dataset_coverage(WF, YEAR, {'A', 'B'}, ok, expected={'A'})
++        finally:
++            pc.fileset_files = saved
++
++    def test_store_path_is_replica_independent(self):
++        from analysis.processing_checks import store_path
++        self.assertEqual(store_path('root://xrootd-cms.infn.it//store/mc/X/a.root'), '/store/mc/X/a.root')
++        self.assertEqual(store_path('root://eoscms.cern.ch//eos/cms/store/mc/X/a.root'), '/store/mc/X/a.root')
++
++
++class TestCardBuilder(unittest.TestCase):
++    """F1/F2/F5/F6/F7 against the real workflow and 2022postEE era config."""
++
++    @classmethod
++    def setUpClass(cls):
++        sys.path.insert(0, str(ROOT / 'scripts/combine'))
++        cls.mod = import_script('build_cards', 'scripts/combine/build_cards_from_templates.py')
++        from analysis.filesets.utils import get_dataset_config
++        cls.cfg = cls.mod.configure_era(workflow(), YEAR)
++        cls.datasets = get_dataset_config(YEAR)
++
++    def record(self, values, chunks, kind='weight'):
++        ch = list(self.cfg.combine['channels'])
++        nb = len(self.cfg.combine['binning']['edges']) - 1
++        counts = {c: np.full(nb, float(values)) for c in ch}
++        return {'counts': counts, 'sumw2': {c: np.abs(v) for c, v in counts.items()},
++                'norm_raw': 1., 'norm_rw': 1., 'negrw': {False}, 'kind': {kind}, 'chunks': set(chunks)}
++
++    def output(self, drop=None, partial=None, shifts_evaluated=True, shift_records=True):
++        combine = self.cfg.combine
++        cat = next(iter(self.cfg.event_selection['categories']))
++        pick = {}
++        for cls in combine['classes']:
++            pick[cls] = next(s for s, v in self.datasets.items() if v['era'] == 'mc'
++                             and v['process'].strip() in combine['process_map'][cls])
++        wg = next(s for s, v in self.datasets.items() if v['process'] == 'WG')
++        data = next(s for s, v in self.datasets.items() if v['process'] == 'Data')
++        weights = ['nominal'] + [s + d for s in combine['shape_systematics'] for d in ('Up', 'Down')]
++        samples = {}
++        for sample in list(pick.values()) + [wg, data]:
++            chunks = {sample + '-c0', sample + '-c1'}
++            if self.datasets[sample]['process'] == 'Data':
++                samples[sample] = {'sumw': 5., 'chunks': chunks, 'chunks_read': 2}
++                continue
++            recs = {v: self.record(1., chunks) for v in weights}
++            if self.datasets[sample]['process'].strip() in combine['process_map']['vjets']:
++                for d in ('Up', 'Down'):
++                    recs['CMS_negrw_vjets' + d] = self.record(1., chunks)
++            if shift_records:
++                recs['JESUp'] = self.record(1.1, chunks, 'object')
++                recs['JESDown'] = self.record(0.9, chunks, 'object')
++            if partial and sample == pick['tt']:
++                recs[partial]['chunks'] = {sample + '-c0'}
++            if drop and sample == pick['tt']:
++                recs.pop(drop)
++            entry = {'sumw': 100., 'chunks': chunks, 'chunks_read': 2, 'templates': {cat: recs},
++                     'evaluated_shifts': ({'JESUp': set(chunks), 'JESDown': set(chunks)}
++                                          if shifts_evaluated else {})}
++            samples[sample] = entry
++        return {'samples': samples}, pick, wg
++
++    def test_data_skipped_and_wg_lands_in_diboson(self):
++        out, pick, wg = self.output()
++        policy = {}
++        hists, variations, shapes, _ = self.mod.make_process_hists(out, self.cfg, YEAR, policy=policy)
++        self.assertEqual(len(policy['data_samples_skipped']), 1)
++        self.assertEqual(shapes, ['JES'])
++        lumi = self.mod.load_lumi(YEAR)
++        per = lambda s: lumi * float(self.datasets[s]['xsec']) / 100.
++        expected = per(pick['diboson']) + per(wg)
++        np.testing.assert_allclose(hists['CR_diboson']['diboson']['nominal'][0], expected)
++
++    def test_partial_weight_variation_raises(self):
++        var = self.cfg.combine['shape_systematics'][0] + 'Up'
++        out, _, _ = self.output(partial=var)
++        with self.assertRaisesRegex(ValueError, 'covers 1 of 2 nominal chunks'):
++            self.mod.make_process_hists(out, self.cfg, YEAR)
++
++    def test_object_shift_real_zero_vs_missing(self):
++        # Evaluated on every chunk but no selected shifted events: genuine zero, not nominal.
++        out, pick, _ = self.output(drop='JESUp')
++        hists, *_ = self.mod.make_process_hists(out, self.cfg, YEAR)
++        self.assertEqual(hists['CR_tt']['tt']['JESUp'][0].sum(), 0.)
++        self.assertGreater(hists['CR_tt']['tt']['nominal'][0].sum(), 0.)
++        # Never evaluated: an error unless declared, then nominal with an audit entry.
++        out, pick, _ = self.output(shifts_evaluated=False, shift_records=False)
++        for s in out['samples']:
++            if 'evaluated_shifts' in out['samples'][s] and s != pick['tt']:
++                out['samples'][s]['evaluated_shifts'] = {'JESUp': out['samples'][s]['chunks'],
++                                                         'JESDown': out['samples'][s]['chunks']}
++        with self.assertRaisesRegex(ValueError, 'evaluated on 0 of 2'):
++            self.mod.make_process_hists(out, self.cfg, YEAR)
++        policy = {}
++        hists, *_ = self.mod.make_process_hists(out, self.cfg, YEAR, {pick['tt']: ['JES']}, policy)
++        np.testing.assert_allclose(hists['CR_tt']['tt']['JESUp'][0], hists['CR_tt']['tt']['nominal'][0])
++        self.assertIn([pick['tt'], 'JESUp'], policy['declared_not_applicable_used'])
++
++    def test_final_policy_matches_legacy_order_exactly(self):
++        """F5 parity: same inputs through the legacy main() sequence and finalize_templates."""
++        legacy = sys.modules['make_combine_inputs']
++        rng = np.random.default_rng(7)
++        channels, procs = ['SR', 'CR'], ['sig', 'vjets']
++        names = ['nominal', 'pileupUp', 'pileupDown', 'JESUp', 'JESDown']
++        hists = {ch: {p: {v: (rng.normal(1, 2, 6), rng.uniform(0, 1, 6)) for v in names} for p in procs}
++                 for ch in channels}
++        hists['SR']['vjets']['nominal'][0][-1] = -4.0          # review R2 negative bin
++        hists['CR']['sig']['JESUp'] = (np.zeros(6), np.zeros(6))  # empty object shift
++        hists['CR']['sig']['nominal'][0][:] = np.abs(hists['CR']['sig']['nominal'][0])
++        for smooth in (False, True):
++            a, b = deepcopy(hists), deepcopy(hists)
++            # legacy make_combine_inputs.main order, verbatim logic
++            for ch in channels:
++                for cp in procs:
++                    nom_c, nom_s2 = a[ch][cp]['nominal']
++                    for vn in ('JESUp', 'JESDown'):
++                        c, _s2 = a[ch][cp][vn]
++                        if c.sum() <= 0 < nom_c.sum():
++                            a[ch][cp][vn] = (nom_c.copy(), nom_s2.copy())
++            pairs = [(v, '') for v in names]
++            legacy.clip_negative_bins(a, channels, procs, pairs)
++            if smooth:
++                legacy.smooth_shape_variations(a, channels, procs, pairs)
++                legacy.clip_negative_bins(a, channels, procs, pairs)
++            policy = {}
++            self.mod.finalize_templates(b, {'smooth_shapes': smooth}, names, ['JES'], policy)
++            for ch in channels:
++                for cp in procs:
++                    for v in names:
++                        np.testing.assert_array_equal(a[ch][cp][v][0], b[ch][cp][v][0])
++                        np.testing.assert_array_equal(a[ch][cp][v][1], b[ch][cp][v][1])
++            self.assertEqual(b['SR']['vjets']['nominal'][0][-1], 1e-6)
++            self.assertEqual([x[:3] for x in policy['object_shift_empty_fallback']], [['CR', 'sig', 'JESUp']])
++        with self.assertRaisesRegex(ValueError, 'is empty'):
++            self.mod.finalize_templates(deepcopy(hists), {'object_shift_empty_fallback': 'error'},
++                                        names, ['JES'], {})
++
++
++class TestRegistryGuards(unittest.TestCase):
++    def production_meta(self, directory, eras):
++        records = []
++        for fold in range(5):
++            src = ROOT / 'tests/data/mode_models' / f'fold_{fold}.onnx'
++            dest = Path(directory) / src.name; shutil.copyfile(src, dest)
++            records.append(dict(fold=fold, excluded_fold=fold, path=dest.name,
++                                sha256=hashlib.sha256(dest.read_bytes()).hexdigest()))
++        meta = dict(schema_version=1, features=FEATURES, features_hash='f', selection_hash='s',
++                    classes=list('abcdef'), folds=5, fold_field='event', diagnostic_only=False, models=records,
++                    training_data=dict(workflow=WF, eras=eras, git_commit='x', filelist_sha256='y'))
++        path = Path(directory) / 'meta.yaml'; path.write_text(yaml.safe_dump(meta)); return path
++
++    def test_run_refuses_untrained_era(self):
++        from analysis.models.registry import FoldModels
++        with tempfile.TemporaryDirectory() as d:
++            path = self.production_meta(d, ['2022preEE', '2022postEE'])
++            FoldModels(path, 'f', 's', list('abcdef'), year='2022postEE')
++            with self.assertRaisesRegex(ValueError, 'refusing to score 2023preBPix'):
++                FoldModels(path, 'f', 's', list('abcdef'), year='2023preBPix')
++
++    def test_bhive_config_and_onnx_io_checks(self):
++        reg = import_script('register_folds', 'scripts/mva/register_folds.py')
++        classes = workflow().combine['classes']
++        self.assertEqual(len(reg.check_bhive_config(BHIVE_CONFIG, classes)), 64)
++        with tempfile.TemporaryDirectory() as d:
++            bad = yaml.safe_load(BHIVE_CONFIG.read_text())
++            bad['truths'] = bad['truths'][::-1]
++            Path(d, 'bad.yml').write_text(yaml.safe_dump(bad))
++            with self.assertRaisesRegex(ValueError, 'truths'):
++                reg.check_bhive_config(Path(d, 'bad.yml'), classes)
++            bad = yaml.safe_load(BHIVE_CONFIG.read_text())
++            bad['global_features'] = bad['global_features'][1:] + bad['global_features'][:1]
++            Path(d, 'bad2.yml').write_text(yaml.safe_dump(bad))
++            with self.assertRaisesRegex(ValueError, 'global_features'):
++                reg.check_bhive_config(Path(d, 'bad2.yml'), classes)
++        reg.check_onnx_io(ROOT / 'tests/data/mode_models/fold_0.onnx', 26, 6)
++        with self.assertRaises(ValueError):
++            reg.check_onnx_io(ROOT / 'tests/data/mode_models/fold_0.onnx', 26, 5)
++
++
++class TestBhiveHandoff(unittest.TestCase):
++    def test_commands_hold_out_fold_and_use_unique_versions(self):
++        split = import_script('split_folds3', 'scripts/mva/split_folds.py')
++        gen = import_script('bhive_fold_commands', 'scripts/mva/bhive_fold_commands.py')
++        with tempfile.TemporaryDirectory() as d:
++            p = Path(d) / 'in.parquet'
++            train_shard(p, np.arange(50), np.zeros(50))
++            split.split_files([p], Path(d) / 'split', 5, {(YEAR, 'S'): 1.})
++            script, runs = gen.build(Path(d) / 'split', 'HPlusCHToWW_2dcats', 'SimpleMLP_MultiClass',
++                                     30, 1024, 1e-3, 4, 300, 0.85, 'hwwtrainrun')
++            versions = [v for r in runs.values() for v in (r['dataset_version'], r['test_dataset_version'])]
++            self.assertEqual(len(versions), len(set(versions)))
++            self.assertEqual(script.count('law run TrainingTask'), 5)
++            self.assertEqual(script.count('--train-val-split 0.85'), 5)
++            for i, r in runs.items():
++                self.assertIn(f"--test-dataset-version {r['test_dataset_version']}", script)
++                self.assertTrue(r['test_list'].endswith(f'model_{i}/test.txt'))
++            self.assertNotIn('valid.txt', script)
++            with open(Path(d) / 'split/model_2/train.txt', 'a') as f:
++                f.write('extra\n')
++            with self.assertRaisesRegex(ValueError, 'changed after'):
++                gen.build(Path(d) / 'split', 'C', 'M', 1, 1, 1e-3, 1, 1, 0.85, 'x')
++
++
++class TestCondorPreparation(unittest.TestCase):
++    """F4/F10/F13 through the real submit_condor.py and condor/submit.sh."""
++
++    def test_prepared_job_saves_into_created_mode_directory(self):
++        with tempfile.TemporaryDirectory() as d:
++            d = Path(d)
++            work, outroot, stub = d / 'cwd', d / 'outroot', d / 'bin'
++            (work / 'condor').mkdir(parents=True); stub.mkdir()
++            os.symlink(ROOT / 'analysis', work / 'analysis')
++            shutil.copy(ROOT / 'condor/submit.sub', work / 'condor/submit.sub')
++            proxy = d / 'x509up_test'; proxy.write_text('fake')
++            (stub / 'voms-proxy-info').write_text(f'#!/bin/bash\n[ "$1" = -path ] && echo {proxy}\nexit 0\n')
++            (stub / 'voms-proxy-info').chmod(0o755)
++            env = dict(os.environ, PATH=f'{stub}:{os.environ["PATH"]}', USER='zzfakeuser',
++                       PYTHONDONTWRITEBYTECODE='1')
++            fs = json.loads((ROOT / f'analysis/filesets/fileset_{YEAR}_nanov12_lxplus.json').read_text())
++            dataset = next(k for k in fs if k.startswith('TTto2L2Nu'))
++            subprocess.run([sys.executable, str(ROOT / 'submit_condor.py'), '-w', WF, '-y', YEAR,
++                            '-d', dataset, '--mode', 'train', '--output_root', str(outroot)],
++                           cwd=work, env=env, check=True, capture_output=True)
++            job = work / 'condor' / f'{WF}__train' / YEAR / dataset
++            args = json.loads((job / 'arguments.json').read_text())
++            expect = outroot / 'outputs' / f'{WF}__train' / YEAR / dataset
++            self.assertEqual(Path(args['output_path']), expect)
++            self.assertTrue(expect.is_dir())                       # F4: created at preparation
++            self.assertEqual(args['output_location'], str(outroot) + '/outputs/')
++            # Execute condor/submit.sh in a scratch job dir with a stub submit.py that
++            # records its argv and saves exactly as submit.py does.
++            base, jobwd = d / 'base', d / 'jobwd'
++            base.mkdir(); jobwd.mkdir()
++            for f in ('arguments.json', 'partitions.json'):
++                shutil.copy(job / f, jobwd / f)
++            (base / 'submit.py').write_text(
++                'import sys, json\n'
++                'a = sys.argv[1:]\n'
++                'json.dump(a, open(sys.argv[0] + ".argv.json", "w"))\n'
++                'from coffea.util import save\n'
++                'save({"ok": 1}, a[a.index("--output_path") + 1] + "/" + a[a.index("--dataset") + 1] + ".coffea")\n')
++            r = subprocess.run(['bash', str(ROOT / 'condor/submit.sh'), '1', str(base), str(proxy)],
++                               cwd=jobwd, env=env, capture_output=True, text=True)
++            self.assertEqual(r.returncode, 0, r.stderr[-2000:])
++            argv = json.loads((base / 'submit.py.argv.json').read_text())
++            self.assertEqual(argv[argv.index('--mode') + 1], 'train')
++            self.assertEqual(argv[argv.index('--output_location') + 1], str(outroot) + '/outputs/')
++            self.assertTrue(list(expect.glob('*.coffea')))
++            # F13: the mode-options helper fails (non-string manifest). The old process
++            # substitution hid this and ran legacy mode; now the job stops first.
++            (base / 'submit.py.argv.json').unlink()
++            (jobwd / 'arguments.json').write_text(json.dumps({**args, 'model_manifest': 123}))
++            r = subprocess.run(['bash', str(ROOT / 'condor/submit.sh'), '1', str(base), str(proxy)],
++                               cwd=jobwd, env=env, capture_output=True, text=True)
++            self.assertNotEqual(r.returncode, 0)
++            self.assertFalse((base / 'submit.py.argv.json').exists())
++
++    def test_output_root_rules(self):
++        from analysis.utils.output_dir_maker import parquet_output_location, output_workflow_name
++        ns = types.SimpleNamespace
++        self.assertIsNone(parquet_output_location(ns(output_root=None)))
++        self.assertEqual(parquet_output_location(ns(output_root='/eos/user/c/cgupta/X', output_root_url=None)),
++                         'root://eosuser.cern.ch//eos/user/c/cgupta/X/outputs/')
++        with self.assertRaises(ValueError):
++            parquet_output_location(ns(output_root='/eos/cms/store/group/X', output_root_url=None))
++        self.assertEqual(output_workflow_name('wf', 'legacy'), 'wf')
++        self.assertEqual(output_workflow_name('wf', 'run'), 'wf__run')
++        from analysis.utils.path_handler import Paths
++        with self.assertRaises(ValueError):
++            Paths(eos=False, root='relative/dir')
++
++
++class TestJobsStatus(unittest.TestCase):
++    def test_prepared_job_mode_and_output_must_match(self):
++        sys.argv = ['x']
++        js = import_script('jobs_status', 'jobs_status.py')
++        with tempfile.TemporaryDirectory() as d:
++            job_dir, out = Path(d) / 'jobs', Path(d) / 'out'
++            (job_dir / 'DS').mkdir(parents=True)
++            (job_dir / 'DS/arguments.json').write_text(json.dumps({'mode': 'run', 'output_path': str(out / 'DS')}))
++            js.check_prepared_jobs(job_dir, out, 'run')
++            with self.assertRaises(SystemExit):
++                js.check_prepared_jobs(job_dir, out, 'train')
++            with self.assertRaises(SystemExit):
++                js.check_prepared_jobs(job_dir, Path(d) / 'elsewhere', 'run')
++
++
++class TestEosParquetFallback(unittest.TestCase):
++    def test_truncated_eos_file_retries_from_server(self):
++        import analysis.utils.eos_io as eio
++        with tempfile.TemporaryDirectory() as d:
++            good = Path(d) / 'good.parquet'
++            pq.write_table(pa.table({'x': [1, 2]}), good)
++            bad = Path(d) / 'bad.parquet'; bad.write_bytes(b'')
++            with self.assertRaises(pa.ArrowInvalid):
++                eio.read_parquet(str(bad))                      # non-EOS: no fallback
++            saved = eio._is_eos, eio.read_bytes
++            try:
++                eio._is_eos = lambda p: True
++                eio.read_bytes = lambda p, prefer_server=False: good.read_bytes()
++                self.assertEqual(eio.read_parquet(str(bad))['x'].to_pylist(), [1, 2])
++            finally:
++                eio._is_eos, eio.read_bytes = saved
++
++
++if __name__ == '__main__':
++    unittest.main()

@@ -1,0 +1,24 @@
+# Patch of ONLY this worker's changes (edits made 2026-11-05 14:37-14:46), excluding earlier workers' dirty changes.
+# Base (a/): pre-edit content reconstructed on 2026-11-06 by reversing this worker's exact edits; 13 files verified
+# against the review's pre-edit sha256[:16] table; 4 files = git HEAD 40d0e3e (clean before the edits); 2 files new.
+# patch sha256: 6003421fe9b89ba566b7ffdc46d829f67bb7106c7b124ccd2a1ab74b1bd085b8
+# files: 19   +lines: 1025   -lines: 90
+#   analysis/models/registry.py
+#   analysis/processing_checks.py
+#   analysis/processing_modes.py
+#   analysis/processors/base.py
+#   analysis/utils/eos_io.py
+#   analysis/utils/output_dir_maker.py
+#   analysis/utils/path_handler.py
+#   analysis/workflows/hww_allfix_4fs.yaml
+#   condor/submit.sh
+#   jobs_status.py
+#   runner.py
+#   scripts/combine/build_cards_from_templates.py
+#   scripts/mva/bhive_fold_commands.py
+#   scripts/mva/register_folds.py
+#   scripts/mva/split_folds.py
+#   submit_condor.py
+#   submit.py
+#   tests/test_processing_modes.py
+#   tests/test_trainrun_blockers.py
