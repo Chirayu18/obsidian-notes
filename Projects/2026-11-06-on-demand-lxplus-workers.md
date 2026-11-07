@@ -1,11 +1,14 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-11-07-t3-connect-vs-lxplus-verdict]]"
 date: 2026-11-06
 source: laptop
 ---
 
 # Decision: laptop default with on-demand lxplus workers
+
+**2026-11-07 update:** Chirayu cancelled lxplus workers. See [[2026-11-07-t3-connect-vs-lxplus-verdict]] for the current stay recommendation and the outstanding rollback status. This historical design is not an instruction to restart the pilot.
 
 **Agent-reported architecture recommendation, following Chirayu's requested direction: keep the existing laptop T3/auto-SSH workflow as the default, and retain lxplus as an optional task execution environment.** Conductor and keeper remain on the laptop. No backend was restarted, environment linked, agent launched or configuration changed by recording this decision.
 

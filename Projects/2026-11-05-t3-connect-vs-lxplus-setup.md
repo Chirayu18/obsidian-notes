@@ -1,11 +1,14 @@
 ---
 tags: [reference]
-status: active
+status: superseded
+superseded_by: "[[2026-11-07-t3-connect-vs-lxplus-verdict]]"
 date: 2026-11-05
 source: laptop
 ---
 
 # T3 remote environments versus the current lxplus setup
+
+**2026-11-07 update:** the current recommendation is **stay with laptop agents over SSH**, after the later pilot evidence and Chirayu's cancellation. See [[2026-11-07-t3-connect-vs-lxplus-verdict]]. The pilot proposal below is retained as history.
 
 **Recommendation — pilot one lxplus T3 environment over SSH, after CERN runtime clearance. Keep the current laptop-agent workflow available.** Chirayu's proposed laptop ControlMaster service can support that connection. Use T3 projects to separate work; defer the T3 Connect cloud tunnel until there is a specific need for access independent of the laptop's SSH forward.
 
