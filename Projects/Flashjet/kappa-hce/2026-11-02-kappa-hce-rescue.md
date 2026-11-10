@@ -95,7 +95,7 @@ These selected rows used the old balanced validation. The pre-registered verdict
 
 ## 2026-11-10 — completed rescue2 scoring and verdict (agent-reported)
 
-All nine runs have selected/final logits, truth and selection metadata. The Condor event log `~/flashjet_condor/output/kappa_rescue2.9662686.log` records normal termination, return value 0, for processes 000–008. A fresh `condor_q 9662686` returns no jobs; history supplied no additional records. No submission, resubmission or authentication renewal was performed in this continuation.
+All nine runs have selected/final logits, truth and selection metadata. The Condor event log `~/flashjet_condor/output/kappa_rescue2.9662686.log` records normal termination, return value 0, for processes 000–008. A fresh `condor_q 9662686` returns no jobs. The completed `condor_history 9662686 -limit 9` query subsequently returned all nine completed records (see addendum below). No submission, resubmission or authentication renewal was performed in this continuation.
 
 Scoring completed at 16:32 CET, 10 November, according to `/tmp/score_rescue2.json` mtime; `/tmp/score_rescue2.log` ends `DONE`. Preserved artifacts: [[Projects/Flashjet/kappa-hce/scoring/score_rescue2.py|scorer]] and [[Projects/Flashjet/kappa-hce/scoring/score_rescue2.json|all per-seed/per-subsample metrics]]. Inputs: `/eos/user/c/cgupta/flashjet/kappa_hce/htoww_replica/runs_rescue2/{arm}_s{seed}/`, files `hist.json`, `test_truth.npy`, `test_logits_selected_fp16.npy`, `test_logits_fp16.npy`.
 
@@ -138,3 +138,20 @@ Required evidence: intended saved comparison or definition of its ratio/referenc
 ### 2026-11-10 follow-up — HToWW weighted comparison recovered
 
 The unresolved HToWW artifact search above is superseded by [[Projects/HToWW/selection-and-mva/2026-11-10-kappa-hce-weighted-significance-recovery|the weighted-significance recovery]]. The saved v32-v9 versus CE v11 weighted cache favours κ-HCE (+14.42% Z ratio at nominal 50% count efficiency). It is a full-sample historical, 13-versus-six-class configuration comparison with signed weights and unresolved normalization/held-out provenance, not a matched loss-only validation. The Flashjet NOT RESCUED verdict is unchanged. Agent-reported.
+
+
+### 2026-11-10 addendum — completed Condor history query
+
+The background read-only command `ssh -o BatchMode=yes lxplus 'klist; tail -5 /tmp/score_rescue2.log; ls -l /tmp/score_rescue2.json; condor_q 9662686; condor_history 9662686 -limit 9'` completed with exit 0. Its final history output corroborates all nine runs as `C` (completed), all on 3 November. This corrects the earlier interim statement that history supplied no records; that statement preceded completion of the query. Event-log exit-zero checks and the scoring verdict remain unchanged. Agent-reported from the completed command output supplied in-thread.
+
+| Condor process | Arm / seed | Completed 2026-11-03 (history display time) |
+|---|---|---|
+| 9662686.0 | ce_es 0 | 09:56 |
+| 9662686.1 | k2n 0 | 09:54 |
+| 9662686.2 | k2t 0 | 10:16 |
+| 9662686.3 | ce_es 1 | 10:15 |
+| 9662686.4 | k2n 1 | 10:18 |
+| 9662686.5 | k2t 1 | 12:39 |
+| 9662686.6 | ce_es 2 | 12:56 |
+| 9662686.7 | k2n 2 | 13:18 |
+| 9662686.8 | k2t 2 | 13:19 |
