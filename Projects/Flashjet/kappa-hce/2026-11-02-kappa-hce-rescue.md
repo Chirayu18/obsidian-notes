@@ -91,3 +91,45 @@ These selected rows used the old balanced validation. The pre-registered verdict
 ## Results
 
 (pending: runs_rescue2)
+
+
+## 2026-11-10 — completed rescue2 scoring and verdict (agent-reported)
+
+All nine runs have selected/final logits, truth and selection metadata. The Condor event log `~/flashjet_condor/output/kappa_rescue2.9662686.log` records normal termination, return value 0, for processes 000–008. A fresh `condor_q 9662686` returns no jobs; history supplied no additional records. No submission, resubmission or authentication renewal was performed in this continuation.
+
+Scoring completed at 16:32 CET, 10 November, according to `/tmp/score_rescue2.json` mtime; `/tmp/score_rescue2.log` ends `DONE`. Preserved artifacts: [[Projects/Flashjet/kappa-hce/scoring/score_rescue2.py|scorer]] and [[Projects/Flashjet/kappa-hce/scoring/score_rescue2.json|all per-seed/per-subsample metrics]]. Inputs: `/eos/user/c/cgupta/flashjet/kappa_hce/htoww_replica/runs_rescue2/{arm}_s{seed}/`, files `hist.json`, `test_truth.npy`, `test_logits_selected_fp16.npy`, `test_logits_fp16.npy`.
+
+The scorer uses the amended twenty paired training-balance subsamples (RNG 20261103+k), with r=0.6289096561845247 and counts [2000000,1686,1419,17908,43928,116323,23957,6770,37938,313826]. Per seed, average the twenty subsamples; then average the three seed values. Errors below are sample seed SD / sqrt(3), not uncertainty from independent test datasets. Subsamples overlap.
+
+| Selected arm | M1 | M2 | Hcc vs Hbb | Hcc vs QCD |
+|---|---|---|---|---|
+| ce_es | 0.98305796 ± 0.00025549 | 14.51549374 ± 0.30565143 | 0.97457358 ± 0.00129747 | 0.98551326 ± 0.00016727 |
+| k2n | 0.98272494 ± 0.00027264 | 14.01099157 ± 0.21560959 | 0.97472629 ± 0.00108331 | 0.98530288 ± 0.00022592 |
+| k2t | 0.98010669 ± 0.00033646 | 12.43811055 ± 0.10802960 | 0.96837776 ± 0.00120331 | 0.98319390 ± 0.00018395 |
+
+Selected iterations from `hist.json`: ce_es [90000,90000,60000], k2n [70000,60000,60000], k2t [50000,60000,60000]. ce_es/k2n use raw scores; k2t uses logits minus log(w), w=(max count/count)^0.5. Selected saved logits are raw, so this correction is applied once by the scorer. Selection remains by validation M1, as preregistered, not by test M2.
+
+**Verdict: NOT RESCUED under the exact preregistered rule.** Better v2 arm k2n passes M1 (delta −0.00033302, allowed −0.0010) and Hcc-vs-Hbb (delta +0.00015271, allowed −0.005), but misses M2: 14.0109915741 versus CE 14.5154937362, delta −0.5045021621, allowed −0.5. The miss beyond the boundary is only 0.0045021621. This is a narrow rule failure, not strong evidence of a meaningful physical difference. Rounding M2 before applying the rule would hide the failure. k2t fails all three rescue conditions. Neither v2 arm beats CE on M1.
+
+Subsample SD ranges across the three seeds: M1 ce_es 0.00112–0.00130, k2n 0.00105–0.00121, k2t 0.00134–0.00137; M2 ce_es 0.754–0.929, k2n 0.635–0.708, k2t 0.495–0.650. See JSON for secondary final-weight metrics.
+
+### Evidence checks and scope
+
+| Prescription | Implementation / check | Saved evidence | Status |
+|---|---|---|---|
+| Training-balance test; twenty shared subsamples | `score_rescue2.py`, same draws/counts as `check/rescore_natural.py`; truth-order assertion for every run | JSON r, take and twenty values per metric | Agent-reported; source inspected, scoring execution recovered |
+| Validation-selected checkpoint / score | `train_rescue.py` saves raw selected logits; scorer consults `hist.json.selected` and applies k2t correction | JSON `sel` per run | Checked from source and recorded metadata |
+| All nine completed | Parse Condor 005 normal-termination events | Event log path above, 000–008 exit 0 | Checked read-only on 10 November |
+| Exact verdict | Aggregate seed means, sample SD/sqrt(3), compare unrounded deltas | JSON and table above | Checked locally; 21 score variants × twenty finite values for each of four metrics |
+
+Remote/local scorer SHA256: `8caf371f0672aa62ea96788c13ee91fea73afc33edf1353b35d33b73dc66aab5`. JSON SHA256: `71e396273448253333d6430ee1bb502a9b86a1d9a9c495f6676dd88429714e7b`. Scorer avoids torch and reproduces the recorded numpy/sklearn metrics; no independent full rescoring or unit-test rerun was performed. Scores derive from saved fp16 logits, as specified by the available artifacts.
+
+### HToWW event-weighted significance: separate, unresolved
+
+Chirayu clarified on 10 November that the relevant HToWW metric is the **event-weighted S/sqrt(B) ratio**. This supersedes the older raw-count metric for answering that HToWW question. The Flashjet verdict above does not establish that kappa-HCE is worse on HToWW's intended metric.
+
+The existing July mathematics note explicitly defines raw-count significance; the older assessment's HToWW audit likewise describes raw-count v20/v32 results and their shared training/evaluation events. Fresh source inspection in `/eos/user/c/cgupta/HToWW/b-hive` (HEAD `ce3bdd5e083b547450eee6a7513043be9e993b5b`, dirty checkout left untouched) finds `scripts/compare_significance.py` accepts weights but its main routine supplies inverse-frequency class-balancing weights. Its configured versions are v11 and two v18 arms, not a v20/v32 or working plain-CE comparison. `scripts/plot_v32_all.py` uses counts. These do not demonstrate the requested physics-event-weighted ratio.
+
+Required evidence: intended saved comparison or definition of its ratio/reference and working points, plus corresponding held-out predictions and event weights. For a weighted comparison, S(t)=sum(signal passing weights), B(t)=sum(background passing weights); the signal-efficiency convention and weight signs/normalisation must follow the actual analysis prescription. Do not silently use class weights, raw counts, or a test-optimised threshold in its place. Even an in-sample weighted improvement would remain descriptive until checked on held-out events.
+
+**Needs Chirayu:** identify the intended weighted plot/script or comparison versions (asked in-thread). No resubmission is needed. CMSSW use-case motivation and the requested b-hive PR remain pending this evidence; no claim of superiority, remote checkout edit, push or PR was made here. Training loss class weights and evaluation physics weights are separate choices; this clarification does not authorize changing the current class-only training scheme.
