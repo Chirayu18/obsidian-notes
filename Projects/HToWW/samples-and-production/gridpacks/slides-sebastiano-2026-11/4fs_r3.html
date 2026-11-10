@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- deck: hplusc-gridpack-4fs  revision: r2 (2026-11-04), split from the combined deck hplusc-gridpacks-3fs-4fs r1 (index.html)  task: HTOWW-3FS-CONTINUE-20261104 -->
+<title>H+c 4FS FxFx → WW: rebuilt and validated gridpack</title>
+<link rel="stylesheet" href="../deck/assets/reveal/reset.css">
+<link rel="stylesheet" href="../deck/assets/reveal/reveal.css" media="screen">
+<style>
+<style>
+  :root { --red:#c0392b; --blue:#1f4e79; --grey:#555; }
+  .reveal { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 22px; color:#222; }
+  .reveal .slides section { text-align:left; padding: 0 10px; box-sizing:border-box; height:100%; }
+  .reveal h1 { font-size: 1.7em; color: var(--blue); margin: 0 0 .3em; line-height:1.15; }
+  .reveal h2 { font-size: 1.25em; color: var(--blue); margin: 0 0 .45em; border-bottom: 2px solid var(--blue); padding-bottom:.15em; }
+  .reveal h3 { font-size: 0.95em; color: var(--red); margin:.3em 0 .2em; }
+  .reveal ul { margin: 0 0 0 1.1em; } .reveal li { margin: .14em 0; line-height:1.3; }
+  .reveal p { margin:.25em 0; line-height:1.3; }
+  .reveal table { border-collapse: collapse; font-size: .72em; margin:.3em 0; }
+  .reveal th, .reveal td { border-bottom: 1px solid #ccc; padding: 3px 9px; text-align:center; }
+  .reveal th { background:#eef2f7; }
+  .reveal td:first-child, .reveal th:first-child { text-align:left; }
+  .reveal code { font-size:.78em; background:#f4f4f4; padding:0 3px; word-break: break-all; }
+  .reveal pre { font-size:.52em; box-shadow:none; width:100%; margin:.3em 0; }
+  .reveal pre { display:block; font-family: 'DejaVu Sans Mono', monospace; }
+  .reveal pre code { display:block; max-height: 540px; overflow:hidden; padding:8px; white-space: pre-wrap; word-break: break-all; line-height:1.38; font-size: 11.5px; background:#f4f4f4; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items:start; }
+  .grid3 { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; align-items:start; }
+  .grid2 img, .grid3 img { width:100%; margin:0; border:0; object-fit: contain; }
+  .grid3 img { height: 268px; }
+  .grid2 img { max-height: 285px; }
+  .grid2 img.tall { max-height: 520px; }
+  .cap { font-size:.62em; color: var(--grey); text-align:center; margin-top:-2px; }
+  .ok { color:#1e7d32; font-weight:bold; } .warn { color:#b35c00; font-weight:bold; }
+  .box { border-left: 5px solid var(--blue); background:#f3f6fa; padding: 6px 12px; margin:.4em 0; }
+  .boxr { border-left: 5px solid var(--red); background:#fbf1f0; padding: 6px 12px; margin:.4em 0; }
+  .small { font-size:.75em; } .tiny { font-size:.6em; color:var(--grey); }
+  .footer { position:absolute; bottom: 4px; left: 10px; right: 10px; font-size: 12px; color:#888; display:flex; justify-content:space-between; }
+  .backup h2 { color:#666; border-bottom-color:#999; }
+  .backup h2::before { content: "Backup: "; color:#999; }
+  @page { size: 1280px 720px; margin: 0; }
+  /* deterministic print layout: one slide = one 1280x720 page, independent of Reveal's print mode */
+  @media print {
+    html, body { width:1280px !important; height:auto !important; overflow:visible !important; background:#fff; }
+    .reveal, .reveal .slides { position:static !important; width:1280px !important; height:auto !important; transform:none !important;
+      zoom:1 !important; overflow:visible !important; inset:auto !important; margin:0 !important; left:auto !important; top:auto !important; }
+    .reveal .slides { counter-reset: slide; }
+    .reveal .slides > section { display:block !important; position:relative !important; width:1280px !important; height:720px !important;
+      transform:none !important; opacity:1 !important; visibility:visible !important; top:auto !important; left:auto !important;
+      padding:22px 34px 26px !important; box-sizing:border-box !important; overflow:hidden !important; counter-increment: slide; }
+    .reveal .slides > section + section { break-before:page; page-break-before:always; }
+    .reveal .slides > section::after { content: "H+c 4FS → WW gridpack · internal · Simulation Private work   |   r3 · 2026-11-10   |   " counter(slide);
+      position:absolute; bottom:6px; right:20px; font-size:12px; color:#888; }
+    .reveal .controls, .reveal .progress, .reveal .slide-number, .footer, .reveal .backgrounds, .reveal .pause-overlay { display:none !important; }
+    .reveal > :not(.slides), body > :not(.reveal), .reveal .slides > :not(section) { display:none !important; }
+  }
+  .reveal a { color: var(--blue); }
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<!-- ===================== MAIN ===================== -->
+<section id="title">
+  <h1 style="margin-top:2.2em">H+c 4FS FxFx → WW: rebuilt and validated gridpack<br>for a Run 3 re-production</h1>
+  <p style="font-size:1.1em;color:#444">Gridpack, fragment and validation for the HToWW contacts / GEN</p>
+  <p style="margin-top:2em">Chirayu Gupta · 2026-11-10 · revision r3</p>
+  <p class="tiny" style="margin-top:3em">Internal. Private-production plots ("Simulation Private work"); not CMS-approved and not for public use. The 3FS gridpack is in a separate deck.</p>
+</section>
+
+<section id="summary">
+  <h2>Summary</h2>
+  <ul>
+    <li>The central Run 3 H+c → WW (4FS FxFx) samples have <b>wrong scale/PDF weights</b> (gridpack build) and a <b>misconfigured FxFx merging</b> (fragment).</li>
+    <li>We rebuilt the gridpack on el8 from the <b>unchanged official cards</b>, with build scripts that keep MG5_aMC's internal reweighting, and completed the fragment with the three missing FxFx lines.</li>
+    <li>Validated at LHE+GEN level against the official clean 4FS H→γγ gridpack, same H→WW fragment, ≈ 10k events each:
+      <ul class="small">
+        <li class="ok">PDF replicas / member 0 = 0.999 (broken central samples: 2.26)</li>
+        <li class="ok">all 9 scale variations within 0.7% of official</li>
+        <li class="ok">σ = 155.5 ± 0.4 fb (identical), all kinematic shapes χ²/ndf ≤ 1</li>
+      </ul></li>
+  </ul>
+  <div class="box small">Package (gridpack, fragment, slides):<br>
+  <code>https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11</code></div>
+  <p class="small"><b>Ask:</b> re-produce the 4FS (and H+b) H→WW requests with the rebuilt gridpack and fixed fragment.</p>
+</section>
+
+<section id="motivation">
+  <h2>Why: two problems in the central H+c/H+b → WW samples</h2>
+  <div class="grid2">
+    <div>
+      <h3>1. LHE scale/PDF weights wrong (gridpack build)</h3>
+      <ul class="small">
+        <li>all scale variations ≈ ×2 nominal, PDF replicas / member 0 ≈ 2.26</li>
+        <li>cause: the genproductions NLO workflow switches off MG5_aMC's internal reweighting and computes the weights with the python <code>systematics</code> module, which ignores the running charm Yukawa added by the cards' <code>_mg5amc.patch</code></li>
+      </ul>
+      <h3>2. FxFx merging misconfigured (fragment)</h3>
+      <ul class="small">
+        <li>the WW requests lack <code>JetMatching:jetAlgorithm = 2</code>, <code>etaJetMax = 999.</code>, <code>coneRadius = 1.</code> → veto only at |η|&lt;2.5, R = 0.7</li>
+        <li>forward 1-jet events 7× rarer; not fixable by reweighting</li>
+      </ul>
+    </div>
+    <div><img src="../deck/assets/before/fig1_weights.png"><div class="cap">Before: central H+c→WW (blue) vs clean references (2026-10-13 study)</div>
+    <img src="../deck/assets/before/fig2_merging_eta.png"><div class="cap">Before: forward-parton structure of the central WW FxFx fragment</div></div>
+  </div>
+</section>
+
+<section id="4fs-fix">
+  <h2>What was fixed in the gridpack build</h2>
+  <ul>
+    <li>Physics cards (proc, run, param, extramodels, <code>_mg5amc.patch</code>) are the official CMS cards, unchanged and identical to those of the official clean H→γγ 4FS gridpack. The bug is purely in the build scripts.</li>
+    <li>The running-Yukawa patch comes from the official cards on GitHub (cms-sw/genproductions, <code>13p6TeV/HPlusHF</code>):<br>
+      <code class="small"><a href="https://github.com/cms-sw/genproductions/blob/a7fbf78aaae406efd6b8f14d8d5357c51a8c21fb/bin/MadGraph5_aMCatNLO/cards/production/13p6TeV/HPlusHF/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_mg5amc.patch">github.com/cms-sw/genproductions/…/HPlusHF/HPlusCharm_4FS_…_amcatnloFXFX_pythia8_mg5amc.patch</a></code></li>
+    <li>Build-script change (only for cards that carry this patch): keep MG5_aMC's internal reweighting and skip the python systematics step. This is what the official clean gridpacks do; every other process builds as before.</li>
+    <li>Built on el8 with CMSSW_12_4_8, MG5_aMC 2.9.18. Integrated σ = <b>155.5 ± 0.4 fb</b>, identical to the official gridpack.</li>
+    <li>Fragment: the official H→WW fragment plus the three missing FxFx lines (backup).</li>
+  </ul>
+  <div class="box small">The validation on the next slides was run on <b>exactly the gridpack in the package</b>.</div>
+</section>
+
+<section id="4fs-weights">
+  <h2>Validation: scale and PDF weights now correct</h2>
+  <div class="grid2">
+    <div>
+      <table>
+        <tr><th>quantity</th><th>new el8</th><th>official</th></tr>
+        <tr><td>events after FxFx matching</td><td>10370</td><td>10296</td></tr>
+        <tr><td>matched σ</td><td>97.4 ± 1.6 fb</td><td>96.5 ± 1.6 fb</td></tr>
+        <tr><td>negative-weight fraction</td><td>0.217</td><td>0.216</td></tr>
+        <tr><td>PDF replicas / member 0</td><td><b>0.999</b></td><td>0.999</td></tr>
+        <tr><td>PDF replica spread (rms)</td><td>0.0073</td><td>0.0074</td></tr>
+        <tr><td>μR×2 σ ratio</td><td>0.966</td><td>0.967</td></tr>
+        <tr><td>μR×0.5 σ ratio</td><td>1.049</td><td>1.044</td></tr>
+        <tr><td>all 9 scale points</td><td colspan="2">within 0.7% of official</td></tr>
+      </table>
+      <p class="small">Broken central samples for comparison: PDF ratio <b>2.26</b>, scale ×2.</p>
+    </div>
+    <div><img src="../deck/assets/plots4fs/pdf_replica_ratio.png"><div class="cap">per-event mean of PDF replicas / member 0</div>
+      <img src="../deck/assets/plots4fs/scale_shape_higgs_pt.png"><div class="cap">scale-variation shape vs Higgs p<sub>T</sub></div></div>
+  </div>
+</section>
+
+<section id="4fs-kin">
+  <h2>Validation: kinematics agree with the official gridpack</h2>
+  <div class="grid3">
+    <div><img src="../deck/assets/plots4fs/higgs_pt.png"><div class="cap">Higgs p<sub>T</sub>: χ²/ndf 1.4/10</div></div>
+    <div><img src="../deck/assets/plots4fs/lead_parton_pt.png"><div class="cap">leading LHE parton p<sub>T</sub>: 1.0/10</div></div>
+    <div><img src="../deck/assets/plots4fs/lead_parton_eta.png"><div class="cap">leading LHE parton η: 8.5/20</div></div>
+    <div><img src="../deck/assets/plots4fs/n_genjets.png"><div class="cap">N GenJets: 4.4/5</div></div>
+    <div><img src="../deck/assets/plots4fs/genjet1_pt.png"><div class="cap">leading GenJet p<sub>T</sub>: 4.3/6</div></div>
+    <div class="small" style="padding-top:1em">
+      <p>LHE+GEN, 2023BPix conditions, the same H→WW fragment with all FxFx lines.</p>
+      <table>
+        <tr><th></th><th>new</th><th>official</th></tr>
+        <tr><td>1-jet share</td><td>0.269 ± 0.009</td><td>0.268 ± 0.009</td></tr>
+        <tr><td>1-jet, |η<sub>parton</sub>|&gt;2.5</td><td>0.066 ± 0.005</td><td>0.072 ± 0.005</td></tr>
+      </table>
+      <p>The central WW fragment gives ≈ 0.010 for the forward 1-jet share; the fixed fragment restores ≈ 0.07.</p>
+    </div>
+  </div>
+</section>
+
+<section id="request">
+  <h2>Proposed request</h2>
+  <ul>
+    <li><b>4FS H+c FxFx → WW (re-production):</b> rebuilt el8 gridpack + fragment with the three FxFx lines, replacing HIG-Run3Summer22wmLHEGS-02684, HIG-Run3Summer22EEwmLHEGS-02600, HIG-Run3Summer23BPixwmLHEGS-02468.</li>
+    <li><b>H+b → WW (same issue):</b> HIG-Run3Summer22wmLHEGS-02697, -22EEwmLHEGS-02645, -23wmLHEGS-03356, -23BPixwmLHEGS-02517. The same build fix applies; the H+b gridpack has <b>not</b> been rebuilt or validated yet.</li>
+    <li>Other processes with a running-Yukawa patch (e.g. bbH) may carry the same weight problem.</li>
+  </ul>
+</section>
+
+<!-- ===================== BACKUP ===================== -->
+<section id="bk-paths" class="backup">
+  <h2>Gridpack, fragment and card paths</h2>
+  <p class="small">Request package (CERNBox):</p>
+  <pre><code>https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11
+  4FS/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz
+  4FS/HPlusCharm_4FS_FxFx_HToWWTo2L2Nu_13p6TeV_fragment.py</code></pre>
+  <p class="small">Original gridpack location:</p>
+  <pre><code>/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/genproductions_scripts/bin/MadGraph5_aMCatNLO/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz</code></pre>
+  <p class="small">Cards (official, unchanged), GitHub cms-sw/genproductions:</p>
+  <pre><code>https://github.com/cms-sw/genproductions/tree/master/bin/MadGraph5_aMCatNLO/cards/production/13p6TeV/HPlusHF/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8</code></pre>
+  <p class="tiny">The fragment's ExternalLHEProducer points at the EOS gridpack; replace it with the cvmfs path after upload.</p>
+</section>
+
+<section id="bk-fragments" class="backup">
+  <h2>Pythia processParameters of the 4FS H→WW fragment</h2>
+<pre><code>"JetMatching:setMad = off",   "JetMatching:scheme = 1",
+"JetMatching:merge = on",
+"JetMatching:jetAlgorithm = 2",   # missing centrally
+"JetMatching:etaJetMax = 999.",   # missing centrally
+"JetMatching:coneRadius = 1.",    # missing centrally
+"JetMatching:slowJetPower = 1",  "JetMatching:qCut = 30.",
+"JetMatching:doFxFx = on",       "JetMatching:qCutME = 10.",
+"JetMatching:nQmatch = 4",       "JetMatching:nJetMax = 1",
+"SLHA:useDecayTable = off",      "25:m0 = 125",
+"25:onMode = off", "25:onIfMatch = 24 -24",
+"24:onMode = off", "24:onIfAny = 11 13 15", "24:mMin = 0.05"
+# blocks: pythia8CommonSettings, CP5 (13.6 TeV), aMCatNLOSettings, PSweightsSettings</code></pre>
+  <p class="tiny">Settings identical to those used in the validation.</p>
+</section>
+
+<section id="bk-4fs-table" class="backup">
+  <h2>Validation: full numbers</h2>
+  <div class="grid2"><div>
+  <table>
+    <tr><th>quantity</th><th>new el8</th><th>official</th></tr>
+    <tr><td>events after matching</td><td>10370</td><td>10296</td></tr>
+    <tr><td>negative-weight fraction</td><td>0.217</td><td>0.216</td></tr>
+    <tr><td>PDF member 0 / nominal (median)</td><td>1.0000</td><td>1.0000</td></tr>
+    <tr><td>PDF replica mean / member 0</td><td>0.9990</td><td>0.9989</td></tr>
+    <tr><td>PDF replica σ spread (rms)</td><td>0.0073</td><td>0.0074</td></tr>
+    <tr><td>(μR,μF)=(0.5,0.5)</td><td>1.052</td><td>1.050</td></tr>
+    <tr><td>(0.5,1)</td><td>1.049</td><td>1.044</td></tr>
+    <tr><td>(0.5,2)</td><td>1.003</td><td>0.996</td></tr>
+    <tr><td>(1,0.5)</td><td>0.951</td><td>0.952</td></tr>
+    <tr><td>(1,2)</td><td>1.013</td><td>1.012</td></tr>
+    <tr><td>(2,0.5)</td><td>0.887</td><td>0.888</td></tr>
+    <tr><td>(2,1)</td><td>0.966</td><td>0.967</td></tr>
+    <tr><td>(2,2)</td><td>1.014</td><td>1.014</td></tr>
+  </table></div><div>
+  <table>
+    <tr><th>quantity</th><th>new</th><th>official</th></tr>
+    <tr><td>1-jet (NpNLO=1) share</td><td>0.269 ± 0.009</td><td>0.268 ± 0.009</td></tr>
+    <tr><td>1-jet, |η<sub>lead parton</sub>|&gt;2.5</td><td>0.0657 ± 0.0047</td><td>0.0723 ± 0.0047</td></tr>
+    <tr><td>0-jet, parton p<sub>T</sub>&gt;30, |η|&gt;2.5</td><td>0.0017 ± 0.0005</td><td>0.0010 ± 0.0004</td></tr>
+  </table>
+  <table>
+    <tr><th>distribution (normalised)</th><th>χ²/ndf</th></tr>
+    <tr><td>Higgs p<sub>T</sub></td><td>1.4/10</td></tr>
+    <tr><td>leading LHE parton η</td><td>8.5/20</td></tr>
+    <tr><td>leading LHE parton p<sub>T</sub></td><td>1.0/10</td></tr>
+    <tr><td>N GenJets (p<sub>T</sub>&gt;30, |η|&lt;4.7)</td><td>4.4/5</td></tr>
+    <tr><td>leading GenJet p<sub>T</sub></td><td>4.3/6</td></tr>
+  </table>
+  <p class="tiny">Reference: official clean <code>HPlusCharm_4FS_MuRFScaleDynX0p50_HToGG_M125_…_slc7_amd64_gcc10_CMSSW_12_4_8</code> (MG 2.9.9) from cvmfs, showered with the same H→WW fragment. 10 + 10 LHE+GEN jobs.</p>
+  </div></div>
+</section>
+
+<section id="bk-caveats" class="backup">
+  <h2>Assumptions, open items, provenance</h2>
+  <ul class="small">
+    <li><b>Validation scope:</b> LHE+GEN, ≈ 10k events, one condition set (2023BPix). Not run through SIM/RECO.</li>
+    <li><b>Build history:</b> two packaging slips in early builds (missing <code>MetaData/</code>; <code>runcmsgrid.sh</code> not executable) were caught by the tests and fixed before the validation shown here.</li>
+    <li><b>H+b:</b> same build issue expected; not rebuilt or validated.</li>
+    <li><b>Running-Yukawa patch:</b> the <code>_mg5amc.patch</code> in the gridpack is identical to the GitHub cms-sw/genproductions card (13p6TeV/HPlusHF).</li>
+    <li><b>Sources:</b> validation <code>/eos/user/c/cgupta/HToWW/mcm_grid/gp_fix_4fs/validation/</code>; before-figures <code>/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/ticket/</code>.</li>
+  </ul>
+</section>
+
+</div>
+<div class="footer"><span>H+c 4FS → WW gridpack · internal · Simulation Private work</span><span>r3 · 2026-11-10</span></div>
+</div>
+<script src="../deck/assets/reveal/reveal.js"></script>
+<script>
+  Reveal.initialize({ width: 1280, height: 720, margin: 0.03, hash: true, slideNumber: 'c/t', center: false, transition: 'none' });
+</script>
+</body>
+</html>
