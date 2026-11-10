@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!-- deck: lmkt-in-flashjet  revision: r1 (2026-11-10)  sources: Projects/Flashjet/learned-clustering/2026-09-2{4,5}-*.md, EOS /eos/user/c/cgupta/flashjet/lmkt/{plots,results}, FlastJetDemo branch lmkt -->
+<title>LM-kT in flashjet: an opt-in learned pair metric</title>
+<style>
+  :root { --red:#c0392b; --blue:#1f4e79; --grey:#555; }
+  html, body { margin:0; background:#ddd; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 22px; color:#222; }
+  section { position:relative; width:1280px; height:720px; margin:20px auto; background:#fff; box-sizing:border-box;
+            padding:22px 34px 30px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,.25); counter-increment: slide; }
+  body { counter-reset: slide; }
+  section::after { content: "LM-kT in flashjet · internal · own Pythia, truth level · private work   |   r1 · 2026-11-10   |   " counter(slide);
+    position:absolute; bottom:6px; right:20px; font-size:12px; color:#888; }
+  h1 { font-size: 1.7em; color: var(--blue); margin: 0 0 .3em; line-height:1.15; }
+  h2 { font-size: 1.25em; color: var(--blue); margin: 0 0 .45em; border-bottom: 2px solid var(--blue); padding-bottom:.15em; }
+  h3 { font-size: 0.95em; color: var(--red); margin:.3em 0 .2em; }
+  ul { margin: 0 0 0 1.1em; padding:0; } li { margin: .14em 0; line-height:1.3; }
+  p { margin:.25em 0; line-height:1.3; }
+  table { border-collapse: collapse; font-size: .72em; margin:.3em 0; }
+  th, td { border-bottom: 1px solid #ccc; padding: 3px 9px; text-align:center; }
+  th { background:#eef2f7; }
+  td:first-child, th:first-child { text-align:left; }
+  code { font-size:.78em; background:#f4f4f4; padding:0 3px; }
+  pre { font-family: 'DejaVu Sans Mono', monospace; font-size: 13px; background:#f4f4f4; padding:8px; margin:.3em 0; line-height:1.38; white-space:pre-wrap; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items:start; }
+  img { max-width:100%; }
+  .cap { font-size:.62em; color: var(--grey); text-align:center; margin-top:-2px; }
+  .ok { color:#1e7d32; font-weight:bold; } .warn { color:#b35c00; font-weight:bold; }
+  .box { border-left: 5px solid var(--blue); background:#f3f6fa; padding: 6px 12px; margin:.4em 0; }
+  .boxr { border-left: 5px solid var(--red); background:#fbf1f0; padding: 6px 12px; margin:.4em 0; }
+  .small { font-size:.75em; } .tiny { font-size:.6em; color:var(--grey); }
+  .src { position:absolute; bottom:24px; left:34px; right:34px; font-size:12px; color:#888; }
+  .backup h2 { color:#666; border-bottom-color:#999; }
+  .backup h2::before { content: "Backup: "; color:#999; }
+  b.hl { color: var(--red); }
+  @page { size: 1280px 720px; margin: 0; }
+  @media print {
+    html, body { background:#fff; }
+    section { margin:0; box-shadow:none; break-after:page; page-break-after:always; }
+  }
+</style>
+</head>
+<body>
+
+<section id="title">
+  <h1 style="margin-top:2.2em">LM-kT in flashjet:<br>an opt-in, IRC-safe learned pair metric for clustering</h1>
+  <p style="font-size:1.1em;color:#444">Why the clustering hook belongs in the library and the network does not</p>
+  <p style="margin-top:2em">Chirayu Gupta · 2026-11-10 · revision r1</p>
+  <p class="tiny" style="margin-top:3em">Internal. All results are from our own Pythia 8 samples at truth level (13.6 TeV) plus JetClass (Delphes) for the tagger check; private work, not CMS-approved. Results are from Sept 2026 studies and have not been independently reviewed.</p>
+</section>
+
+<section id="summary">
+  <h2>Summary</h2>
+  <ul>
+    <li><b>Proposal:</b> add <code>cluster_lmkt</code> to flashjet as an <b>experimental, opt-in</b> clustering with an external pair matrix G. The network that produces G stays out of the library.</li>
+    <li><b>What it does:</b> generalised kT with a bounded learned factor on the pair distance, d<sub>ab</sub> = ΔR²<sub>ab</sub> · exp(clip(g<sub>ab</sub>, ±c)).</li>
+    <li><b>Why bother:</b> for top jets it pairs the two W quarks correctly <b class="hl">0.66</b> of the time, vs <b>0.33</b> for C/A, closing ~60% of the gap to a truth oracle (0.86).</li>
+    <li><b>Safe to add:</b>
+      <ul class="small">
+        <li class="ok">G = 0 or c = 0 reproduces anti-kt, C/A and kt bit for bit (pinned in tests); existing users see no change</li>
+        <li class="ok">IRC failure rate equal to C/A on real jets; QCD not sculpted (fake W 0.096 vs 0.108)</li>
+        <li class="ok">22 LM-kT tests pass, including a brute-force check of the definition</li>
+      </ul></li>
+    <li><b>Honest limits:</b> small tagging gain (+0.5 pt accuracy on JetClass), torch-only today (≈160× slower than Triton C/A), model-dependent jet definition if G comes from a network.</li>
+    <li><b>Prerequisite:</b> land the <code>_pseudojet_p4</code> padding fix on <code>main</code> first; it affects every user today.</li>
+  </ul>
+</section>
+
+<section id="motivation">
+  <h2>Motivation: geometric trees get the hierarchy wrong</h2>
+  <div class="grid2">
+  <div>
+  <h3>The problem</h3>
+  <ul class="small">
+    <li>In a boosted top, t → b W → b q q′. C/A clusters by angle only, so it often merges b with one W quark first.</li>
+    <li>C/A pairs the W quarks correctly in only <b>33%</b> of top jets, kt in 40%.</li>
+    <li>Any substructure built on the tree (W candidate mass, Lund plane, prong features) inherits this.</li>
+  </ul>
+  <h3>Why the tree is the right object</h3>
+  <ul class="small">
+    <li>ParT's learned pair bias is, to ~<b>77%</b> (AUC recovery), a function of the pair's C/A common-ancestor node.</li>
+    <li>So taggers already use tree-like pair information; a better tree is a compact, IRC-safe way to supply it.</li>
+  </ul>
+  </div>
+  <div>
+  <h3>Why in flashjet</h3>
+  <ul class="small">
+    <li>flashjet is where the trees are built (batched GPU clustering, history decode, grooming, Lund coordinates).</li>
+    <li>A learned metric is a <b>small change to the distance</b>, not a new library: same merge loop, same history schema.</li>
+    <li>Users can plug in LM-kT's GNN or <i>any</i> other learned pair score, without flashjet shipping a model.</li>
+  </ul>
+  <div class="box small">"Same answer as FastJet, faster" stays the default. Learned clustering is a flag you turn on.</div>
+  </div>
+  </div>
+  <p class="src">Sources: learned-clustering/2026-09-24-lmkt-gnn-ceiling.md; 2026-09-25-part-pairbias-anatomy-and-tree-substitution.md (tree_subst_logit.json)</p>
+</section>
+
+<section id="algorithm">
+  <h2>The algorithm (LM-kT)</h2>
+  <div class="grid2">
+  <div class="small">
+  <h3>Inputs</h3>
+  <ul>
+    <li>Constituents p<sub>i</sub>, mask, (R, p) as usual.</li>
+    <li>Pair matrix G<sub>ij</sub> (B×N×N, symmetric). Negative = pull together, positive = push apart.</li>
+  </ul>
+  <h3>Merge loop (n−1 steps)</h3>
+  <ul>
+    <li>g<sub>ab</sub> = L<sub>ab</sub> / (S<sub>a</sub>S<sub>b</sub>): the <b>pT-weighted average</b> of G over a × b, with S = ΣpT, L<sub>ab</sub> = Σ pT<sub>i</sub>pT<sub>j</sub>G<sub>ij</sub>.</li>
+    <li>d<sub>ab</sub> = ΔR²<sub>ab</sub> · exp(clip(g<sub>ab</sub>, −c, c)) (C/A; general p via kt<sup>2p</sup>). c = 4: factor in [1/55, 55].</li>
+    <li>On merge: L row of the new pseudojet = L<sub>a</sub> + L<sub>b</sub>. Exact, O(n) per merge.</li>
+    <li>Options: <code>zmin</code> (modulate only hard pairs), <code>geo=False</code> (distance from G only, with a collinear guard), <code>beam</code> (inclusive vs one tree per jet).</li>
+  </ul>
+  </div>
+  <div class="small">
+  <h3>Why it is IRC safe</h3>
+  <ul>
+    <li><b>Collinear:</b> ΔR = 0 gives d = 0 for any bounded g, so collinear pieces merge first, and their pT-weighted rows sum to the unsplit particle's row.</li>
+    <li><b>Infrared:</b> a soft particle enters every average with weight pT → 0, and the factor is bounded.</li>
+    <li>G itself comes from an energy-weighted GNN (pT only as attention weight), so G is IRC safe too.</li>
+  </ul>
+  <h3>API (branch <code>lmkt</code>)</h3>
+<pre>cluster_lmkt(p4, mask, R, p, G=None, c=0.0,
+             beam=True, zmin=0.0, geo=True)
+# returns the torch_backend schema
+# (jet_idx, n_jets, hist_p1, hist_p2, hist_child, hist_d)
+# + per-merge dR, z, kt, m2, g and node_p4</pre>
+  </div>
+  </div>
+  <p class="src">Source: learned-clustering/2026-09-25-lmkt-algorithm.md; FlastJetDemo <code>src/flashjet/lmkt.py</code> @ lmkt (commits 0bddc57, 9030e11, 6700afc, 4deefbd)</p>
+</section>
+
+<section id="trees">
+  <h2>Result: better trees where there is hierarchy</h2>
+  <img src="fig/structure_metrics.png" style="width:100%">
+  <table style="margin:0 auto">
+    <tr><th>metric (27k test jets)</th><th>C/A</th><th>kt</th><th>LM-kT c=2</th><th>LM-kT c=4</th><th>truth oracle</th></tr>
+    <tr><td>top: W quarks paired correctly</td><td>0.33</td><td>0.40</td><td>0.59</td><td><b>0.66</b></td><td>0.86</td></tr>
+    <tr><td>top: W candidate 65–95 GeV</td><td>0.41</td><td>0.53</td><td>0.57</td><td><b>0.60</b></td><td>0.69</td></tr>
+    <tr><td>top: 3 prongs correct</td><td>0.72</td><td>0.83</td><td>0.81</td><td>0.83</td><td>0.87</td></tr>
+    <tr><td>W: 2 prongs correct</td><td>0.91</td><td>0.91</td><td>0.91</td><td>0.91</td><td>0.93</td></tr>
+  </table>
+  <p class="small">Top W pairing doubles; 2-prong jets are unchanged (nothing to learn there). Pairing rises with the bound c: 0.45 → 0.59 → 0.66 for c = 1, 2, 4.</p>
+  <p class="src">Own Pythia 8, AK8, pT 500–1000 GeV; groomed declustering zcut = 0.1. Source: 2026-09-24-lmkt-gnn-ceiling.md; EOS lmkt/results/summary.json, lmkt/plots/structure_metrics.png</p>
+</section>
+
+<section id="masses">
+  <h2>Masses and QCD: no sculpting</h2>
+  <img src="fig/prong_masses.png" style="width:100%">
+  <div class="grid2 small">
+    <ul>
+      <li><b>Top W candidate:</b> sharper peak at m<sub>W</sub>, smaller low-mass shoulder than C/A.</li>
+      <li><b>QCD:</b> fake W rate (groomed 2-prong mass 65–105 GeV) <span class="ok">0.096</span> vs 0.108 for C/A; kt sculpts badly (0.274).</li>
+    </ul>
+    <ul>
+      <li><span class="warn">W mass window</span> (±15%): 0.78 vs 0.82 for C/A. Soft particles get learned nudges into prongs, giving a high-mass tail.</li>
+      <li>Fix in the code: <code>zmin</code>, apply the factor only to pairs with z > zmin (IRC safe like a Soft Drop cut). <b>Not yet evaluated.</b></li>
+    </ul>
+  </div>
+  <p class="src">Source: 2026-09-24-lmkt-gnn-ceiling.md; EOS lmkt/plots/prong_masses.png</p>
+</section>
+
+<section id="irc">
+  <h2>IRC safety and correctness</h2>
+  <div class="grid2">
+  <div>
+    <img src="fig/irc_harness.png" style="width:100%">
+    <p class="cap">1000 signal jets, GNN in float64; 3-prong four-momenta compared at 1e-6. Lowest points = zero failures.</p>
+  </div>
+  <div class="small">
+    <table>
+      <tr><th>perturbation</th><th>C/A</th><th>LM-kT</th></tr>
+      <tr><td>ghosts at 1e-8</td><td>0.001</td><td>0.001</td></tr>
+      <tr><td>ghosts at 1e-10</td><td>0.001</td><td>0.000</td></tr>
+      <tr><td>collinear split at 1e-7</td><td>0.003</td><td>0.003</td></tr>
+    </table>
+    <p>LM-kT's rate equals C/A's at every scale. Larger perturbations "fail" for both because the tolerance is tighter than the perturbation.</p>
+    <h3>Tests (<code>tests/test_lmkt.py</code>, 22 pass)</h3>
+    <ul>
+      <li>c = 0 is bit-for-bit the torch backend for anti-kt, C/A, kt</li>
+      <li>batched code = brute-force implementation of the definition</li>
+      <li>IRC harness on toy and real jets</li>
+      <li>negative control: a count-weighted (not collinear-safe) variant is flagged</li>
+    </ul>
+  </div>
+  </div>
+  <p class="src">Source: 2026-09-24-lmkt-gnn-ceiling.md; EOS lmkt/results/irc_timing.json, lmkt/plots/irc_harness.png</p>
+</section>
+
+<section id="costs">
+  <h2>What it costs, and what it does not buy</h2>
+  <div class="grid2 small">
+  <div>
+    <h3>Speed (T4, 512 jets × 128 particles)</h3>
+    <table>
+      <tr><th>step</th><th>time</th></tr>
+      <tr><td>GNN forward (makes G)</td><td>534 ms</td></tr>
+      <tr><td>LM-kT torch, c = 4</td><td>639 ms</td></tr>
+      <tr><td>flashjet torch backend, C/A</td><td>643 ms</td></tr>
+      <tr><td>flashjet Triton, C/A</td><td><b>4.0 ms</b></td></tr>
+    </table>
+    <ul>
+      <li>LM-kT runs at torch-backend speed today. Triton speed needs the modulation (and the O(n) row update) in the kernel.</li>
+      <li>The GNN is ~130× the fused clustering; a distilled student is the plan for inference.</li>
+    </ul>
+  </div>
+  <div>
+    <h3>Tagging gain is modest</h3>
+    <ul>
+      <li>JetClass, BDT on tree features: acc 0.708 (LM-kT) vs 0.704 (C/A), ±0.2 stat; the gain sits in top and Hbb.</li>
+      <li>Substituting ParT's pair bias by a function of the tree: LM-kT recovers 72%, C/A 77%.</li>
+    </ul>
+    <h3>Open problems</h3>
+    <ul>
+      <li>GNN trained on pairs, not merges: pair AUC 0.999 becomes 0.88 in the tree.</li>
+      <li>Trained on our truth-level Pythia, applied to Delphes without retraining: a G from a network makes the jet definition model-dependent.</li>
+    </ul>
+  </div>
+  </div>
+  <div class="boxr small">So: the case is <b>substructure</b> (finding the W inside a top, prong assignment), not a generic tagging boost. That is why it should be an opt-in hook, not a default.</div>
+  <p class="src">Source: 2026-09-24-lmkt-gnn-ceiling.md (irc_timing.json, jetclass_tagger.json); 2026-09-25-part-pairbias-anatomy-and-tree-substitution.md</p>
+</section>
+
+<section id="plan">
+  <h2>Integration plan: four separate pieces</h2>
+  <p class="small">The <code>lmkt</code> branch is 16 commits ahead of <code>main</code> (48 files, ~3.8k lines), but only 5 commits are LM-kT. Split it:</p>
+  <table style="font-size:.66em">
+    <tr><th>#</th><th>piece</th><th>commits</th><th>why / status</th></tr>
+    <tr><td>1</td><td><b>Padding fix</b> in <code>history._pseudojet_p4</code></td><td>46e566d</td><td>Bug on <code>main</code> today: last real particle zeroed in padded jets (undefined on CUDA). Regression test included. <b>First, independent of LM-kT.</b></td></tr>
+    <tr><td>2</td><td>Substructure tools: exclusive jets, Soft Drop, Lund coordinates</td><td>2e912ef</td><td>LM-kT readout likely builds on these; on <code>origin/benchmarking</code>, not <code>main</code>.</td></tr>
+    <tr><td>3</td><td><b>LM-kT</b>: <code>cluster_lmkt</code>, groomed prong membership, <code>zmin</code>, <code>geo=False</code></td><td>0bddc57, 9030e11, 6700afc, 4deefbd</td><td>Experimental, torch only, opt-in. G is an input; no model shipped.</td></tr>
+    <tr><td>4</td><td>Triton tuning / benchmark suite</td><td>remaining 10</td><td>Unrelated to LM-kT; separate review.</td></tr>
+  </table>
+  <h3>Later, if there is a use case that needs it</h3>
+  <ul class="small">
+    <li>Learned factor in the Triton kernel, plus a distilled small network for G, to keep flashjet speed.</li>
+    <li>GNN, weights and training code in a separate experimental package.</li>
+    <li>Same hook enables cheap follow-ups: wider envelopes (R = 1.2–1.5) and the radius-free <code>geo=False</code> mode (never evaluated so far).</li>
+  </ul>
+  <p class="src">Source: read-only <code>git log main..lmkt</code>, <code>git merge-base --is-ancestor</code> in FlastJetDemo on EOS (2026-11-10); 2026-09-25-flashjet-pseudojet-p4-padding-bug.md</p>
+</section>
+
+<section id="next">
+  <h2>Next steps</h2>
+  <ul>
+    <li><b>Now:</b> padding fix to <code>main</code> as its own change (piece 1).</li>
+    <li><b>Then:</b> pieces 2 and 3 as an experimental LM-kT module; review the API (G as input, c = 0 default, flags).</li>
+    <li><b>Physics checks still open</b> (in code, not yet evaluated):
+      <ul class="small">
+        <li><code>zmin</code> gating to recover the W mass window</li>
+        <li>larger bound c (oracle uses 8); GNN v2 (wider, 30 epochs)</li>
+        <li>training through the clustering (merge decisions, not pairs)</li>
+      </ul></li>
+    <li><b>Tagging question:</b> G2 (ParT without pair bias + precomputed groomed-prong membership channels), approved but not launched; ~10–20 GPU-hours to precompute.</li>
+  </ul>
+  <div class="box small">The ask: accept a small, tested, opt-in distance hook in flashjet core. It costs nothing when off, and gives a clean place to test learned clustering at scale.</div>
+</section>
+
+<section class="backup" id="pairauc">
+  <h2>Pair-level view</h2>
+  <div class="grid2">
+  <div><img src="fig/pair_auc.png" style="width:100%"></div>
+  <div class="small">
+    <ul>
+      <li>z<sub>i</sub>z<sub>j</sub>-weighted same-prong AUC over labelled pairs, signal jets. Trees scored by the merge step at which a pair first shares a pseudojet (lowest common ancestor).</li>
+      <li>GNN logit 0.999 vs ΔR alone 0.983; in the tree LM-kT c=4 gives 0.882 vs C/A 0.869.</li>
+      <li>Anti-kt scores 0.913 here, likely because its pT-ordered merging keeps soft particles separate until late; this metric rewards ordering <i>inside</i> prongs, not the prong hierarchy that the tree-quality metrics measure.</li>
+      <li>The drop from 0.999 to 0.88 is the "trained on pairs, not merges" gap.</li>
+    </ul>
+  </div>
+  </div>
+  <p class="src">Source: 2026-09-24-lmkt-gnn-ceiling.md; EOS lmkt/plots/pair_auc.png</p>
+</section>
+
+<section class="backup" id="setup">
+  <h2>Setup, labels, oracle, tagger proxies</h2>
+  <div class="grid2 small">
+  <div>
+    <ul>
+      <li><b>Samples:</b> own Pythia 8, truth level, 13.6 TeV: W′→WZ (hadronic), tt̄ all-hadronic, QCD. AK8, pT 500–1000, |y| &lt; 2, top 128 constituents. 163k / 27k / 27k.</li>
+      <li><b>Labels:</b> nearest decay quark if clearly nearest (ΔR<sub>min</sub> &lt; 0.75·ΔR<sub>2nd</sub>, &lt; 0.5), else unassigned (3–4% of pT). Check: W 81.6, Z 91.9, top 170.6 GeV.</li>
+      <li><b>GNN:</b> energy-weighted message passing, 119k parameters, 3 rounds within ΔR &lt; 0.8; heads "same prong" and "same decay parent"; G = −(ℓ<sub>0</sub>+ℓ<sub>1</sub>)/2. 12 epochs on a T4.</li>
+      <li><b>Oracle:</b> same algorithm with G from truth (−8 same prong, 0 W siblings, +8 different), c = 8. Not usable on data; on QCD it is exactly C/A.</li>
+    </ul>
+  </div>
+  <div>
+    <table>
+      <tr><th>BDT on tree features</th><th>acc</th><th>top AUC</th><th>Hbb AUC</th></tr>
+      <tr><td>Pythia, C/A tree</td><td>0.826</td><td>0.9706</td><td>—</td></tr>
+      <tr><td>Pythia, LM-kT c=2</td><td><b>0.834</b></td><td><b>0.9760</b></td><td>—</td></tr>
+      <tr><td>JetClass base (mSD + τ)</td><td>0.687</td><td>0.9691</td><td>0.9337</td></tr>
+      <tr><td>JetClass base + C/A</td><td>0.704</td><td>0.9718</td><td>0.9416</td></tr>
+      <tr><td>JetClass base + LM-kT c=4</td><td><b>0.708</b></td><td><b>0.9743</b></td><td><b>0.9456</b></td></tr>
+    </table>
+    <p class="tiny">JetClass: GNN trained on truth-level Pythia, applied to Delphes without retraining; 50k test jets, ±0.2 pt stat on accuracy.</p>
+  </div>
+  </div>
+  <p class="src">Source: 2026-09-25-lmkt-algorithm.md; 2026-09-24-lmkt-gnn-ceiling.md (summary.json, jetclass_tagger.json)</p>
+</section>
+
+</body>
+</html>
