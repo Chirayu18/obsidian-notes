@@ -153,3 +153,13 @@ tags: [plot]
 - Description: cross-check of the per-event H+b scale-weight fix (P0-16), note [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-hb-yukawa-fix-crosscheck]]. `hb_xcheck_r_and_mu0.png` shows the per-event r = mean(PDF replicas)/member 0 (H+b 1.993, H+c 2.261, clean H+b 1.000) and the μ0 closure (H+b 1.0004). `hb_xcheck_scale_means.png` shows the nine scale means, inclusive and in the ≥1 gen b-jet region: fixed H+b 22/22EE against clean Run 3 γγ H+b and UL18 H+b WW, with H+c for comparison. Results JSON in the same folder; scripts in `runall/hb_xcheck_20261105/`. Agent-reported.
 - Path: /eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/hb_xcheck_20261105
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/higgscharm/outputs/hww_lhe_fix/hb_xcheck_20261105
+
+
+### Recovered HToWW event-yield-weighted significance overlay
+
+- tags: [plot]
+- Date: 2026-11-10 (recovered; original plot 2026-06-19)
+- Description: Agent-reported historical v32-v9 κ-HCE versus CE v11 comparison, signed saved yield weights and count-based efficiency; full-sample cache, not loss-only held-out validation. See [[Projects/HToWW/selection-and-mva/2026-11-10-kappa-hce-weighted-significance-recovery]].
+- Path: `/eos/user/c/cgupta/HToWW/b-hive/plots/new_v9_v11/sb_vs_eff_overlay.png`
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/plots/new_v9_v11/sb_vs_eff_overlay.png
+- Local recovered ratio chart: [[Projects/HToWW/selection-and-mva/weighted-significance/recovered_weighted_ratio.png]] (ignored by git).

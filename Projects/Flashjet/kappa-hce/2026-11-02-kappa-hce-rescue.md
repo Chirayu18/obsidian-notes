@@ -133,3 +133,8 @@ The existing July mathematics note explicitly defines raw-count significance; th
 Required evidence: intended saved comparison or definition of its ratio/reference and working points, plus corresponding held-out predictions and event weights. For a weighted comparison, S(t)=sum(signal passing weights), B(t)=sum(background passing weights); the signal-efficiency convention and weight signs/normalisation must follow the actual analysis prescription. Do not silently use class weights, raw counts, or a test-optimised threshold in its place. Even an in-sample weighted improvement would remain descriptive until checked on held-out events.
 
 **Needs Chirayu:** identify the intended weighted plot/script or comparison versions (asked in-thread). No resubmission is needed. CMSSW use-case motivation and the requested b-hive PR remain pending this evidence; no claim of superiority, remote checkout edit, push or PR was made here. Training loss class weights and evaluation physics weights are separate choices; this clarification does not authorize changing the current class-only training scheme.
+
+
+### 2026-11-10 follow-up — HToWW weighted comparison recovered
+
+The unresolved HToWW artifact search above is superseded by [[Projects/HToWW/selection-and-mva/2026-11-10-kappa-hce-weighted-significance-recovery|the weighted-significance recovery]]. The saved v32-v9 versus CE v11 weighted cache favours κ-HCE (+14.42% Z ratio at nominal 50% count efficiency). It is a full-sample historical, 13-versus-six-class configuration comparison with signed weights and unresolved normalization/held-out provenance, not a matched loss-only validation. The Flashjet NOT RESCUED verdict is unchanged. Agent-reported.
