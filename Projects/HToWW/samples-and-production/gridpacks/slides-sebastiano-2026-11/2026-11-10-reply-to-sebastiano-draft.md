@@ -11,7 +11,7 @@ Answers his 16:18 message ("there are still some samples that are submitted and 
 
 > Hi Sebastiano, yes, happy to stop them and rerun with the fixes.
 >
-> - **H+c 4FS:** the rebuilt el8 gridpack and the fragment with the three missing FxFx lines are ready (slides + files in the package: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11). Validated at LHE+GEN against the official clean 4FS H→γγ gridpack; not run through SIM/RECO.
+> - **H+c 4FS:** the rebuilt el8 gridpack and the fragment with the three missing FxFx lines are ready; slides attached. Gridpack: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/mcm_grid/request_package_2026-11/4FS/HPlusCharm_4FS_MuRFScaleDynX0p50_M125_TuneCP5_13p6TeV_amcatnloFXFX_pythia8_el8_amd64_gcc10_CMSSW_12_4_8_tarball.tar.xz. Validated at LHE+GEN against the official clean 4FS H→γγ gridpack; not run through SIM/RECO.
 > - **H+b:** same build fix; the gridpack is being rebuilt now and is not validated yet, so I'll follow up once it is.
 > - Which of these are still in production? H+c: HIG-Run3Summer22wmLHEGS-02684, HIG-Run3Summer22EEwmLHEGS-02600, HIG-Run3Summer23BPixwmLHEGS-02468; H+b: HIG-Run3Summer22wmLHEGS-02697, -22EEwmLHEGS-02645, -23wmLHEGS-03356, -23BPixwmLHEGS-02517.
 > - The fragment currently points at the gridpack on my EOS. How should I get it onto cvmfs?
@@ -20,6 +20,8 @@ Answers his 16:18 message ("there are still some samples that are submitted and 
 > Thanks!
 
 ## Notes for Chirayu (not part of the message)
+- Revised 2026-11-10 (Chirayu): message links only the gridpack file; slides go as the attached PDF `hplusc-gridpack-4fs_r3.pdf` (sha256 d682318d…5d75, local only). The fragment is no longer linked; it is in the same `4FS/` folder if he asks.
+- CERNBox link only works for Sebastiano if the file/folder is shared with him (not checked).
 - Training caveat (agent's assessment, not checked): the existing samples are fine where only nominal-weight kinematics in the central region matter. The LHE scale/PDF weights are wrong (scale ≈×2, PDF ratio 2.26), and the forward 1-jet share is ≈7× too low (≈0.010 vs ≈0.07, [[Projects/HToWW/samples-and-production/gridpacks/deck/4fs.html|4FS deck]] slide 6). A classifier that uses forward jets would learn the wrong shape there.
 - Assumes he means the central McM requests, not the private 3FS production.
 - Which samples are fully produced vs in flight is not checked (no McM/DAS query was made).
