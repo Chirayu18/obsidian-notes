@@ -52,10 +52,56 @@ The MET-xy correction also uses an unseeded random run number, but it is importe
   - `FileNotFoundError` redirects (UFL, NCHC and others).
 - Action, 11 Nov: `jobs_status.py -w hww_allfix_4fs -y <era> --eos --mode train --hours_ago 48`, answering yes to fileset regeneration with failing sites blacklisted and to resubmitting only the missing jobs. Result (rc=0): 2022preEE 205/205 missing jobs resubmitted (29 datasets), 2022postEE 568/568 (40 datasets, 1188 expected in total). Logs: `~/htoww_submit_logs/resubmit_<era>_20261111.log`. The 2023 eras still need the same completeness check once their jobs finish.
 
+### Second pass (11 Nov, ~17:20)
+
+Completeness before the second pass (`jobs_status.py ... --hours_ago 48`, answering no):
+
+| era | finished / expected |
+|---|---|
+| 2022preEE | 486/506 |
+| 2022postEE | 1157/1188 |
+| 2023postBPix | 316/393 |
+
+Failures were again site errors: NCHC Taiwan, Rutgers, UFL `[3010]`, and KFKI timeouts. No jobs were queued (`condor_q -name bigbird28.cern.ch cgupta`: 0), so the missing jobs had all failed. All of them were resubmitted with the failing sites blacklisted: 2022preEE 20, 2022postEE 31, 2023postBPix 77. Logs: `~/htoww_submit_logs/resubmit2_<era>_20261111.log`.
+
+2023preBPix needed two separate fixes:
+
+- **`DYto2L_2Jets_10to50` was never submitted.** The 10 Nov run was cut off while preparing it, which left an empty condor directory. `submit_missing.py` then counted it as done. I removed the two empty directories and submitted it: 44 jobs, cluster 9697156.
+- **One bad input file in `GluGluHto2Tau`.** A `ValueError: ListArray64 ... index out of range` in `jerc.py:377` (`events.GenJet[genjetidx]`), from a jet whose `genJetIdx` points past the GenJet list in file `.../40000/1d4e1a08-9b2c-4366-86f0-972e4ed0a8dc.root`. This is a property of the file, not of the site serving it.
+  - I removed that file from `fileset_2023preBPix_nanov12_lxplus.json` (backup `.bak-20261111-ggHtautau`) and resubmitted the sample, which now has 1 file: 1 job, cluster 9697157.
+  - `jerc.py` was deliberately not patched. It is part of `selection_signature`, so editing it would invalidate the TRAIN outputs already produced.
+  - Normalisation uses the sumw of the processed files, so the sample is consistently halved.
+  - **Flag:** this 2023preBPix sample is `Run3Winter23NanoAOD ... 126X_mcRun3_2023_forPU65`, not Summer23. That predates this work, but it should be replaced by the Summer23 sample when one exists.
+- The 2023preBPix completeness check has not been rerun yet. It must wait until the DY and H→ττ jobs have written output; otherwise `jobs_status.py` would resubmit them a second time. I stopped my own loop before it reached that era.
+
+### `jobs_status.py` truncates the fileset JSON
+
+Each fileset regeneration runs `fetch.py --samples <group>`, and that rewrites `fileset_<era>_nanov12_lxplus.json` with only the requested datasets. After the second pass, 2022preEE, 2022postEE and 2023postBPix each held 1 dataset. The many 1-entry `.bak*` files show this has happened before.
+
+- Running jobs were not affected, because each job reads its own `partitions.json`.
+- The later coverage check (F6) and any new submission do need the full list.
+- **Restored** with `/tmp/cgupta_rebuild_filesets.py`, copied to `~/htoww_submit_logs/`. Each list was rebuilt from `.bak-20261103` with every workflow dataset replaced by the union of its submitted `partitions.json`. Result: 92, 93 and 84 datasets. The truncated files are kept as `.bak-20261111-truncated`.
+- The backup's DY entries were stale. The live era YAML queries newer DY versions (2022preEE: 10to50 `-v4`, MLL-50 `-v5`; 2022postEE: `-v5`; 2023postBPix: `-v4`). Each sample uses exactly one version, so there is no double counting.
+- The jobs_status/fetch.py bug itself is not fixed. Rerun the restore after any future blacklist round, or fix `fetch.py` so it merges instead of overwriting.
+
+## Nc-j split implemented (11 Nov)
+
+- Commit `9802054` (fixture update in `ff35a19`) adds `combine.channel_splits`. In `hww_allfix_4fs` the SR becomes `SR_hplusc_1cj` (`cjet_multiplicity` = 1) and `SR_hplusc_2cj` (≥ 2); the CRs are unchanged.
+- It is used by RUN templates (`analysis/sinks/hww.py`, `base.py`) and `build_cards_from_templates.py`. Legacy builders still see the unsplit `combine.channels`.
+- Each event in the class is checked to land in exactly one sub-channel, and an uncovered event raises an error.
+- The model and selection hashes are unchanged (`sinks/`, `processors/` and the `combine` block are not hashed), so the running TRAIN is unaffected.
+- Tests: `tests/test_channel_split.py` 4/4; full suite 76/77 (the remaining error is the container's `/eos/user` read).
+
+## Option (a): candidate sources found (not chosen, not implemented)
+
+- **H+b:** LHCHWG YR4 13 TeV page, bbH at mH = 125.09 GeV: σ = 0.5265 pb, THU +9.3%, **PDF+αS+mb +3.3% / −3.5%** (combined, no separate PDF/αS split). Source: https://twiki.cern.ch/twiki/bin/view/LHCPhysics/CERNYellowReportPageAt13TeV, read 2026-11-11. The 13.6 TeV page (LHCHWG136TeVxsec, rev 45) defines the format but publishes no bbH numbers.
+- **H+c:** LHCHWG-2026-007 gives scale and flavour-scheme uncertainties only, with no PDF/αS. The Run 2 AN (AN-23-102 §7.1.1 and Table 14, from AN-22-064) uses **6% PDF** with NNPDF31 nf4 325500, the same set as our 4FS sample, and no separate αS. The pre-August config had 6% PDF + 3% αS; the source of that 3% is not recorded.
+- Proposed for Chirayu: H+b lnN 1.033/0.965 (PDF+αS combined); H+c PDF 6% (AN-23-102). For H+c αS, either an inclusive estimate from the private clean 4FS gridpack (325500 has no αS members, so this needs another set) or a stated proxy. Awaiting his choice.
+
 ## Not done yet
 
 - Route B: still the parked proposal ([[Projects/HToWW/2026-11-05-route-b-stitching-implementation]]). It needs integration into the live processor and a check that the 3FS samples and re-NANO are complete before its TRAIN.
-- Option (a) rate uncertainties: sourced numbers still to be found and shown to Chirayu.
-- The Nc-j = 1 / > 1 SR split.
+- Option (a): Chirayu to confirm the numbers above; then add the lnN rows.
+- 2023preBPix completeness check after its DY/H→ττ jobs finish.
 - b-hive seeding of the internal validation split; empty-shift fallback set to `error`. Both happen after TRAIN (training and card stage).
 - After TRAIN completes: `check_train_outputs.py` → `split_folds.py` → b-hive per-fold training.
