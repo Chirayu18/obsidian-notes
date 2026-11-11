@@ -72,7 +72,8 @@ Failures were again site errors: NCHC Taiwan, Rutgers, UFL `[3010]`, and KFKI ti
   - `jerc.py` was deliberately not patched. It is part of `selection_signature`, so editing it would invalidate the TRAIN outputs already produced.
   - Normalisation uses the sumw of the processed files, so the sample is consistently halved.
   - **Flag:** this 2023preBPix sample is `Run3Winter23NanoAOD ... 126X_mcRun3_2023_forPU65`, not Summer23. That predates this work, but it should be replaced by the Summer23 sample when one exists.
-- The 2023preBPix completeness check has not been rerun yet. It must wait until the DY and H→ττ jobs have written output; otherwise `jobs_status.py` would resubmit them a second time. I stopped my own loop before it reached that era.
+- **2023preBPix second pass (11 Nov evening):** 263/640 finished, 377 missing. The 333 failures outside the two in-flight samples were resubmitted, with failing sites blacklisted, by `~/htoww_submit_logs/resubmit_except.py 2023preBPix DYto2L_2Jets_10to50 GluGluHto2Tau` (the jobs_status flow minus in-flight datasets). The fileset was restored afterwards to 95 datasets. DY 10to50 uses 657 files, equal to the live list at submission; the 3 Nov backup had 658.
+- Earlier note, superseded by the line above: the 2023preBPix completeness check has not been rerun yet. It must wait until the DY and H→ττ jobs have written output; otherwise `jobs_status.py` would resubmit them a second time. I stopped my own loop before it reached that era.
 
 ### `jobs_status.py` truncates the fileset JSON
 
