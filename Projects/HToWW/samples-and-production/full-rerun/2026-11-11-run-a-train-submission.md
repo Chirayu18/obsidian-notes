@@ -39,6 +39,7 @@ The MET-xy correction also uses an unseeded random run number, but it is importe
 - Command per era: `python3 runner.py --workflow hww_allfix_4fs --year <era> --submit --eos --mode train --folds 5` (memory 2000 MB, nfiles 15). Proxy: `~/private/x509up_u151861`.
 - 2022preEE and 2022postEE: submitted 10 Nov ~18:00–18:05.
 - 2023preBPix: interrupted after 22 of 66 datasets. The remaining 44 and all 56 of 2023postBPix were submitted on 11 Nov with `~/htoww_submit_logs/submit_missing.py`, which runs the same `submit_condor.py` arguments for datasets that have no prepared condor directory.
+- 11 Nov result: 2023preBPix 44/44 and 2023postBPix 56/56 datasets submitted, rc=0. All 4 eras are now fully submitted.
 - Logs: `lxplus:~/htoww_submit_logs/`.
 - Output: `/eos/user/c/cgupta/higgscharm/outputs/hww_allfix_4fs__train/<era>/`; 567 MB after the first pass, so TRAIN space is not a concern.
 
@@ -49,7 +50,7 @@ The MET-xy correction also uses an unseeded random run number, but it is importe
 - Causes, from `condor/logs/hww_allfix_4fs__train/<era>/*/*.err`:
   - mostly `XRootD error: [FATAL] Connection error` at `root://ruhex-osgce.rutgers.edu` (~600 hits in 2022preEE, ~1600 in 2022postEE);
   - `FileNotFoundError` redirects (UFL, NCHC and others).
-- Action, 11 Nov: `jobs_status.py -w hww_allfix_4fs -y <era> --eos --mode train --hours_ago 48`, answering yes to fileset regeneration with failing sites blacklisted and to resubmitting only the missing jobs. Result: see the log `~/htoww_submit_logs/resubmit_<era>_20261111.log`.
+- Action, 11 Nov: `jobs_status.py -w hww_allfix_4fs -y <era> --eos --mode train --hours_ago 48`, answering yes to fileset regeneration with failing sites blacklisted and to resubmitting only the missing jobs. Result (rc=0): 2022preEE 205/205 missing jobs resubmitted (29 datasets), 2022postEE 568/568 (40 datasets, 1188 expected in total). Logs: `~/htoww_submit_logs/resubmit_<era>_20261111.log`. The 2023 eras still need the same completeness check once their jobs finish.
 
 ## Not done yet
 
