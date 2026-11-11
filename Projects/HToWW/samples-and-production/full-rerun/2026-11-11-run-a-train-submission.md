@@ -106,3 +106,20 @@ Each fileset regeneration runs `fetch.py --samples <group>`, and that rewrites `
 - 2023preBPix completeness check after its DY/H→ττ jobs finish.
 - b-hive seeding of the internal validation split; empty-shift fallback set to `error`. Both happen after TRAIN (training and card stage).
 - After TRAIN completes: `check_train_outputs.py` → `split_folds.py` → b-hive per-fold training.
+
+## TRAIN v2 (12 Nov)
+
+- **Why:** commit `f84d311` moved the negrw model from the hashed selection inputs to weight provenance, because b-hive ignores event weights and Chirayu asked for negrw to be retrained. That changed the features and selection hashes once, so the v1 TRAIN was stopped:
+  - 52 running jobs were removed (`condor_rm`, clusters 9701186–9701214).
+  - v1 outputs were moved, not deleted, to `/eos/user/c/cgupta/higgscharm/outputs/hww_allfix_4fs__train_v1_20261110/`, and the condor and log dirs to `condor/[logs/]hww_allfix_4fs__train_v1_20261110`.
+- **Same commit:** `jobs_status.py` now merges the regenerated filesets instead of letting `fetch.py` truncate them (`tests/test_jobs_status_merge.py` 3/3).
+- **v2 submitted 12 Nov**, all datasets via `~/htoww_submit_logs/submit_missing.py`, rc=0:
+
+  | era | datasets | jobs |
+  |---|---|---|
+  | 2022preEE | 54 | 506 |
+  | 2022postEE | 55 | 1188 |
+  | 2023preBPix | 66 | 640 |
+  | 2023postBPix | 56 | 393 |
+
+  Queue right after submission: 2446 jobs (575 running).
