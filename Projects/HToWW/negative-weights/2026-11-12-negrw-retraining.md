@@ -40,6 +40,18 @@ The runner submits every partition (~6000 for the 4 eras), far more than needed.
 
 Outputs: `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train_v2/<era>/<ds>_<partition>/train/*.parquet`.
 
+**Input outcome (2026-11-12 01:10 CET):** 38/40 jobs exited 0. Two exited 1 partway with `OSError: XRootD error: [ERROR] Operation expired` at `root://redir.t2.ucsd.edu:1095` (grid site): 2022postEE DY-50 partition 316 (cluster 9701385.1) and 2022preEE DY-50 partition 99 (9701391.1). Their completed chunks are on EOS and were **used as they are, not resubmitted**: each parquet is a complete processor chunk, and the generator-level sample needs only to be representative, not complete.
+Slim (`python3 scripts/negrw/negrw_slim_v2.py train …`, host python3): **7,595,624 rows** from 397 parquet files, 175 MB → `condor/hww_genrw_train_v2_model/train_v2.parquet`. Rows per era/dataset:
+
+| era | DY 10–50 | DY 50 | W 0J | W 1J | W 2J |
+|---|---|---|---|---|---|
+| 2022preEE | 17,650 | 332,857 | 172,848 | 306,208 | 76,321 |
+| 2022postEE | 17,103 | 546,378 | 305,916 | 405,451 | 376,213 |
+| 2023preBPix | 17,753 | 1,325,008 | 308,141 | 559,511 | 415,991 |
+| 2023postBPix | 22,675 | 940,342 | 645,447 | 328,889 | 474,922 |
+
+So ~6.1M training rows after the 20% hold-out (July: 9.8M, no hold-out). DY 10–50 is small (75k rows), as in July (the trigger/lepton cuts remove most low-mass DY).
+
 ## Validation plan
 - Held-out (event%5==0) closure Σ|w|g / Σw, total and per (era, dataset), with N_eff; calibration (observed vs predicted P+); log-loss/AUC train vs held-out (overfitting); g and δg distributions; old model on the same held-out rows.
 - Allfix SR reference: the 2026-11-10 allfix TRAIN v1 SR parquets (`/eos/user/c/cgupta/higgscharm/outputs/hww_allfix_4fs__train_v1_20261110/<era>/<ds>_*/base/`), slimmed to `condor/hww_genrw_train_v2_model/sr_allfix_v1_20261110.parquet` (**17,627 V+jets SR events**, ~85% DY-50) with gen features and the old model's `weight_negrw`. Checks: the old model reproduces the stored column (sanity), new vs old g in the SR, SR closure, and feature coverage (SR events outside the training range).
@@ -47,11 +59,14 @@ Outputs: `/eos/user/c/cgupta/higgscharm/outputs/hww_genrw_train_v2/<era>/<ds>_<p
 
 ## N1 (training region vs allfix SR overlap)
 - By construction: v2 uses the allfix lepton definitions, and `veto_emu_sr` is the negation of "exactly one eμ pair" → disjoint.
-- Empirical (pending outputs): eμ-pair rows in the v2 training sample, and an event-level match (era, dataset, event + identical lhe_vpt & lhe_ht) of v2 training rows against the allfix SR events (`negrw_n1_check.py`).
+- **Empirical: PASS** (`python3 scripts/negrw/negrw_n1_check.py condor/hww_genrw_train_v2_model/train_v2.parquet condor/hww_genrw_train_v2_model/sr_allfix_v1_20261110.parquet`, 2026-11-12 01:15 CET):
+  - v2 training rows 7,595,624: **eμ-pair rows 0**, same-flavour pair rows 496,411, pairless 7,099,213.
+  - (era, dataset, event) matches against the 17,627 allfix SR V+jets events: 3, of which **0** have identical lhe_vpt and lhe_ht (event-number coincidences across different files, not the same physical event).
+  - July training (9,832,308 rows) vs allfix SR 2022postEE: 79 event-number matches, 0 identical.
 - July model: trained on different MC samples (2022postEE DY -v2 / inclusive W) from those the allfix SR uses (-v5 DY / jet-binned W), so there is no event overlap at all.
 
 ## Results
-_Pending: jobs queued (pool had ~14k idle jobs at submission)._
+_Pending: training job cluster 9701673 (submitted 2026-11-12 01:14 CET from `condor/hww_genrw_train_v2_model/`)._
 
 ## Model
 New model will be written to `/afs/cern.ch/user/c/cgupta/negrw_model/negrw_models_v2_20261112.joblib` (+ copy in `/eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/`). The old `negrw_models.joblib` and `negrw.model` in `hww_allfix_4fs.yaml` stay unchanged.
