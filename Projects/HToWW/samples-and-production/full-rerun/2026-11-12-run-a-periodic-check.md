@@ -137,3 +137,35 @@ The held original job9701317.23 **already has** its EOS `.coffea` end marker (wo
 One deterministic failure was excluded: 2023preBPix GluGluHto2Tau partition1 includes the known bad genJetIdx file `1d4e1a08-9b2c...`; the earlier file exclusion was undone by a later restore. This sample has no v2 end marker. Recovering it requires a documented sample-content/correction decision before complete TRAIN acceptance; nothing was silently dropped or patched here.
 
 Parent periodic grid monitoring remains enabled and read-only; there is no active Run A recovery delegate to wait on. Substantial new coding still uses c1 Opus after availability returns. No new jobs, account switch, deletion, release, input/config changes or push by parent in this handoff.
+
+
+## Follow-up: 02:13–02:16 CET (original + retry batch)
+
+At **02:13:06 CET**, exact-workflow queue query included original jobs and batch `runA_v2_retry_20261112`, joined by first Args token. **0 duplicate (era,dataset,partition) keys**. Original: 79 running + the known1 held. Retry batch: **275 running, 0 idle, 0 held** (preEE63, postEE181, preBPix5, postBPix26). Total live running354 +1 held. Snapshot is sequential with the marker census.
+
+| era | expected | mounted EOS end markers | missing in live queue | missing not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 442 | 64 | 0 |
+| 2022postEE | 1188 | 977 | 210 | 1 |
+| 2023preBPix | 640 | 582 | 40 | 18 |
+| 2023postBPix | 393 | 341 | 40 | 12 |
+| total | 2727 | 2342 | 354 | 31 |
+
+Missing/not-in-queue entries are candidates, not automatically confirmed failures; no second retry batch was submitted. Held original9701317.23 remains unchanged and already has an EOS marker.
+
+### New retry failure category: proxy visibility, not established expiry
+
+A filtered **10-row rolling retry-history sample** returned ExitCode0 for1 job and ExitCode1 for9. Inspected `9702005.1` (2023preBPix Muon1Run2023Cv1) `.err`: it exits at the initial `voms-proxy-info -all -file /afs/cern.ch/user/c/cgupta/private/x509up_u151861` with **"Couldn't find a valid proxy."** Source:
+`R/condor/logs/hww_allfix_4fs__train/2023preBPix/Muon1Run2023Cv1/hww_allfix_4fs__train_Muon1Run2023Cv1.9702005.1.err`.
+
+Parent read-only lxplus check at **02:14:11 CET**: `voms-proxy-info -timeleft -file <same path>` returned **569059 seconds** (~158h), and the600-mode file exists (mtime10Nov16:18). This establishes that the lxplus copy is valid; it does **not** establish worker-node visibility or identify why this retry could not validate it. No proxy renewal is requested on this evidence. The staged retry `.sub` passes the AFS proxy path in arguments; its transfer_input_files contains the partition/jobnum/arguments JSON inputs, not the proxy. This is a diagnosis lead, not a validated cause or authorized credential-delivery change. No modification or repeat retry attempted while other jobs run and c1 is limited.
+
+### One successful retry end marker: provenance checked
+
+`condor_history` filtered to batch and ExitCode0 returned **9701991.1**, Args partition4, 2022preEE/TWminusto4Q. Parent copied its end marker via `xrdcp` from:
+`/eos/user/c/cgupta/higgscharm/outputs/hww_allfix_4fs__train/2022preEE/TWminusto4Q/TWminusto4Q_4.coffea`
+to lxplus scratch `/tmp/cgupta/cgupta_runA_markercheck_49m0t4q_/TWminusto4Q_4.coffea`.
+
+Executed the saved `~/htoww_submit_logs/runA_v2_retry_20261112/hashcheck.py` inside the established coffea0.7.30 image, read-only for analysis/output. rc0: marker and current tree **match** features `36f655f4724cb1a4…` and selection `80e75bca3f231c49…`. This validates that one retry marker's model-input provenance matches; it does not validate all retry payloads or complete file/row coverage. No repeated unit tests were run.
+
+Next checks: continue observing retry completion; inspect and distinguish worker credential-visibility failures from input-site failures before any further recovery. Run full payload/file/hash gates once inputs are complete. Bad GluGluHto2Tau sample-content decision and incomplete negrw review remain open. Parent changed no jobs, analysis inputs, credentials or services. Monitoring remains enabled while in-flight grid work can progress.
