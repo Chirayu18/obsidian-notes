@@ -128,3 +128,14 @@ Baseline: the 19 August deck (`analysis-overview.pdf`: 2022postEE, expected UL 1
    - Planned: automatic Condor retries and the global redirector.
 
 Production state at 18:22 on 12 Nov: arm A preparation done (`ready.json` 18:18, 6,959,308 rows), and A's 5 GPU folds submitted (DAG 9706908, jobs 9706909–9706913). Arm B was still writing its split, with fold submission armed to follow automatically.
+
+## Signal-sample communication (Chirayu, 12 Nov, for the talk)
+
+Chirayu's message to Thomas (12 Nov, 13:45, his wording): "Not very major issues, the nominal version of the samples are fine... There are 2 issues which I found actually: 1) The scale variations are off by a factor of 2 (I came up with a workaroud for this , however it may not be the best way to deal with it) 2) FxFx merging is applied only upto eta 2.5 in our samples as opposed to the full eta range as done in Run2 and Run3 H to gamma gamma. Should not be a major issue for us since we do apply a eta cut , but this issue still exists in the samples itself. I have reported this to Sebastiano anyways, and he said he can try to reproduce those samples with increased priority... Meanwhile , I am also regenerating the correct gridpacks and compiling all the instructions to give to the conveners for producing these corrected samples. I also asked Gerrit and others for suggestions to deal with this but didn't get a clear understanding on how to proceed, so I was thinking that maybe we could present these issues to the conveners and see what they have to say about this? Along with our way of dealing with the flavour scheme uncertainity (as I wanted to avoid waiting for centrally produced 3FS samples)".
+
+Status for Sebastiano, in Chirayu's words: "I have already sent the corrected H+c and H+b gridpacks (I will have some validation slides). I have also done for 3FS validation (slides should be there)". This supersedes the earlier vault statement that the request package had not been sent.
+
+For the talk:
+- In the signal-sample section, add the status: reported to GEN (Sebastiano, higher-priority reproduction), corrected H+c and H+b gridpacks sent, and validation slides for 4FS, H+b and 3FS (reuse `samples-and-production/gridpacks/deck/` and `slides-sebastiano-2026-11/`).
+- Close with **questions for the conveners**: (1) how to treat the factor-2 scale variations in the existing samples, given our per-event running-Yukawa workaround; (2) FxFx merging only within |η| < 2.5 (≈1–2% inside our selection); (3) our flavour-scheme approach, ratio method (A) vs stitching (B), without waiting for central 3FS samples.
+- Run A TRAIN v2 status at about 19:00: all four eras complete, data included (`jobs_status.py`: 0 missing jobs).
