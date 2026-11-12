@@ -193,3 +193,22 @@ Example logs under `R/condor/logs/hww_allfix_4fs__train/`:
 - `2022postEE/MuonRun2022F/hww_allfix_4fs__train_MuonRun2022F.9701968.6.err`: inspected separately; `pkg_resources.safe_listdir` fails with `OSError: [Errno 5] Input/output error` reading the shared AFS repo path. This is an environment/filesystem startup failure, not evidence of a new selection defect.
 
 Existing proxy validity on lxplus was established in the02:14 entry; no expiry/renewal claim follows from worker-side failures. Parent did not change delivery, submit more retries, poll delegates or change any analysis/config/output. Existing in-flight jobs still make progress, so periodic monitoring stays enabled. c1 coding/review work remains limited pending its reset; bad GluGluHto2Tau decision and negrw acceptance remain unresolved.
+
+
+## Follow-up: 02:53 CET (read-only)
+
+At **02:53:21 CET**, combined Run A queue: **56 running +1 held**, zero duplicate live partition identities. Original1 running (2022postEE) + known held9701317.23; retries55 running (preEE17, postEE37, postBPix1), no idle/held retry jobs. No 2023preBPix Run A jobs remain in the live queue, but that era is **not complete**.
+
+| era | expected | mounted EOS end markers | missing in live queue | missing not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 489 | 17 | 0 |
+| 2022postEE | 1188 | 1146 | 37 | 5 |
+| 2023preBPix | 640 | 604 | 0 | 36 |
+| 2023postBPix | 393 | 380 | 1 | 12 |
+| total | 2727 | 2619 | 55 | 53 |
+
+Retry-only census of all296 staged entries: **218 markers, 54 missing/in queue, 24 missing/not in queue**. Sequential snapshots can differ from queue counts where a job already has a marker but still returns sandbox files. The24 absent/not-in-queue retries are the same count as the prior census; no evidence of a new failure category was established in this check. Prior log classifications remain20 worker proxy-check failures,3 input read timeouts and1 AFS startup error; do not treat missing-marker counts alone as a fully validated terminal census.
+
+Method unchanged: original jobnum.txt expected partitions, mounted marker listing, first Args token live join, both batch identities. Full payload/file coverage, all-marker hashes and direct-server confirmation of remaining gaps are still pending. No queue disappearance/completeness equivalence is claimed. The known held job already has an EOS marker and was not released. Bad GluGluHto2Tau sample-content decision and incomplete negrw acceptance remain open.
+
+No delegates polled; no jobs, inputs, outputs, credentials, accounts or services changed. No repeat batch or full training launched. Existing jobs still progress; the periodic grid monitor stays enabled.
