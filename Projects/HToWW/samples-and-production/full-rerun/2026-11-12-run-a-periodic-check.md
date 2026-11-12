@@ -212,3 +212,20 @@ Retry-only census of all296 staged entries: **218 markers, 54 missing/in queue, 
 Method unchanged: original jobnum.txt expected partitions, mounted marker listing, first Args token live join, both batch identities. Full payload/file coverage, all-marker hashes and direct-server confirmation of remaining gaps are still pending. No queue disappearance/completeness equivalence is claimed. The known held job already has an EOS marker and was not released. Bad GluGluHto2Tau sample-content decision and incomplete negrw acceptance remain open.
 
 No delegates polled; no jobs, inputs, outputs, credentials, accounts or services changed. No repeat batch or full training launched. Existing jobs still progress; the periodic grid monitor stays enabled.
+
+
+## Follow-up: 03:13 CET (read-only)
+
+At **03:13:37 CET**, Run A has **3 running retries +1 known original held job**, zero duplicate live identities. The running partitions are one2022preEE and two2022postEE. No idle/held retry jobs. Aggregate read-only query also sees **3 running Route B TRAIN jobs** (`hww_routeb_3fs4fs__train`); parent neither polled its delegate nor altered that work.
+
+| era | expected | mounted EOS end markers | missing in live queue | missing not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 505 | 1 | 0 |
+| 2022postEE | 1188 | 1181 | 2 | 5 |
+| 2023preBPix | 640 | 604 | 0 | 36 |
+| 2023postBPix | 393 | 381 | 0 | 12 |
+| total | 2727 | 2671 | 3 | 53 |
+
+All296 staged retries: **269 markers, 3 missing/in queue, 24 missing/not in queue**. Previous log categories for the24 remain recorded above; no new per-log classification or complete server census was run in this check. The53 absent/not-in-queue entries include original failures and the excluded deterministic bad input; they are not resolved by the approaching queue drain. The held job has a marker and stays untouched.
+
+Same first-Args-token identity and end-marker method; mount listing is not full payload/file/hash validation. No job/input/model/credential/service changes, account fallback, replacement delegate, repeat retry batch or production training. Keep the grid schedule enabled while these six A/B jobs can still progress. Remaining coverage/recovery, worker proxy visibility, bad GluGluHto2Tau decision, b-hive pipeline completion/reproducibility and negrw review remain open; no readiness claim.
