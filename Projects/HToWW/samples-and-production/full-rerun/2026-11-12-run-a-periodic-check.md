@@ -86,3 +86,24 @@ Direct EOS server cross-check (`eos root://eosuser.cern.ch ls <era>/<dataset>`, 
 The held destination `mode_opts.bin` now responds to `stat` (23 bytes). The held job remains JobStatus 5, HoldReasonCode 12 / HoldReasonSubCode 5, Args starts with partition **24** (ProcId is 23; do not confuse these). No release was attempted: successful `stat` alone does not establish successful output transfer or whether the job already wrote its EOS payload. Before recovery, inspect the partition-24 marker and exit/transfer state.
 
 No jobs or analysis inputs were changed in this follow-up. Next: finish matching missing-marker partitions to live `Args` (not ProcId), confirm absent markers directly on EOS, and retry only proven terminal failures within the existing recovery scope. Avoid editing shared filesets/wrappers while A/B jobs are running. All scientific validation and production-training gates remain open.
+
+
+## Follow-up: 01:33 CET and recovery ownership
+
+Fresh live-queue/marker match at **01:33:07 CET** used the exact workflow UserLog path and the first token of live job `Args` as the partition number. Queue: 2022preEE 3 running; 2022postEE 59 running + the same 1 held; 2023preBPix 74 running; 2023postBPix 36 running. Total 172 running + 1 held.
+
+| era | expected | mounted EOS end markers | absent and in queue | absent and not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 439 | 3 | 64 |
+| 2022postEE | 1188 | 949 | 58 | 181 |
+| 2023preBPix | 640 | 558 | 74 | 8 |
+| 2023postBPix | 393 | 321 | 36 | 36 |
+| total | 2727 | 2267 | 171 | 289 |
+
+The census is sequential while jobs finish; jobs with markers may still be in the queue (for example during output transfer). The 289 absent/not-in-queue entries are **recovery candidates**, not 289 proven failures: server-side marker verification and terminal-history/log diagnosis are still required. Several gaps are data samples; do not assume every gap is an XRootD timeout.
+
+A new bounded recovery task was delegated to **Claude Opus 5.5, c1, high effort**, as requested by Chirayu for substantial coding/operational work. It owns diagnosis, direct EOS verification, safe targeted retries and the held-job assessment. It must preserve running-job inputs, avoid shared fileset/wrapper changes, avoid successful-output overwrite, and return after bounded recovery rather than starting a shell polling loop. No new physics choice, full production restart or full model training is authorized by this task.
+
+Recovery thread: <t3-thread://v2/7fbb6319-2aff-454c-af0e-25d245ea222a/thread:delegated-task:command%3Amcp%3Ac185fc50-2415-4b0f-b864-f696a60303be%3Adelegate-task%3Aa38661fc-1037-4c46-874b-039333a90f91>.
+
+Until its native result returns, parent periodic checks remain read-only for Run A; do not submit duplicate retries or poll the delegate. Route B, negrw and b-hive retain their separate existing owners.
