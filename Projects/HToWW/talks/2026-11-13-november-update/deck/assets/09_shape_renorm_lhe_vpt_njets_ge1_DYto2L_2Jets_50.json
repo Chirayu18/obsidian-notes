@@ -1,0 +1,7 @@
+{"original_path": "/eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img/09_shape_renorm_lhe_vpt_njets_ge1_DYto2L_2Jets_50.png",
+ "cernbox": "https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img",
+ "script": "scripts/negrw/make_negrw_v2_plots.py via negrw_v2_corrected_report.py (higgscharm hww-analysis)",
+ "commit": "ccdc8f9",
+ "sha256_prefix": "426f5011711a3929",
+ "copied": "2026-11-12",
+ "source_note": "Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats.md"}

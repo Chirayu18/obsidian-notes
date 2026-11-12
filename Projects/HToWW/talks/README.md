@@ -10,6 +10,8 @@ source: laptop
 Analysis overview, Athens talk and historical c-tag/negrw presentations.
 
 Status: Organized by topic; original results and evidence remain in their source notes.
+
+**Latest deck:** [November analysis update, r1](2026-11-13-november-update/deck/index.html) (28 slides, local PDF `2026-11-13-november-update/deck/november-update_r1.pdf`) for the 13 Nov talk. Built from [[Projects/HToWW/talks/2026-11-12-november-update-slide-plan|the slide plan]]; the status snapshot (12 Nov ~16:45) needs refreshing before presenting. No new templates or limits yet; agent-reported.
 Latest dated record: [[Projects/HToWW/talks/athens/TRANSCRIPT|Transcript — MVA studies for $H+c$ ($H\to WW\to 2\ell2\nu$) at Run 3]].
 Needs Chirayu: unresolved source-note tasks remain open; see [[Meta/reorg/vault-20261105-report|keeper report]].
 
