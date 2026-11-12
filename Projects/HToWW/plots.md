@@ -163,3 +163,11 @@ tags: [plot]
 - Path: `/eos/user/c/cgupta/HToWW/b-hive/plots/new_v9_v11/sb_vs_eff_overlay.png`
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/plots/new_v9_v11/sb_vs_eff_overlay.png
 - Local recovered ratio chart: [[Projects/HToWW/selection-and-mva/weighted-significance/recovered_weighted_ratio.png]] (ignored by git).
+
+### negrw v2 corrected validation plots (delta-method σ, fitted-k shape covariance)
+
+- tags: [plot]
+- Date: 2026-11-12
+- Description: Versioned corrected report for the v2 negrw model. Closure per (era, dataset) uses the delta-method σ. Raw ratio panels use the per-bin delta σ. Plots 09 show the shape residual after per-(era, dataset) renormalization, with the fitted-normalization, shared-event covariance, v2 vs July, against the |CMS_negrw_vjets| band. The original `v2_20261112/img/` is unchanged. Agent-reported; not a shape validation of either model. See [[Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats]].
+- Path: /eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img

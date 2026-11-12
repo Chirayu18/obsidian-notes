@@ -10,6 +10,12 @@ evidence: agent-reported
 
 **Status: agent-reported, DONE.** v2 model trained and validated by the agent; not switched into the analysis (that is Chirayu's/the parent's call). Not independently reviewed.
 
+> [!warning] Corrections (2026-11-12, after the [[Projects/HToWW/negative-weights/2026-11-12-negrw-v2-acceptance-review|acceptance review]]; details in [[Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats]])
+> - **Closure uncertainties, pulls and χ² below are superseded.** They use √Σw²/|Σw|, the denominator only. The corrected delta-method σ is smaller, so the per-sample held-out offsets are significant (3–13σ; for example DY‑50 1.0080 ± 0.0012). "All within stat errors" holds only for the SR: 1.011 ± 0.021, not ± 0.025. The DY‑50 "χ² 42/20, max pull 4.9" is a raw-ratio statistic, not a shape test. The shape statistic after the approved renormalization is in the corrected report.
+> - **Slim input: 377 chunk files, not 397.** The row count 7,595,624 is unchanged. The input manifest and a frozen copy of `train_v2.parquet` are now stored next to the EOS model (G1).
+> - **N1 scope:** disjoint at nominal objects. Lepton-scale-shifted RUN templates are not covered by construction (negligible impact, review F5).
+> - "Fit for use" is not an acceptance. The switch is on hold, and G3 (closure in the scored SR fit bins) is open for both models.
+
 **Bottom line:** new model `/afs/cern.ch/user/c/cgupta/negrw_model/negrw_models_v2_20261112.joblib`, sha256 `af53567ccfeddeef94c1fa62b3a6ed3c1285937919ced3f7705c565b819155cb`. It is **fit for use**, but it is practically equivalent to the July model on the current samples (held-out AUC 0.8181 vs 0.8183, corr(g_new, g_old) = 0.9987 held-out / 0.9982 in the allfix SR). Switching is a provenance and consistency upgrade, not a physics change. N1: **pass**.
 Chirayu (2026-11-12): "Do the negrw training (you might need to use the negrw workflow to get the
 parquet files and subsequently find the scripts to then launch the training)". Job submission approved.
