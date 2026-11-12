@@ -171,3 +171,10 @@ tags: [plot]
 - Description: Versioned corrected report for the v2 negrw model. Closure per (era, dataset) uses the delta-method σ. Raw ratio panels use the per-bin delta σ. Plots 09 show the shape residual after per-(era, dataset) renormalization, with the fitted-normalization, shared-event covariance, v2 vs July, against the |CMS_negrw_vjets| band. The original `v2_20261112/img/` is unchanged. Agent-reported; not a shape validation of either model. See [[Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats]].
 - Path: /eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/negrw_out_img/v2_20261112/corrected_report_20261112/img
+
+### Post-fix data/MC, preselection, all four eras + combined (TRAIN v2, MC-stat band only)
+- tags: [plot]
+- Date: 2026-11-13
+- Description: data/MC after the October correction campaign. Arm A TRAIN v2 (`hww_allfix_4fs`, base preselection, nominal only), with the same binning and style as the October `hww_combine_full_base_*` plots. The band is **MC statistics only**: TRAIN has no shifts, so no systematic band can be drawn. Variables: met_pt, mtl1, mtl2, dilepton_mass, dilepton_pt, lepton1_pt, lepton2_pt, per era plus `allEras/` (2022+2023, 61.9 fb⁻¹). MET slope per 100 GeV, October → new: 2022postEE −0.098 → −0.097 ± 0.008 (still there); 2023preBPix −0.076 → −0.002 ± 0.010 and 2023postBPix −0.065 → −0.007 ± 0.013 (gone). 2022postEE mT(ℓ1)/mT(ℓ2) slopes reduced from −0.045/−0.055 to −0.010 ± 0.005/−0.008 ± 0.008. Data/MC 0.92–0.97. Details: [[2026-11-13-postfix-datamc]].
+- Path: /eos/user/c/cgupta/HToWW/datamc_postfix_20261113/2022postEE/postfix_datamc_met_pt_2022postEE.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/datamc_postfix_20261113
