@@ -107,3 +107,20 @@ A new bounded recovery task was delegated to **Claude Opus 5.5, c1, high effort*
 Recovery thread: <t3-thread://v2/7fbb6319-2aff-454c-af0e-25d245ea222a/thread:delegated-task:command%3Amcp%3Ac185fc50-2415-4b0f-b864-f696a60303be%3Adelegate-task%3Aa38661fc-1037-4c46-874b-039333a90f91>.
 
 Until its native result returns, parent periodic checks remain read-only for Run A; do not submit duplicate retries or poll the delegate. Route B, negrw and b-hive retain their separate existing owners.
+
+
+## Follow-up: 01:53 CET (read-only while recovery agent owns retries)
+
+Snapshot timestamp **01:53:02 CET**. Same bounded `/usr/bin/python3 -S` census and exact workflow filter as the previous entry; live identity is (era, dataset, first Args token). No delegate polling and no job/input changes.
+
+| era | expected | mounted EOS end markers | missing in live queue | missing not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 440 | 2 | 64 |
+| 2022postEE | 1188 | 963 | 44 | 181 |
+| 2023preBPix | 640 | 577 | 53 | 10 |
+| 2023postBPix | 393 | 328 | 27 | 38 |
+| total | 2727 | 2308 | 126 | 293 |
+
+Queue counts: **126 running, 1 held**, no other Run A queue states. Held job remains `9701317.23` / DY10–50 partition24 with the same mode_opts.bin AFS output-transfer failure. The queue includes jobs that may already have end markers; counts are sequential, not atomic. No inference that the held job needs processing again.
+
+The 293 absent/not-in-queue partitions remain recovery candidates requiring direct EOS confirmation and failure diagnosis by the existing recovery owner. Parent did not submit duplicate retries, modify inputs or attempt release. End-marker presence is not payload/input-file/hash validation. Run A remains incomplete; full training gates remain open. Periodic checks stay enabled while grid work is pending. No new human decision established by this snapshot.
