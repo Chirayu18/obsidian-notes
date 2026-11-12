@@ -123,7 +123,7 @@ H+c numbers from existing validation slides: 10370 vs 10296 matched events, Higg
 
 Chirayu at discussion position 2221: “I have already sent the corrected H+c and H+b gridpacks(I will have some validation slides). I have also done for 3FS validation(slides should be there)”. He also reports Sebastiano can try reproduction with increased priority. This supersedes Nov10 draft NOT SENT; do not infer received acknowledgement, new production completion or CMSapproval. No messages were sent by keeper.
 
-## 20. Flavour scheme: two complementary strategies
+## 20. Flavour scheme: baseline A, cross-check B
 
 [Open slide](index.html#/arms)
 
@@ -237,11 +237,11 @@ Intended combined single-pass workflow, not claimed complete. The new model cann
 
 Features: 14 kinematic + 11 c-tag one-hot + nSV. Cached constructed datasets use unique fold/split identities. RUN/registration guard feature/selection hashes, class order and provenance. Same test fold remains assigned for object-shifted copies.
 
-## 39. Progress made, and questions for the conveners
+## 39. Proposed baseline and path to the result
 
 [Open slide](index.html#/open)
 
-Analysis follow-ups remain: provisional c-tag calibration, H+c αS rate, H+b PDF+αS overlap, Higgs BR scope, ttH→ττ coverage, negrw fit-bin closure. hDamp is deferred by instruction; no alternative-sample template is claimed.
+Framing agreed with Chirayu on 13 Nov. No corrected limit exists yet: Arm A training and scoring are in production. Listed inputs are external or check items (Livio c-tag update; process-specific alphaS calculation; H+b overlap with the 5% Higgs rate; BR scope; ttH tau-tau coverage; negrw closure needs scored outputs; hDamp deferred). Do not present this as a result or as approval readiness.
 
 ## 40. Backup
 
