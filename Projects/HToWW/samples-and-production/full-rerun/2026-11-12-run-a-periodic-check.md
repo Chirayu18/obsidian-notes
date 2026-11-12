@@ -124,3 +124,16 @@ Snapshot timestamp **01:53:02 CET**. Same bounded `/usr/bin/python3 -S` census a
 Queue counts: **126 running, 1 held**, no other Run A queue states. Held job remains `9701317.23` / DY10–50 partition24 with the same mode_opts.bin AFS output-transfer failure. The queue includes jobs that may already have end markers; counts are sequential, not atomic. No inference that the held job needs processing again.
 
 The 293 absent/not-in-queue partitions remain recovery candidates requiring direct EOS confirmation and failure diagnosis by the existing recovery owner. Parent did not submit duplicate retries, modify inputs or attempt release. End-marker presence is not payload/input-file/hash validation. Run A remains incomplete; full training gates remain open. Periodic checks stay enabled while grid work is pending. No new human decision established by this snapshot.
+
+
+## Recovery handoff after c1 rate limit: ~02:04 CET
+
+The recovery delegate reached its **five-hour Claude c1 limit**, not a processing failure. Its native terminal notice reports reset at **05:00 Europe/Brussels**, 12 November. No provider/account fallback or replacement delegate was started.
+
+The failure happened **after** successful submission of **296 targeted retry jobs** (46 datasets, clusters9701959–9702005 except9701970, batch `runA_v2_retry_20261112`) and after its vault note was committed as `7a4e1c5`. Read [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-run-a-train-v2-failure-recovery]] for the commands, EOS server verification, terminal-log diagnosis, dry-run checks, staged replica changes and per-job sandbox isolation. Parent read the saved note and native activity through the submission, queue duplicate check and commit; no need to restart or duplicate the completed submission work. Successful recovery of those retries is not yet validated. A parent read-only queue check at **02:05:29 CET** confirmed all 296 retry jobs still in the batch: **151 running, 145 idle**, no held retry jobs.
+
+The held original job9701317.23 **already has** its EOS `.coffea` end marker (worker checked server-side); the failure was incidental sandbox return of mode_opts.bin. Do not release and rerun good processing. Removal is optional and remains unperformed.
+
+One deterministic failure was excluded: 2023preBPix GluGluHto2Tau partition1 includes the known bad genJetIdx file `1d4e1a08-9b2c...`; the earlier file exclusion was undone by a later restore. This sample has no v2 end marker. Recovering it requires a documented sample-content/correction decision before complete TRAIN acceptance; nothing was silently dropped or patched here.
+
+Parent periodic grid monitoring remains enabled and read-only; there is no active Run A recovery delegate to wait on. Substantial new coding still uses c1 Opus after availability returns. No new jobs, account switch, deletion, release, input/config changes or push by parent in this handoff.
