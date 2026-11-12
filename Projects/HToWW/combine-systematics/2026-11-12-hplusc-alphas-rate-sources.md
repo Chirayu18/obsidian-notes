@@ -35,3 +35,22 @@ The published [CMS HIG-24-009 paper](https://arxiv.org/pdf/2508.14988), section6
 ## Analysis boundary
 
 Chirayu already chose shape-only event variations plus separately justified inclusive rate uncertainties. This note supplies the literature path for the still-missing H+c alphaS number; it does not select PDF4LHC15 vs21, change PDF families or flavour schemes, change nuisance correlations, set a percentage, adopt a proxy or authorize new jobs. A future calculation must keep rate and acceptance/shape components distinct and avoid counting a combined PDF+alphaS uncertainty again as a separate alphaS rate.
+
+
+## Run 2 provenance follow-up (12 November)
+
+Question: "How did run2 get it?" Read the local `References/HToWW/AN-23-102.pdf` directly with pdftotext, including complete physicalPDFpages58–59 (§7.1/§7.1.1) and61(Table16, printedp59); rendered/visually inspected the full table page. Also checked the local paper-v15 uncertainty paragraph and the public published paper. This is source tracing, not an independent regeneration of Run2 cross sections or a review of its actual cards.
+
+- AN-23-102§7.1.1, lines568–579: H+c/H+b prescriptions were adopted from **AN-22-064§5**. For H+c it names `NNPDF31_nnlo_as_0118_nf_4_mc_hessian`,100variations, yielding **6% PDF** effect. This does not document a separate alphaS scan.
+- Table16 has a dedicated **signal(H+c) PDF6%** row and a separate generic **alphaS+PDF1–3%** normalization row. The table does not supply a process-applicability matrix showing whether that generic row also applies to cH, nor a dedicated H+c alphaS number or derivation.
+- Ref45 of the AN is Butterworth et al., PDF4LHC RunII recommendations (arXiv1510.03865), cited in its general PDF paragraph. Ref18 is the internal particle-level H+c study AN2022/064. That second note is not present in the local References/HToWW inventory checked here; its section5 and/or actual Run2 datacards are the next decisive sources for the cH-specific alphaS treatment.
+- The public CMS paper§6 describes up to6% PDF for cH without a dedicated cH alphaS rate value; that supports the documented PDF treatment but cannot prove no separate alphaS nuisance existed in the implementation.
+
+### Correction: the old Run 3 flat3% has a recorded provenance
+
+The initial source search focused on current notes and overstated the absence of any recorded source. The old3% **does** have documentary provenance, though no process-specific H+c alphaS calculation has been established:
+
+- [[Projects/HToWW/combine-systematics/_history/lxplus-2026-06-17/bhive-docs/combine]], subsection "combine v2 — rate-only lnNs aligned with AN-23-102 (2026-05-13)", explicitly lists `alphaS_PDF`3% on allMC, sourced to **AN-23-102Table16, top of1–3%range**. It describes choosing a conservative range endpoint, not measuring or calculating a new H+c alphaS response.
+- [[Projects/HToWW/analysis-strategy/2026-08-11-provenance-audit]]§B records the same1.03 value and flags flat application of the upper range endpoint to all processes.
+
+Thus distinguish **Run2's documented6% H+cPDF**, **the generic Run2 table row**, and **our later Run3 flat3% interpretation**. Do not present the last as the actual Run2 H+c alphaS calculation, or treat6%PDF as including alphaS without further evidence. This corrects the earlier broad "source not recorded" wording; the remaining gap is applicability and a dedicated derivation. No physics value/config/code was changed and no jobs were launched.
