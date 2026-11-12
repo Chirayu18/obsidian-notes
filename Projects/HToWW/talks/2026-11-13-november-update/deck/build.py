@@ -1,476 +1,205 @@
 #!/usr/bin/env python3
-"""Build index.html for the HToWW November update deck (keeper, 2026-11-12).
-
-Edit SLIDES below, then run: python3 build.py && node render.mjs --revision=N
-Every number on a slide comes from the vault note linked in its source line.
+"""November HToWW update, revision 2. Higgs2026 template, internal CMS.
+Build: python3 build.py && node render.mjs --revision=2
+Numbers and plots are recorded artifacts, not new analysis results.
 """
 from pathlib import Path
 from urllib.parse import quote
-
-REV = 1
-LABEL = "H+c, H→WW · November analysis update · 13 Nov 2026 · internal CMS"
-MAIN_TAG = "preliminary · checks not independently reviewed"
-
-
-def note(path, text):
-    href = "obsidian://open?vault=obsidian-notes&amp;file=" + quote(path, safe="")
-    return f'<a href="{href}">{text}</a>'
-
-
-N = {
-    "plan": "Projects/HToWW/talks/2026-11-12-november-update-slide-plan.md",
-    "syst": "Projects/HToWW/combine-systematics/2026-11-12-current-ab-systematics-status.md",
-    "cards": "Projects/HToWW/combine-systematics/2026-11-12-final-cards-todo.md",
-    "alphas": "Projects/HToWW/combine-systematics/2026-11-12-hplusc-alphas-rate-sources.md",
-    "prod": "Projects/HToWW/samples-and-production/full-rerun/2026-11-12-direct-continuation-training-launch.md",
-    "state": "Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state.md",
-    "routeb": "Projects/HToWW/samples-and-production/full-rerun/2026-11-12-route-b-integration-and-train.md",
-    "ggtt": "Projects/HToWW/samples-and-production/full-rerun/2026-11-12-ggtt-summer23-replacement-and-retry3.md",
-    "speed": "Projects/HToWW/framework/optimization/2026-11-05-speedup-patches.md",
-    "dup": "Projects/HToWW/framework/2026-11-12-bhive-validation-dupfix-gpu-readiness.md",
-    "c1": "Projects/HToWW/framework/2026-11-12-bhive-pipeline-c1-resume.md",
-    "trainrun": "Projects/HToWW/framework/2026-11-05-run-framework-legacy-train-run.md",
-    "negrw": "Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats.md",
-    "negrw_v2": "Projects/HToWW/negative-weights/2026-11-12-negrw-retraining.md",
-    "negrw_rev": "Projects/HToWW/negative-weights/2026-11-12-negrw-v2-acceptance-review.md",
-    "lepsf": "Projects/HToWW/2026-11-10-lepton-sf-provenance-check.md",
-    "decisions": "Projects/HToWW/2026-11-10-training-decisions-discussion.md",
+import json
+D=Path(__file__).resolve().parent
+REV=2
+N={
+'plan':'Projects/HToWW/talks/2026-11-12-november-update-slide-plan.md',
+'frame':'Projects/HToWW/talks/2026-11-12-framework-presentation-decision.md',
+'evening':'Projects/HToWW/talks/2026-11-12-evening-results-and-restart-handoff.md',
+'old':'Projects/HToWW/samples-and-production/full-rerun/2026-10-01-full-rerun-plan-and-findings.md',
+'prod':'Projects/HToWW/samples-and-production/full-rerun/2026-11-12-direct-continuation-training-launch.md',
+'b':'Projects/HToWW/samples-and-production/full-rerun/2026-11-12-b-fold-startup-fix.md',
+'route':'Projects/HToWW/samples-and-production/full-rerun/2026-11-12-route-b-integration-and-train.md',
+'state':'Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state.md',
+'syst':'Projects/HToWW/combine-systematics/2026-11-12-current-ab-systematics-status.md',
+'alpha':'Projects/HToWW/combine-systematics/2026-11-12-hplusc-alphas-rate-sources.md',
+'lep':'Projects/HToWW/2026-11-10-lepton-sf-provenance-check.md',
+'ggtt':'Projects/HToWW/samples-and-production/full-rerun/2026-11-12-ggtt-summer23-replacement-and-retry3.md',
+'speed':'Projects/HToWW/framework/optimization/2026-11-05-speedup-patches.md',
+'dup':'Projects/HToWW/framework/2026-11-12-bhive-validation-dupfix-gpu-readiness.md',
+'negrw':'Projects/HToWW/negative-weights/2026-11-12-negrw-g1-g2-provenance-and-corrected-stats.md',
+'ntrain':'Projects/HToWW/negative-weights/2026-11-12-negrw-retraining.md',
+'nreview':'Projects/HToWW/negative-weights/2026-11-12-negrw-v2-acceptance-review.md',
+'scorer':'Projects/HToWW/framework/2026-11-12-train-card-scorer-implemented.md',
+'grid':'Projects/HToWW/samples-and-production/gridpacks/slides-sebastiano-2026-11/4fs_r3.html',
 }
+def link(key,label=None):
+ p=N.get(key,key);return '<a href="obsidian://open?vault=obsidian-notes&amp;file='+quote(p,safe='')+'">'+(label or key)+'</a>'
+def refs(*pairs):return ' · '.join(link(k,t) for k,t in pairs)
+def bullets(*items):return '<ul>'+''.join('<li>'+x+'</li>' for x in items)+'</ul>'
+def fig(name,cap):return '<figure><img src="assets/'+name+'" alt="'+cap.replace('"','')+'"><figcaption>'+cap+'</figcaption></figure>'
+def col(*items,ratio=None):return '<div class="columns"'+(' style="grid-template-columns:'+ratio+'"' if ratio else '')+'>'+''.join('<div>'+i+'</div>' for i in items)+'</div>'
+def metric(value,label,detail=''):return '<div class="metric"><span>'+value+'</span><b>'+label+'</b><small>'+detail+'</small></div>'
+def table(head,rows,cls=''):
+ return '<table class="t '+cls+'"><tr>'+''.join('<th>'+x+'</th>' for x in head)+'</tr>'+''.join('<tr>'+''.join('<td>'+x+'</td>' for x in row)+'</tr>' for row in rows)+'</table>'
+slides=[]
+def add(sid,title,sub,body,take,source,notes='',backup=False,layout=''):
+ n=len(slides)+1
+ forward={
+ 'analysis':[('definitions','terms → backup')],
+ 'gridpack-validation':[('backup-gridpack-weights','weight checks → backup'),('backup-gridpacks','3FS validation → backup')],
+ 'negrw-limits':[('backup-negrw-sr','SR diagnostics → backup')],
+ 'status':[('backup-production','input inventory → backup')],
+ 'syst-overview':[( 'backup-syst-norm','rates/PU'),('backup-syst-lepsf','lepton SFs'),('backup-syst-lepscale','lepton shifts'),('backup-syst-jets','jets/MET'),('backup-syst-theory','theory'),('backup-syst-pdf','PDF/αS'),('backup-syst-scheme','scheme/negrw'),('backup-syst-rates','fit model'),('hdamp','hDamp'),('backup-ctag','c-tag')]
+ }
+ if sid in forward:
+  source += ' · Backup: ' + ' · '.join('<a href="#/'+target+'">'+text+'</a>' for target,text in forward[sid])
+ slides.append({'id':sid,'title':title,'backup':backup,'html':f'''<section class="slide {layout}" id="{sid}" data-n="{n}" data-backup="{str(backup).lower()}">
+<header><h2>{title}</h2><p class="sub">{sub}</p></header>
+<div class="content">{body}</div>
+<p class="takeaway">{take}</p>
+<p class="provenance">{source}</p><p class="internal">CMS internal · preliminary</p>
+<aside class="notes">{notes}</aside></section>'''})
+# Title uses the same gradient, logo tile, typography and orange rule as Higgs2026.
+slides.append({'id':'title','title':'Higgs + charm, H → WW','backup':False,'html':'''<section class="slide title-slide" id="title" data-n="1" data-backup="false">
+<div class="logos-tile"><img src="assets/CMSlogo_color.png" alt="CMS"><img src="assets/VUB_logo.png" alt="VUB"></div>
+<div class="title-block"><h1>Higgs + charm, H → WW<br>Run 3 analysis update</h1><p class="venue">Internal analysis discussion · 13 November 2026</p><p class="speaker">Chirayu Gupta</p><p class="affil">IIHE · Vrije Universiteit Brussel</p></div>
+<div class="title-agenda"><span>Four-era reference</span><span>Signal modelling</span><span>New A/B analysis</span></div><p class="title-scope">Historical results, completed checks and the path to the next limit</p>
+<aside class="notes">Internal CMS talk. The October result is a pre-fix reference. No new A/B limit or trained-model performance is claimed. Main status follows the saved 12 November 20:29 CET record.</aside></section>'''})
+add('analysis','The H+c analysis in Run 3','H → WW → eμνν · four eras · 61.9 fb⁻¹',
+col('<h3>A rare signal in a large background</h3>'+bullets('One opposite-flavour eμ pair, missing transverse momentum &gt; 45 GeV, and a c-jet candidate.','A six-class event classifier separates H+c, Higgs backgrounds, tt, single top, diboson and V+jets.','Each event enters the signal region (SR) or one of five control regions (CRs).'),
+'<div class="formula panel">H + c → eμ + p<sub>T</sub><sup>miss</sup> + c</div><h3>What changes in this round?</h3>'+bullets('Two descriptions of the signal: central 4FS and stitched 3FS/4FS.','New prompt-lepton selection and retrained event classifiers.','A future full-systematics fit with two SRs: N<sub>c-jet</sub> = 1 and ≥ 2.')),
+'The analysis is being rebuilt around the updated objects and signal samples.',refs(('plan','Talk plan'),('syst','Current model')),
+'4FS and 3FS are defined on the signal-comparison slide before the detailed construction. The historical fit had a merged SR; the two-SR result is a future production result, not the October fit.')
+add('progress','August → October: building the four-era analysis','Establish the reference before introducing the new corrections',
+'<div class="milestones"><div><h3>August</h3>'+metric('1 era','2022postEE reference','Expected μ limit 1034')+'<p>Initial event-MVA analysis and systematic checks.</p></div><div><h3>October</h3>'+metric('4 eras','Run 3 combination','61.9 fb⁻¹')+'<p>Central signals, additional backgrounds, corrected card construction.</p></div><div><h3>This update</h3>'+metric('A / B','Controlled signal comparison','new leptons + retraining')+'<p>Generator repairs, new reweighting, model safeguards and compact processing.</p></div></div><p class="context">Coverage changed between August and October. The two limit numbers are not an isolated measurement of a single improvement.</p>',
+'The October combination is our reference point, not the final corrected result.',refs(('plan','Agreed August→October storyline'),('old','October analysis record')),
+'August reference is the 19 August analysis-overview deck as recorded in the agreed plan. Do not imply the decrease from1034 to691 measures only algorithmic improvements or only luminosity.')
+add('historical-result','October reference: expected μ < 691','Blind Asimov · expected 95% CL · pre-fix four-era model',
+col('<div class="result hero"><div class="rlab">Run 3 combined · 61.9 fb⁻¹</div><div class="rval">μ<sub>95</sub><sup>exp</sup> &lt; 691</div><p>μ is the signal rate relative to the SM prediction.</p></div>'+table(['Period','Expected full-systematics limit'],[['2022','905'],['2023','1077']]),
+'<h3>What limited this reference?</h3><div class="hbars"><div><label>Full model</label><i style="width:96%">691</i></div><div><label>Freeze autoMCStats</label><i style="width:85.6%">616</i></div><div><label>Stat-only</label><i class="orange" style="width:47%">338.5</i></div></div><p class="small">Different nuisance configurations of the same historical card; these bars are not nuisance impacts.</p>'),
+'Keep 691 as a dated benchmark; the corrected A/B fits are still to come.',refs(('old','7 October result table'),('plan','Presentation baseline')),
+'Important pre-fix caveats: JER no-op, WH cross section zero, partial signal scale repair, NLO-like H+c normalization and flat30% scheme lnN. The stat-only and freeze-autoMCStats configurations are historical. Do not combine or subtract these as independent uncertainty components.')
+add('higgs-scale','A diagnostic of the Higgs-background scale treatment','Same old card · vary the rate/shape bookkeeping only',
+col(table(['Variant','Treatment'],[['V0','Keep the historical scale shapes and rate terms'],['V1','Make Higgs-background scale shapes shape-only; retain the separate rate term'],['V2','Also apply this treatment to single top, diboson and V+jets']]),
+'<div class="hbars"><div><label>V0 reference</label><i style="width:86.4%">691</i></div><div><label>V1 diagnostic</label><i class="orange" style="width:87.9%">703</i></div></div><p class="context">V1 changes the median by about +1.7%. V2 had no recorded result at the 18:51 source check.</p><p class="small">V1 expected 16–84% band: 469–1107.</p>'),
+'This tests an uncertainty prescription; it is not a new corrected A/B result.',refs(('evening','Saved scale diagnostic and logs')),
+'V0=691 was recovered from parent history; the V1 log was directly read at18:47. V2 was still running at18:51 and no completion is asserted. The treatment has not been adopted as the final physics prescription.')
+add('signal-samples','Two issues in the central signal samples','Separate the weight problem from the FxFx merging problem',
+col('<h3>Variation weights</h3><div class="result"><div class="rval">scale ≈ ×2</div><div class="rlab">central sample: anomalous LHE variations</div></div>'+bullets('External reweighting misses the running charm-Yukawa dependence.','A per-event workaround is implemented and checked; seek agreement on the prescription.'),
+'<h3>FxFx merging</h3><div class="panel"><b>Veto restricted to |η| &lt; 2.5</b><p>The fragment does not use the full-η merging setup of the clean reference.</p></div>'+bullets('Affects the forward-parton population.','Reweighting cannot regenerate missing events; corrected generation is the long-term fix.')),
+'Both issues are reported to GEN; the current samples remain a provisional analysis input.',refs(('plan','Chirayu’s message to Thomas / GEN'),('grid','4FS validation slides')),
+'User says nominal samples are usable and expects a small effect inside the central selection. The ≈1–2% statement is the communicated selection-level estimate, not a new measurement here. Do not imply the scale workaround fixes the fragment’s nominal-generation defect.')
+add('gridpack-validation','Corrected gridpack: checks against the clean reference','H+c 4FS · LHE+GEN validation · corrected fragment',
+col(fig('gridpack_higgs_pt.png','Higgs pT: rebuilt el8 gridpack vs official clean reference.'),
+'<h3>Independent generation, consistent outputs</h3>'+table(['Quantity','Rebuilt','Reference'],[['Matched σ [fb]','97.4 ± 1.6','96.5 ± 1.6'],['PDF/member 0','0.999','0.999'],['Negative-weight fraction','0.217','0.216'],['μR×2 ratio','0.966','0.967']])+'<p class="small">≈10k matched events per sample; all nine scale points agree within 0.7%. These are generator-validation cross sections, not the NNLO analysis normalization.</p>',ratio='1.15fr 1fr'),
+'Corrected H+c/H+b gridpacks are sent; full detector-level reproduction is still ahead.',refs(('grid','4FS r3 validation'),('plan','Latest send status')),
+'H+c numbers from existing validation slides:10370 vs10296 matched events, Higgs-pT χ²/ndf1.4/10. H+b sent status is Chirayu’s own report; do not transfer the H+c numerical validation to H+b. Three-flavour validation is in backup.',layout='plot-slide')
+add('arms','Flavour scheme: two complementary strategies','4FS: massless charm in the proton · 3FS: massive charm produced in the hard process',
+col('<div class="arm-title">A <span>Ratio method</span></div><h3>Keep central 4FS signal</h3>'+bullets('Use the leading GEN c-hadron pT ratio to make a 3FS-like shape.','Up = 3FS-like; Down = 2 − Up.','This shape treatment replaces the historical flat 30% rate uncertainty.'),
+'<div class="arm-title orange">B <span>Stitching method</span></div><h3>Join complementary GEN regions</h3><div class="partition"><div>4FS<br><b>N<sub>c-jet</sub> = 0</b></div><div>3FS<br><b>N<sub>c-jet</sub> ≥ 1</b></div></div><p class="small">GEN c jets: pT &gt;10 GeV, |η|&lt;2.5, R=0.4. Per-era generated-weight normalization. A’s separate scheme nuisance is off in B.</p>'),
+'Same analysis and NNLO target rate; compare the two signal descriptions explicitly.',refs(('route','Stitching implementation'),('state','Ratio-method prescription')),
+'Both arms use σ×BR=0.0016626pb. B does not automatically close scale/PDF overlap or missing-rate coverage questions; retain those as card-stage checks. This is not a new central3FS production claim.')
+add('samples','Rates and sample coverage brought up to date','One mass convention, with remaining component checks explicit',
+'<div class="milestones"><div><h3>Signal rate</h3>'+metric('0.0016626 pb','H+c σ×BR','NNLO target in all four eras')+'<p>Running-Yukawa correction applied to the scale-variation treatment.</p></div><div><h3>Higgs backgrounds</h3>'+metric('125.09 GeV','Normalization convention','H→ττ rates updated')+'<p>2023preBPix ggH→ττ replaced with Summer23 v14.</p></div><div><h3>Coverage still open</h3>'+bullets('Re-derive remaining Higgs rates consistently.','Check ttH→ττ: current ttHnonBB group is not an inclusive non-bb sample.')+'</div></div><p class="context">A rate convention does not change the generated Higgs mass or event kinematics.</p>',
+'The H→ττ update is complete; a global Higgs-rate validation is not yet claimed.',refs(('ggtt','Summer23 replacement'),('prod','Normalization updates'),('syst','Remaining rate scope')))
+add('leptonmva','Prompt-lepton selection aligned with HWW','Reference working points, vectorized inference and scale-factor provenance',
+col('<h3>Physics selection</h3>'+bullets('Muon: HWW tight ID × tight isolation × prompt-lepton MVA.','Electron: POG Medium × prompt-lepton MVA, with separate reconstruction factors.','All eight SF files match latinos byte-for-byte; nominal factorization follows the producer chain.'),
+'<h3>Reference checks</h3>'+metric('≈3×10⁻⁷','Maximum ONNX–TMVA score difference','24,484 muons · 25,713 electrons')+'<div class="result"><div class="rval">563 → 423 selected events</div><div class="rlab">One H+c file, old vs new leptons (−25%)</div></div>'),
+'New event populations require retraining; numerical parity is not a calibration measurement.',refs(('state','Lepton inference checks'),('lep','SF producer comparison')),
+'Muon maxdifference3.05e-7, electron3.27e-7 including threshold-tie coverage. SF factorization concern from the earlier review is not supported by the producer comparison. Measurement provenance/correlations and c-tag calibration are separate questions.')
+add('negrw','Negative weights: retraining the reweighting model','negrw v2 · all four eras · updated lepton selection',
+col('<div class="formula panel">w′ = |w| g(x)<br><small>g(x) = 2P(w &gt; 0 | x) − 1</small></div>'+bullets('A generator-level classifier estimates the signed-weight cancellation.','20 features, 20 boosted-tree members; 7.6M training rows.','About 1.5M held-out events test closure; the training region excludes the updated eμ SR.')+'<p class="small">SR closure: v2 1.011 ±0.021; July 1.019 ±0.021 (17,627 events).</p>',
+fig('04_closure_holdout_era_dataset.png','Held-out closure by era and sample: v2 (blue), July (red).'),ratio='0.9fr 1.2fr'),
+'v2 is adopted for A and B; the training inputs now match the analysis selection.',refs(('ntrain','Retraining'),('negrw','Corrected closure statistics')),
+'The estimator can be negative; do not call every output weight positive. Closure is a ratio of signed sums, with correlated delta-method errors in the corrected report. Shape agreement between two models is not proof of agreement with the original signed distribution.',layout='plot-slide')
+add('negrw-limits','Overall closure hides sample-level shape bias','The ensemble spread is not a complete model-bias uncertainty',
+col(fig('09_shape_renorm_lhe_vpt_njets_ge1_DYto2L_2Jets_50.png','DY mass&gt;50, Njet≥1: residual shape after sample-yield renormalization.'),
+'<h3>What the checks show</h3>'+table(['Held-out closure','v2'],[['All samples','0.9984'],['DY 10–50','0.8980'],['W+0J','0.9855']])+'<p>Per-era/sample renormalization restores rates. It does not remove every shape discrepancy.</p><div class="result"><div class="rval">χ²/ndf = 47.2/20</div><div class="rlab">DY shape example; 35.0/20 with the nuisance</div></div>',ratio='1.2fr 0.9fr'),
+'Final fit-bin closure remains a required check after event-MVA scoring.',refs(('negrw','Corrected G1/G2'),('nreview','Acceptance review')),
+'This is a limitation in both v2 and July; July shape χ²47.9/20 for the shown diagnostic. The band is ensemble spread, not an independently validated envelope of all method biases.',layout='plot-slide')
+add('syst-overview','Systematics: implementation and physics scope','Detector calibration, generator modelling, rate terms and finite MC',
+col('<h3>Detector / object response</h3>'+bullets('Lepton efficiencies and momentum/energy shifts.','Total JES, JER and soft/unclustered MET shifts.','Pileup and luminosity; c-tag SFs remain provisional.'),'<h3>Generator / fit model</h3>'+bullets('ISR/FSR, μR/μF and PDF variations; process scope matters.','Top-pT and Higgs+heavy-flavour modelling.','Flavour scheme, negrw ensemble and autoMCStats.'))+'<div class="context"><b>Still open:</b> H+c αS rate, component-aware Higgs rate/BR terms, final empty-template policy and fit-bin checks. hDamp implementation is deferred.</div>',
+'Configured sources are not yet measured impacts in the new A/B fit.',refs(('syst','Current inventory'),('alpha','Signal αS provenance')),
+'Full explanations and implementation/evidence status for every source are in backup. tt is excluded from configured scalevar/ps rows, not automatically from all theory-named nuisances. Trigger SFs remain disabled by decision; not a measured zero.')
+add('speed','Framework optimization: remove repeated work','Measured component improvements; separate storage and timing claims',
+col('<h3>Redundant event storage</h3>'+metric('2,858 MB → 18.9 MB','Same historical tt partition','Legacy output vs nominal TRAIN output')+'<p>≈150× smaller for these different output contents: repeated shifts, weight columns and precision dominate.</p>',
+'<h3>Controlled timing benchmark</h3>'+metric('46.5 s → 31.1 s','One H+c chunk','85,732 events; −33% wall time')+'<p>NumPy parquet writer, cached YAML and correction sets. Seeded outputs match byte-for-byte.</p>')+'<p class="context">Production median 18 min, p90 50 min; 11% failed in the recorded grid snapshot. Retries and input access dominated campaign wall time.</p>',
+'These are measured comparisons, not a claimed 150× runtime speedup.',refs(('frame','Storage comparison and agreed framing'),('speed','One-file timing'),('plan','Production snapshot')),
+'Legacy stores nominal+15 shifts and all53weight columns; TRAIN is nominal-only. The proposed combined writer will store more than TRAIN: its size/runtime have not been measured. 16/16 and64/64parquet equality checks refer to the controlled optimization test.')
+add('framework-flow','A compact event record for offline iteration','Problems found → solutions implemented → combined workflow',
+'<div class="problem-flow">'+table(['Problem','Solution'],[['Weight columns repeated in shifted tables','Keep weight variations in nominal; shifts carry only needed quantities'],['Unused columns and excess precision','Compact columns and suitable precision; preserve event IDs'],['Histogram-only outputs tie iteration to NanoAOD','Retain event inputs for offline training, scoring and rebinning'],['Missing inputs or stale model outputs','Coverage, provenance and model-compatibility guards']])+'</div><div class="workflow"><div>One NanoAOD<br>pass</div><span>→</span><div>Compact nominal<br>+ shifted inputs</div><span>→</span><div>Offline MVA<br>+ templates</div><span>→</span><div>Combine</div></div>',
+'The core components are implemented; a bit of refactoring remains to bring them together.',refs(('frame','Chirayu’s final presentation decision'),('scorer','Offline scorer now implemented')),
+'Intended combined single-pass workflow, not claimed complete. The new model cannot be used before it is trained: store event inputs first, then score offline. The exact user wording is “a bit of refactoring”; this is his presentation preference, not an engineering-effort estimate. Automatic Condor retries/global redirector remain planned.',layout='flow-slide')
+add('mva','Event classifier: five held-out models per arm','One validation owner; every fitted event has an out-of-training score',
+'<div class="workflow folds"><div>event % 5<br>test fold i</div><span>↘</span><div>Model i<br>trained on other folds</div><span>→</span><div>Score fold i<br>once in the fit</div></div>'+col('<h3>b-hive owns validation</h3>'+bullets('Training list split 85/15 internally; seed 20261112.','Roughly 68% training, 12% validation, 20% held out, by constructed files.'),'<h3>Physics recipe kept explicit</h3>'+bullets('Six classes, 26 features; 30 epochs, batch 1024, learning rate 10⁻³.','Class weights only; event-weight columns do not enter the loss.')),
+'A and B require ten trained models in total; submitted jobs are not completed models.',refs(('dup','Training readiness and seed'),('plan','A/B strategy')),
+'Features:14kinematic+11c-tagonehot+nSV. Cached constructed datasets use unique fold/split identities. RUN/registration guard feature/selection hashes, class order and provenance. Same test fold remains assigned for object-shifted copies.')
+add('mvacheck','A duplicated validation batch changed model selection','Found, reproduced and corrected before the new training',
+col('<div class="result"><div class="rlab">Real validation fixture ·129 files</div><div class="rval">38,700 events<br>→ 103,980 emitted rows</div><p>2.69× duplication before the fix</p></div>'+bullets('The leftover partial batch was emitted again.','Validation loss and inference metrics were affected; training updates were unchanged.'),
+'<h3>Checks after the fix</h3>'+bullets('Exactly-once tests for partial, tiny and exact-size files with 0/2/3 loader workers.','Epoch-0 weights identical before/after.','Same seed on the same A100: bitwise-identical model weights.','Registration rejects pre-fix or mixed-code fold provenance.')),
+'The new best-epoch selection uses an exactly-once validation sample.',refs(('dup','Duplication regression and GPU repeatability')),
+'Inference fixture:170465emitted rows for64073events. Reproducibility boundary is same hardware/setup; do not claim universal cross-GPU bitwise equality. The v11 validation/inference was also affected, so its published internal metrics are not a clean baseline.')
+add('results','Fast iteration cards from the TRAIN event records','New offline scorer implemented; production fold models still needed',
+'<div class="workflow"><div>Frozen TRAIN<br>event inventory</div><span>→</span><div>Held-out score<br>+ current negrw v2</div><span>→</span><div>One nominal<br>template pass</div><span>→</span><div>Two card<br>variants</div></div>'+col('<h3>Statistical iteration</h3>'+bullets('Stat-only: no shape or lnN terms.','Retain autoMCStats and floated tt normalization.','Optional rate-systematics variant shares identical nominal templates.'),'<h3>Evidence and boundary</h3>'+bullets('7/7 focused tests, including ROOT readback and signed variance.','One real A/B event checked for generator schema and negrw compatibility.','Current TRAIN schema needs a merged SR; the full fit will use two SRs.')),
+'The tool is ready for model validation; it has not produced an A/B limit yet.',refs(('scorer','Local analysis commit 5b25295; tests and schema check')),
+'No production scoring or Combine run. Original stored July negrw weights are ignored and v2 rescored from generator columns; normalize after all shards merge. A merged-SR iteration result must not be compared as though identical to the intended split-SR full-systematics fit.')
+add('status','Production: complete inputs, training underway','Saved 12 November 20:29 CET snapshot; refresh before presentation',
+'<div class="milestones"><div><h3>Inputs complete</h3>'+metric('A: 6.96M','Selected training rows','2,437 MC markers')+metric('B: 6.98M','Selected training rows','2,572 MC markers')+'</div><div><h3>Fold processing</h3>'+metric('A: 3 running','2 queued','Dataset construction observed')+metric('B: queued','5 folds in one job','Sequential, approved submission')+'</div><div><h3>Results not yet available</h3>'+bullets('No completed production fold.','No exported or registered model.','No new A/B templates, impacts or expected limits.')+'</div></div>',
+'Preparation and job submission are complete; trained-model performance is still pending.',refs(('scorer','Latest execution snapshot'),('b','B preparation and submission')),
+'Exact saved selected rows A6959308 B6978013. B single job9706954 underDAG9706953. Afolds9706926–9706928running,9706929–30idle. This slide is a dated saved record, not live queue monitoring. No new job operations performed by keeper.')
+add('open','Progress made, and questions for the conveners','Signal generation, flavour schemes and the next controlled comparison',
+col('<h3>What is now in place</h3>'+bullets('Four-era inputs for both signal arms.','Reference-checked leptons, negrw v2 and reproducible training setup.','Corrected gridpacks sent; compact processing and offline-card components built.'),'<h3>Where guidance is needed</h3>'+bullets('Existing samples: endorse the per-event scale workaround, or another prescription?','FxFx forward merging: agree the treatment while corrected samples are reproduced?','Flavour scheme: is ratio method A versus stitched B the right comparison?')),
+'Next result: held-out A/B iteration limits, followed by the full-systematics two-SR fit.',refs(('plan','Chirayu’s GEN / convener questions'),('frame','Framework framing'),('scorer','Result dependency')),
+'Analysis follow-ups remain: provisionalc-tagcalibration, H+cαSrate, H+bPDF+αSoverlap, HiggsBRscope, ttHττcoverage, negrwfit-binclosure. hDamp is deferred by instruction; no alternative-sample template is claimed.')
+# Backup starts only after the main conclusions. Every page links back to its main context.
+slides.append({'id':'backup','title':'Backup','backup':True,'html':f'''<section class="slide divider" id="backup" data-n="{len(slides)+1}" data-backup="true"><div class="line"></div><h1>Backup</h1><p class="divsub">Systematic prescriptions · validation plots · production provenance</p><p class="backup-home"><a href="#/open">← Main conclusions</a></p></section>'''})
+add('definitions','Backup: definitions and fit conventions','Reference terms; implementation details live in the companion notes',
+table(['Term','Meaning'],[['Arm A / Arm B','Central 4FS with scheme-shape uncertainty / stitched 3FS+4FS signal'],['TRAIN / RUN','Nominal feature-event output / inline-scored systematic templates'],['SR / CR','Signal region / control region selected by classifier argmax'],['negrw g(x)','Generator-level signed-weight cancellation estimate, 2P(positive|x)−1'],['lnN / shape / rateParam','Rate uncertainty / varied template / fitted normalization'],['autoMCStats','Finite MC-bin statistics from signed-weight variance, not a flat 10%'],['Current iteration / final fit','Merged SR from present TRAIN schema / intended two c-jet-count SRs']]),
+'Keep the statistical model and the saved-output schema attached to every result.',refs(('syst','Inventory'),('scorer','TRAIN-to-card conventions')),backup=True)
+for sid,item in json.loads((D/'systematics.json').read_text()).items():
+ rows=[];details=[]
+ for r in item['rows']:
+  rows.append([r['name'],r['effect'],r['construction']+'<br><span class="check">'+r['evidence']+'</span>'])
+  details.append(r['nuisance'])
+ add(sid,item['title'],'Backup · what it is, how it is varied, and current evidence',table(['Source','Physical effect / why it matters','Variation, scope and check'],rows,'systematics'),
+ 'New template effects and fit impacts remain to be checked after scoring.',item['source']+' · <a href="#/syst-overview">← systematics overview</a>',
+ 'Implementation nuisance names: '+', '.join(details)+'. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.',backup=True,layout='systematics-slide')
+add('hdamp','Backup: hDamp probes tt matching','Deferred until after MVA training, by instruction',
+col('<h3>Physical uncertainty</h3>'+bullets('POWHEG h_damp controls the damping of hard real emission relative to shower matching.','Changes extra-jet activity and can migrate tt events between c-jet categories.','ISR/FSR shower weights do not automatically cover this matching variation.'),'<h3>Implementation still pending</h3>'+bullets('Dedicated Hdamp158/418 tt samples configured in all four eras.','Normalize each alternative using its own full generated sumw.','Need acceptance, shape and MC-stat checks before adding the template nuisance.')),
+'Configured samples are not an implemented or validated alternative-sample nuisance.',refs(('prod','Deferred hDamp scope'),('syst','Current inventory'))+' · <a href="#/syst-overview">← main</a>',backup=True)
+add('backup-negrw-sr','Backup: negrw in the selected eμ signal region','17,627 events · corrected v2 report',
+col(fig('07_sr_vpt.png','SR V-pT distributions: original signed weights, v2 and July.'),fig('09_shape_renorm_lhe_vpt_all_WtoLNu_2Jets_1J.png','W+1J: shape residual after per-sample renormalization.')),
+'Model-to-model agreement does not close the common residual shape bias.',refs(('negrw','Corrected statistics'))+' · <a href="#/negrw-limits">← main</a>',
+'W+1J χ²139.4/20 v2185.5/20July, 120.1/155.6withnuisance in savedreport. The horizontal nuisanceband should not be represented as independent measurement errors.',backup=True,layout='plot-slide')
+add('backup-ctag','Backup: c-tag categories enter the event MVA','ParticleNet CvsL × CvsB · provisional calibration',
+col('<h3>Eleven one-hot categories</h3><div class="category-strip"><span>L0</span><span>C0–C4</span><span>B0–B4</span></div>'+bullets('Leading c-jet candidate is categorized in the two tagger discriminants.','Categories are model inputs, not just a downstream plotting choice.','The calibration is provisional while Livio’s update is awaited.'),
+'<h3>Versioned category definition</h3><p class="small">CvsL edges:0,0.250,0.452,0.808,1</p><p class="small">CvsB edges:0,0.006,0.017,0.055,0.761,0.944,0.985,0.995,1</p><div class="panel">Changing category edges changes the inputs and can force reprocessing/retraining. Changing only SF weights is a different operation.</div>'),
+'Tagger category consistency must be preserved through training, scoring and fitting.',refs(('syst','c-tag status'))+' · <a href="#/syst-overview">← main</a>',backup=True)
+add('backup-gridpack-weights','Backup: scale and PDF weights after the rebuild','H+c 4FS · same corrected WW fragment in rebuilt and reference samples',
+col(fig('gridpack_scale_higgs_pt.png','Scale-variation response versus Higgs pT: rebuilt gridpack and clean reference.'),
+'<h3>Weight-level checks</h3>'+table(['Quantity','Rebuilt','Reference'],[['PDF/member 0','0.999','0.999'],['μR×2 σ ratio','0.966','0.967'],['μR×0.5 σ ratio','1.049','1.044']])+'<p>The broken central sample had PDF/member0 ≈2.26 and anomalous scale variations.</p><p class="small">All nine scale points agree within0.7% in the ≈10k-event generation check.</p>',ratio='1.15fr 1fr'),
+'Generation-level agreement supports the rebuilt setup; detector-level reproduction remains separate.',refs(('grid','4FS validation, full numbers'))+' · <a href="#/gridpack-validation">← main</a>',backup=True,layout='plot-slide')
+add('backup-gridpacks','Backup: private 3FS validation','Reused official gridpack; H→WW decay configuration',
+col(fig('gridpack_3fs_higgs_pt.png','Production-level LHE Higgs pT: private WW versus official γγ reference.'),
+'<h3>What is compared</h3>'+bullets('Production variables before Higgs decay.','The official gridpack is reused unchanged.','Decay-specific jet/lepton distributions are checked separately.','The 3FS re-NANO supplies the PDF replica weights needed by Arm B.')+'<p class="small">Do not use decay-dependent jet agreement as a production-only equivalence test.</p>',ratio='1.2fr 0.85fr'),
+'Generator validation and central-sample reproduction are separate stages.',
+'<a href="../../../samples-and-production/gridpacks/deck/3fs.html">3FS validation deck</a> · <a href="#/gridpack-validation">← main</a>',backup=True,layout='plot-slide')
+add('backup-production','Backup: traceable inputs and output boundaries','Four eras · local code commits · preserved preparation manifests',
+table(['Artifact','Saved record'],[['Original TRAIN MC partitions','A 2437; B 2572 (completion markers and full input checks)'],['Original selected-event parquet shards','A 22,613; B 24,598 before later fold splitting'],['Selected rows after preparation','A 6,959,308; B 6,978,013'],['Classifier training','Five held-out models per arm; B folds sequential in one Condor job'],['Offline scorer','Analysis local 5b25295; 7 focused tests and bounded real-schema check'],['Full-systematics result','Not yet produced; requires models, scoring, templates and final-card checks']]),
+'Timestamps, manifests and model identities travel with every later result.',refs(('prod','Input inventory'),('b','B readiness'),('scorer','Latest scorer / queue record'))+' · <a href="#/status">← main</a>',backup=True)
+# Exact Higgs2026 template plus scoped adaptations for Reveal navigation and offline reading.
+head='''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>HToWW November analysis update · Higgs2026 template · r2</title>
+<link rel="stylesheet" href="../../../../../_shared/reveal/reset.css"><link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css"><link rel="stylesheet" href="higgs2026-theme.css"><link rel="stylesheet" href="talk.css">
+<noscript><style>html,body{height:auto!important;overflow:auto!important}.reveal,.reveal .slides{position:static!important;transform:none!important;width:auto!important;height:auto!important}.reveal .slides>section.slide{display:block!important;position:relative!important;transform:none!important;inset:auto!important;opacity:1!important;visibility:visible!important;margin:20px auto!important;pointer-events:auto!important}body{overflow-x:auto!important}</style></noscript></head><body><div class="reveal"><div class="slides">'''
+tail='''</div></div><script src="../../../../../_shared/reveal/reveal.js"></script><script>Reveal.initialize({width:1280,height:720,margin:0,center:false,hash:true,transition:'none',backgroundTransition:'none',controls:true,progress:false,slideNumber:false,pdfSeparateFragments:false,pdfMaxPagesPerSlide:1});</script></body></html>'''
+(D/'index.html').write_text(head+'\n'.join(s['html'] for s in slides)+tail)
+(D/'slides.json').write_text(json.dumps([{k:v for k,v in s.items() if k!='html'} for s in slides],indent=2,ensure_ascii=False)+'\n')
+print(len(slides),'slides;',sum(not s['backup'] for s in slides),'main;',sum(s['backup'] for s in slides),'backup')
 
-
-def src(*items):
-    return '<p class="source">Source: ' + " · ".join(items) + "</p>"
-
-
-def slide(sid, title, body, source, tag=MAIN_TAG, notes=""):
-    aside = f'<aside class="notes">{notes}</aside>' if notes else ""
-    return (f'<section id="{sid}">\n<p class="label">{LABEL} · {tag}</p>\n'
-            f"<h2>{title}</h2>\n{body}\n{source}\n{aside}\n</section>")
-
-
-def syst_slide(sid, title, rows, foot, source):
-    """rows: (name, nuisance, what it is / why it matters, prescription & scope, evidence & status)."""
-    head = ("<table class='syst'><colgroup><col style='width:15%'><col style='width:29%'>"
-            "<col style='width:30%'><col style='width:26%'></colgroup>"
-            "<tr><th>Source</th><th>What it is · why it matters here</th>"
-            "<th>Prescription · scope · correlation</th><th>Evidence · status</th></tr>")
-    body = "".join(
-        f"<tr><td><b>{n}</b><br><code>{k}</code></td><td>{w}</td><td>{p}</td><td>{e}</td></tr>"
-        for n, k, w, p, e in rows)
-    return slide(sid, title, head + body + "</table>" + f'<p class="foot">{foot}</p>',
-                 source, tag="backup · systematics")
-
-
-PENDING = "Limit impact: <span class='warn'>pending</span>. Needs the new RUN templates and Combine fit; July impacts used a different model and are not current."
-
-SLIDES = []
-add = SLIDES.append
-
-# ---------------------------------------------------------------- main
-add(f'''<section id="title" class="title">
-<p class="label">{LABEL}</p>
-<h1>H+c, H→WW→eμνν at Run 3:<br>analysis update</h1>
-<p class="sub">Signal modelling (two arms) · new lepton ID and prompt MVA · event MVA retraining · negative-weight reweighting v2 · systematics</p>
-<p class="sub">Chirayu Gupta · 13 November 2026</p>
-<p class="foot">Four eras: 2022preEE, 2022postEE, 2023preBPix, 2023postBPix. No new limit is shown: production scoring has not run yet (see status).</p>
-</section>''')
-
-add(slide("status", "Status: inputs reprocessed for both arms; MVA training is next",
-'''<table class="compact"><colgroup><col style="width:30%"><col style="width:15%"><col style="width:55%"></colgroup>
-<tr><th>Stage</th><th>State</th><th>Evidence</th></tr>
-<tr><td>Code: lepton ID/MVA, corrections, TRAIN/RUN</td><td class="ok">done</td><td>local <code>hww-analysis</code> commits up to <code>71eef55</code>; unit and one-file tests</td></tr>
-<tr><td>TRAIN inputs, all MC (A and B)</td><td class="ok">done</td><td>every MC partition has a completion marker: A 2437, B 2572; hash and entry checks pass</td></tr>
-<tr><td>negrw v2 (V+jets)</td><td class="ok">adopted</td><td>trained on all 4 eras; fit-bin closure still open</td></tr>
-<tr><td>Event MVA, 5 folds × 2 arms</td><td class="warn">preparing</td><td>input checks and fold split running (A: all 2437 MC files passed); then 5 batch-GPU folds per arm. No fold trained yet</td></tr>
-<tr><td>RUN scoring, templates, cards</td><td class="todo">not started</td><td>needs the registered fold models</td></tr>
-<tr><td>Expected limits A and B</td><td class="todo">not started</td><td>per era and combined</td></tr>
-<tr><td>hDamp (tt)</td><td class="todo">deferred</td><td>Up/Down samples configured for all eras; implementation after the MVA training</td></tr>
-</table>
-<p class="take">Today's message: what changed in the analysis and how it was checked. Results come once A is scored.</p>
-<p class="small">Snapshot 12 Nov 2026, ~16:45 CET. <span class="warn">Refresh before presenting.</span></p>''',
-src(note(N["prod"], "production continuation note"), note(N["dup"], "MVA readiness"), note(N["negrw"], "negrw follow-up"))))
-
-add(slide("definitions", "Terms used in this talk",
-'''<table class="compact"><colgroup><col style="width:21%"><col style="width:79%"></colgroup>
-<tr><td><b>4FS / 3FS</b></td><td>four- or three-flavour scheme: the charm quark is massless and in the proton (4FS), or massive and produced only in the hard process (3FS)</td></tr>
-<tr><td><b>Arm A</b></td><td>signal from the central <b>4FS</b> FxFx H+c sample alone; a 3FS-vs-4FS shape uncertainty covers the scheme choice</td></tr>
-<tr><td><b>Arm B</b></td><td>signal <b>stitched</b>: 4FS for events with no GEN c-jet, private 3FS for events with ≥1 GEN c-jet</td></tr>
-<tr><td><b>TRAIN / RUN</b></td><td>two processing modes: TRAIN writes slim nominal features for MVA training; RUN scores events inline and writes histogram templates for all shifts</td></tr>
-<tr><td><b>Fold</b></td><td><code>event % 5</code>. Model <i>i</i> never sees fold <i>i</i> in training; RUN scores each event with the model that held it out, so <b>all</b> events enter the templates</td></tr>
-<tr><td><b>b-hive</b></td><td>the training framework for the event MVA (6-class DNN)</td></tr>
-<tr><td><b>negrw</b></td><td>negative-weight reweighting for amc@NLO V+jets: replaces signed weights by |w|·g(x), g = classifier estimate of the positive fraction</td></tr>
-<tr><td><b>prompt MVA</b></td><td>the ttH lepton MVA used to select prompt leptons (Thomas's HWW working points)</td></tr>
-</table>
-<p class="take">Arm A vs Arm B is the main physics comparison of this round.</p>''',
-src(note(N["trainrun"], "framework how-to"), note(N["routeb"], "Route B note"))))
-
-add(slide("analysis", "Analysis recap: one eμ pair, one c-jet, a 6-class MVA",
-'''<div class="two"><div>
-<ul>
-<li><b>Selection:</b> exactly one eμ pair, MET &gt; 45 GeV, ≥1 c-jet candidate, triggers, MET filters, good vertex</li>
-<li><b>Classes:</b> H+c, Higgs background, tt, single top, diboson, V+jets</li>
-<li><b>Channels:</b> each event goes to the channel of its highest-score class: 1 SR + 5 CRs</li>
-<li><b>New:</b> the SR is split into N<sub>c-jet</sub> = 1 and ≥ 2 (AN-23-102: +8% sensitivity in Run 2)</li>
-</ul></div><div>
-<p><b>26 input features</b></p>
-<ul class="small">
-<li>14 kinematic: p<sub>T</sub>(ℓℓ), p<sub>T</sub>(ℓ1,ℓ2), p<sub>T</sub>(c), MET, m<sub>T</sub>(ℓ1,ℓ2), m<sub>ℓℓ</sub>, ΔR and Δφ between leptons, c-jet and MET</li>
-<li>11 one-hot c-tag categories (L0, C0–C4, B0–B4) from PNet CvsL × CvsB</li>
-<li>nSV (secondary vertices)</li>
-</ul></div></div>
-<p class="take">The selection and features are unchanged in definition; the leptons and corrections feeding them changed.</p>''',
-src("<code>analysis/features/hww.py</code>, <code>hww_allfix_4fs.yaml</code> (lxplus HEAD <code>71eef55</code>, read 12 Nov)")))
-
-add(slide("arms", "Two signal descriptions: Arm A (4FS) and Arm B (3FS/4FS stitched)",
-'''<div class="two"><div>
-<p><b>Arm A</b> — central 4FS FxFx H+c</p>
-<ul class="small">
-<li>Normalised to σ<sub>NNLO</sub>×BR = <b>0.0016626 pb</b> (all eras)</li>
-<li>Scheme uncertainty: reweight by leading GEN c-hadron p<sub>T</sub>; Up = 3FS-like, Down = 2 − Up</li>
-<li>Replaces the old flat 30%</li>
-</ul></div><div>
-<p><b>Arm B</b> — stitched (LHCHWG-2026-007 §4.4)</p>
-<ul class="small">
-<li>N<sub>c-jet</sub> = 0 from 4FS, N<sub>c-jet</sub> ≥ 1 from private 3FS; GEN c-jet p<sub>T</sub> &gt; 10 GeV, |η| &lt; 2.5, R = 0.4</li>
-<li>Same σ×BR; each region scaled per era by L·σ·c<sub>s</sub>/F<sub>s</sub></li>
-<li>3FS PDF: 100 MC replicas (LHA 321900) → replica standard deviation</li>
-<li>Arm A's scheme nuisance is off (no double counting)</li>
-</ul></div></div>
-<p class="take">Same analysis, two signal models: the A/B difference measures the flavour-scheme dependence directly.</p>''',
-src(note(N["routeb"], "Route B integration"), note(N["state"], "full-fix state"), "arXiv:2608.26863 §4.4")))
-
-add(slide("samples", "Samples and normalisation updates",
-'''<ul>
-<li><b>H+c</b>: 0.0016626 pb in all eras (NNLO); running-Yukawa scale fix in the μ<sub>R</sub> weights</li>
-<li><b>m<sub>H</sub> = 125.09 GeV convention</b> adopted. Done so far: <b>H→ττ</b> backgrounds (ggH 3.264 pb, VBF 0.2549 pb, W<sup>±</sup>H) from the LHCHWG 13.6 TeV tables × BR<sub>ττ</sub> 0.06256. Other Higgs rates: <span class="warn">not yet re-derived</span></li>
-<li><b>2023preBPix ggH→ττ</b>: Winter23 sample replaced by Summer23 v14</li>
-<li><b>ttH→ττ coverage open</b>: our <code>ttHnonBB</code> group is the exclusive cc, γγ, Zγ samples, not an inclusive non-bb sample</li>
-<li>Generated mass is unchanged: renormalisation changes rates, not kinematics</li>
-</ul>
-<p class="take">Normalisations are being moved to one convention; the H→ττ part is done.</p>''',
-src(note(N["prod"], "continuation note"), note(N["ggtt"], "H→ττ replacement"), note(N["state"], "full-fix state"))))
-
-add(slide("leptonmva", "Prompt-lepton MVA: Thomas's working points, now via ONNX",
-'''<ul>
-<li><b>What:</b> muons tight ID + tight PF iso + prompt MVA; electrons POG Medium + prompt MVA (HWW/latinos WPs)</li>
-<li><b>How:</b> TMVA weights converted to ONNX and scored vectorised once per chunk, on NanoAOD inputs before scale/smearing; reused by every shift</li>
-<li><b>Check vs TMVA:</b> max |Δscore| = <b>3.05×10<sup>−7</sup></b> (μ, 24,484 leptons), <b>3.27×10<sup>−7</sup></b> (e, 25,713), including threshold-tie leptons</li>
-<li><b>Fixes vs the reference code:</b> signed η for muon SFs (tables span −2.4…2.4); no φ argument for 2023 electron SFs; supercluster η for electrons</li>
-<li><b>SFs:</b> all 8 SF files byte-identical to latinos; factorisation matches how latinos applies them</li>
-<li><b>Effect:</b> one H+c file keeps 423 events vs 563 with the old leptons (−25%)</li>
-</ul>
-<p class="take">Same physics as the HWW group's leptons, faster, and checked against the reference to 10<sup>−7</sup>.</p>''',
-src(note(N["state"], "full-fix state §ttH MVA"), note(N["lepsf"], "lepton-SF provenance"))))
-
-add(slide("speed", "Processing speed-ups with byte-identical output",
-'''<table class="compact"><colgroup><col style="width:34%"><col style="width:66%"></colgroup>
-<tr><th>Change</th><th>Effect</th></tr>
-<tr><td>parquet writer via numpy</td><td><code>dump_parquet</code> 16.8 s → 1.8 s per chunk</td></tr>
-<tr><td>cache era YAML</td><td>parsed once instead of 15× per chunk</td></tr>
-<tr><td>cache trigger YAML</td><td>once instead of 45× per chunk</td></tr>
-<tr><td>cache correctionlib sets</td><td>c-tag, pileup loaded once per process</td></tr>
-</table>
-<ul>
-<li>One H+c file, one chunk (85,732 events): <b>46.5 s → 31.1 s</b> wall (−33%)</li>
-<li>Outputs <b>byte-identical</b> (16/16 parquets, multi-chunk 64/64) with seeded muon RNG</li>
-<li>Scope: one-file benchmark, not a measured campaign speed-up. Next cost: object selection re-run for each of 15 shift passes</li>
-</ul>
-<p class="take">Faster with no change in output; reproducibility needed seeding the muon smearing RNG.</p>''',
-src(note(N["speed"], "speed-up patches"))))
-
-add(slide("mva", "Event MVA: retrained for the new leptons and signal",
-'''<ul>
-<li><b>Why retrain:</b> v11 was trained with the old tight/wp80iso leptons and older corrections; the selected events changed</li>
-<li><b>Folds:</b> 5 outer folds by <code>event % 5</code>; model <i>i</i> trains on the other four folds</li>
-<li><b>Validation:</b> b-hive splits the training list 85/15 internally (seed 20261112)</li>
-<li><b>Loss weights:</b> class weights only (event weights not in the loss): unchanged convention</li>
-<li><b>Recipe:</b> 30 epochs, batch 1024, lr 10<sup>−3</sup>, same architecture and 26 features</li>
-<li><b>RUN:</b> every event scored once, by the model that never saw it</li>
-<li><b>Guards:</b> RUN refuses a model whose feature hash, selection hash, classes, folds or file SHA256 differ</li>
-</ul>
-<div class="bar"><span class="train" style="width:68%">~68% train</span><span class="valid" style="width:12%">~12% val</span><span class="test" style="width:20%">20% test fold</span></div>
-<p class="small">Shares are approximate (by constructed-file fraction). Training inputs are MC only.</p>''',
-src(note(N["trainrun"], "framework how-to"), note(N["dup"], "MVA readiness"), note(N["decisions"], "training decisions"))))
-
-add(slide("mvacheck", "MVA reliability: a validation-duplication bug, fixed and tested",
-'''<ul>
-<li><b>Found:</b> b-hive's loader re-emitted the leftover partial batch, so validation and inference rows were duplicated</li>
-<li><b>Size:</b> on 129 real validation files, 103,980 rows emitted for 38,700 events (2.69×); inference 170,465 rows for 64,073 held-out events</li>
-<li><b>Effect:</b> biased the validation loss, hence best-epoch selection (and v11's)</li>
-<li><b>Fix:</b> every row emitted exactly once: tests over partial, exact-multiple and tiny files, with 0/2/3 loader workers</li>
-<li><b>Training unchanged:</b> epoch-0 weights bitwise identical before and after the fix</li>
-<li><b>Reproducible:</b> same seed on an A100 → bitwise-identical weights (max |Δw| = 0)</li>
-<li><b>Provenance:</b> each fold records code hashes; registration refuses pre-fix or mixed-code folds</li>
-</ul>
-<p class="take">Model selection now uses a clean validation sample, and a rerun gives the same model.</p>''',
-src(note(N["dup"], "dup-fix and GPU note"))))
-
-add(slide("negrw", "negrw v2: retrained on all eras with the new leptons",
-'''<div class="two"><div>
-<ul class="small">
-<li><b>Why:</b> amc@NLO V+jets has many negative weights; |w|·g keeps the yield and cuts the variance</li>
-<li><b>v2:</b> same recipe (20 GEN-level features, 20 boosted-tree members); trained on <b>all 4 eras</b> (7.6 M rows), training region defined with the new leptons → disjoint from the eμ SR</li>
-<li><b>Held-out</b> events (<code>event % 5 == 0</code>, 1.5 M) for closure</li>
-<li>AUC 0.8181 vs 0.8183 (July); corr(g<sub>v2</sub>, g<sub>July</sub>) = 0.9987</li>
-<li><b>SR closure</b> (17,627 events): v2 1.011 ± 0.021, July 1.019 ± 0.021</li>
-<li>Adopted for both arms; nuisance <code>CMS_negrw_vjets</code> = ensemble spread</li>
-</ul></div>
-<div><img src="assets/04_closure_holdout_era_dataset.png" alt="negrw held-out closure per era and dataset, v2 vs July"><p class="cap">Held-out closure Σ|w|g/Σw per era and dataset, v2 (blue) vs July (red)</p></div></div>
-<p class="take">v2 is equivalent to July in shape, and its inputs now match the current analysis.</p>''',
-src(note(N["negrw_v2"], "negrw retraining"), note(N["negrw"], "corrected statistics"), "plots: EOS <code>negrw_out_img/v2_20261112/corrected_report_20261112/img</code>")))
-
-add(slide("negrw-limits", "negrw: closure is good overall, not per sample",
-'''<div class="two"><div>
-<table class="compact"><tr><th>held-out</th><th>v2 R</th><th>(R−1)/σ</th></tr>
-<tr><td>total</td><td>0.9984</td><td>−1.4</td></tr>
-<tr><td>DY 10–50</td><td>0.8980</td><td>−11.2</td></tr>
-<tr><td>DY 50</td><td>1.0080</td><td>+6.5</td></tr>
-<tr><td>W 0J</td><td>0.9855</td><td>−13.2</td></tr>
-<tr><td>W 1J</td><td>1.0086</td><td>+3.1</td></tr>
-<tr><td>W 2J</td><td>1.0004</td><td>+0.1</td></tr></table>
-<p class="small">σ: delta-method on R = Σ|w|g/Σw (earlier quoted σ were too large). Rates are renormalised per era and sample.</p>
-<p class="small">Shape after renormalisation, DY 50, N<sub>jet</sub>≥1, V p<sub>T</sub>: χ² 47.2/20 (35.0 with the nuisance); July 47.9/20</p>
-</div>
-<div><img src="assets/09_shape_renorm_lhe_vpt_njets_ge1_DYto2L_2Jets_50.png" alt="shape residual after renormalisation, DY 50 njets>=1, lhe_vpt"><p class="cap">Shape residual after per-sample renormalisation vs the |<code>CMS_negrw_vjets</code>| band (grey)</p></div></div>
-<p class="take">Residual shape bias exists in both models and is not fully covered by the band: the closure check in the final fit bins is still open.</p>''',
-src(note(N["negrw"], "G1/G2 and corrected stats"), note(N["negrw_rev"], "acceptance review"))))
-
-add(slide("syst-overview", "Systematics: what is in the model now",
-'''<table class="compact"><colgroup><col style="width:22%"><col style="width:52%"><col style="width:26%"></colgroup>
-<tr><th>Group</th><th>Sources</th><th>Change since summer</th></tr>
-<tr><td>Normalisation</td><td>luminosity, cross sections, BRs, tt rateParam</td><td>H→ττ at 125.09</td></tr>
-<tr><td>Leptons</td><td>μ ID, iso, prompt MVA; e ID, prompt MVA, reco (3 p<sub>T</sub> bins); μ/e scale and resolution</td><td><b>new</b> lepton IDs and SFs</td></tr>
-<tr><td>Jets and MET</td><td>JES (Total), JER, unclustered MET, pileup</td><td>unclustered MET <b>added</b></td></tr>
-<tr><td>c-tagging</td><td>2D SF Total Up/Down</td><td>provisional (calibration update awaited)</td></tr>
-<tr><td>Theory</td><td>ISR, FSR, μ<sub>R</sub>, μ<sub>F</sub>, μ<sub>R</sub>μ<sub>F</sub>, PDF, top p<sub>T</sub>, H+heavy-flavour</td><td>H+c PDF rate 7.4%; H+HF ±50% per event</td></tr>
-<tr><td>Signal scheme</td><td>A: 3FS/4FS shape · B: stitching</td><td><b>new</b> in both arms</td></tr>
-<tr><td>Method / MC</td><td>negrw ensemble, autoMCStats</td><td>negrw v2</td></tr>
-<tr><td>tt modelling</td><td>hDamp</td><td><span class="warn">deferred</span></td></tr>
-</table>
-<p class="take">All sources are implemented except hDamp (deferred); none has a measured impact in the new fit yet. One backup slide per group explains each source.</p>''',
-src(note(N["syst"], "systematic inventory (HEAD 71eef55)"))))
-
-add(slide("hdamp", "hDamp: the missing tt matching uncertainty",
-'''<ul>
-<li><b>What:</b> POWHEG's h<sub>damp</sub> sets where hard real emission hands over to the shower. Varying it probes ME–PS matching for the top</li>
-<li><b>Why here:</b> tt is a main background with its own CR and enters the SR; hDamp changes jet multiplicity and the extra-jet spectrum, so c-jet and category migrations</li>
-<li><b>Not covered by ISR/FSR:</b> those vary shower radiation; h<sub>damp</sub> varies the matching scale</li>
-<li><b>Samples:</b> dedicated <code>TTto2L2Nu_Hdamp158</code> (Down) and <code>_Hdamp418</code> (Up), configured in all 4 eras (σ = 98.578 pb)</li>
-<li><b>Plan:</b> alternative-sample templates, each normalised by its own Σw; compare to nominal tt in D, N<sub>jet</sub>, acceptance; check MC stat; one nuisance on tt</li>
-<li><b>Status:</b> <span class="warn">deferred until after the MVA training</span>; no template or card yet. Alternative samples stay out of the training sample</li>
-</ul>
-<p class="take">Adds the standard tt matching variation; results come with the RUN production.</p>''',
-src(note(N["prod"], "continuation note §hDamp"), note(N["syst"], "inventory"))))
-
-add(slide("results", "Results: pending production",
-'''<table class="compact"><colgroup><col style="width:36%"><col style="width:64%"></colgroup>
-<tr><th>Planned result</th><th>Needs</th></tr>
-<tr><td>Classifier performance per fold (ROC, overtraining)</td><td>trained folds</td></tr>
-<tr><td>SR and CR templates, data/MC in CRs</td><td>RUN over all eras</td></tr>
-<tr><td>Systematic Up/Down ratio plots</td><td>RUN shift templates</td></tr>
-<tr><td>Expected limit per era and combined, Arm A</td><td>cards + Combine</td></tr>
-<tr><td>Same for Arm B, and A vs B</td><td>B scored after A</td></tr>
-<tr><td>Impacts and pulls</td><td>new fit (July impacts are not comparable)</td></tr>
-</table>
-<p class="take">Order: Arm A first, then Arm B. No number is shown until it is produced and checked.</p>''',
-src(note(N["prod"], "production status"))))
-
-add(slide("open", "Open questions and next steps",
-'''<ul>
-<li><b>H+c α<sub>S</sub> rate:</b> the 4FS sample has no α<sub>S</sub> pair; no process-specific number yet (the old 3% had no H+c source)</li>
-<li><b>H+b PDF⊕α<sub>S</sub>:</b> candidate +3.36/−3.44%, not installed; check overlap with the 5% Higgs-background rate</li>
-<li><b>BR(H→WW), BR(H→ττ) 1%:</b> applied to the whole merged Higgs background; needs component-aware scope</li>
-<li><b>c-tag calibration:</b> provisional; category edges are MVA inputs, so a change may need retraining</li>
-<li><b>negrw:</b> closure in the final fit bins after scoring</li>
-<li><b>ttH→ττ:</b> coverage of the exclusive ttH samples</li>
-<li><b>Arm B:</b> 3FS PDF rate vs the 7.4% signal PDF rate; scale normalisation across the stitched regions</li>
-<li><b>Trigger SFs</b> disabled by earlier decision: no trigger nuisance, which is not a measured zero</li>
-</ul>
-<p class="take">Next: train and score Arm A, build cards, first expected limit; then Arm B and the comparison.</p>''',
-src(note(N["syst"], "inventory"), note(N["alphas"], "α<sub>S</sub> sources"), note(N["cards"], "final-cards to-do"))))
-
-# ---------------------------------------------------------------- backup: systematics
-add('''<section id="backup" class="title"><p class="label">''' + LABEL + '''</p><h1>Backup</h1>
-<p class="sub">One slide per systematic group: what it is, how it is varied, what has been checked.</p>
-<p class="foot">Common to all: implemented in code at HEAD <code>71eef55</code>; <b>no new templates, plots or impacts yet</b>. Detector nuisances are named per year (2022, 2023): pre/post sub-eras within a year are correlated.</p></section>''')
-
-add(syst_slide("backup-syst-norm", "Normalisation: luminosity, pileup",
-[("Luminosity", "lumi_&lt;year&gt;", "Uncertainty on the integrated luminosity; scales every simulated yield", "lnN 1.4% (2022), 1.3% (2023); all MC except free-floating tt; separate per year", "Configured. Official common-component correlation model not implemented"),
- ("Pileup", "CMS_pileup_&lt;year&gt;", "Uncertain distribution of extra pp collisions per crossing; changes MET, isolation, jet counts", "Event-weight Up/Down from the pileup calibration; all MC", "Implemented; template effect pending")],
-PENDING, src(note(N["syst"], "inventory §detector"))))
-
-add(syst_slide("backup-syst-lepsf", "Lepton efficiency scale factors",
-[("μ ID", "CMS_eff_m_id_&lt;year&gt;", "Data/MC difference in identifying a real muon", "HWW tight-ID SF Up/Down per lepton; all MC", "Files identical to latinos (md5)"),
- ("μ isolation", "CMS_eff_m_iso_&lt;year&gt;", "Data/MC difference in a real muon looking isolated", "Tight PF iso SF, conditional on ID", "Same producer chain"),
- ("μ prompt MVA", "CMS_eff_m_promptMVA_&lt;year&gt;", "Efficiency of the prompt-MVA cut on real muons", "ttH-MVA SF on top of ID×iso", "Up/nom 1.0036 on one H+c file"),
- ("e ID", "CMS_eff_e_id_&lt;year&gt;", "Data/MC difference for POG Medium electrons", "Medium SF", "Matches the latinos combination"),
- ("e prompt MVA", "CMS_eff_e_promptMVA_&lt;year&gt;", "Efficiency of the prompt-MVA cut on real electrons", "Medium+MVA conditional factor", "Up/nom 1.0097 on one H+c file"),
- ("e reco", "CMS_eff_e_reco_{below20, 20to75, above75}", "Electron reconstruction efficiency, measured in three p<sub>T</sub> ranges", "Three independent nuisances by p<sub>T</sub> range", "Implemented")],
-"Product ID×iso×MVA (μ) and Medium×MVA×reco (e) matches how latinos applies the same files; no double counting found. Measurement definitions are less documented. " + PENDING,
-src(note(N["lepsf"], "lepton-SF provenance"), note(N["state"], "full-fix state"))))
-
-add(syst_slide("backup-syst-lepscale", "Lepton momentum scale and resolution",
-[("μ scale", "CMS_scale_m_&lt;year&gt;", "Uncertainty in the absolute muon momentum calibration; moves p<sub>T</sub>, m<sub>ℓℓ</sub>, m<sub>T</sub>", "Object shift Up/Down; selection and features recomputed for each shift", "Implemented; migrations pending"),
- ("μ resolution", "CMS_res_m_&lt;year&gt;", "Uncertainty in the extra smearing that matches MC resolution to data (width, not mean)", "Object shift Up/Down", "Deterministic per-event path implemented; output checks pending"),
- ("e scale", "CMS_scale_e_&lt;year&gt;", "Uncertainty in the absolute electron energy calibration", "Object shift Up/Down", "Implemented"),
- ("e resolution", "CMS_res_e_&lt;year&gt;", "Uncertainty in the electron energy smearing", "Object shift Up/Down", "Earlier nominal-only smearing-key bug fixed")],
-"Object shifts re-run the full selection, so acceptance and channel migrations are included, not only weights. " + PENDING,
-src(note(N["syst"], "inventory"))))
-
-add(syst_slide("backup-syst-jets", "Jets, MET, c-tagging, trigger",
-[("JES", "CMS_scale_j_&lt;year&gt;", "Uncertainty in the jet energy response; moves jets, c-jet choice and MET", "Total source Up/Down, propagated to MET", "Implemented; no per-source split"),
- ("JER", "CMS_res_j_&lt;year&gt;", "MC jet resolution vs data", "Smearing Up/Down, propagated to MET", "Implemented"),
- ("Unclustered MET", "CMS_met_unclustered_&lt;year&gt;", "Soft energy not in jets or leptons; enters MET and m<sub>T</sub>", "Up/Down on the unclustered component", "<b>Added</b>; was missing in July"),
- ("c-tag", "CMS_ctag2d_&lt;year&gt;", "Data/MC difference in PNet CvsL/CvsB, which define the 11 categories (MVA inputs)", "2D SF Total Up/Down", "<span class='warn'>provisional</span>: calibration update awaited"),
- ("Trigger", "—", "Online selection efficiency", "SFs disabled by earlier decision", "No nuisance; not a measured zero")],
-PENDING, src(note(N["syst"], "inventory"), note(N["lepsf"], "c-tag status"))))
-
-add(syst_slide("backup-syst-theory", "Theory: parton shower, scales, top p<sub>T</sub>",
-[("ISR / FSR", "ps_isr, ps_fsr", "Shower radiation from incoming / outgoing partons; changes jet activity", "PS weight pairs; all processes except tt; one name across processes and eras", "Implemented"),
- ("μ<sub>R</sub>, μ<sub>F</sub>", "scalevar_muR, _muF, _muR_muF", "Missing higher orders: renormalisation and factorisation scale choice", "LHE weights ×2 and ×0.5; three directions (not an envelope); running-Yukawa fix for H+c/H+b", "Implemented; tt excluded"),
- ("Top p<sub>T</sub>", "top_pt", "Data prefer a softer top p<sub>T</sub> than MC", "Nominal reweighted; Down = none, Up = symmetric", "Implemented"),
- ("H + heavy flavour", "higgs_plus_c", "Uncertain rate of ggH/VBF with a real c-jet", "±50% on ggH/VBF events with a GEN c-jet (p<sub>T</sub>&gt;25, |η|&lt;2.5)", "Replaces flat 40% on all Higgs bkg")],
-PENDING, src(note(N["syst"], "inventory §theory"))))
-
-add(syst_slide("backup-syst-pdf", "PDF and α<sub>S</sub>",
-[("PDF shape", "lhe_pdf", "Parton momentum and flavour content of the proton; changes acceptance and shape", "Hessian members (4FS); MC-replica std (Arm B 3FS); inclusive rate removed per member", "Acceptance may still change"),
- ("H+c PDF rate", "xsec_hplusc_PDF", "PDF uncertainty on the inclusive signal cross section", "lnN 1.074, both arms", "7.43% ± 0.14% (stat) from the 13.6 TeV 4FS gridpack"),
- ("α<sub>S</sub>", "lhe_alphaS", "Uncertainty in α<sub>S</sub>(m<sub>Z</sub>), distinct from scale choice", "Event weights where members exist", "<span class='warn'>4FS H+c has no α<sub>S</sub> pair</span>"),
- ("H+c α<sub>S</sub> rate", "—", "α<sub>S</sub> effect on the signal rate", "Needs a process-specific calculation (PDF4LHC recipe)", "<span class='warn'>missing</span>; old 3% unsourced"),
- ("H+b PDF⊕α<sub>S</sub>", "—", "Theory rate of H+b inside the Higgs background", "Candidate +3.36/−3.44%", "Not installed; overlap with 5%")],
-"Arm B: 3FS is not renormalised like 4FS, so check that its PDF rate is not counted twice with the 7.4%. " + PENDING,
-src(note(N["syst"], "inventory"), note(N["alphas"], "α<sub>S</sub> sources"))))
-
-add(syst_slide("backup-syst-scheme", "Signal flavour scheme and negrw",
-[("A: 3FS vs 4FS", "xsec_hplusc_3FS_4FS", "4FS vs 3FS give different charm kinematics", "Shape from leading GEN c-hadron p<sub>T</sub>: Up = 3FS-like, Down = 2 − Up; Arm A only", "Replaces flat 30%"),
- ("B: stitching", "—", "How 3FS (≥1 c-jet) and 4FS (0 c-jet) regions are joined", "Per-era stitch factors; A's scheme nuisance off", "Missing-rate, scale and PDF consistency checks pending"),
- ("negrw", "CMS_negrw_vjets", "Spread of the negative-weight model on V+jets", "20-member ensemble spread; per-era/sample yield preserved", "Band does not cover all shape bias; fit-bin closure open")],
-PENDING, src(note(N["routeb"], "Route B"), note(N["negrw"], "negrw"))))
-
-add(syst_slide("backup-syst-rates", "Rates, fit freedom, MC statistics",
-[("Single top", "—", "Inclusive cross-section uncertainty", "lnN −1.27/+1.67%", "Configured"),
- ("Diboson / V+jets", "—", "Inclusive cross sections of merged groups", "lnN 3.7% / 2.7%", "Configured"),
- ("Higgs bkg / BRs", "—", "Production rate; BR(H→WW), BR(H→ττ)", "5%; 1% each on the whole merged group", "<span class='warn'>BR scope too broad</span>"),
- ("tt normalisation", "rate_tt", "Free in the fit, constrained by the tt CR", "rateParam, range [0, 5]", "Not a prior"),
- ("MC statistics", "autoMCStats 10", "Finite simulated events per bin (incl. negative weights)", "Barlow–Beeston-lite per bin from Σw²; threshold 10 events", "Not a flat 10%")],
-"Correlations: detector by year; theory names shared across eras. " + PENDING,
-src(note(N["syst"], "inventory §rates"))))
-
-# ---------------------------------------------------------------- other backup
-add(slide("backup-negrw-sr", "Backup: negrw in the eμ SR (V+jets, 17,627 events)",
-'''<div class="two"><div><img src="assets/07_sr_vpt.png" alt="V pT in the SR: nominal, v2, July"></div>
-<div><img src="assets/09_shape_renorm_lhe_vpt_all_WtoLNu_2Jets_1J.png" alt="W 1J vpt shape residual after renormalisation">
-<p class="cap">W+1J, V p<sub>T</sub>: χ² 139.4/20 (v2), 185.5/20 (July); 120.1 / 155.6 with the nuisance</p></div></div>
-<p class="take">In the SR the two models agree with each other; the residual per-sample shape bias is common to both.</p>''',
-src(note(N["negrw"], "corrected stats")), tag="backup"))
-
-add(slide("backup-ctag", "Backup: 2D c-tag categories used as MVA inputs",
-'''<ul>
-<li>Leading c-jet candidate scored by PNet CvsL (x) and CvsB (y)</li>
-<li>x edges: 0, 0.250, 0.452, 0.808, 1</li>
-<li>y edges: 0, 0.006, 0.017, 0.055, 0.761, 0.944, 0.985, 0.995, 1</li>
-<li>11 categories: L0, C0–C4, B0–B4, one-hot inputs to the event MVA</li>
-<li>Edges are hashed into the feature signature: changing them invalidates trained models</li>
-</ul>
-<p class="take">A new c-tag calibration with new edges means retraining; with the same edges only the SF weights change.</p>''',
-src("<code>analysis/corrections/ctag2d_categories.py</code> (HEAD <code>71eef55</code>)", note(N["syst"], "inventory")), tag="backup"))
-
-add(slide("backup-production", "Backup: production bookkeeping",
-'''<ul>
-<li>TRAIN partitions expected: A 2729, B 2864 (after the H→ττ replacement)</li>
-<li>MC inputs frozen for training: A 2437 markers / 22,613 parquets; B 2572 / 24,598</li>
-<li>Training preparation re-checks every MC marker (mode, era, hashes, entries, exact file list), duplicate chunks, normalisation and Route B stitch records before any fold starts</li>
-<li>Model registry: <code>/eos/user/c/cgupta/higgscharm/outputs/hww_mva_models/</code></li>
-<li>Code: <code>hww-analysis</code> local commits <code>ccdc8f9</code>, <code>b6d52ea</code>, <code>71eef55</code>; b-hive <code>195fd67</code>; none pushed</li>
-</ul>''',
-src(note(N["prod"], "continuation note"), note(N["dup"], "MVA readiness")), tag="backup"))
-
-HEAD = '''<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HToWW November analysis update - 13 Nov 2026 (r%d)</title>
-<link rel="stylesheet" href="../../../../../_shared/reveal/reset.css">
-<link rel="stylesheet" href="../../../../../_shared/reveal/reveal.css">
-<style>
-:root { --ink:#172b42; --accent:#126782; --muted:#526374; --line:#c4d1d9; --warn:#9a4b00; --ok:#2c6e3f; }
-body { background:#fff; color:var(--ink); font-family: Arial, sans-serif; }
-.reveal { font-size: 25px; line-height: 1.32; }
-.reveal .slides { text-align: left; }
-.reveal .slides section { box-sizing: border-box; padding: 26px 44px 18px; }
-.reveal h1 { font-size: 1.9em; color: var(--ink); margin: 120px 0 26px; line-height: 1.15; }
-.reveal h2 { color: var(--ink); font-size: 1.3em; font-weight: 700; line-height: 1.14; margin: 0 0 16px; }
-.reveal p { margin: 0 0 12px; }
-.reveal ul { margin: 0 0 12px 1em; padding: 0; list-style: disc; }
-.reveal li { margin-bottom: 7px; padding-left: 4px; }
-.reveal strong, .reveal b { color: var(--accent); }
-.reveal a { color: var(--accent); }
-.reveal code { font-family: monospace; font-size: .84em; overflow-wrap: anywhere; }
-.reveal table { border-collapse: collapse; width: 100%%; margin-bottom: 12px; }
-.reveal th, .reveal td { text-align: left; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
-.reveal th { color: var(--accent); }
-.reveal .compact { font-size: .74em; }
-.reveal table.syst { font-size: .6em; line-height: 1.25; }
-.reveal table.syst td, .reveal table.syst th { padding: 5px 10px 5px 0; }
-.reveal table.syst code { font-size: .9em; color: var(--muted); }
-.reveal .label { color: var(--muted); font-size: .54em; margin-bottom: 8px; }
-.reveal .warn { color: var(--warn); font-weight: 700; }
-.reveal .ok { color: var(--ok); font-weight: 700; }
-.reveal .todo { color: var(--muted); font-weight: 700; }
-.reveal .take { color: var(--accent); font-weight: 600; margin-top: 10px; }
-.reveal .small { font-size: .78em; }
-.reveal .sub { font-size: .9em; color: var(--muted); }
-.reveal .foot { font-size: .62em; color: var(--muted); }
-.reveal .cap { font-size: .58em; color: var(--muted); }
-.reveal .source { font-size: .5em; line-height: 1.35; color: var(--muted); margin-top: 10px; }
-.reveal .two { display: flex; gap: 28px; align-items: flex-start; }
-.reveal .two > div { flex: 1 1 0; min-width: 0; }
-.reveal img { max-width: 100%%; max-height: 330px; display: block; margin: 0 auto 4px; }
-.reveal aside.notes { display: none; }
-.reveal .bar { display: flex; height: 34px; margin: 6px 0 4px; font-size: .7em; }
-.reveal .bar span { display: flex; align-items: center; justify-content: center; }
-.reveal .train { background: #126782; color: white; }
-.reveal .valid { background: #d9a441; color: #172b42; }
-.reveal .test { background: #74b6ad; color: #172b42; }
-.reveal .slide-number { font: 14px Arial, sans-serif; color: var(--muted); background: transparent; }
-.reveal .progress { color: var(--accent); height: 3px; }
-.reveal .controls { color: var(--accent); }
-.vault-nav { position: fixed; bottom: 10px; left: 20px; z-index: 50; font: 13px Arial, sans-serif; color: #526374; }
-.vault-nav a { color: #126782; margin-right: 16px; }
-@media print { .vault-nav { display: none; } }
-</style>
-<!-- Obsidian's HTML viewer runs with scripts off: show every slide as a plain page. -->
-<noscript><style>
-html, body { overflow: auto !important; height: auto !important; }
-.reveal, .reveal .slides, .reveal .slides > section {
-  position: static !important; display: block !important; transform: none !important;
-  width: auto !important; height: auto !important; inset: auto !important;
-  overflow: visible !important; opacity: 1 !important; visibility: visible !important;
-  pointer-events: auto !important; margin: 0 !important; }
-.reveal .slides > section { max-width: 1180px; margin: 0 auto !important;
-  border-bottom: 2px solid #c4d1d9; padding: 30px 40px !important; }
-.reveal h1 { margin-top: 20px; }
-</style></noscript>
-</head>
-<body>
-<nav class="vault-nav" aria-label="Vault and slide navigation"><a href="obsidian://open?vault=obsidian-notes&amp;file=%s">Open slide plan in Obsidian</a><a href="../../../../../index.html">All decks</a></nav>
-<div class="reveal"><div class="slides">
-'''
-
-TAIL = '''
-</div></div>
-<script src="../../../../../_shared/reveal/reveal.js"></script>
-<script>
-Reveal.initialize({ width: 1280, height: 720, margin: 0.04, center: false,
-  hash: true, transition: 'none', backgroundTransition: 'none',
-  controls: true, progress: true, slideNumber: 'c/t',
-  pdfSeparateFragments: false, pdfMaxPagesPerSlide: 1 });
-</script>
-</body>
-</html>
-'''
-
-out = Path(__file__).with_name("index.html")
-out.write_text(HEAD % (REV, quote(N["plan"], safe="")) + "\n".join(SLIDES) + TAIL)
-print(out, len(SLIDES), "slides")
+# Companion notes are generated from the evidence/interpretation annotations, not invented results.
+import re,html
+lines=['---','tags: [slides, speaker-notes]','status: active','date: 2026-11-12','source: laptop','---','','# November update r2: speaker notes','','Internal CMS talk. The old-card reference and new-production status are explicitly separate. No new A/B limit is claimed.','']
+for i,s in enumerate(slides,1):
+ raw=s['html'];notes=re.search(r'<aside class="notes">(.*?)</aside>',raw,re.S)
+ takeaway=re.search(r'<p class="takeaway">(.*?)</p>',raw,re.S)
+ text=(notes.group(1) if notes and notes.group(1).strip() else takeaway.group(1) if takeaway else 'Section divider.')
+ text=html.unescape(re.sub('<[^>]*>',' ',text))
+ lines += [f"## {i}. {html.unescape(re.sub('<[^>]*>','',s['title']))}",'',f"[Open slide](index.html#/{s['id']})",'',text,'']
+(D/'speaker-notes.md').write_text('\n'.join(lines))

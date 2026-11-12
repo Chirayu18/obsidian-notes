@@ -1,0 +1,9 @@
+{
+  "template": "Projects/HiggsCharmTalk-Higgs2026/html/deck.html",
+  "stylesheet": "Projects/HiggsCharmTalk-Higgs2026/html/deck.css",
+  "source_css_sha256": "6fa4054ec3477343fc494d6657b395439f3542dc1847e69ea2b9369ebf26430d",
+  "reused": "teal/orange palette, gradient side rail and title, typography, logo tile, footer takeaway and backup divider",
+  "adapted": "internal HToWW title; Reveal navigation and source links; 23px content and scoped layouts",
+  "reference_inspected": "final PDF title, charm-tagging and prospects pages; source HTML/CSS",
+  "date": "2026-11-12"
+}

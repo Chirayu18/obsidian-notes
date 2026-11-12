@@ -1,0 +1,182 @@
+[
+  {
+    "id": "title",
+    "title": "Higgs + charm, H → WW",
+    "backup": false
+  },
+  {
+    "id": "analysis",
+    "title": "The H+c analysis in Run 3",
+    "backup": false
+  },
+  {
+    "id": "progress",
+    "title": "August → October: building the four-era analysis",
+    "backup": false
+  },
+  {
+    "id": "historical-result",
+    "title": "October reference: expected μ < 691",
+    "backup": false
+  },
+  {
+    "id": "higgs-scale",
+    "title": "A diagnostic of the Higgs-background scale treatment",
+    "backup": false
+  },
+  {
+    "id": "signal-samples",
+    "title": "Two issues in the central signal samples",
+    "backup": false
+  },
+  {
+    "id": "gridpack-validation",
+    "title": "Corrected gridpack: checks against the clean reference",
+    "backup": false
+  },
+  {
+    "id": "arms",
+    "title": "Flavour scheme: two complementary strategies",
+    "backup": false
+  },
+  {
+    "id": "samples",
+    "title": "Rates and sample coverage brought up to date",
+    "backup": false
+  },
+  {
+    "id": "leptonmva",
+    "title": "Prompt-lepton selection aligned with HWW",
+    "backup": false
+  },
+  {
+    "id": "negrw",
+    "title": "Negative weights: retraining the reweighting model",
+    "backup": false
+  },
+  {
+    "id": "negrw-limits",
+    "title": "Overall closure hides sample-level shape bias",
+    "backup": false
+  },
+  {
+    "id": "syst-overview",
+    "title": "Systematics: implementation and physics scope",
+    "backup": false
+  },
+  {
+    "id": "speed",
+    "title": "Framework optimization: remove repeated work",
+    "backup": false
+  },
+  {
+    "id": "framework-flow",
+    "title": "A compact event record for offline iteration",
+    "backup": false
+  },
+  {
+    "id": "mva",
+    "title": "Event classifier: five held-out models per arm",
+    "backup": false
+  },
+  {
+    "id": "mvacheck",
+    "title": "A duplicated validation batch changed model selection",
+    "backup": false
+  },
+  {
+    "id": "results",
+    "title": "Fast iteration cards from the TRAIN event records",
+    "backup": false
+  },
+  {
+    "id": "status",
+    "title": "Production: complete inputs, training underway",
+    "backup": false
+  },
+  {
+    "id": "open",
+    "title": "Progress made, and questions for the conveners",
+    "backup": false
+  },
+  {
+    "id": "backup",
+    "title": "Backup",
+    "backup": true
+  },
+  {
+    "id": "definitions",
+    "title": "Backup: definitions and fit conventions",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-norm",
+    "title": "Normalisation: luminosity, pileup",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-lepsf",
+    "title": "Lepton efficiency scale factors",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-lepscale",
+    "title": "Lepton momentum scale and resolution",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-jets",
+    "title": "Jets, MET, c-tagging, trigger",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-theory",
+    "title": "Theory: parton shower, scales, top p<sub>T</sub>",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-pdf",
+    "title": "PDF and α<sub>S</sub>",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-scheme",
+    "title": "Signal flavour scheme and negrw",
+    "backup": true
+  },
+  {
+    "id": "backup-syst-rates",
+    "title": "Rates, fit freedom, MC statistics",
+    "backup": true
+  },
+  {
+    "id": "hdamp",
+    "title": "Backup: hDamp probes tt matching",
+    "backup": true
+  },
+  {
+    "id": "backup-negrw-sr",
+    "title": "Backup: negrw in the selected eμ signal region",
+    "backup": true
+  },
+  {
+    "id": "backup-ctag",
+    "title": "Backup: c-tag categories enter the event MVA",
+    "backup": true
+  },
+  {
+    "id": "backup-gridpack-weights",
+    "title": "Backup: scale and PDF weights after the rebuild",
+    "backup": true
+  },
+  {
+    "id": "backup-gridpacks",
+    "title": "Backup: private 3FS validation",
+    "backup": true
+  },
+  {
+    "id": "backup-production",
+    "title": "Backup: traceable inputs and output boundaries",
+    "backup": true
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "original_path": "/home/cgupta/obsidian-notes/Projects/HiggsCharmTalk-Higgs2026/html/img/CMSlogo_color.png",
+  "original_sha256": "e1a1e8e15ca466c0ff824039bc433eacb569c7220111172380f3c092a2d7853b",
+  "source_deck": "Projects/HiggsCharmTalk-Higgs2026/html/deck.html",
+  "operation": "local resized copy; original unchanged",
+  "copied": "2026-11-12",
+  "script": "build.py asset preparation (keeper)",
+  "commit": "source already present in vault; see git history"
+}

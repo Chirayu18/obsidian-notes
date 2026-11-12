@@ -1,0 +1,288 @@
+{
+  "backup-syst-norm": {
+    "title": "Normalisation: luminosity, pileup",
+    "rows": [
+      {
+        "name": "<b>Luminosity</b>",
+        "nuisance": "lumi_<year>",
+        "effect": "Uncertainty on the integrated luminosity; scales every simulated yield",
+        "construction": "lnN 1.4% (2022), 1.3% (2023); all MC except free-floating tt; separate per year",
+        "evidence": "Configured. Official common-component correlation model not implemented"
+      },
+      {
+        "name": "<b>Pileup</b>",
+        "nuisance": "CMS_pileup_<year>",
+        "effect": "Uncertain distribution of extra pp collisions per crossing; changes MET, isolation, jet counts",
+        "construction": "Event-weight Up/Down from the pileup calibration; all MC",
+        "evidence": "Implemented; template effect pending"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory §detector</a>"
+  },
+  "backup-syst-lepsf": {
+    "title": "Lepton efficiency scale factors",
+    "rows": [
+      {
+        "name": "<b>μ ID</b>",
+        "nuisance": "CMS_eff_m_id_<year>",
+        "effect": "Data/MC difference in identifying a real muon",
+        "construction": "HWW tight-ID SF Up/Down per lepton; all MC",
+        "evidence": "Files identical to latinos (md5)"
+      },
+      {
+        "name": "<b>μ isolation</b>",
+        "nuisance": "CMS_eff_m_iso_<year>",
+        "effect": "Data/MC difference in a real muon looking isolated",
+        "construction": "Tight PF iso SF, conditional on ID",
+        "evidence": "Same producer chain"
+      },
+      {
+        "name": "<b>μ prompt MVA</b>",
+        "nuisance": "CMS_eff_m_promptMVA_<year>",
+        "effect": "Efficiency of the prompt-MVA cut on real muons",
+        "construction": "ttH-MVA SF on top of ID×iso",
+        "evidence": "Up/nom 1.0036 on one H+c file"
+      },
+      {
+        "name": "<b>e ID</b>",
+        "nuisance": "CMS_eff_e_id_<year>",
+        "effect": "Data/MC difference for POG Medium electrons",
+        "construction": "Medium SF",
+        "evidence": "Matches the latinos combination"
+      },
+      {
+        "name": "<b>e prompt MVA</b>",
+        "nuisance": "CMS_eff_e_promptMVA_<year>",
+        "effect": "Efficiency of the prompt-MVA cut on real electrons",
+        "construction": "Medium+MVA conditional factor",
+        "evidence": "Up/nom 1.0097 on one H+c file"
+      },
+      {
+        "name": "<b>e reco</b>",
+        "nuisance": "CMS_eff_e_reco_{below20, 20to75, above75}",
+        "effect": "Electron reconstruction efficiency, measured in three p<sub>T</sub> ranges",
+        "construction": "Three independent nuisances by p<sub>T</sub> range",
+        "evidence": "Implemented"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-10-lepton-sf-provenance-check.md\">lepton-SF provenance</a> · <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2F2026-11-05-fullfix-rerun-run-a-state.md\">full-fix state</a>"
+  },
+  "backup-syst-lepscale": {
+    "title": "Lepton momentum scale and resolution",
+    "rows": [
+      {
+        "name": "<b>μ scale</b>",
+        "nuisance": "CMS_scale_m_<year>",
+        "effect": "Uncertainty in the absolute muon momentum calibration; moves p<sub>T</sub>, m<sub>ℓℓ</sub>, m<sub>T</sub>",
+        "construction": "Object shift Up/Down; selection and features recomputed for each shift",
+        "evidence": "Implemented; migrations pending"
+      },
+      {
+        "name": "<b>μ resolution</b>",
+        "nuisance": "CMS_res_m_<year>",
+        "effect": "Uncertainty in the extra smearing that matches MC resolution to data (width, not mean)",
+        "construction": "Object shift Up/Down",
+        "evidence": "Deterministic per-event path implemented; output checks pending"
+      },
+      {
+        "name": "<b>e scale</b>",
+        "nuisance": "CMS_scale_e_<year>",
+        "effect": "Uncertainty in the absolute electron energy calibration",
+        "construction": "Object shift Up/Down",
+        "evidence": "Implemented"
+      },
+      {
+        "name": "<b>e resolution</b>",
+        "nuisance": "CMS_res_e_<year>",
+        "effect": "Uncertainty in the electron energy smearing",
+        "construction": "Object shift Up/Down",
+        "evidence": "Earlier nominal-only smearing-key bug fixed"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory</a>"
+  },
+  "backup-syst-jets": {
+    "title": "Jets, MET, c-tagging, trigger",
+    "rows": [
+      {
+        "name": "<b>JES</b>",
+        "nuisance": "CMS_scale_j_<year>",
+        "effect": "Uncertainty in the jet energy response; moves jets, c-jet choice and MET",
+        "construction": "Total source Up/Down, propagated to MET",
+        "evidence": "Implemented; no per-source split"
+      },
+      {
+        "name": "<b>JER</b>",
+        "nuisance": "CMS_res_j_<year>",
+        "effect": "MC jet resolution vs data",
+        "construction": "Smearing Up/Down, propagated to MET",
+        "evidence": "Implemented"
+      },
+      {
+        "name": "<b>Unclustered MET</b>",
+        "nuisance": "CMS_met_unclustered_<year>",
+        "effect": "Soft energy not in jets or leptons; enters MET and m<sub>T</sub>",
+        "construction": "Up/Down on the unclustered component",
+        "evidence": "<b>Added</b>; was missing in July"
+      },
+      {
+        "name": "<b>c-tag</b>",
+        "nuisance": "CMS_ctag2d_<year>",
+        "effect": "Data/MC difference in PNet CvsL/CvsB, which define the 11 categories (MVA inputs)",
+        "construction": "2D SF Total Up/Down",
+        "evidence": "<span class=\"warn\">provisional</span>: calibration update awaited"
+      },
+      {
+        "name": "<b>Trigger</b>",
+        "nuisance": "—",
+        "effect": "Online selection efficiency",
+        "construction": "SFs disabled by earlier decision",
+        "evidence": "No nuisance; not a measured zero"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory</a> · <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2F2026-11-10-lepton-sf-provenance-check.md\">c-tag status</a>"
+  },
+  "backup-syst-theory": {
+    "title": "Theory: parton shower, scales, top p<sub>T</sub>",
+    "rows": [
+      {
+        "name": "<b>ISR / FSR</b>",
+        "nuisance": "ps_isr, ps_fsr",
+        "effect": "Shower radiation from incoming / outgoing partons; changes jet activity",
+        "construction": "PS weight pairs; all processes except tt; one name across processes and eras",
+        "evidence": "Implemented"
+      },
+      {
+        "name": "<b>μ<sub>R</sub>, μ<sub>F</sub></b>",
+        "nuisance": "scalevar_muR, _muF, _muR_muF",
+        "effect": "Missing higher orders: renormalisation and factorisation scale choice",
+        "construction": "LHE weights ×2 and ×0.5; three directions (not an envelope); running-Yukawa fix for H+c/H+b",
+        "evidence": "Implemented; tt excluded"
+      },
+      {
+        "name": "<b>Top p<sub>T</sub></b>",
+        "nuisance": "top_pt",
+        "effect": "Data prefer a softer top p<sub>T</sub> than MC",
+        "construction": "Nominal reweighted; Down = none, Up = symmetric",
+        "evidence": "Implemented"
+      },
+      {
+        "name": "<b>H + heavy flavour</b>",
+        "nuisance": "higgs_plus_c",
+        "effect": "Uncertain rate of ggH/VBF with a real c-jet",
+        "construction": "±50% on ggH/VBF events with a GEN c-jet (p<sub>T</sub>&gt;25, |η|&lt;2.5)",
+        "evidence": "Replaces flat 40% on all Higgs bkg"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory §theory</a>"
+  },
+  "backup-syst-pdf": {
+    "title": "PDF and α<sub>S</sub>",
+    "rows": [
+      {
+        "name": "<b>PDF shape</b>",
+        "nuisance": "lhe_pdf",
+        "effect": "Parton momentum and flavour content of the proton; changes acceptance and shape",
+        "construction": "Hessian members (4FS); MC-replica std (Arm B 3FS); inclusive rate removed per member",
+        "evidence": "Acceptance may still change"
+      },
+      {
+        "name": "<b>H+c PDF rate</b>",
+        "nuisance": "xsec_hplusc_PDF",
+        "effect": "PDF uncertainty on the inclusive signal cross section",
+        "construction": "lnN 1.074, both arms",
+        "evidence": "7.43% ± 0.14% (stat) from the 13.6 TeV 4FS gridpack"
+      },
+      {
+        "name": "<b>α<sub>S</sub></b>",
+        "nuisance": "lhe_alphaS",
+        "effect": "Uncertainty in α<sub>S</sub>(m<sub>Z</sub>), distinct from scale choice",
+        "construction": "Event weights where members exist",
+        "evidence": "<span class=\"warn\">4FS H+c has no α<sub>S</sub> pair</span>"
+      },
+      {
+        "name": "<b>H+c α<sub>S</sub> rate</b>",
+        "nuisance": "—",
+        "effect": "α<sub>S</sub> effect on the signal rate",
+        "construction": "Needs a process-specific calculation (PDF4LHC recipe)",
+        "evidence": "<span class=\"warn\">missing</span>; old 3% unsourced"
+      },
+      {
+        "name": "<b>H+b PDF⊕α<sub>S</sub></b>",
+        "nuisance": "—",
+        "effect": "Theory rate of H+b inside the Higgs background",
+        "construction": "Candidate +3.36/−3.44%",
+        "evidence": "Not installed; overlap with 5%"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory</a> · <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-hplusc-alphas-rate-sources.md\">α<sub>S</sub> sources</a>"
+  },
+  "backup-syst-scheme": {
+    "title": "Signal flavour scheme and negrw",
+    "rows": [
+      {
+        "name": "<b>A: 3FS vs 4FS</b>",
+        "nuisance": "xsec_hplusc_3FS_4FS",
+        "effect": "4FS vs 3FS give different charm kinematics",
+        "construction": "Shape from leading GEN c-hadron p<sub>T</sub>: Up = 3FS-like, Down = 2 − Up; Arm A only",
+        "evidence": "Replaces flat 30%"
+      },
+      {
+        "name": "<b>B: stitching</b>",
+        "nuisance": "—",
+        "effect": "How 3FS (≥1 c-jet) and 4FS (0 c-jet) regions are joined",
+        "construction": "Per-era stitch factors; A's scheme nuisance off",
+        "evidence": "Missing-rate, scale and PDF consistency checks pending"
+      },
+      {
+        "name": "<b>negrw</b>",
+        "nuisance": "CMS_negrw_vjets",
+        "effect": "Spread of the negative-weight model on V+jets",
+        "construction": "20-member ensemble spread; per-era/sample yield preserved",
+        "evidence": "Band does not cover all shape bias; fit-bin closure open"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fsamples-and-production%2Ffull-rerun%2F2026-11-12-route-b-integration-and-train.md\">Route B</a> · <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fnegative-weights%2F2026-11-12-negrw-g1-g2-provenance-and-corrected-stats.md\">negrw</a>"
+  },
+  "backup-syst-rates": {
+    "title": "Rates, fit freedom, MC statistics",
+    "rows": [
+      {
+        "name": "<b>Single top</b>",
+        "nuisance": "—",
+        "effect": "Inclusive cross-section uncertainty",
+        "construction": "lnN −1.27/+1.67%",
+        "evidence": "Configured"
+      },
+      {
+        "name": "<b>Diboson / V+jets</b>",
+        "nuisance": "—",
+        "effect": "Inclusive cross sections of merged groups",
+        "construction": "lnN 3.7% / 2.7%",
+        "evidence": "Configured"
+      },
+      {
+        "name": "<b>Higgs bkg / BRs</b>",
+        "nuisance": "—",
+        "effect": "Production rate; BR(H→WW), BR(H→ττ)",
+        "construction": "5%; 1% each on the whole merged group",
+        "evidence": "<span class=\"warn\">BR scope too broad</span>"
+      },
+      {
+        "name": "<b>tt normalisation</b>",
+        "nuisance": "rate_tt",
+        "effect": "Free in the fit, constrained by the tt CR",
+        "construction": "rateParam, range [0, 5]",
+        "evidence": "Not a prior"
+      },
+      {
+        "name": "<b>MC statistics</b>",
+        "nuisance": "autoMCStats 10",
+        "effect": "Finite simulated events per bin (incl. negative weights)",
+        "construction": "Barlow–Beeston-lite per bin from Σw²; threshold 10 events",
+        "evidence": "Not a flat 10%"
+      }
+    ],
+    "source": "Source: <a href=\"obsidian://open?vault=obsidian-notes&amp;file=Projects%2FHToWW%2Fcombine-systematics%2F2026-11-12-current-ab-systematics-status.md\">inventory §rates</a>"
+  }
+}

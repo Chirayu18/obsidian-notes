@@ -1,0 +1,20 @@
+{
+  "revision": 2,
+  "slides": 36,
+  "main": 20,
+  "backup": 16,
+  "overflow": 0,
+  "broken_figures": 0,
+  "page_errors": [],
+  "external_requests": [],
+  "scripts_disabled": "36 sections visible; no broken images;1280px viewport; not Obsidian itself",
+  "pdf_pages": 36,
+  "cern_deterministic_checks": {
+    "blockers": 0,
+    "minor_density": 10,
+    "font_notice": "Type3 present; representative PDF pages rasterized and visually checked"
+  },
+  "physics_validation": "Source consistency against cited notes and saved plots; no new analysis tests, processing, model training or Combine",
+  "general_vault_lint": "Deferred by user;172 local deck/hub targets and anchors checked",
+  "publication": "Local revision; unrelated pending vault commits not published by this task"
+}

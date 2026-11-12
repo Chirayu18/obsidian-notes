@@ -54,7 +54,16 @@ try {
           const r = e.getBoundingClientRect();
           return r.left < box.left - 2 || r.right > box.right + 2 || r.top < box.top - 2 || r.bottom > box.bottom + 2;
         }).map(e => e.textContent.slice(0, 100));
-      return { id: s.id, height: s.scrollHeight, overflow, title: s.querySelector('h1,h2')?.textContent };
+      const content = s.querySelector('.content');
+      const contentBox = content?.getBoundingClientRect();
+      const bodyOverflow = content ? [...content.querySelectorAll('p,li,table,figure,.metric,.workflow,.context')]
+        .filter(e => getComputedStyle(e).display !== 'none')
+        .filter(e => { const r=e.getBoundingClientRect(); return r.width>0 && (r.bottom>contentBox.bottom+2 || r.right>contentBox.right+2 || r.left<contentBox.left-2); })
+        .map(e => e.textContent.slice(0,90)) : [];
+      const heading = s.querySelector('header');
+      if (heading && contentBox && heading.getBoundingClientRect().bottom > contentBox.top-4) bodyOverflow.push('heading overlaps body');
+      const brokenImages = [...s.querySelectorAll('img')].filter(i=>!i.complete||!i.naturalWidth).map(i=>i.getAttribute('src'));
+      return { id: s.id, height: s.scrollHeight, overflow, bodyOverflow, brokenImages, title: s.querySelector('h1,h2')?.textContent };
     });
     slides.push(check);
     await page.screenshot({ path: join(render, `${String(i + 1).padStart(2, '0')}-${check.id}.png`) });
@@ -65,7 +74,7 @@ try {
   await page.pdf({ path: output, width: '1280px', height: '720px', printBackground: true, preferCSSPageSize: true, margin: { top: 0, right: 0, bottom: 0, left: 0 } });
   const report = { revision: Number(revision), output, slides, errors, failed, external };
   await writeFile(join(render, 'check.json'), JSON.stringify(report, null, 2) + '\n');
-  if (slides.some(s => s.overflow.length || s.height > 722) || errors.length || failed.length || external.length) {
+  if (slides.some(s => s.overflow.length || s.bodyOverflow.length || s.brokenImages.length || s.height > 722) || errors.length || failed.length || external.length) {
     throw new Error(`Render checks failed: ${join(render, 'check.json')}`);
   }
   console.log(JSON.stringify({ output, slides: count, overflow: 0, errors: 0, externalRequests: 0 }));

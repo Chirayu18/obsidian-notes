@@ -11,7 +11,7 @@ Analysis overview, Athens talk and historical c-tag/negrw presentations.
 
 Status: Organized by topic; original results and evidence remain in their source notes.
 
-**Latest deck:** [November analysis update, r1](2026-11-13-november-update/deck/index.html) (28 slides, local PDF `2026-11-13-november-update/deck/november-update_r1.pdf`) for the 13 Nov talk. Built from [[Projects/HToWW/talks/2026-11-12-november-update-slide-plan|the slide plan]]; the status snapshot (12 Nov ~16:45) needs refreshing before presenting. No new templates or limits yet; agent-reported.
+**Latest deck:** [November analysis update, r2](2026-11-13-november-update/deck/index.html) in the Higgs2026 template: 20 main + 16 backup slides. [Local PDF](2026-11-13-november-update/deck/november-update_r2.pdf) · [[Projects/HToWW/talks/2026-11-13-november-update/deck/speaker-notes|Speaker notes]]. Includes the updated problem→solution framework framing, old-card reference and 12 Nov 20:29 production snapshot. No new A/B limit is claimed.
 Latest dated record: [[Projects/HToWW/talks/athens/TRANSCRIPT|Transcript — MVA studies for $H+c$ ($H\to WW\to 2\ell2\nu$) at Run 3]].
 Needs Chirayu: unresolved source-note tasks remain open; see [[Meta/reorg/vault-20261105-report|keeper report]].
 

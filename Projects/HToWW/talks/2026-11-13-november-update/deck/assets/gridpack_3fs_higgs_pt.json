@@ -1,0 +1,9 @@
+{
+  "original_path": "/home/cgupta/obsidian-notes/Projects/HToWW/samples-and-production/gridpacks/deck/assets/plots3fs/3fs_prod_lhe_h_pt.png",
+  "original_sha256": "56c2d6550f5eea41d7f4870bbb0dbd1ba83c23747cb52490c8eec6dafef5f00c",
+  "source_deck": "Projects/HToWW/samples-and-production/gridpacks/deck/3fs.html",
+  "operation": "local resized copy; original unchanged",
+  "copied": "2026-11-12",
+  "script": "build.py asset preparation (keeper)",
+  "commit": "source already present in vault; see git history"
+}

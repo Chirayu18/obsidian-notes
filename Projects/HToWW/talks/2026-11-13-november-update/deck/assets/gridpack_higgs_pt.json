@@ -1,0 +1,9 @@
+{
+  "original_path": "/home/cgupta/obsidian-notes/Projects/HToWW/samples-and-production/gridpacks/deck/assets/plots4fs/higgs_pt.png",
+  "original_sha256": "7a6f2fd088ada83688ab73d6c2b4be6e7ef010815a7e08ceecbcae56652c2fb3",
+  "source_deck": "Projects/HToWW/samples-and-production/gridpacks/slides-sebastiano-2026-11/4fs_r3.html",
+  "operation": "local resized copy; original unchanged",
+  "copied": "2026-11-12",
+  "script": "build.py asset preparation (keeper)",
+  "commit": "source already present in vault; see git history"
+}

@@ -1,0 +1,17 @@
+{
+  "deck": "index.html",
+  "mode": "internal",
+  "audience": "HToWW analysis group and conveners",
+  "talk_minutes": null,
+  "focus": [
+    "storyline",
+    "source consistency",
+    "figures",
+    "readability"
+  ],
+  "forbidden_patterns": [],
+  "max_words_per_slide": 110,
+  "source": "Latest explicit internal presentation requests in the slide plan; Higgs2026 used for design only",
+  "limitations": "No new analysis runs or external-model reviews. Physics claims remain analysis-agent reported.",
+  "review_scope": "Local deterministic PDF checks and manual visual/source review; no external-model review"
+}

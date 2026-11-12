@@ -1,0 +1,9 @@
+{
+  "original_path": "/home/cgupta/obsidian-notes/Projects/HiggsCharmTalk-Higgs2026/html/img/VUB_logo.png",
+  "original_sha256": "c7598f7639dbb55f7b42c66fae29f4c790cb36e9de50d1d1485feb2e024320a6",
+  "source_deck": "Projects/HiggsCharmTalk-Higgs2026/html/deck.html",
+  "operation": "local resized copy; original unchanged",
+  "copied": "2026-11-12",
+  "script": "build.py asset preparation (keeper)",
+  "commit": "source already present in vault; see git history"
+}
