@@ -1,0 +1,5 @@
+{"script": "assets/oct_scan.py with assets/oct_scan_points.json",
+ "fit": "lxplus:~/htoww_submit_logs/scan_oct691_20261113/run_scan.sh (keeper, 2026-11-13): combine -M MultiDimFit -t -1 --expectSignal 1 --algo grid --points 41, r in [-1000,1000]; stat-only with --freezeParameters allConstrainedNuisances from the total-fit snapshot",
+ "workspace": "higgscharm outputs/combine/full/full_run3.ws.root (October four-era card v12_hplusc_full_run3, pre-fix); sha256 in ws.sha256 next to the outputs",
+ "cross_check": "AsymptoticLimits on the same workspace: expected 50% r<691.0, 16% 459.3, 84% 1090.4",
+ "status": "historical pre-fix card; not the corrected A/B fit"}

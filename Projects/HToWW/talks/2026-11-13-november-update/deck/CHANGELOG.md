@@ -7,6 +7,21 @@ source: laptop
 
 # November analysis update deck
 
+## r4 — 2026-11-13
+
+Chirayu: "If likelihood scan is not there , do it" (κc interpretation then withdrawn: "Forget the kc interpretation btw"), and "Also can you add a systematic share comparision with run 2... Our impacts vs their impacts?". The Codex keeper hit its usage limit mid-r3; the Claude keeper reviewed r3 and continued.
+
+- **New `oct-scan`:** blind Asimov (μ = 1) scan of r on the unchanged October four-era workspace `full_run3.ws.root`, total and statistical-only (all constrained nuisances frozen). Run by the keeper on lxplus (`~/htoww_submit_logs/scan_oct691_20261113/`). Cross-check: AsymptoticLimits on the same workspace gives expected μ < 691.0 (16%/84%: 459.3/1090.4). 68% interval −294…+309 (stat-only −168…+171); 95% −637…+693. It replaces the August single-era scan in backup. Points and script are in `assets/oct_scan*`.
+- **New `run2-compare`:** HIG-24-009 Table 3 (1POI) vs the 21 Oct group-freeze study of the same October card, both of our conventions shown. Numbers taken unchanged from [[Projects/HToWW/combine-systematics/2026-10-21-uncertainty-breakdown-run2-vs-run3]]. Chart from `assets/run2_vs_run3_impacts.py`, colours validated with the dataviz palette checker.
+- **Text fix:** the r2/r3 text had lost spaces between words and numbers ("The1October", "Top30of55") and some notes had lost all spaces. `spacing.py` restores them in the generated HTML and speaker notes; about a dozen fully glued phrases were rewritten by hand.
+- No κc slide. No new A/B result: the scan and impacts belong to the pre-fix October card.
+
+Checks: 54 slides / PDF pages, zero overflow, script errors or external requests; scripts-disabled Chromium shows all 54 sections, no broken images (`noscript-check.mjs`, now kept in the deck folder). New and respaced slides inspected visually. Not opened in Obsidian itself.
+
+## r3 — 2026-11-12 (Codex keeper, not committed separately)
+
+Selection pass after the r2 rebuild: physics results in the main story and engineering detail in backup; added central-sample inventory slides, October data/MC investigation, impact table and minor-update appendix (53 slides). Folded into r4.
+
 ## r2 — 2026-11-12
 
 Complete presentation rebuild requested by Chirayu: “Decisions about the slides have been updated.... Update the slides... Make then GOOD like GOOD GOOD ... As good as the slides for the talk in Higgs2026 . And use that same template”; then “Revamp the slides completely, use elements from the CERN skill if needed.... Present it properly and it should look like substancial work done”.

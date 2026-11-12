@@ -1,0 +1,34 @@
+"""Build HIG-24-013-style scale-normalised variants of the October v12 Run 3 card (2026-11-12).
+For the chosen processes, each scalevar_* Up/Down template is rescaled so that its yield summed
+over the six channels of an era equals the nominal yield (rate removed, shape and channel
+migration kept). The process rate then comes only from its existing xsec lnN."""
+import shutil, sys
+from pathlib import Path
+import ROOT
+
+SRC = Path(sys.argv[1]); DEST = Path(sys.argv[2]); procs = sys.argv[3].split(',')
+ERAS = ['2022preEE', '2022postEE', '2023preBPix', '2023postBPix']
+CH = ['SR_hplusc', 'CR_higgsbkg', 'CR_tt', 'CR_st', 'CR_diboson', 'CR_vjets']
+SYST = ['scalevar_muR', 'scalevar_muF', 'scalevar_muR_muF']
+DEST.mkdir(parents=True, exist_ok=False)
+shutil.copy2(SRC / 'v12_hplusc_full_run3.txt', DEST)
+for era in ERAS:
+    name = f'v12_hplusc_full_{era}.root'
+    shutil.copy2(SRC / name, DEST / name)
+    if procs == ['none']:
+        continue
+    f = ROOT.TFile.Open(str(DEST / name), 'UPDATE')
+    for p in procs:
+        nom = sum(f.Get(f'{c}_{p}').Integral() for c in CH)
+        for s in SYST:
+            for d in ('Up', 'Down'):
+                hs = [f.Get(f'{c}_{p}_{s}{d}') for c in CH]
+                if any(h is None for h in hs):
+                    raise SystemExit(f'{era}: missing {p} {s}{d}')
+                tot = sum(h.Integral() for h in hs)
+                k = nom / tot
+                for c, h in zip(CH, hs):
+                    h = h.Clone(); h.Scale(k); h.SetDirectory(f); h.Write(f'{c}_{p}_{s}{d}', ROOT.TObject.kOverwrite)
+                print(f'{era} {p:9s} {s}{d:4s} rate removed: x{k:.4f} (variation/nominal was {tot/nom:.4f})')
+    f.Close()
+print('done', DEST)

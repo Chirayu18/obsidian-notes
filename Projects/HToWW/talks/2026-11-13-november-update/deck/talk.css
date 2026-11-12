@@ -38,3 +38,15 @@ body,.reveal{font-family:Inter,"Fira Sans",Arial,sans-serif;font-size:23px;line-
 .reveal sub,.reveal sup{font-size:.7em;line-height:0;position:relative;vertical-align:baseline}.reveal sub{bottom:-.25em}.reveal sup{top:-.5em}
 
 .reveal .divider{background:linear-gradient(125deg,#0a3346 0%,#0b4f6c 50%,#1b8a8f 100%)}.reveal .divider h1{font-size:64px;color:#fff;text-transform:none}.backup-home{position:absolute;left:70px;bottom:50px;font-size:20px}.reveal .backup-home a{color:white}.provenance{font-size:13px}
+/* Wide evidence figures use the available canvas without shrinking their labels. */
+.wide-plot .columns{gap:24px}.wide-plot .t{font-size:19px}.wide-plot .t td{padding:6px 8px}.wide-plot p{font-size:20px}.wide-plot .small{font-size:17px}
+.panorama figure img{height:330px;width:100%;object-fit:contain}.panorama .content>p{margin-top:14px;font-size:21px}
+.tall-plot figure img{height:440px}.tall-plot figcaption{font-size:16px}
+.reveal .minor-table{font-size:20px;line-height:1.23;table-layout:fixed}.minor-table th:first-child{width:20%}.minor-table th:nth-child(2){width:61%}.minor-table th:last-child{width:19%}.reveal .minor-table td{padding:8px 10px}.commit-ref{font-family:monospace;font-size:13px;color:var(--grey)}
+.minor-slide .content{top:137px;bottom:108px}.minor-slide .takeaway{font-size:20px}
+.syst-example{border-top:2px solid var(--teal-line);padding-top:20px;margin-top:22px;font-size:23px;line-height:1.4;max-width:1050px}
+.wide-plot .small{font-size:16px;line-height:1.25}.wide-plot .content{top:133px;bottom:108px}
+.tall-plot figure img{height:415px}
+.reveal table.minor-table{font-size:18px;line-height:1.2;table-layout:fixed}.reveal table.minor-table td{padding:5px 10px}.reveal table.minor-table th{font-size:17px;padding:6px 10px}
+.reveal table.impact-table{font-size:21px}.reveal table.impact-table td{padding:9px 10px}.impact-slide .content{top:137px;bottom:108px}
+.reveal table.inventory-table{font-size:21px;line-height:1.25}.reveal table.inventory-table td{padding:8px 10px}.inventory-slide .content{top:136px;bottom:108px}.inventory-slide .small{font-size:18px}

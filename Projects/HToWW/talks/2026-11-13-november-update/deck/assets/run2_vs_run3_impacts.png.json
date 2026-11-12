@@ -1,0 +1,4 @@
+{"script": "assets/run2_vs_run3_impacts.py (keeper, 2026-11-13)",
+ "run2_source": "References/HToWW/HIG-24-009-paper-v15 (28-04-2026), Table 3, 1POI column",
+ "run3_source": "Projects/HToWW/combine-systematics/2026-10-21-uncertainty-breakdown-run2-vs-run3.md (outputs/combine/full/plots_work/breakdown/breakdown.json, Condor 9566340)",
+ "status": "pre-fix October four-era card (61.9 fb-1); not the corrected A/B fit"}

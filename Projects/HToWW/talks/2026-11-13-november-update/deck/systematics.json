@@ -183,7 +183,7 @@
         "name": "<b>PDF shape</b>",
         "nuisance": "lhe_pdf",
         "effect": "Parton momentum and flavour content of the proton; changes acceptance and shape",
-        "construction": "Hessian members (4FS); MC-replica std (Arm B 3FS); inclusive rate removed per member",
+        "construction": "Hessian members (4FS); MC-replica std (Arm B 3FS). Rate removed per member for central4FS; residual rate in3FS needs checking.",
         "evidence": "Acceptance may still change"
       },
       {

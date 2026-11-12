@@ -1,0 +1,206 @@
+[
+  [
+    "minor-rates",
+    "Minor updates: cross sections and normalization",
+    [
+      [
+        "WH→WW",
+        "W−ℓν0.004215pb; W+qq0.013659pb; zero entries replaced.",
+        "63fb5ab,9aa71d5",
+        "Implemented"
+      ],
+      [
+        "WH companion rates",
+        "W+ℓν0.006601pb; W−qq0.008722pb checked against125.09 inputs.",
+        "9aa71d5",
+        "Checked"
+      ],
+      [
+        "H+c NNLO convention",
+        "0.0022141×(0.1664/0.2216)=0.0016626pb; ratio keeps original BR convention.",
+        "63fb5ab,4d26800",
+        "Adopted"
+      ],
+      [
+        "ggH→ττ",
+        "52.17pb×BRττ0.06256=3.2637552pb at125.09; other-era alignment recorded later.",
+        "37ce9d6",
+        "Updated"
+      ],
+      [
+        "PDF⊕αS rates",
+        "H+cPDF7.4% configured; H+b+3.36/−3.44% sourced but separate install pending.",
+        "8a4b5ed,ad9cf13",
+        "Mixed status"
+      ],
+      [
+        "Rate guard",
+        "Reject samples with xsec≤0 instead of silently assigning zero yield.",
+        "9aa71d5",
+        "Implemented"
+      ]
+    ]
+  ],
+  [
+    "minor-samples",
+    "Minor updates: samples and production inputs",
+    [
+      [
+        "DY replacement",
+        "Ten INVALID DY queries replaced by VALID same-generator reprocessings; all six YAMLs covered.",
+        "9ea0bf0,0fd7f93",
+        "Implemented"
+      ],
+      [
+        "DY2023 LO exception",
+        "JMENano12p5 4Jets queries use standard130X NanoAODv12 replacements; branch check saved.",
+        "0fd7f93",
+        "Checked"
+      ],
+      [
+        "Jet-binned W+jets",
+        "All four eras populated for the revised training; does not imply a new fake estimate.",
+        "03617d2,8944c6e",
+        "In inputs"
+      ],
+      [
+        "Wγ mapping",
+        "Included in diboson for retrained analysis; overlap with W+jets still needs physics review.",
+        "ad7a864,9ef65a9",
+        "Mapped"
+      ],
+      [
+        "H→ττ campaign",
+        "2023preBPix ggH→ττ Winter23 input replaced by Summer23v14-v2,31 LFNs.",
+        "37ce9d6",
+        "Reprocessed"
+      ],
+      [
+        "3FS PDF re-NANO",
+        "LHA321900 added to preferred PDFs; missing NanoAOD replicas recovered from retained MiniAOD.",
+        "187ce65,fec22c9",
+        "Used by B"
+      ]
+    ]
+  ],
+  [
+    "minor-corrections",
+    "Minor updates: correction details",
+    [
+      [
+        "LHE scale labels",
+        "μR/μF labels corrected to the actual nine-weight ordering. Nominal scale-weight factor is1, removing the oldw₄³ product.",
+        "9ea0bf0",
+        "Ported"
+      ],
+      [
+        "Signed αS variations",
+        "Preserve the sign/orientation of the two αS members where they exist.",
+        "9ea0bf0",
+        "Ported"
+      ],
+      [
+        "PDF-only samples",
+        "Combined PDF⊕αS reduces to PDF when no αS pair exists; it no longer becomes1.",
+        "9aa71d5",
+        "Regression checked"
+      ],
+      [
+        "PDF outliers",
+        "WH→ττ per-event PDF/αS δ capped at0.5; bounded smoke changed Up22.8→1.112.",
+        "0d0da48,a104a74",
+        "Historical check"
+      ],
+      [
+        "Jet ordering",
+        "Persist the sorted shared jet collection, beyond the leading-candidate vectors.",
+        "9aa71d5",
+        "Regression checked"
+      ],
+      [
+        "Randomness",
+        "Event-keyed lepton smearing and seeded b-hive validation; independent of job splitting.",
+        "e9427a8,d5548d4",
+        "Implemented"
+      ]
+    ]
+  ],
+  [
+    "minor-framework",
+    "Minor updates: outputs and integrity checks",
+    [
+      [
+        "Condor output paths",
+        "Create mode-specific destination before saving the completion/coffea output.",
+        "9ef65a9",
+        "Integration fix"
+      ],
+      [
+        "Data classification",
+        "Recognize data by dataset/process, not era==data; eras are run letters.",
+        "9ef65a9",
+        "Integration fix"
+      ],
+      [
+        "Template integrity",
+        "Restore negative-bin flooring and explicit empty-shift behavior; final fallback policy remains open.",
+        "9ef65a9,8a4b5ed",
+        "Partial final policy"
+      ],
+      [
+        "Input completeness",
+        "Missing MC files/samples and partial weight-variation coverage fail explicitly.",
+        "9ef65a9",
+        "Guards added"
+      ],
+      [
+        "Cached datasets",
+        "Unique fold/split dataset versions and test-dataset guard prevent cache contamination.",
+        "9ef65a9",
+        "Implemented"
+      ],
+      [
+        "Calibration provenance",
+        "Model-validity hashes include selection-changing external calibrations; current negrw identity checked separately.",
+        "e9427a8,32d3a7c",
+        "Implemented"
+      ]
+    ]
+  ],
+  [
+    "minor-operations",
+    "Minor updates: processing and remaining scope",
+    [
+      [
+        "Retry mechanics",
+        "XRootD retry/site exclusion and direct EOS listings; later partial-fileset merge and parquet staging race repaired.",
+        "9ea0bf0,6a2d79c,f22fea1",
+        "Implemented"
+      ],
+      [
+        "Resource request",
+        "Two CPUs requested to match processing workers; b-hive GPU training uses separately sized jobs.",
+        "e9427a8",
+        "Applied"
+      ],
+      [
+        "Local caching",
+        "Dataset/trigger YAML and correction loading cached; prompt-lepton inference once per chunk.",
+        "b0fb5a4,f4475c7",
+        "Applied + bounded tests"
+      ],
+      [
+        "Trigger / c-tag",
+        "Trigger SFs stay off by decision. c-tag Total is provisional pending Livio, not a completed33-source model.",
+        "5820752,8a4b5ed",
+        "Explicit scope"
+      ],
+      [
+        "Final regions",
+        "Nc-jet=1 and≥2 split for final templates; present TRAIN iteration must use merged SR.",
+        "e8b2b98,329b274",
+        "Schema boundary"
+      ]
+    ]
+  ]
+]

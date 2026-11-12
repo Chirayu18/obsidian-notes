@@ -15,18 +15,73 @@
     "backup": false
   },
   {
+    "id": "central-inventory",
+    "title": "Central samples: full current-analysis inventory",
+    "backup": false
+  },
+  {
+    "id": "central-2024",
+    "title": "2024: central background samples are available",
+    "backup": false
+  },
+  {
     "id": "historical-result",
-    "title": "October reference: expected μ < 691",
+    "title": "October reference: four eras, expected μ < 691",
     "backup": false
   },
   {
     "id": "higgs-scale",
-    "title": "A diagnostic of the Higgs-background scale treatment",
+    "title": "Higgs-background scale treatment: 691 → 703",
+    "backup": false
+  },
+  {
+    "id": "oct-impacts",
+    "title": "What drives the October fit?",
+    "backup": false
+  },
+  {
+    "id": "oct-impact-table",
+    "title": "October fit: leading individual nuisance impacts",
+    "backup": false
+  },
+  {
+    "id": "oct-scan",
+    "title": "October card: likelihood scan in μ",
+    "backup": false
+  },
+  {
+    "id": "run2-compare",
+    "title": "Uncertainty shares: our October card vs Run 2",
+    "backup": false
+  },
+  {
+    "id": "oct-datamc",
+    "title": "Data/MC: broad bands hid a visible shape trend",
+    "backup": false
+  },
+  {
+    "id": "oct-band",
+    "title": "Where the large uncertainty band came from",
+    "backup": false
+  },
+  {
+    "id": "oct-slope",
+    "title": "The MET-slope study exposed inconsistent variations",
+    "backup": false
+  },
+  {
+    "id": "oct-corrections",
+    "title": "What the data/MC investigation changed",
     "backup": false
   },
   {
     "id": "signal-samples",
-    "title": "Two issues in the central signal samples",
+    "title": "Central signal samples: two independent production issues",
+    "backup": false
+  },
+  {
+    "id": "yukawa-check",
+    "title": "Per-event scale repair: check the selected phase space",
     "backup": false
   },
   {
@@ -35,8 +90,23 @@
     "backup": false
   },
   {
+    "id": "gridpack-handoff",
+    "title": "Corrected gridpacks sent to Sebastiano",
+    "backup": false
+  },
+  {
     "id": "arms",
     "title": "Flavour scheme: two complementary strategies",
+    "backup": false
+  },
+  {
+    "id": "fs-validation",
+    "title": "Ratio-method validation: era consistency and decay transfer",
+    "backup": false
+  },
+  {
+    "id": "fs-reco",
+    "title": "Does the ratio cover a real 3FS H→WW sample?",
     "backup": false
   },
   {
@@ -65,6 +135,46 @@
     "backup": false
   },
   {
+    "id": "backup-syst-norm",
+    "title": "Normalisation: luminosity, pileup",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-lepsf",
+    "title": "Lepton efficiency scale factors",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-lepscale",
+    "title": "Lepton momentum scale and resolution",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-jets",
+    "title": "Jets, MET, c-tagging, trigger",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-theory",
+    "title": "Theory: parton shower, scales, top p<sub>T</sub>",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-pdf",
+    "title": "PDF and α<sub>S</sub>",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-scheme",
+    "title": "Signal flavour scheme and negrw",
+    "backup": false
+  },
+  {
+    "id": "backup-syst-rates",
+    "title": "Rates, fit freedom, MC statistics",
+    "backup": false
+  },
+  {
     "id": "speed",
     "title": "Framework optimization: remove repeated work",
     "backup": false
@@ -80,21 +190,6 @@
     "backup": false
   },
   {
-    "id": "mvacheck",
-    "title": "A duplicated validation batch changed model selection",
-    "backup": false
-  },
-  {
-    "id": "results",
-    "title": "Fast iteration cards from the TRAIN event records",
-    "backup": false
-  },
-  {
-    "id": "status",
-    "title": "Production: complete inputs, training underway",
-    "backup": false
-  },
-  {
     "id": "open",
     "title": "Progress made, and questions for the conveners",
     "backup": false
@@ -105,48 +200,23 @@
     "backup": true
   },
   {
+    "id": "backup-fs-njet",
+    "title": "Backup: the ratio does not cover jet multiplicity",
+    "backup": true
+  },
+  {
+    "id": "backup-prefit",
+    "title": "Backup: October MVA templates before the fit",
+    "backup": true
+  },
+  {
+    "id": "mvacheck",
+    "title": "Backup: validation duplication and model selection",
+    "backup": true
+  },
+  {
     "id": "definitions",
     "title": "Backup: definitions and fit conventions",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-norm",
-    "title": "Normalisation: luminosity, pileup",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-lepsf",
-    "title": "Lepton efficiency scale factors",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-lepscale",
-    "title": "Lepton momentum scale and resolution",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-jets",
-    "title": "Jets, MET, c-tagging, trigger",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-theory",
-    "title": "Theory: parton shower, scales, top p<sub>T</sub>",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-pdf",
-    "title": "PDF and α<sub>S</sub>",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-scheme",
-    "title": "Signal flavour scheme and negrw",
-    "backup": true
-  },
-  {
-    "id": "backup-syst-rates",
-    "title": "Rates, fit freedom, MC statistics",
     "backup": true
   },
   {
@@ -175,8 +245,28 @@
     "backup": true
   },
   {
-    "id": "backup-production",
-    "title": "Backup: traceable inputs and output boundaries",
+    "id": "minor-rates",
+    "title": "Minor updates: cross sections and normalization",
+    "backup": true
+  },
+  {
+    "id": "minor-samples",
+    "title": "Minor updates: samples and production inputs",
+    "backup": true
+  },
+  {
+    "id": "minor-corrections",
+    "title": "Minor updates: correction details",
+    "backup": true
+  },
+  {
+    "id": "minor-framework",
+    "title": "Minor updates: outputs and integrity checks",
+    "backup": true
+  },
+  {
+    "id": "minor-operations",
+    "title": "Minor updates: processing and remaining scope",
     "backup": true
   }
 ]
