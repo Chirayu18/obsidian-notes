@@ -41,3 +41,8 @@ The349 absent/not-in-queue partitions are recovery candidates, not a validated f
 - negrw v2 remains unadopted pending interrupted acceptance review. b-hive fold0 test work is recovered separately; no diagnostic model can be promoted to production.
 
 Parent grid monitoring remains read-only and can include Route B now that its delegate is terminal. Substantial coding remains c1 Opus after availability, with no unasked provider/account fallback. No automatic delegate-resumption schedule was created after the earlier approval rejection. Only this handoff note is committed locally; no push.
+
+
+## Final read-only grid check: 03:33–03:34 CET
+
+Route B has **no jobs left in the live queue**, but remains incomplete: markers456/523(preEE),1066/1246(postEE),613/679(preBPix),377/414(postBPix), **2512/2862 total**. All350 candidate missing markers were confirmed absent directly on the EOS server, with no listing errors. No retries/replacement worker/model training launched. Full rows/file/stitching/hash validation remains pending. Parent periodic grid monitoring was disabled because no A/B compute job can currently progress; see [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-run-a-periodic-check]] for final evidence and morning decisions. No completeness/readiness claim from queue drain.

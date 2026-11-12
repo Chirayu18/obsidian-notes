@@ -229,3 +229,34 @@ At **03:13:37 CET**, Run A has **3 running retries +1 known original held job**,
 All296 staged retries: **269 markers, 3 missing/in queue, 24 missing/not in queue**. Previous log categories for the24 remain recorded above; no new per-log classification or complete server census was run in this check. The53 absent/not-in-queue entries include original failures and the excluded deterministic bad input; they are not resolved by the approaching queue drain. The held job has a marker and stays untouched.
 
 Same first-Args-token identity and end-marker method; mount listing is not full payload/file/hash validation. No job/input/model/credential/service changes, account fallback, replacement delegate, repeat retry batch or production training. Keep the grid schedule enabled while these six A/B jobs can still progress. Remaining coverage/recovery, worker proxy visibility, bad GluGluHto2Tau decision, b-hive pipeline completion/reproducibility and negrw review remain open; no readiness claim.
+
+
+## Final grid snapshot: 03:33–03:34 CET; periodic monitoring disabled
+
+At **03:33:12 CET**, neither Run A nor Route B has any running/idle/transfer/suspended compute job in the exact-workflow queue query. Only original Run A held job9701317.23 remains, with its already-present marker and known incidental output-transfer failure. Zero duplicate live partition identities. Parent did not release or remove it.
+
+| workflow / era | expected | mounted EOS end markers | missing/in queue | missing/not in queue |
+|---|---:|---:|---:|---:|
+| A2022preEE | 506 | 506 | 0 | 0 |
+| A2022postEE | 1188 | 1183 | 0 | 5 |
+| A2023preBPix | 640 | 604 | 0 | 36 |
+| A2023postBPix | 393 | 381 | 0 | 12 |
+| **Run A total** | **2727** | **2674** | **0** | **53** |
+| B2022preEE | 523 | 456 | 0 | 67 |
+| B2022postEE | 1246 | 1066 | 0 | 180 |
+| B2023preBPix | 679 | 613 | 0 | 66 |
+| B2023postBPix | 414 | 377 | 0 | 37 |
+| **Route B total** | **2862** | **2512** | **0** | **350** |
+
+At **03:34:01 CET**, independently checked the403 candidate missing-marker entries directly on the EOS server (`eos root://eosuser.cern.ch ls`,88 sample directories,4 concurrent read-only queries,8s per-query timeout). **All403 are confirmed absent, zero unexpectedly present markers and zero listing errors**. Per-era confirmed absences match the table. There is now a direct-server missing-marker census, not merely an inference from mount listings or a drained queue. Existing payload rows and full input/selection/model provenance are not all validated by this census.
+
+Per the scheduled instruction, disabled `scheduled-task:3969fcfa-d977-455e-b3d6-0042bd1df669`: returned enabled=false, nextRunAt=null. No relevant A/B queued compute work can currently fill the gaps. Repeated status checks would add no progress while recovery/coding is paused at c1's limit and the bad-input/review-resumption decisions remain unresolved. This disables only the parent periodic grid check, not jobs or services.
+
+### Morning handoff / Needs Chirayu
+
+- Decide handling of the known bad2023preBPixGluGluHto2Tau input (retry with the good file only, documented sample exclusion/replacement, or a separately reviewed correction fix with hash/reprocessing consequences). Do not silently halve/drop the sample or change selection hashes. Applies to full-production acceptance, not just queue monitoring.
+- Approval to schedule/resume the paused review remains pending after the automatic rejection of the05:05fixed-time resumption schedule; do not circumvent it through this grid task. c1's native notice gives05:00Brussels reset, not a guarantee of successful resumption. All substantial coding remains c1Opus; no fallback account/model was used.
+- Follow-up work, after appropriate resumption: inspect and recover remaining A/B failures with EOS/queue safeguards, address worker proxy visibility and AFS/site failures without blindly renewing a valid proxy, finish b-hive reproducibility/export/registration/RUN-smoke checks, finish negrw acceptance review. negrw config stays old. Full model training remains gated on complete validated inputs and open physics/provenance decisions.
+- Optional removal of held9701317.23 is not needed to validate its already-written marker and was not authorized/executed here. Do not release it and repeat good processing.
+
+No new production, retry batch, model switch, code/input edits, delegate polling, deletion, push, account change, credentials/service change or full training launch in this final check. Only own vault evidence note committed locally. Source details: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-run-a-train-v2-failure-recovery]], [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-route-b-interrupted-handoff]], [[Projects/HToWW/framework/2026-11-12-bhive-pipeline-interrupted-handoff]], [[Projects/HToWW/negative-weights/2026-11-12-negrw-acceptance-review-handoff]].
