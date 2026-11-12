@@ -1,6 +1,7 @@
 ---
 tags: [reference, decision, framework]
-status: active
+status: superseded
+superseded_by: "[[2026-11-12-train-card-scorer-implemented]]"
 date: 2026-11-12
 source: laptop
 evidence: in-progress
