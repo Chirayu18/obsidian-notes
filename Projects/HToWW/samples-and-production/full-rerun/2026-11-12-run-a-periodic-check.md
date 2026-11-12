@@ -55,3 +55,34 @@ A separate bounded EOS server listing did return entries from `/eos/user/c/cgupt
 - Full `check_train_outputs.py`, sample/file coverage and frozen-hash checks remain prerequisites to production model training. No readiness claim follows from this snapshot.
 
 No immediate decision or credential action is established for Chirayu by this check. No analysis code changes, delegate launches, job submissions/releases/removals, data deletion, credential/service changes or push. Existing unrelated vault changes were preserved. Only this note is committed locally.
+
+
+## Follow-up: 01:12–01:16 CET
+
+Fresh queue command (same schedd, owner and exact workflow filter) at **01:12:52 CET**: 2022preEE 10 running; 2022postEE 96 running + the same 1 held; 2023preBPix 145 running; 2023postBPix 89 running. Total **340 running, 1 held**. These counts and the marker census below were taken sequentially while jobs continued to finish, so their difference must not be used as an exact failed-job census.
+
+Using `/usr/bin/python3 -S` (avoids user-environment/site startup), a bounded read-only check successfully matched prepared `jobnum.txt` entries against mounted EOS `.coffea` filenames:
+
+| era | expected partitions | end markers present | absent markers |
+|---|---:|---:|---:|
+| 2022preEE | 506 | 432 | 74 |
+| 2022postEE | 1188 | 914 | 274 |
+| 2023preBPix | 640 | 493 | 147 |
+| 2023postBPix | 393 | 278 | 115 |
+| total | 2727 | 2117 | 610 |
+
+Method: for each `condor/hww_allfix_4fs__train/<era>/<dataset>/jobnum.txt`, compare each partition to `<EOS root>/<era>/<dataset>/<dataset>_<n>.coffea`, accepting the single-job fallback exactly as `jobs_status.py` does. Marker filenames were listed through the mount; this is **not** a payload/file-coverage/hash validation, and a complete server-side census remains needed before retry or training decisions. The earlier timeout is superseded only as an operational marker-listing blocker; its historical observation remains above.
+
+Three most recent failed Run A jobs were inspected using filtered `condor_history` (ExitCode != 0, exact v2 UserLog path, limit 3), then the matching `.err` files:
+
+- `9701500.2`: 2023postBPix / GluGluZH_ZtoAll_Hto2Wto2L2Nu. `OSError: XRootD error: [ERROR] Operation expired`, `root://redir.t2.ucsd.edu:1095`, input ending `da2fe407-196c-41ec-9229-febf144843ed.root`.
+- `9701499.1`: 2023postBPix / ZH_ZtoAll_Hto2Wto2L2Nu. Same error/site, input ending `d523e19e-a45e-43c0-8f42-db1958e123c7.root`.
+- `9701316.110`: 2022postEE / DYto2L_2Jets_50. Same error/site, input ending `f0972ca0-acf7-4dbe-aa03-bace6b834b12.root`.
+
+These three failures are established input-read timeouts, not evidence that all failed jobs share this cause. Source logs are under `condor/logs/hww_allfix_4fs__train/<era>/<dataset>/hww_allfix_4fs__train_<dataset>.<cluster>.<proc>.err` in the canonical analysis repo.
+
+Direct EOS server cross-check (`eos root://eosuser.cern.ch ls <era>/<dataset>`, rc=0 each) found zero `.coffea` markers in each of the two 2023postBPix ZH sample directories, and 15 in the 2022postEE DY-50 directory. Other partitions were still running, so missing markers alone do not authorize blanket retry of either sample.
+
+The held destination `mode_opts.bin` now responds to `stat` (23 bytes). The held job remains JobStatus 5, HoldReasonCode 12 / HoldReasonSubCode 5, Args starts with partition **24** (ProcId is 23; do not confuse these). No release was attempted: successful `stat` alone does not establish successful output transfer or whether the job already wrote its EOS payload. Before recovery, inspect the partition-24 marker and exit/transfer state.
+
+No jobs or analysis inputs were changed in this follow-up. Next: finish matching missing-marker partitions to live `Args` (not ProcId), confirm absent markers directly on EOS, and retry only proven terminal failures within the existing recovery scope. Avoid editing shared filesets/wrappers while A/B jobs are running. All scientific validation and production-training gates remain open.
