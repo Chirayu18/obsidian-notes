@@ -7,6 +7,14 @@ source: laptop
 
 # Framework framing for tomorrow's presentation
 
+## Final wording preference
+
+Chirayu confirmed the problems→solutions→plan structure and asked to say that the code is pending **“a bit of refactoring”**. His exact instruction: **“NO say a bit of refractoring, record that”**.
+
+Use this presentation wording: **“The core components are implemented; a bit of refactoring remains to bring them together into the clean, single-pass workflow shown here.”** Present the resulting workflow as the legacy-lite idea, following the concrete problems and solutions rather than leading with TRAIN/RUN mode names.
+
+This supersedes the earlier recommendation to avoid that phrase. It records Chirayu's chosen wording, not a measured engineering-effort estimate or a claim of completed integration. Technical restart record: integration, completion of the offline scorer/template builder, and validation of the combined chain remain outstanding. This is not authorization to implement or delete code now.
+
 ## Latest agreed framing: problems and solutions
 
 Chirayu clarified: **“I just want to say that these are the problems we found and this is how the fixes we made(showing actuallly what the legacy lite would do)”**. After the problem/solution outline below, he confirmed: **“Yeah this seems like a better way to present, record that”**.
