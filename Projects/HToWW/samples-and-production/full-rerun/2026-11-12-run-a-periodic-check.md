@@ -169,3 +169,27 @@ to lxplus scratch `/tmp/cgupta/cgupta_runA_markercheck_49m0t4q_/TWminusto4Q_4.co
 Executed the saved `~/htoww_submit_logs/runA_v2_retry_20261112/hashcheck.py` inside the established coffea0.7.30 image, read-only for analysis/output. rc0: marker and current tree **match** features `36f655f4724cb1a4…` and selection `80e75bca3f231c49…`. This validates that one retry marker's model-input provenance matches; it does not validate all retry payloads or complete file/row coverage. No repeated unit tests were run.
 
 Next checks: continue observing retry completion; inspect and distinguish worker credential-visibility failures from input-site failures before any further recovery. Run full payload/file/hash gates once inputs are complete. Bad GluGluHto2Tau sample-content decision and incomplete negrw review remain open. Parent changed no jobs, analysis inputs, credentials or services. Monitoring remains enabled while in-flight grid work can progress.
+
+
+## Follow-up: 02:33 CET (read-only)
+
+At **02:33:09 CET**, combined original/retry query has **225 running, 1 held**, zero duplicate live partition identities. Originals:16 running; retries:209 running; no idle or held retry jobs. Held original9701317.23 remains the same postprocessing transfer hold with a known marker; no release/removal attempted.
+
+| era | expected | mounted EOS end markers | missing in live queue | missing not in queue |
+|---|---:|---:|---:|---:|
+| 2022preEE | 506 | 459 | 47 | 0 |
+| 2022postEE | 1188 | 1036 | 147 | 5 |
+| 2023preBPix | 640 | 594 | 13 | 33 |
+| 2023postBPix | 393 | 363 | 18 | 12 |
+| total | 2727 | 2452 | 225 | 50 |
+
+Method and mount/payload caveats are unchanged: compare original prepared jobnum.txt lists with end-marker names, join queue by first Args token, and retain full validation gates. Snapshot is sequential while jobs finish.
+
+A subsequent retry-only census of all296 staged retry.txt entries returned **70 markers, 202 missing/in queue, 24 missing/not in queue**. Its queue was taken later than the main snapshot, so running counts are not expected to match. For each absent/not-in-queue retry, matched the newest retry `.err` via the traced `+ JOBID=<partition>` and cluster range9701959–9702005 (excluding9701970). Signatures: **20 worker proxy-check failures**, **3 XRootD Operation expired**, **1 AFS I/O error**. These are log classifications; candidate markers were checked through the mount, not a new full server census. No blanket retry or output-validation claim.
+
+Example logs under `R/condor/logs/hww_allfix_4fs__train/`:
+- `2023postBPix/TTto4Q/hww_allfix_4fs__train_TTto4Q.9701996.2.err`: representative proxy-check category, same initial-check issue as the previous entry.
+- `2022postEE/DYto2L_2Jets_50/hww_allfix_4fs__train_DYto2L_2Jets_50.9701959.48.err`: representative XRootD timeout category.
+- `2022postEE/MuonRun2022F/hww_allfix_4fs__train_MuonRun2022F.9701968.6.err`: inspected separately; `pkg_resources.safe_listdir` fails with `OSError: [Errno 5] Input/output error` reading the shared AFS repo path. This is an environment/filesystem startup failure, not evidence of a new selection defect.
+
+Existing proxy validity on lxplus was established in the02:14 entry; no expiry/renewal claim follows from worker-side failures. Parent did not change delivery, submit more retries, poll delegates or change any analysis/config/output. Existing in-flight jobs still make progress, so periodic monitoring stays enabled. c1 coding/review work remains limited pending its reset; bad GluGluHto2Tau decision and negrw acceptance remain unresolved.
