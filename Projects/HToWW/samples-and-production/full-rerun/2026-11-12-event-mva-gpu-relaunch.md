@@ -53,3 +53,8 @@ A separate worker (Claude 2) implements tt hDamp as an alternative-sample system
 
 ## Next
 After each `ready.json`: submit `folds.dag` for that arm, then monitor. Then export, check and register the folds, then RUN, cards and Combine. **No production model or limit exists yet.**
+
+## RUN approval (Chirayu, 2026-11-12 ~16:55 CET)
+- Chirayu: "Launch the RUN mode once you are done with training..."
+- Scope as stated to him: RUN goes ahead for A and B only after all 10 folds per arm are checked, exported and registered (the model manifest). If any fold fails or looks wrong, stop and report rather than submit RUN.
+- RUN reprocesses all NanoAOD (data + MC, nominal + every shift) with inline scoring, so it is a production-sized Condor submission per era. hDamp is not in RUN unless the hDamp worker's code is merged before submission.
