@@ -241,7 +241,7 @@ Features: 14 kinematic + 11 c-tag one-hot + nSV. Cached constructed datasets use
 
 [Open slide](index.html#/open)
 
-No corrected limit exists yet: Arm A training and scoring are in production. Listed inputs are external or check items (Livio c-tag update; process-specific alphaS calculation; H+b overlap with the 5% Higgs rate; BR scope; ttH tau-tau coverage; negrw closure needs scored outputs; hDamp deferred). Do not present this as a result or as approval readiness.
+No corrected limit exists yet: Arm A training and scoring are in production. c-tag update comes from Livio. H+c alphaS rate and H+b PDF+alphaS overlap are questions to the theory/sample contacts. BR terms: the 1% BR(WW) and BR(tautau) currently act on the whole merged Higgs background; we scale them to the decay components. ttH: our ttHnonBB group is exclusive cc, gamma-gamma, Z-gamma, so tau-tau coverage must be checked without double counting an inclusive sample. hDamp will be implemented. Do not present this as a result or as approval readiness.
 
 ## 40. Backup
 
