@@ -46,3 +46,25 @@ Chirayu forwarded a discussion with Tahys Janssen, Thomas Van Laer and a quoted 
 |Use negrw v2 now |71eef55, verified model bytes; existing G2 identity guard | configured for both arms; no full RUN result yet |
 |No incomplete supervised training | validate_mc.py and MC-only coverage checks | running; training not yet submitted |
 
+## Production event-MVA workflows submitted, 16:25 CET
+
+User explicitly asked to start training ASAP. Complete current MC inventories were frozen under `~/bhive_prod_20261112_sol/{A,B}/inputs.json`: **A2437MCmarkers/22613parquets**, **B2572MCmarkers/24598parquets**. Both include all late recovery outputs; no MC exclusion. Old standalone validation snapshots predate those late markers: Aselected-rowcheck passed; B's selected-row mismatch and the file-coverage failures require reconciliation with the late outputs. Do not mark those old reports fullypassed.
+
+Prepared and submitted one dependency-based Condor DAG per arm. It has one CPU preparation node and five GPU fold nodes. The GPU nodes cannot start unless preparation exits successfully. Preparation verifies every MC marker's mode/year/current hashes/entry counters/exact LFNs and duplicate chunks, full MC dataset/file normalization, RouteBstitchrecords, then counts real table rows during split reading and compares to completed-marker selected-event totals. It writes ready.json only after allchecks and fresh split/command generation pass. No data inputs enter supervisedtraining; no guard is bypassed.
+
+- DAG directory `~/bhive_prod_20261112_sol/` holds `prepare.py`, `prepare.sh`, `fold_job.sh` and per-arm inputs/submit files/logs.
+- Fresh EOS split/command versions: `/eos/user/c/cgupta/HToWW/b-hive/output/prod_20261112_sol_<A|B>_{split,cmds}`. Generated dataset/trainingprefixes `hwwAv2sol` / `hwwBv2sol`, plus splitdigest/fold. Existing directories are refused.
+- Recipe unchanged:30epochs,batch1024,lr0.001,classweights only, fiveevent%5outerfolds, bhive85/15inner validation, seeds20261112. Trainingusesvalidatedb-hive195fd67pluspinnedexistingdiff; exactcode/configprovenance savedperfold.
+- Resource request: preparation4CPU/24GB; eachfold1GPU/4CPU/24GB; tomorrowflavour. Nooutput-transferlist, badAFSnodeexcluded. No hardwarebitwiseequivalenceclaimbeyondrecordedtestedA100; productionrecordsactualGPU/software.
+- Both PREP/FOLD submit ads passed `condor_submit -dry-run`; checkedArgs/resource/outputtransfer; `bash -n` wrappers andPythoncompilationpassed; bothDAGs passed `condor_submit_dag -no_submit`. Freshqueue/versionguards preventedduplicates before submission.
+- **A DAG9706466**, submittedfirst; PREP **9706468**.
+- **B DAG9706467**; PREP **9706469**.
+
+At **16:28:27CET**, bothDAGManjobsrun, bothPREPjobsare **idle/queued**, noheldproductionjobs, nofailednodes. FiveGPUchildrenperarmaredependency-blocked, notsubmitted/runningyet. This is a submittedproductiontrainingworkflow, not completedtrainingorGPUepochs. No full RUN campaign/cards/limit yet.
+
+Noinputprocessingjobremainsinthe16:28queue; originalknownsuccessful-outputtransferholds9701317.23anddiagnostic9701591remainuntouched. Lastdatamarkersneedconfirmationafterqueuedisappearance; MCmarkerswerealreadyconfirmedcomplete. Existingread-onlygridmonitorcontinues; it must now include theseDAG/preparation/foldstatesandnegrwv2, not staleJulyholdstatements.
+
+## hDamp and presentation requests
+
+Chirayu subsequently requested implementinghDampandaddingexplanation/implementation/checkplotsforeachsystematicintheslides. Ordinaryslideplan saved at [[Projects/HToWW/talks/2026-11-12-november-update-slide-plan]]; noagentrestartedandnodeckauthored. AllfoureraYAMLs alreadydefine dedicated `TTto2L2Nu_Hdamp158` Down and`TTto2L2Nu_Hdamp418` Up, processnames`tt_hdampDown/Up`, key`tt_hdamp`, xsec98.578pb. This is sampleavailabilityconfiguration, not implementednewcarduncertainty. CurrentnewRUNcardpathhasnoseparatealternative-sampleoperation; implementingitremainsinprogress. AlternativeprocessesmustnotenterthenominalMCtrainingcompositionorbedoublecountedasnominaltt.
+
