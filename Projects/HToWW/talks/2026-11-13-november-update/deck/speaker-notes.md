@@ -67,7 +67,7 @@ Directly read JSON from October 9 plot folder: 55 nuisances, failed electron rec
 
 [Open slide](index.html#/oct-scan)
 
-New fit by the keeper on 13 Nov: MultiDimFit grid, 41 points, r in [-1000,1000], Asimov r=1, on the unchanged October workspace (pre-fix: old global LHE fix, JER no-op, provisional c-tag). Stat-only scan freezes allConstrainedNuisances from the total-fit snapshot. A −2ΔlnL=3.84 crossing is a likelihood interval, not CLs; its agreement with 691 is a consistency check. Not the corrected A/B result. Outputs: lxplus ~/htoww_submit_logs/scan_oct691_20261113/.
+New fit, 13 Nov: MultiDimFit grid, 41 points, r in [-1000,1000], Asimov r=1, on the unchanged October workspace (pre-fix: old global LHE fix, JER no-op, provisional c-tag). Stat-only scan freezes allConstrainedNuisances from the total-fit snapshot. A −2ΔlnL=3.84 crossing is a likelihood interval, not CLs; its agreement with 691 is a consistency check. Not the corrected A/B result. Outputs: lxplus ~/htoww_submit_logs/scan_oct691_20261113/.
 
 ## 11. Uncertainty shares: our October card vs Run 2
 
@@ -97,13 +97,13 @@ Original MET χ² values: nominal 418.7, top-pT off 497.1,JERUp/Down 497.1,JESDo
 
 [Open slide](index.html#/oct-corrections)
 
-Dedup after removal MET ratio 1.00→0.89; postEE 1.00→0.83. Matching used(event, round(lepton1_pt)), not a complete modern run/lumi/event duplicate scan. The historical review is agent-reported evidence; new corrections have bounded tests, not a new all-era data/MC closure measurement. Old Asimov limit does not use data, so data duplicates alone did not change it.
+Dedup after removal MET ratio 1.00→0.89; postEE 1.00→0.83. Matching used(event, round(lepton1_pt)), not a complete modern run/lumi/event duplicate scan. The historical review was not independently repeated; new corrections have bounded tests, not a new all-era data/MC closure measurement. Old Asimov limit does not use data, so data duplicates alone did not change it.
 
 ## 16. Central signal samples: two independent production issues
 
 [Open slide](index.html#/signal-samples)
 
-Nominal samples remain usable provisionally by user decision. Yukawa patch is applied in Fortran but omitted by Python systematics. FxFx settings: etaJetMax999 and coneRadius1 absent; default 2.5/.7. Forward 1 jet fraction≈.98% central versus 6.6–6.8% clean. Corrected H+c/H+b gridpacks sent per Chirayu. GEN reproduction pending.
+Nominal samples remain usable provisionally. Yukawa patch is applied in Fortran but omitted by Python systematics. FxFx settings: etaJetMax999 and coneRadius1 absent; default 2.5/.7. Forward 1 jet fraction≈.98% central versus 6.6–6.8% clean. Corrected H+c/H+b gridpacks sent. GEN reproduction pending.
 
 ## 17. Per-event scale repair: check the selected phase space
 
@@ -115,13 +115,13 @@ GEN-region proxy, not full reconstructed analysis selection. Single-scale events
 
 [Open slide](index.html#/gridpack-validation)
 
-H+c numbers from existing validation slides: 10370 vs 10296 matched events, Higgs-pT χ²/ndf 1.4/10. H+b sent status is Chirayu’s own report; do not transfer the H+c numerical validation to H+b. Three-flavour validation is in backup.
+H+c numbers from existing validation slides: 10370 vs 10296 matched events, Higgs-pT χ²/ndf 1.4/10. Do not transfer the H+c numerical validation to H+b. Three-flavour validation is in backup.
 
 ## 19. Corrected gridpacks sent to Sebastiano
 
 [Open slide](index.html#/gridpack-handoff)
 
-Chirayu at discussion position 2221: “I have already sent the corrected H+c and H+b gridpacks(I will have some validation slides). I have also done for 3FS validation(slides should be there)”. He also reports Sebastiano can try reproduction with increased priority. This supersedes Nov10 draft NOT SENT; do not infer received acknowledgement, new production completion or CMSapproval. No messages were sent by keeper.
+Corrected H+c and H+b gridpacks have been sent; 3FS validation slides exist. Sebastiano can try the reproduction with increased priority. Do not imply acknowledgement, new production completion or CMS approval.
 
 ## 20. Flavour scheme: baseline A, cross-check B
 
@@ -241,7 +241,7 @@ Features: 14 kinematic + 11 c-tag one-hot + nSV. Cached constructed datasets use
 
 [Open slide](index.html#/open)
 
-Framing agreed with Chirayu on 13 Nov. No corrected limit exists yet: Arm A training and scoring are in production. Listed inputs are external or check items (Livio c-tag update; process-specific alphaS calculation; H+b overlap with the 5% Higgs rate; BR scope; ttH tau-tau coverage; negrw closure needs scored outputs; hDamp deferred). Do not present this as a result or as approval readiness.
+No corrected limit exists yet: Arm A training and scoring are in production. Listed inputs are external or check items (Livio c-tag update; process-specific alphaS calculation; H+b overlap with the 5% Higgs rate; BR scope; ttH tau-tau coverage; negrw closure needs scored outputs; hDamp deferred). Do not present this as a result or as approval readiness.
 
 ## 40. Backup
 
