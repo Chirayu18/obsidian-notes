@@ -260,3 +260,16 @@ Per the scheduled instruction, disabled `scheduled-task:3969fcfa-d977-455e-b3d6-
 - Optional removal of held9701317.23 is not needed to validate its already-written marker and was not authorized/executed here. Do not release it and repeat good processing.
 
 No new production, retry batch, model switch, code/input edits, delegate polling, deletion, push, account change, credentials/service change or full training launch in this final check. Only own vault evidence note committed locally. Source details: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-run-a-train-v2-failure-recovery]], [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-route-b-interrupted-handoff]], [[Projects/HToWW/framework/2026-11-12-bhive-pipeline-interrupted-handoff]], [[Projects/HToWW/negative-weights/2026-11-12-negrw-acceptance-review-handoff]].
+
+
+## Daytime recovery result received; monitoring re-enabled (~13:38 CET)
+
+Fresh resumed c1 grid worker completed targeted recovery submissions: **52 Run A jobs** in `runA_v2_retry2_20261112pm` (clusters9704354–9704371), **349 Route B jobs** in `routeb_train_retry_20261112pm` (clusters9704372–9704441 excluding9704387/9704419), submitted13:34–13:35CET. Source [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-ab-train-retry-round2]], locally committedc3d9ee8. No success/coverage claim yet; don't repeat the401 submissions.
+
+Worker diagnosed the apparent proxy failures as authenticated-AFS failure on worker `b9p29p4279.cern.ch`:24attempts there,24failures, no successes; same proxy path worked for272jobs elsewhere. New staged jobs exclude that machine. No credential change or renewal required on this evidence. Inputs preserve original LFNs/order, with replica-only rewrites and isolated per-job return directories. Current A/B hashes and B stitching match checked existing markers; new retry markers still need validation.
+
+**Correction to the earlier one-good-file proposal:** both files of2023preBPixGluGluHto2Tau have out-of-range GenJet indices (~12.4% of events each); even the historical one-file retry failed. Do not use the earlier "retry only e182930b" suggestion. The remaining partition in BOTH routes was excluded from submission, not silently dropped from coverage. Recommended path to a decision is replacement with current Summer23 input; v14-v2 has two-file read checks with zero out-of-range indices (140229events). v15-v2 is another available campaign, but not the same tested two-file evidence. Dataset cross-section125.09GeV convention remains to be checked before replacement. User choice still pending; no replacement/sample exclusion/correction patch performed.
+
+Parent re-enabled existing read-only grid schedule `scheduled-task:3969fcfa-d977-455e-b3d6-0042bd1df669`,20min interval; next returned run **13:58:12 Brussels** (12:58:12UTC), enabled=true. This restores only monitoring of real submitted jobs. It does not create a new delegate-resumption schedule or bypass the separate negrw engineering authorization rejection. No duplicate delegate, code/model change or new job submission by parent.
+
+Parent read-only confirmation at **13:38:54 CET**: A2 has49running+3idle; B2 has70running+279idle. All401newjobs are accounted for in the live queue,119running/282idle, no held jobs in those batches. This establishes submission/live state, not recovered outputs.
