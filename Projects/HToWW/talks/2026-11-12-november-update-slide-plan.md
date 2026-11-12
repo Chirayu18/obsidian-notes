@@ -94,3 +94,37 @@ Only include PUjetID/prefiring/UE/othergenerator variations as explicit not-acti
 - Final pull/constraint/correlation/impactplots requirethe newfit. No inventedoutputs, oldlimitspresented asnew, orclaimedindependentvalidationfromauthorlogs.
 
 Primary currentinventory: [[Projects/HToWW/combine-systematics/2026-11-12-current-ab-systematics-status]]. Promptleptonreference/benchmarks: [[Projects/HToWW/framework/optimization/2026-10-08-framework-optimization-plan]], [[Projects/HToWW/framework/optimization/2026-11-05-speedup-patches]], [[Projects/HToWW/samples-and-production/full-rerun/2026-11-05-fullfix-rerun-run-a-state]]. Latestproductionstate: [[Projects/HToWW/samples-and-production/full-rerun/2026-11-12-direct-continuation-training-launch]].
+
+## Agreed talk structure (Chirayu, 12 Nov evening)
+
+Baseline: the 19 August deck (`analysis-overview.pdf`: 2022postEE, expected UL 1034). Chirayu's wording: "we present this first after presenting what all we did to arrive till here... Then we present updates upon updates after that, particularly in the problems in the signal sample, our ratio method, stitching method and a stat only A vs B limit saying the full systematics limit is processsing .... Also the changes we need to cover regarding the speedup of the framework from legacy - legacy_slim". Also: "for the new limit we will produce, we will have 2 SR with the ncjet split".
+
+1. **What we did to get here (August → October).** One era to four. August priorities: the 4FS/5FS treatment re-derived as a shape; trigger SFs kept off; `higgs_plus_c`, top-pT and MET unclustered activated; datasets added or replaced (jet-binned W+jets, WG, DY replacements). The August card's 7 no-op nuisances were found and fixed in the 1 Oct audit.
+2. **The October four-era, full-systematics result (pre-fix reference).** Run 3, 61.9 fb⁻¹, blind Asimov:
+
+   | | full | stat-only | autoMCStats frozen |
+   |---|---|---|---|
+   | Run 3 | **691** | 338.5 | 616 |
+   | 2022 / 2023 | 905 / 1077 | | |
+   | 2022preEE / 2022postEE / 2023preBPix / 2023postBPix | 1549 / 1076 / 1348 / 1689 | | |
+
+   - Scaled to 138 fb⁻¹: 463, against the published HIG-24-009 expected 506 (about 9% better).
+   - Source: [[Projects/HToWW/samples-and-production/full-rerun/2026-10-01-full-rerun-plan-and-findings]].
+   - Plots: `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/combine_plots`.
+   - The breakdown against Run 2 is in [[Projects/HToWW/combine-systematics/2026-10-21-uncertainty-breakdown-run2-vs-run3]].
+   - State the pre-fix caveats: JER was a no-op, the WH cross section was 0, the signal scale fix was partial, H+c was at NLO, and the FS treatment was a flat 30% lnN.
+3. **Updates since October**
+   - **Problems in the central signal samples:** the LHE weights miss the running-Yukawa factor, fixed with a per-event correction; the FxFx merging is misconfigured. A corrected el8 gridpack has been validated and a GEN request package is ready.
+   - **The ratio method (Route A):** the 3FS/4FS leading c-hadron pT ratio weights as the flavour-scheme shape systematic.
+   - **The stitching method (Route B):** 4FS for N_c = 0 and 3FS for N_c ≥ 1 (LHCHWG-2026-007 §4.4), normalisation closure, and the 3FS re-NANO with PDF weights.
+   - **Normalisation and theory:** NNLO H+c, mH = 125.09, H+c PDF 7.4% at 13.6 TeV, H+b +3.36/−3.44%; H+c αS still open.
+   - **Leptons and negrw:** Thomas's ttH-MVA WPs, SFs checked against latinos, and negrw v2.
+   - **Stat-only A vs B limit:** from the TRAIN outputs and the new 5-fold models, with **one merged SR**, because the current TRAIN outputs do not store `cjet_multiplicity`. Say clearly that the full-systematics limit is processing.
+   - **The new full limit will have 2 SRs**, split by c-jet count (Nc-j = 1 / > 1, AN-23-102 lines 337–338).
+4. **Framework: from legacy to legacy-slim.**
+   - Measured: the legacy tt̄ partition is 2,858 MB against 18.9 MB in TRAIN (about 150×). The factors are 15 shift trees, each repeating all 53 weight columns, plus float64.
+   - Legacy-slim keeps a single pass with offline MVA: a nominal tree with the weight variations, plus slim shift trees.
+   - Measured job times: median 18 min, p90 50 min; 11% failed (grid sites). The wall time was dominated by failures and retries.
+   - Planned: automatic Condor retries and the global redirector.
+
+Production state at 18:22 on 12 Nov: arm A preparation done (`ready.json` 18:18, 6,959,308 rows), and A's 5 GPU folds submitted (DAG 9706908, jobs 9706909–9706913). Arm B was still writing its split, with fold submission armed to follow automatically.
