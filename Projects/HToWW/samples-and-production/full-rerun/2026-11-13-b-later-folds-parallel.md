@@ -1,6 +1,7 @@
 ---
 tags: [reference, production, decision]
-status: active
+status: superseded
+superseded_by: "[[2026-11-13-b-folds-2-3-interactive]]"
 date: 2026-11-13
 source: laptop
 evidence: executed-submission
