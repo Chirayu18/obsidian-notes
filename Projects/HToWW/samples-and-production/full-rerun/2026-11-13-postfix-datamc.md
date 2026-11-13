@@ -41,6 +41,23 @@ The other variables show the same change (mtll, mtl1, mtl2, m(ℓℓ) all 19.7% 
 
 **What is left in the band:** the **c-tag 2D SF dominates**, at 89% of the band variance in 2022postEE MET (80% preEE, 66% preBPix, 73% postBPix), followed by αS (5–12%) and PDF (3–8%). It is mostly one-sided upward (see the plot). With the band reduced, the 2022postEE MET slope (1.0 → 0.83) and the ~8% deficit fall **outside** it: 13 of 18 MET bins lie outside.
 
+**Breakdown plots (added 13 Nov):**
+- `october_fitband/band_overview_fitband_allEras.png` is the "after" version of the October `band_overview_allEras.png`, in the same layout.
+- `october_fitband/<era>/band_sources_{met_pt,mtll}_<era>.png` show the source shares per bin and the half-width along the variable.
+- Script `fitband_breakdown.py`, numbers in `october_fitband/band_breakdown_summary.json`.
+- The definitions match `band_breakdown.py`: per-source variance symmetrised, shares summed over bins, yield-weighted mean half-width. On this definition the old values reproduce the October overview exactly (18.7 / 20.1 / 17.5 / 18.0%). The new band is 10.6 / 12.8 / 8.3 / 9.3%. The asymmetric mean used in the table above is lower (10.1 / 11.4 / 7.9 / 8.8%).
+
+MET, share of band variance (mTll within 1 point):
+
+| era | c-tag 2D | PDF/αS | lepton SFs | μR/μF+PS (non-tt) | top-pT | MC stat | pileup |
+|---|---|---|---|---|---|---|---|
+| 2022preEE | 80% | 11% | 5.6% | 1.7% | 1.1% | 0.8% | 0.1% |
+| 2022postEE | 89% | 7.4% | 2.2% | 0.9% | 0.7% | 0.2% | 0.1% |
+| 2023preBPix | 65% | 20% | 8.3% | 3.5% | 1.8% | 0.7% | 0.2% |
+| 2023postBPix | 73% | 14% | 8.2% | 2.4% | 1.4% | 0.9% | 0.1% |
+
+In 2022postEE MET, c-tag is 79–91% per bin below 300 GeV and 64% in the last bin, where PDF/αS reaches 20%. The half-width rises from about 12% to 16.5% at high MET.
+
 This shows the effect of the **band fix** only. It does not include the October correction campaign; that is the TRAIN v2 section below.
 
 ## Bottom line (post-fix TRAIN v2 plots)

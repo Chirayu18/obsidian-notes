@@ -185,3 +185,10 @@ tags: [plot]
 - Description: the October production (`hww_combine_full` base, `<era>_processed_histograms.coffea`) is redrawn with the stack and data unchanged. The hatched band is MC stat plus the card shape systematics with the card exclusion `no_theory: [tt]` (no tt scale or PS; `rate_tt` floats). The red dashed outline in the ratio is the old October plotter band. MET mean half-width old → new: 2022preEE 18.6 → 10.1%, 2022postEE 19.7 → 11.4%, 2023preBPix 17.5 → 7.9%, 2023postBPix 17.9 → 8.8%, 2022+2023 18.6 → 9.8%. The remaining band is about 65–89% c-tag 2D SF. The 2022postEE MET slope now lies outside the band (13/18 bins). Variables: met_pt, mtll, mtl1, mtl2, dilepton_mass, dilepton_pt, lepton1_pt, jet_multiplicity. Details: [[2026-11-13-postfix-datamc]].
 - Path: /eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/2022postEE/oct_fitband_met_pt_2022postEE.png
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband
+
+### What dominates the data/MC band after removing the tt theory variations — all four eras (October production)
+- tags: [plot]
+- Date: 2026-11-13
+- Description: the "after" version of `band_overview_allEras.png`, in the same layout and with the same definitions. The band is MC stat plus the card shape systematics, with tt μR/μF and PS removed (`no_theory: [tt]`). MET variance shares: c-tag 2D SF 65–89% (89% in 2022postEE), PDF/αS 7–20%, lepton SFs 2–8%, everything else under 4%. Mean half-width, October → fit prescription: 18.7 → 10.6%, 20.1 → 12.8%, 17.5 → 8.3%, 18.0 → 9.3% (preEE, postEE, preBPix, postBPix). Per-bin source plots: `<era>/band_sources_{met_pt,mtll}_<era>.png`. Details: [[2026-11-13-postfix-datamc]].
+- Path: /eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/band_overview_fitband_allEras.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband
