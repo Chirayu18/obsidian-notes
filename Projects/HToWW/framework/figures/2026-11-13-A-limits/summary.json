@@ -1,0 +1,54 @@
+{
+  "arm": "A",
+  "workflow": "hww_allfix_4fs",
+  "analysis_commit": "5b25295c561ca8431a290e018a1641b7998656f3",
+  "model_manifest": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/registered_20261113/meta.yaml",
+  "model_manifest_sha256": "852cf79ce79cba7f9d5efecf8ab427267b1e97115c1cbf0fd27d514853dbe5f7",
+  "blind": true,
+  "mass_parameter": 125.09,
+  "merged_SR": true,
+  "rate_tt": "free [0,5]",
+  "autoMCStats": 10,
+  "modes": {
+    "stat_only": {
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/higgsCombine_A_stat_only.AsymptoticLimits.mH125.09.root",
+      "card": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/combined.txt",
+      "workspace": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/workspace.root",
+      "quantiles": {
+        "0.02500000037252903": 265.84625244140625,
+        "0.1599999964237213": 354.64227294921875,
+        "0.5": 493.1640625,
+        "0.8399999737739563": 687.7755737304688,
+        "0.9750000238418579": 919.2837524414062
+      },
+      "median": 493.1640625,
+      "values": [
+        265.84625244140625,
+        354.64227294921875,
+        493.1640625,
+        687.7755737304688,
+        919.2837524414062
+      ]
+    },
+    "rate_systematics": {
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/higgsCombine_A_rate_systematics.AsymptoticLimits.mH125.09.root",
+      "card": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/combined.txt",
+      "workspace": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/workspace.root",
+      "quantiles": {
+        "0.02500000037252903": 270.4525146484375,
+        "0.1599999964237213": 362.21759033203125,
+        "0.5": 505.37109375000006,
+        "0.8399999737739563": 710.843017578125,
+        "0.9750000238418579": 965.7157592773438
+      },
+      "median": 505.37109375000006,
+      "values": [
+        270.4525146484375,
+        362.21759033203125,
+        505.37109375000006,
+        710.843017578125,
+        965.7157592773438
+      ]
+    }
+  }
+}
