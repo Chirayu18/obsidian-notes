@@ -10,9 +10,42 @@ source: lxplus
 **Status: agent-reported.** Made interactively on lxplus on 2026-11-12/13 for the 13 Nov talk. Nobody has reviewed the plots yet.
 Compare with the October (pre-fix) plots: [[2026-10-06-independent-review]] and the `oct-datamc` / `oct-band` / `oct-slope` slides.
 
-## Bottom line
+## Added 13 Nov: October plots with the band built as the fit uses it (Chirayu's request)
 
-1. **The large October band cannot be redrawn yet.** TRAIN v2 is **nominal only**, so the new plots show the **MC-statistics band only**. Its mean half-width is 0.5–1.1% per era. The October band was 18–20% (mean relative half-width), and 54–72% of its variance came from the tt μR/μF scale, which the fit does not use. The new band is smaller because **systematics are not in it**, not because they shrank. A post-fix systematic band needs a RUN-mode production with shifts.
+Chirayu asked for the band fix to be shown **on the October files that carry the systematics**. These plots use the October production (`hww_combine_full`, base, pre-correction campaign). The stack, data and H+c are unchanged from the October framework plots; **only the band differs**.
+
+- **Plots:** `/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/<era>/oct_fitband_<var>_<era>.png` and `allEras/…_2022+2023.png`. Variables: met_pt, mtll, mtl1, mtl2, dilepton_mass, dilepton_pt, lepton1_pt, jet_multiplicity. The hatched band is the new one. The **red dashed outline in the ratio is the old October plotter band**, so the shrink is visible on the same plot.
+- **Input:** `/eos/user/c/cgupta/higgscharm/outputs/hww_combine_full/<era>/<era>_processed_histograms.coffea`, the same file the October plots and `band_breakdown.py` read.
+- **Script:** `lxplus:~/htoww_submit_logs/datamc_postfix_20261113/october_fixedband.py`, logs in `oct_fitband_<era>.log`, numbers in `october_fitband/<era>/summary.json`.
+- **New band** ("fit prescription"):
+  - MC stat plus every weight variation in `combine.shape_systematics` of `hww_combine_full`: pileup, ps_isr/fsr, μR, μF, μRμF, muon id/iso, electron id/reco ×3, c-tag 2D, PDF, αS, top-pT.
+  - Applied per process with the card exclusion `no_theory: [tt]`: **tt gets no μR/μF scale and no PS shapes**, because `rate_tt` floats.
+  - The stored `lhe_pdf_alphaS` is dropped because it is not a card systematic. `higgs_plus_c` applies only to the signal, which is not in the stack.
+  - Combined per source with the plotter's one-/two-sided rule.
+- **Old band:** MC stat plus every stored weight variation, including the tt scale. This reproduces the October plotter band: 19.7% here vs 20.1% in `band_breakdown`, whose averaging differs slightly.
+- **In neither band:** object shifts (JES/JER/MET-unclustered/lepton scale) and lnN rates, as in October.
+
+**Mean relative half-width of the band (MET, yield-weighted), old → new, and number of bins whose data/MC lies inside the band:**
+
+| era | old band | new band | new range per bin | bins inside, old → new |
+|---|---|---|---|---|
+| 2022preEE* | 18.6% | 10.1% | 9.2–15.6% | 18/18 → 16/18 |
+| 2022postEE | 19.7% | 11.4% | 10.9–15.9% | 18/18 → **5/18** |
+| 2023preBPix | 17.5% | 7.9% | 7.1–14.4% | 18/18 → 9/18 |
+| 2023postBPix | 17.9% | 8.8% | 8.1–13.9% | 18/18 → 14/18 |
+| 2022+2023 | 18.6% | 9.8% | 9.2–15.0% | 18/18 → 7/18 |
+
+\* The October 2022preEE data still contains the duplicated events (data/MC 1.009).
+
+The other variables show the same change (mtll, mtl1, mtl2, m(ℓℓ) all 19.7% → 11.4% in 2022postEE). The combined 2022+2023 band adds the per-era half-widths linearly (fully correlated, which is conservative).
+
+**What is left in the band:** the **c-tag 2D SF dominates**, at 89% of the band variance in 2022postEE MET (80% preEE, 66% preBPix, 73% postBPix), followed by αS (5–12%) and PDF (3–8%). It is mostly one-sided upward (see the plot). With the band reduced, the 2022postEE MET slope (1.0 → 0.83) and the ~8% deficit fall **outside** it: 13 of 18 MET bins lie outside.
+
+This shows the effect of the **band fix** only. It does not include the October correction campaign; that is the TRAIN v2 section below.
+
+## Bottom line (post-fix TRAIN v2 plots)
+
+1. **The large October band cannot be redrawn from TRAIN v2.** TRAIN v2 is **nominal only**, so the new plots show the **MC-statistics band only**. Its mean half-width is 0.5–1.1% per era. The October band was 18–20% (mean relative half-width), and 54–72% of its variance came from the tt μR/μF scale, which the fit does not use. The new band is smaller because **systematics are not in it**, not because they shrank. A post-fix systematic band needs a RUN-mode production with shifts.
 2. **The MET slope is still there in 2022postEE.** The data/MC fit slope is −0.097 ± 0.008 per 100 GeV (October: −0.098). The ratio goes from 0.95 at 45–55 GeV to 0.85 at 300–350 GeV. In **2023 it is gone**: preBPix −0.002 ± 0.010 (October −0.076), postBPix −0.007 ± 0.013 (October −0.065). 2022preEE: −0.039 ± 0.014 (October −0.051, and the October preEE data still had the duplicated events).
 3. **The lepton–MET transverse-mass slopes are much reduced in 2022postEE.** mT(ℓ1): −0.045 → −0.010 ± 0.005 per 100 GeV (2σ from zero). mT(ℓ2): −0.055 → −0.008 ± 0.008 (consistent with zero).
 4. **The overall normalisation deficit remains.** Data/MC is 0.926 (2022preEE), 0.918 (2022postEE), 0.964 (2023preBPix) and 0.968 (2023postBPix); 0.941 for all eras. The MC is about 87% tt in every era. The October yields are **not like-for-like**. `diff` of the object/event-selection blocks of `hww_combine_full.yaml` vs `hww_allfix_4fs.yaml` shows:

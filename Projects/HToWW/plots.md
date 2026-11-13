@@ -178,3 +178,10 @@ tags: [plot]
 - Description: data/MC after the October correction campaign. Arm A TRAIN v2 (`hww_allfix_4fs`, base preselection, nominal only), with the same binning and style as the October `hww_combine_full_base_*` plots. The band is **MC statistics only**: TRAIN has no shifts, so no systematic band can be drawn. Variables: met_pt, mtl1, mtl2, dilepton_mass, dilepton_pt, lepton1_pt, lepton2_pt, per era plus `allEras/` (2022+2023, 61.9 fb⁻¹). MET slope per 100 GeV, October → new: 2022postEE −0.098 → −0.097 ± 0.008 (still there); 2023preBPix −0.076 → −0.002 ± 0.010 and 2023postBPix −0.065 → −0.007 ± 0.013 (gone). 2022postEE mT(ℓ1)/mT(ℓ2) slopes reduced from −0.045/−0.055 to −0.010 ± 0.005/−0.008 ± 0.008. Data/MC 0.92–0.97. Details: [[2026-11-13-postfix-datamc]].
 - Path: /eos/user/c/cgupta/HToWW/datamc_postfix_20261113/2022postEE/postfix_datamc_met_pt_2022postEE.png
 - Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/datamc_postfix_20261113
+
+### October data/MC with the band built the way the fit uses it (tt μR/μF and PS removed), all four eras + combined
+- tags: [plot]
+- Date: 2026-11-13
+- Description: the October production (`hww_combine_full` base, `<era>_processed_histograms.coffea`) is redrawn with the stack and data unchanged. The hatched band is MC stat plus the card shape systematics with the card exclusion `no_theory: [tt]` (no tt scale or PS; `rate_tt` floats). The red dashed outline in the ratio is the old October plotter band. MET mean half-width old → new: 2022preEE 18.6 → 10.1%, 2022postEE 19.7 → 11.4%, 2023preBPix 17.5 → 7.9%, 2023postBPix 17.9 → 8.8%, 2022+2023 18.6 → 9.8%. The remaining band is about 65–89% c-tag 2D SF. The 2022postEE MET slope now lies outside the band (13/18 bins). Variables: met_pt, mtll, mtl1, mtl2, dilepton_mass, dilepton_pt, lepton1_pt, jet_multiplicity. Details: [[2026-11-13-postfix-datamc]].
+- Path: /eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/2022postEE/oct_fitband_met_pt_2022postEE.png
+- Link: https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband
