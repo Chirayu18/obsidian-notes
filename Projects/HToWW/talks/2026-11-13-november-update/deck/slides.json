@@ -126,7 +126,7 @@
   },
   {
     "id": "negrw-limits",
-    "title": "Overall closure hides sample-level shape bias",
+    "title": "Closure: good overall, residual shape in some samples",
     "backup": false
   },
   {

@@ -159,7 +159,7 @@ Muon max difference 3.05e-7, electron 3.27e-7 including threshold-tie coverage. 
 
 The estimator can be negative; do not call every output weight positive. Closure is a ratio of signed sums, with correlated delta-method errors in the corrected report. Shape agreement between two models is not proof of agreement with the original signed distribution.
 
-## 26. Overall closure hides sample-level shape bias
+## 26. Closure: good overall, residual shape in some samples
 
 [Open slide](index.html#/negrw-limits)
 
