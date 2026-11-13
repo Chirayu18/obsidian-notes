@@ -65,6 +65,16 @@
     "backup": false
   },
   {
+    "id": "oct-fitband-sources",
+    "title": "After removing the tt scale and PS terms: c-tag dominates",
+    "backup": false
+  },
+  {
+    "id": "oct-fitband",
+    "title": "With the fit’s band, the 2022 MET trend is no longer covered",
+    "backup": false
+  },
+  {
     "id": "oct-slope",
     "title": "The MET-slope study exposed inconsistent variations",
     "backup": false
@@ -72,6 +82,11 @@
   {
     "id": "oct-corrections",
     "title": "What the data/MC investigation changed",
+    "backup": false
+  },
+  {
+    "id": "postfix-datamc",
+    "title": "Post-fix MET: slope gone in 2023, remains in 2022postEE",
     "backup": false
   },
   {
@@ -187,6 +202,11 @@
   {
     "id": "mva",
     "title": "Event classifier: five held-out models per arm",
+    "backup": false
+  },
+  {
+    "id": "a-performance",
+    "title": "Arm A: classifier trained on all four eras",
     "backup": false
   },
   {

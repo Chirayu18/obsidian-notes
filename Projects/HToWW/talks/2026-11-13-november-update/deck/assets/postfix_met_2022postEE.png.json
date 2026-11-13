@@ -1,0 +1,8 @@
+{
+  "original_path": "/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/2022postEE/postfix_datamc_met_pt_2022postEE.png",
+  "sha256_original": "a1fb1e1f246a49f5ba4e08ef3954cf2951748dd76af05eef8ac1a831af682e17",
+  "source": "lxplus:~/htoww_submit_logs/datamc_postfix_20261113/datamc_postfix.py",
+  "note": "Projects/HToWW/samples-and-production/full-rerun/2026-11-13-postfix-datamc.md",
+  "status": "Post-fix TRAIN v2, Arm A (hww_allfix_4fs), nominal only; band = MC stat only",
+  "processing": "Unchanged pixels (copied 13 Nov via EOS mount)"
+}

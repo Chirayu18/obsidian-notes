@@ -1,0 +1,8 @@
+{
+  "original_path": "/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/band_overview_fitband_allEras.png",
+  "sha256_original": "720aa350ae5a6d655287735e1ae44c04765d4b3ee41ced43cd1aa1e697941a4f",
+  "source": "lxplus:~/htoww_submit_logs/datamc_postfix_20261113/fitband_breakdown.py",
+  "note": "Projects/HToWW/samples-and-production/full-rerun/2026-11-13-postfix-datamc.md",
+  "status": "October production; band source shares after removing tt scale/PS; symmetrised half-widths",
+  "processing": "Unchanged pixels (copied 13 Nov via EOS mount)"
+}

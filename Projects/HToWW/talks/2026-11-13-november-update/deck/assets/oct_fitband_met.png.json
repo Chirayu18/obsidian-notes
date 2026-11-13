@@ -1,0 +1,8 @@
+{
+  "original_path": "/eos/user/c/cgupta/HToWW/datamc_postfix_20261113/october_fitband/2022postEE/oct_fitband_met_pt_2022postEE.png",
+  "sha256_original": "2854e132cc10d32e33eeb8dabe5cfa93ed9b740c7f9bbd0945643737b9f138c8",
+  "source": "lxplus:~/htoww_submit_logs/datamc_postfix_20261113/october_fixedband.py",
+  "note": "Projects/HToWW/samples-and-production/full-rerun/2026-11-13-postfix-datamc.md",
+  "status": "October production (hww_combine_full), band rebuilt with the card shape-systematics prescription; red dashed = old plotter band",
+  "processing": "Unchanged pixels (copied 13 Nov via EOS mount)"
+}

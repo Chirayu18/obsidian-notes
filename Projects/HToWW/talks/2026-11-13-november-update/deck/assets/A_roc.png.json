@@ -1,0 +1,8 @@
+{
+  "original_path": "/eos/user/c/cgupta/HToWW/b-hive/output/prod_20261112_sol_A_performance_20261113/A_heldout_roc.png",
+  "sha256_original": "709d05fa6de71a295bef09324f6e61bfda9eebdeb4576a0c9fe9d164dc267146",
+  "source": "Projects/HToWW/framework/2026-11-13-compute-a-performance.py",
+  "note": "Projects/HToWW/framework/2026-11-13-a-performance-plots.md",
+  "status": "Arm A held-out one-vs-rest ROC, unweighted MC, five folds",
+  "processing": "Unchanged pixels (copied 13 Nov via EOS mount)"
+}

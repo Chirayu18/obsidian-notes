@@ -1,0 +1,8 @@
+{
+  "original_path": "/eos/user/c/cgupta/HToWW/b-hive/output/prod_20261112_sol_A_performance_20261113/A_confusion_matrix.png",
+  "sha256_original": "6e31cf37cf3748599348312ecf9a481aabd5f50df62da137ea4afdfecee26d02",
+  "source": "Projects/HToWW/framework/2026-11-13-compute-a-performance.py",
+  "note": "Projects/HToWW/framework/2026-11-13-a-performance-plots.md",
+  "status": "Arm A held-out confusion matrix, row-normalised, unweighted MC",
+  "processing": "Unchanged pixels (copied 13 Nov via EOS mount)"
+}
