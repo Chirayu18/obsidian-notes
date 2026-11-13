@@ -28,6 +28,7 @@ Chirayu: "If likelihood scan is not there , do it" (κc interpretation then with
   - **`oct-impact-table`:** take-away now lists the ranking caveats from [[Projects/HToWW/combine-systematics/2026-11-13-october-impacts-checks-for-postfix-cards]] (three scale nuisances, one-sided old signal scale, 2022 c-tag at ±0.02).
   - **`arms`:** B's GEN split is stated as separate from the reco N<sub>c-jet</sub> SR split ([[Projects/HToWW/talks/2026-11-13-ab-physics-comparison-slide-decision]]).
   - **`open`:** production line updated (A trained, exported, scored; B training).
+- **Post-fix data/MC removed** (Chirayu: "Don't show post fix data/MC, just the ones with the ttbar stuff removed from october"): `postfix-datamc` is out of the deck; only the October plots with the fit-prescription band remain. 57 slides (42 main + 15 backup).
 - No κc slide. No new A/B result: the scan and impacts belong to the pre-fix October card.
 
 Checks: 54 slides / PDF pages, zero overflow, script errors or external requests; scripts-disabled Chromium shows all 54 sections, no broken images (`noscript-check.mjs`, now kept in the deck folder). New and respaced slides inspected visually. Not opened in Obsidian itself.

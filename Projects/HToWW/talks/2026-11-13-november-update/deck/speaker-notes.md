@@ -111,247 +111,241 @@ Original MET χ² values: nominal 418.7, top-pT off 497.1,JERUp/Down 497.1,JESDo
 
 Dedup after removal MET ratio 1.00→0.89; postEE 1.00→0.83. Matching used(event, round(lepton1_pt)), not a complete modern run/lumi/event duplicate scan. The historical review was not independently repeated; new corrections have bounded tests, not a new all-era data/MC closure measurement. Old Asimov limit does not use data, so data duplicates alone did not change it.
 
-## 18. Post-fix MET: slope gone in 2023, remains in 2022postEE
-
-[Open slide](index.html#/postfix-datamc)
-
-This production stores nominal weights only, so the band is MC statistics only (0.5-1.1 percent); a systematic band needs the shifted production. Yields are not like-for-like with October: lepton ID changed (ttH-MVA), jet-veto maps added, data deduplicated (0 duplicate run/lumi/event in all eras). The free tt rate absorbs the 2022 normalisation deficit, not the MET shape. Causes are not yet established.
-
-## 19. Central signal samples: two independent production issues
+## 18. Central signal samples: two independent production issues
 
 [Open slide](index.html#/signal-samples)
 
 Nominal samples remain usable provisionally. Yukawa patch is applied in Fortran but omitted by Python systematics. FxFx settings: etaJetMax999 and coneRadius1 absent; default 2.5/.7. Forward 1 jet fraction≈.98% central versus 6.6–6.8% clean. Corrected H+c/H+b gridpacks sent. GEN reproduction pending.
 
-## 20. Per-event scale repair: check the selected phase space
+## 19. Per-event scale repair: check the selected phase space
 
 [Open slide](index.html#/yukawa-check)
 
 GEN-region proxy, not full reconstructed analysis selection. Single-scale events match patch<0.1%; real/counterterm two-scale treatment has≈1% residual. Inclusive reference discrepancies were traced to event-class mix and MG 1 GeV scale-floor events. H+b follow-up validation is separately recorded, not inferred from H+c.
 
-## 21. Corrected gridpack: checks against the clean reference
+## 20. Corrected gridpack: checks against the clean reference
 
 [Open slide](index.html#/gridpack-validation)
 
 H+c numbers from existing validation slides: 10370 vs 10296 matched events, Higgs-pT χ²/ndf 1.4/10. Do not transfer the H+c numerical validation to H+b. Three-flavour validation is in backup.
 
-## 22. Corrected gridpacks sent to Sebastiano
+## 21. Corrected gridpacks sent to Sebastiano
 
 [Open slide](index.html#/gridpack-handoff)
 
 Corrected H+c and H+b gridpacks have been sent; 3FS validation slides exist. Sebastiano can try the reproduction with increased priority. Do not imply acknowledgement, new production completion or CMS approval.
 
-## 23. Flavour scheme: baseline A, cross-check B
+## 22. Flavour scheme: baseline A, cross-check B
 
 [Open slide](index.html#/arms)
 
 Both arms use σ×BR=0.0016626 pb. B does not automatically close scale/PDF overlap or missing-rate coverage questions; retain those as card-stage checks. This is not a new central 3FS production claim.
 
-## 24. Ratio-method validation: era consistency and decay transfer
+## 23. Ratio-method validation: era consistency and decay transfer
 
 [Open slide](index.html#/fs-validation)
 
 Derived on official Run3γγ; no private exploratory γγ samples used. c-hadron threshold 5 GeV,|η|<2.5. Run2 WW/γγ χ² 18.9/10,9 of 10 bins within 1–2σ. The 20–30 GeV outlier was examined per-file and with Run3γγ; consistent with a Run2γγ fluctuation, not established decay dependence. Run3 weights 1.052 vsWW 1.048 in that bin.
 
-## 25. Does the ratio cover a real 3FS H→WW sample?
+## 24. Does the ratio cover a real 3FS H→WW sample?
 
 [Open slide](index.html#/fs-reco)
 
 Not the current Run3 MVA selection: standalone OS eμ with tight μ / WP80 e, 20/10 GeV, mll 12–72,mT cuts, DeepJet medium UL18 stand-in. Real 3FS SR yield versus 4FS +6.3±2.3%, variation+7.3%. Njets χ² 23/5 not covered;2jet3FS/4FS≈0.82. Historical “no 3FSWW inRun 3” reason to avoid stitching is now obsolete: private 3FS and re-NANO exist.
 
-## 26. Rates and sample coverage brought up to date
+## 25. Rates and sample coverage brought up to date
 
 [Open slide](index.html#/samples)
 
 The H→ττ update is complete; a global Higgs-rate validation is not yet claimed.
 
-## 27. Prompt-lepton selection aligned with HWW
+## 26. Prompt-lepton selection aligned with HWW
 
 [Open slide](index.html#/leptonmva)
 
 Muon max difference 3.05e-7, electron 3.27e-7 including threshold-tie coverage. SF factorization concern from the earlier review is not supported by the producer comparison. Measurement provenance/correlations and c-tag calibration are separate questions.
 
-## 28. Negative weights: retraining the reweighting model
+## 27. Negative weights: retraining the reweighting model
 
 [Open slide](index.html#/negrw)
 
 The estimator can be negative; do not call every output weight positive. Closure is a ratio of signed sums, with correlated delta-method errors in the corrected report. Shape agreement between two models is not proof of agreement with the original signed distribution.
 
-## 29. Closure: good overall, residual shape in some samples
+## 28. Closure: good overall, residual shape in some samples
 
 [Open slide](index.html#/negrw-limits)
 
 This is a limitation in both v2 and July; July shape χ² 47.9/20 for the shown diagnostic. The band is ensemble spread, not an independently validated envelope of all method biases.
 
-## 30. Systematics: implementation and physics scope
+## 29. Systematics: implementation and physics scope
 
 [Open slide](index.html#/syst-overview)
 
 Full explanations and implementation/evidence status for every source are in backup. tt is excluded from configured scalevar/ps rows, not automatically from all theory-named nuisances. Trigger SFs remain disabled by decision; not a measured zero.
 
-## 31. Normalisation: luminosity, pileup
+## 30. Normalisation: luminosity, pileup
 
 [Open slide](index.html#/backup-syst-norm)
 
  Implementation nuisance names: lumi_ , CMS_pileup_ . See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 32. Lepton efficiency scale factors
+## 31. Lepton efficiency scale factors
 
 [Open slide](index.html#/backup-syst-lepsf)
 
  Implementation nuisance names: CMS_eff_m_id_ , CMS_eff_m_iso_ , CMS_eff_m_promptMVA_ , CMS_eff_e_id_ , CMS_eff_e_promptMVA_ , CMS_eff_e_reco_{below20, 20to75, above75}. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 33. Lepton momentum scale and resolution
+## 32. Lepton momentum scale and resolution
 
 [Open slide](index.html#/backup-syst-lepscale)
 
  Implementation nuisance names: CMS_scale_m_ , CMS_res_m_ , CMS_scale_e_ , CMS_res_e_ . See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 34. Jets, MET, c-tagging, trigger
+## 33. Jets, MET, c-tagging, trigger
 
 [Open slide](index.html#/backup-syst-jets)
 
  Implementation nuisance names: CMS_scale_j_ , CMS_res_j_ , CMS_met_unclustered_ , CMS_ctag2d_ , —. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 35. Theory: parton shower, scales, top pT
+## 34. Theory: parton shower, scales, top pT
 
 [Open slide](index.html#/backup-syst-theory)
 
 ISR/FSR, top-pT and HF prescriptions follow the analysis sources, not universal uncertainty sizes. AN-23-102§7.1/Table16 sources 50%ggH+HF; extension toVBF is an analysis choice requiring review. LHE×2/.5 scales are generator variations; three independent directions and shared correlation are current analysis choices, not the paper seven-point-envelope prescription. Implementation nuisance names: ps_isr, ps_fsr, scalevar_muR, _muF, _muR_muF, top_pt, higgs_plus_c. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 36. PDF and αS
+## 35. PDF and αS
 
 [Open slide](index.html#/backup-syst-pdf)
 
 PDF/alphaS method: PDF4LHC15eq26–28 or 21 eq 6.6–6.8 with different αS steps, not interchanged. H+c7.43±.14% is our own clean 4FS gridpack Hessian calculation,10370 events, not a percentage fromthepaper. H+b +3.36/−3.44 is an interpolation ofLHCHWG 2025-011 Table 1 at 125.09, not yet installed. H+c alphaS process-specific number remains missing. Implementation nuisance names: lhe_pdf, xsec_hplusc_PDF, lhe_alphaS, —, —. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 37. Signal flavour scheme and negrw
+## 36. Signal flavour scheme and negrw
 
 [Open slide](index.html#/backup-syst-scheme)
 
 Paper motivates flavour-scheme comparison andstitching; c-hadron shape ratio and mirrored Down are our analysis construction with official-sample checks. negrw ensemble spread is an implemented method uncertainty, not a paper-supplied universal coverage guarantee. Implementation nuisance names: xsec_hplusc_3FS_4FS, —, CMS_negrw_vjets. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 38. Rates, fit freedom, MC statistics
+## 37. Rates, fit freedom, MC statistics
 
 [Open slide](index.html#/backup-syst-rates)
 
 Single top −1.27/+1.67%, diboson 3.7%, V+jets 2.7%, Higgs 5% are inherited AN prescriptions, not newly calculated 2024 or Run 3 theory errors. BR 1% is the current configured prescription; its merged-background scope is broader than the decay components. rate_tt and autoMCStats are fit/statistical model choices, not external theory uncertainties. Implementation nuisance names: —, —, —, rate_tt, autoMCStats 10. See the source inventory for exact dispatch/configuration. These are implemented/source-inspected prescriptions, not fresh all-era validation plots.
 
-## 39. Framework optimization: remove repeated work
+## 38. Framework optimization: remove repeated work
 
 [Open slide](index.html#/speed)
 
 Legacy stores nominal+15 shifts and all 53 weight columns; TRAIN is nominal-only. The proposed combined writer will store more than TRAIN: its size/runtime have not been measured. 16/16 and 64/64 parquet equality checks refer to the controlled optimization test.
 
-## 40. A compact event record for offline iteration
+## 39. A compact event record for offline iteration
 
 [Open slide](index.html#/framework-flow)
 
 Intended combined single-pass workflow, not claimed complete. The new model cannot be used before it is trained: store event inputs first, then score offline. The exact user wording is “a bit of refactoring”; this is his presentation preference, not an engineering-effort estimate. Automatic Condor retries/global redirector remain planned.
 
-## 41. Event classifier: five held-out models per arm
+## 40. Event classifier: five held-out models per arm
 
 [Open slide](index.html#/mva)
 
 Features: 14 kinematic + 11 c-tag one-hot + nSV. Cached constructed datasets use unique fold/split identities. RUN/registration guard feature/selection hashes, class order and provenance. Same test fold remains assigned for object-shifted copies.
 
-## 42. Arm A: classifier trained on all four eras
+## 41. Arm A: classifier trained on all four eras
 
 [Open slide](index.html#/a-performance)
 
 Unweighted held-out MC: not luminosity-weighted, not negrw-weighted, and not a v11 comparison. AUCs: H+c 0.956, Higgs bkg 0.750, tt 0.724, single top 0.570, diboson 0.849, V+jets 0.957. No A or B limit is shown in this talk. Arm B folds are still training.
 
-## 43. Proposed baseline and path to the result
+## 42. Proposed baseline and path to the result
 
 [Open slide](index.html#/open)
 
 No corrected limit exists yet: Arm A training and scoring are in production. c-tag update comes from Livio. H+c alphaS rate and H+b PDF+alphaS overlap are questions to the theory/sample contacts. BR terms: the 1% BR(WW) and BR(tautau) currently act on the whole merged Higgs background; we scale them to the decay components. ttH: our ttHnonBB group is exclusive cc, gamma-gamma, Z-gamma, so tau-tau coverage must be checked without double counting an inclusive sample. hDamp will be implemented. Do not present this as a result or as approval readiness.
 
-## 44. Backup
+## 43. Backup
 
 [Open slide](index.html#/backup)
 
 Section divider.
 
-## 45. Backup: the ratio does not cover jet multiplicity
+## 44. Backup: the ratio does not cover jet multiplicity
 
 [Open slide](index.html#/backup-fs-njet)
 
 Yield closure does not imply closure of every discriminating variable.
 
-## 46. Backup: October MVA templates before the fit
+## 45. Backup: October MVA templates before the fit
 
 [Open slide](index.html#/backup-prefit)
 
 These templates belong to the historical 691 card, not the newly trained models.
 
-## 47. Backup: validation duplication and model selection
+## 46. Backup: validation duplication and model selection
 
 [Open slide](index.html#/mvacheck)
 
 Inference fixture: 170465 emitted rows for 64073 events. Reproducibility boundary is same hardware/setup; do not claim universal cross-GPU bitwise equality. The v11 validation/inference was also affected, so its published internal metrics are not a clean baseline.
 
-## 48. Backup: definitions and fit conventions
+## 47. Backup: definitions and fit conventions
 
 [Open slide](index.html#/definitions)
 
 Keep the statistical model and the saved-output schema attached to every result.
 
-## 49. Backup: hDamp probes tt matching
+## 48. Backup: hDamp probes tt matching
 
 [Open slide](index.html#/hdamp)
 
 Configured samples are not an implemented or validated alternative-sample nuisance.
 
-## 50. Backup: negrw in the selected eμ signal region
+## 49. Backup: negrw in the selected eμ signal region
 
 [Open slide](index.html#/backup-negrw-sr)
 
 W+1J χ² 139.4/20 (v2) vs 185.5/20 (July); 120.1/155.6 with the nuisance in the saved report. The horizontal nuisanceband should not be represented as independent measurement errors.
 
-## 51. Backup: c-tag categories enter the event MVA
+## 50. Backup: c-tag categories enter the event MVA
 
 [Open slide](index.html#/backup-ctag)
 
 Tagger category consistency must be preserved through training, scoring and fitting.
 
-## 52. Backup: scale and PDF weights after the rebuild
+## 51. Backup: scale and PDF weights after the rebuild
 
 [Open slide](index.html#/backup-gridpack-weights)
 
 Generation-level agreement supports the rebuilt setup; detector-level reproduction remains separate.
 
-## 53. Backup: private 3FS validation
+## 52. Backup: private 3FS validation
 
 [Open slide](index.html#/backup-gridpacks)
 
 Generator validation and central-sample reproduction are separate stages.
 
-## 54. Minor updates: cross sections and normalization
+## 53. Minor updates: cross sections and normalization
 
 [Open slide](index.html#/minor-rates)
 
 Small changes consolidated from vault Git history. Commit IDs record the note or handoff, not necessarily the analysis-code commit. Superseded operational counts and temporary queue failures are omitted. Scope/status is stated per row.
 
-## 55. Minor updates: samples and production inputs
+## 54. Minor updates: samples and production inputs
 
 [Open slide](index.html#/minor-samples)
 
 Small changes consolidated from vault Git history. Commit IDs record the note or handoff, not necessarily the analysis-code commit. Superseded operational counts and temporary queue failures are omitted. Scope/status is stated per row.
 
-## 56. Minor updates: correction details
+## 55. Minor updates: correction details
 
 [Open slide](index.html#/minor-corrections)
 
 Small changes consolidated from vault Git history. Commit IDs record the note or handoff, not necessarily the analysis-code commit. Superseded operational counts and temporary queue failures are omitted. Scope/status is stated per row.
 
-## 57. Minor updates: outputs and integrity checks
+## 56. Minor updates: outputs and integrity checks
 
 [Open slide](index.html#/minor-framework)
 
 Small changes consolidated from vault Git history. Commit IDs record the note or handoff, not necessarily the analysis-code commit. Superseded operational counts and temporary queue failures are omitted. Scope/status is stated per row.
 
-## 58. Minor updates: processing and remaining scope
+## 57. Minor updates: processing and remaining scope
 
 [Open slide](index.html#/minor-operations)
 

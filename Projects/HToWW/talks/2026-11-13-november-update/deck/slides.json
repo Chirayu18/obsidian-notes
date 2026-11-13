@@ -85,11 +85,6 @@
     "backup": false
   },
   {
-    "id": "postfix-datamc",
-    "title": "Post-fix MET: slope gone in 2023, remains in 2022postEE",
-    "backup": false
-  },
-  {
     "id": "signal-samples",
     "title": "Central signal samples: two independent production issues",
     "backup": false

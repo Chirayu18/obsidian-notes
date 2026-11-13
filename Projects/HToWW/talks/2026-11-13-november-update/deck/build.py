@@ -327,7 +327,7 @@ col(fig('A_roc.png','Held-out ROC per class; AUC in the legend.'),fig('A_confusi
 'H+c is well separated (AUC 0.956; 82% classified as H+c); tt and single top remain hard to tell apart.',refs(('aperf','A performance, provenance and checks')),
 'Unweighted held-out MC: not luminosity-weighted, not negrw-weighted, and not a v11 comparison. AUCs: H+c 0.956, Higgs bkg 0.750, tt 0.724, single top 0.570, diboson 0.849, V+jets 0.957. No A or B limit is shown in this talk. Arm B folds are still training.',layout='plot-slide')
 # Revision3: select physics results for the main story, keep engineering detail in backup.
-main_ids=['title','analysis','progress','central-inventory','central-2024','historical-result','higgs-scale','oct-impacts','oct-impact-table','oct-scan','run2-compare','oct-datamc','oct-band','oct-fitband-sources','oct-fitband','oct-slope','oct-corrections','postfix-datamc','signal-samples','yukawa-check','gridpack-validation','gridpack-handoff','arms','fs-validation','fs-reco','samples','leptonmva','negrw','negrw-limits','syst-overview','speed','framework-flow','mva','a-performance','open']
+main_ids=['title','analysis','progress','central-inventory','central-2024','historical-result','higgs-scale','oct-impacts','oct-impact-table','oct-scan','run2-compare','oct-datamc','oct-band','oct-fitband-sources','oct-fitband','oct-slope','oct-corrections','signal-samples','yukawa-check','gridpack-validation','gridpack-handoff','arms','fs-validation','fs-reco','samples','leptonmva','negrw','negrw-limits','syst-overview','speed','framework-flow','mva','a-performance','open']
 systematic_ids=list(json.loads((D/'systematics.json').read_text()))
 pos=main_ids.index('syst-overview')+1
 main_ids[pos:pos]=systematic_ids
