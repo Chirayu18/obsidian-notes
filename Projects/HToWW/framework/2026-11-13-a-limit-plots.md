@@ -57,7 +57,21 @@ Largest negative contributions are V+jets in preEE CR_st (−0.3580781) and post
 - **Path:**`/eos/user/c/cgupta/HToWW/b-hive/output/prod_20261112_sol_A_limits_20261113/A_expected_limits.png`.
 - **Link:**[CERNBox limit plot](https://cernbox.cern.ch/files/spaces/eos/user/c/cgupta/HToWW/b-hive/output/prod_20261112_sol_A_limits_20261113/A_expected_limits.png).
 
-Local PNG retained/gitignored under `framework/figures/2026-11-13-A-limits/`; numerical summary/render source recorded there and on EOS. No PNG/PDF committed. Keeper owns the actual deck. Additional cheap per-era/per-year blind fits from these same checked templates were started under `limits_20261113/<mode>/components/`; their results are not claimed in this snapshot.
+Local PNG retained/gitignored under `framework/figures/2026-11-13-A-limits/`; numerical summary/render source recorded there and on EOS. No PNG/PDF committed. Keeper owns the actual deck.
+
+## Per-era and per-year results
+
+All12additional blind fits completed from the same checked templates. Source `limits_20261113/<mode>/components/<group>/limit.log` and respective ROOT outputs. Read every ROOT tree back: five positive finite ordered expected quantiles, no observed entry. Numerical record `limits_20261113/components_summary.json`, copied to the local figure folder. These are sensitivity checks at different exposures, not a ranking of per-era detector performance.
+
+|Subset|Median stat-only|Median stat + configured rates|
+|---|---:|---:|
+|2022preEE|1264.6484|1284.1797|
+|2022postEE|876.4648|893.5547|
+|2022 combined|715.3320|732.4219|
+|2023preBPix|808.1055|820.3125|
+|2023postBPix|1333.0078|1352.5391|
+|2023 combined|686.0352|700.6836|
+|All four eras|493.1641|505.3711|
 
 ## Interpretation boundary for the talk
 

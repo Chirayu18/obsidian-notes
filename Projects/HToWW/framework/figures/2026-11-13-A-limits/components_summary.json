@@ -1,0 +1,138 @@
+{
+  "stat_only": {
+    "2022preEE": {
+      "values": [
+        676.7845458984375,
+        906.4188842773438,
+        1264.6484375,
+        1783.8656005859375,
+        2404.0
+      ],
+      "median": 1264.6484375,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2022preEE/higgsCombine_A_stat_only_2022preEE.AsymptoticLimits.mH125.09.root"
+    },
+    "2022postEE": {
+      "values": [
+        472.4693298339844,
+        630.2800903320312,
+        876.46484375,
+        1229.3211669921875,
+        1649.9892578125
+      ],
+      "median": 876.46484375,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2022postEE/higgsCombine_A_stat_only_2022postEE.AsymptoticLimits.mH125.09.root"
+    },
+    "2023preBPix": {
+      "values": [
+        435.6193542480469,
+        578.211669921875,
+        808.10546875,
+        1133.44091796875,
+        1521.2991943359375
+      ],
+      "median": 808.10546875,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2023preBPix/higgsCombine_A_stat_only_2023preBPix.AsymptoticLimits.mH125.09.root"
+    },
+    "2023postBPix": {
+      "values": [
+        718.5745239257812,
+        953.7872924804688,
+        1333.0078125,
+        1869.663818359375,
+        2526.515380859375
+      ],
+      "median": 1333.0078125,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2023postBPix/higgsCombine_A_stat_only_2023postBPix.AsymptoticLimits.mH125.09.root"
+    },
+    "2022": {
+      "values": [
+        385.6086730957031,
+        514.4068603515625,
+        715.33203125,
+        1000.4664306640625,
+        1344.632568359375
+      ],
+      "median": 715.33203125,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2022/higgsCombine_A_stat_only_2022.AsymptoticLimits.mH125.09.root"
+    },
+    "2023": {
+      "values": [
+        369.8158264160156,
+        493.3389892578125,
+        686.03515625,
+        962.2262573242188,
+        1287.10546875
+      ],
+      "median": 686.03515625,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/stat_only/components/2023/higgsCombine_A_stat_only_2023.AsymptoticLimits.mH125.09.root"
+    }
+  },
+  "rate_systematics": {
+    "2022preEE": {
+      "values": [
+        682.220458984375,
+        912.657958984375,
+        1284.1796875,
+        1821.6531982421875,
+        2497.1142578125
+      ],
+      "median": 1284.1796875,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2022preEE/higgsCombine_A_rate_systematics_2022preEE.AsymptoticLimits.mH125.09.root"
+    },
+    "2022postEE": {
+      "values": [
+        478.1913757324219,
+        637.1976318359375,
+        893.5546875,
+        1267.5382080078125,
+        1726.2105712890625
+      ],
+      "median": 893.5546875,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2022postEE/higgsCombine_A_rate_systematics_2022postEE.AsymptoticLimits.mH125.09.root"
+    },
+    "2023preBPix": {
+      "values": [
+        438.995361328125,
+        584.9683227539062,
+        820.3125,
+        1163.6416015625,
+        1584.7178955078125
+      ],
+      "median": 820.3125,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2023preBPix/higgsCombine_A_rate_systematics_2023preBPix.AsymptoticLimits.mH125.09.root"
+    },
+    "2023postBPix": {
+      "values": [
+        718.536376953125,
+        966.1936645507812,
+        1352.5390625,
+        1918.623291015625,
+        2612.89794921875
+      ],
+      "median": 1352.5390625,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2023postBPix/higgsCombine_A_rate_systematics_2023postBPix.AsymptoticLimits.mH125.09.root"
+    },
+    "2022": {
+      "values": [
+        391.96014404296875,
+        522.2931518554688,
+        732.421875,
+        1033.126708984375,
+        1401.6065673828125
+      ],
+      "median": 732.421875,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2022/higgsCombine_A_rate_systematics_2022.AsymptoticLimits.mH125.09.root"
+    },
+    "2023": {
+      "values": [
+        374.9752197265625,
+        499.66046142578125,
+        700.68359375,
+        988.35791015625,
+        1340.8702392578125
+      ],
+      "median": 700.68359375,
+      "root": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/limits_20261113/rate_systematics/components/2023/higgsCombine_A_rate_systematics_2023.AsymptoticLimits.mH125.09.root"
+    }
+  }
+}
