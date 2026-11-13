@@ -1,6 +1,7 @@
 ---
 tags: [reference, production]
-status: active
+status: superseded
+superseded_by: "[[2026-11-13-b-later-folds-parallel]]"
 date: 2026-11-12
 source: laptop
 evidence: executed-check
