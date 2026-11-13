@@ -1,0 +1,258 @@
+A production fold 2; verbatim stdout from epoch1 onward
+Source: /afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold2.9706928.out
+Full stdout SHA256: 898ab23606247c709c59f6bb2aafb64e1226342ad0092a93cc10817368f5719e
+Pre-epoch dataset file listings omitted.
+
+Epoch 1 of 30
+entering traing loop
+Training...   | Average loss: 0.0204 | Batch loss: 0.0295 | … Speed: 51.3 b/s |…
+   Average loss: 0.0204
+   Average accuracy: 34.7546
+Validation... | Average loss: 0.0191 | Batch loss: 0.0… 1… 39.96 b/s | 815/~816…
+   Validation loss: 0.0191
+   Validation accuracy: 42.6364
+Epoch 2 of 30
+entering traing loop
+Training...   | Average loss: 0.0195 | Batch loss: 0.0125 | … Speed: 205.0 b/s …
+   Average loss: 0.0195
+   Average accuracy: 38.5411
+Validation... | Average loss: 0.0188 | Batch loss: 0.… 1… 132.90 b/s | 815/~816…
+   Validation loss: 0.0188
+   Validation accuracy: 39.7153
+Epoch 3 of 30
+entering traing loop
+Training...   | Average loss: 0.0193 | Batch loss: 0.0115 | … Speed: 199.4 b/s …
+   Average loss: 0.0193
+   Average accuracy: 38.9214
+Validation... | Average loss: 0.0183 | Batch loss: 0.… 1… 130.47 b/s | 815/~816…
+   Validation loss: 0.0183
+   Validation accuracy: 49.9424
+Epoch 4 of 30
+entering traing loop
+Training...   | Average loss: 0.0190 | Batch loss: 0.1303 | … Speed: 195.8 b/s …
+   Average loss: 0.0190
+   Average accuracy: 39.9986
+Validation... | Average loss: 0.0189 | Batch loss: 0.0… 1… 31.06 b/s | 815/~816…
+   Validation loss: 0.0189
+   Validation accuracy: 33.7767
+Epoch 5 of 30
+entering traing loop
+Training...   | Average loss: 0.0190 | Batch loss: 0.0253 | … Speed: 110.4 b/s …
+   Average loss: 0.0190
+   Average accuracy: 39.9691
+Validation... | Average loss: 0.0181 | Batch loss: 0.0… 1… 96.50 b/s | 815/~816…
+   Validation loss: 0.0181
+   Validation accuracy: 47.1661
+Epoch 6 of 30
+entering traing loop
+Training...   | Average loss: 0.0188 | Batch loss: 0.0597 | … Speed: 201.3 b/s …
+   Average loss: 0.0188
+   Average accuracy: 40.5234
+Validation... | Average loss: 0.0181 | Batch loss: 0.… 1… 135.12 b/s | 815/~816…
+   Validation loss: 0.0181
+   Validation accuracy: 42.3320
+Epoch 7 of 30
+entering traing loop
+Training...   | Average loss: 0.0187 | Batch loss: 0.0252 | … Speed: 197.8 b/s …
+   Average loss: 0.0187
+   Average accuracy: 40.5561
+Validation... | Average loss: 0.0180 | Batch loss: 0.… 1… 130.59 b/s | 815/~816…
+   Validation loss: 0.0180
+   Validation accuracy: 38.3344
+Epoch 8 of 30
+entering traing loop
+Training...   | Average loss: 0.0186 | Batch loss: 0.0239 | … Speed: 197.8 b/s …
+   Average loss: 0.0186
+   Average accuracy: 41.3701
+Validation... | Average loss: 0.0179 | Batch loss: 0.… 1… 128.71 b/s | 815/~816…
+   Validation loss: 0.0179
+   Validation accuracy: 47.0693
+Epoch 9 of 30
+entering traing loop
+Training...   | Average loss: 0.0183 | Batch loss: 0.0185 | … Speed: 195.3 b/s …
+   Average loss: 0.0183
+   Average accuracy: 42.8840
+Validation... | Average loss: 0.0188 | Batch loss: 0.… 1… 128.49 b/s | 815/~816…
+   Validation loss: 0.0188
+   Validation accuracy: 49.5982
+Epoch 10 of 30
+entering traing loop
+Training...   | Average loss: 0.0181 | Batch loss: 0.0224 | … Speed: 194.5 b/s …
+   Average loss: 0.0181
+   Average accuracy: 43.5815
+Validation... | Average loss: 0.0179 | Batch loss: 0.… 1… 124.63 b/s | 815/~816…
+   Validation loss: 0.0179
+   Validation accuracy: 48.3808
+Epoch 11 of 30
+entering traing loop
+Training...   | Average loss: 0.0179 | Batch loss: 0.0211 | … Speed: 86.1 b/s |…
+   Average loss: 0.0179
+   Average accuracy: 44.2509
+Validation... | Average loss: 0.0186 | Batch loss: 0.… 1… 124.77 b/s | 815/~816…
+   Validation loss: 0.0186
+   Validation accuracy: 51.5125
+Epoch 12 of 30
+entering traing loop
+Training...   | Average loss: 0.0179 | Batch loss: 0.0067 | … Speed: 202.2 b/s …
+   Average loss: 0.0179
+   Average accuracy: 44.4303
+Validation... | Average loss: 0.0179 | Batch loss: 0.… 1… 142.20 b/s | 815/~816…
+   Validation loss: 0.0179
+   Validation accuracy: 56.2344
+Epoch 13 of 30
+entering traing loop
+Training...   | Average loss: 0.0178 | Batch loss: 0.0126 | … Speed: 102.7 b/s …
+   Average loss: 0.0178
+   Average accuracy: 45.0833
+Validation... | Average loss: 0.0188 | Batch loss: 0.… 1… 106.66 b/s | 815/~816…
+   Validation loss: 0.0188
+   Validation accuracy: 48.6749
+Epoch 14 of 30
+entering traing loop
+Training...   | Average loss: 0.0177 | Batch loss: 0.0047 | … Speed: 206.8 b/s …
+   Average loss: 0.0177
+   Average accuracy: 44.5640
+Validation... | Average loss: 0.0179 | Batch loss: 0.… 1… 137.37 b/s | 815/~816…
+   Validation loss: 0.0179
+   Validation accuracy: 37.3912
+Epoch 15 of 30
+entering traing loop
+Training...   | Average loss: 0.0177 | Batch loss: 0.0166 | … Speed: 204.8 b/s …
+   Average loss: 0.0177
+   Average accuracy: 45.0686
+Validation... | Average loss: 0.0181 | Batch loss: 0.… 1… 134.83 b/s | 815/~816…
+   Validation loss: 0.0181
+   Validation accuracy: 49.7760
+Epoch 16 of 30
+entering traing loop
+Training...   | Average loss: 0.0177 | Batch loss: 0.0161 | … Speed: 196.0 b/s …
+   Average loss: 0.0177
+   Average accuracy: 44.7022
+Validation... | Average loss: 0.0185 | Batch loss: 0.… 1… 135.18 b/s | 815/~816…
+   Validation loss: 0.0185
+   Validation accuracy: 46.6704
+Epoch 17 of 30
+entering traing loop
+Training...   | Average loss: 0.0176 | Batch loss: 0.0140 | … Speed: 174.4 b/s …
+   Average loss: 0.0176
+   Average accuracy: 44.6635
+Validation... | Average loss: 0.0188 | Batch loss: 0.0… 1… 29.81 b/s | 815/~816…
+   Validation loss: 0.0188
+   Validation accuracy: 51.8917
+Epoch 18 of 30
+entering traing loop
+Training...   | Average loss: 0.0177 | Batch loss: 0.0241 | … Speed: 204.0 b/s …
+   Average loss: 0.0177
+   Average accuracy: 44.5377
+Validation... | Average loss: 0.0191 | Batch loss: 0.… 1… 122.71 b/s | 815/~816…
+   Validation loss: 0.0191
+   Validation accuracy: 53.6522
+Epoch 19 of 30
+entering traing loop
+Training...   | Average loss: 0.0176 | Batch loss: 0.0141 | … Speed: 199.6 b/s …
+   Average loss: 0.0176
+   Average accuracy: 44.4780
+Validation... | Average loss: 0.0187 | Batch loss: 0.… 1… 128.69 b/s | 815/~816…
+   Validation loss: 0.0187
+   Validation accuracy: 53.3234
+Epoch 20 of 30
+entering traing loop
+Training...   | Average loss: 0.0176 | Batch loss: 0.0040 | … Speed: 204.9 b/s …
+   Average loss: 0.0176
+   Average accuracy: 44.7307
+Validation... | Average loss: 0.0184 | Batch loss: 0.… 1… 137.47 b/s | 815/~816…
+   Validation loss: 0.0184
+   Validation accuracy: 51.0626
+Epoch 21 of 30
+entering traing loop
+Training...   | Average loss: 0.0175 | Batch loss: 0.0064 | … Speed: 198.6 b/s …
+   Average loss: 0.0175
+   Average accuracy: 44.6857
+Validation... | Average loss: 0.0195 | Batch loss: 0.… 1… 135.02 b/s | 815/~816…
+   Validation loss: 0.0195
+   Validation accuracy: 49.6788
+Epoch 22 of 30
+entering traing loop
+Training...   | Average loss: 0.0173 | Batch loss: 0.0065 | … Speed: 196.8 b/s …
+   Average loss: 0.0173
+   Average accuracy: 44.8807
+Validation... | Average loss: 0.0195 | Batch loss: 0.… 1… 126.46 b/s | 815/~816…
+   Validation loss: 0.0195
+   Validation accuracy: 50.3203
+Epoch 23 of 30
+entering traing loop
+Training...   | Average loss: 0.0172 | Batch loss: 0.0122 | … Speed: 126.5 b/s …
+   Average loss: 0.0172
+   Average accuracy: 45.3520
+Validation... | Average loss: 0.0180 | Batch loss: 0.… 1… 130.70 b/s | 815/~816…
+   Validation loss: 0.0180
+   Validation accuracy: 49.1495
+Epoch 24 of 30
+entering traing loop
+Training...   | Average loss: 0.0170 | Batch loss: 0.0105 | … Speed: 204.9 b/s …
+   Average loss: 0.0170
+   Average accuracy: 45.1728
+Validation... | Average loss: 0.0177 | Batch loss: 0.… 1… 132.73 b/s | 815/~816…
+   Validation loss: 0.0177
+   Validation accuracy: 49.7655
+Epoch 25 of 30
+entering traing loop
+Training...   | Average loss: 0.0170 | Batch loss: 0.0064 | … Speed: 93.3 b/s |…
+   Average loss: 0.0170
+   Average accuracy: 46.0393
+Validation... | Average loss: 0.0177 | Batch loss: 0.… 1… 103.98 b/s | 815/~816…
+   Validation loss: 0.0177
+   Validation accuracy: 47.4974
+Epoch 26 of 30
+entering traing loop
+Training...   | Average loss: 0.0169 | Batch loss: 0.0362 | … Speed: 205.7 b/s …
+   Average loss: 0.0169
+   Average accuracy: 45.7275
+Validation... | Average loss: 0.0180 | Batch loss: 0.… 1… 142.23 b/s | 815/~816…
+   Validation loss: 0.0180
+   Validation accuracy: 49.5326
+Epoch 27 of 30
+entering traing loop
+Training...   | Average loss: 0.0169 | Batch loss: 0.0165 | … Speed: 208.6 b/s …
+   Average loss: 0.0169
+   Average accuracy: 45.9208
+Validation... | Average loss: 0.0177 | Batch loss: 0.… 1… 130.78 b/s | 815/~816…
+   Validation loss: 0.0177
+   Validation accuracy: 49.2993
+Epoch 28 of 30
+entering traing loop
+Training...   | Average loss: 0.0168 | Batch loss: 0.0049 | … Speed: 202.1 b/s …
+   Average loss: 0.0168
+   Average accuracy: 45.6271
+Validation... | Average loss: 0.0178 | Batch loss: 0.… 1… 139.84 b/s | 815/~816…
+   Validation loss: 0.0178
+   Validation accuracy: 49.0462
+Epoch 29 of 30
+entering traing loop
+Training...   | Average loss: 0.0168 | Batch loss: 0.0076 | … Speed: 199.4 b/s …
+   Average loss: 0.0168
+   Average accuracy: 45.6402
+Validation... | Average loss: 0.0178 | Batch loss: 0.… 1… 130.71 b/s | 815/~816…
+   Validation loss: 0.0178
+   Validation accuracy: 49.1423
+Epoch 30 of 30
+entering traing loop
+Training...   | Average loss: 0.0168 | Batch loss: 0.0059 | … Speed: 203.9 b/s …
+   Average loss: 0.0168
+   Average accuracy: 46.1003
+Validation... | Average loss: 0.0183 | Batch loss: 0.… 1… 128.54 b/s | 815/~816…
+   Validation loss: 0.0183
+   Validation accuracy: 49.8408
+Training finished.
+Warning: CUDA device available. Running on cuda!
+Build Model
+SimpleMLP_MultiClass
+Applying nominal attack (attack_magnitude=0.0, n_iterations=1, attack_uncertainty=1.0).
+Loading Dataset
+Initialize datasets
+Precision of inference dataset is set to float32
+Start inference on cuda
+Inference...   | Average loss: 1.1853 | Batch loss: 1.… … 60.71 b/s | 1361/1363…
+   Average loss: 1.1853
+   Average accuracy: 49.2214
+completed route A fold 2 2026-11-12T23:37:31+01:00

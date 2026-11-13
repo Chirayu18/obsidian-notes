@@ -1,0 +1,37 @@
+[
+  {
+    "fold": 0,
+    "source": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold0.9706926.out",
+    "full_stdout_sha256": "d7d5af3ab818909b424a30cfcc9d37cbe3f92950e6a58a52e2c1be87e98295ec",
+    "excerpt": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/training_logs_20261113/fold0.training.log",
+    "epochs": 30
+  },
+  {
+    "fold": 1,
+    "source": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold1.9706927.out",
+    "full_stdout_sha256": "c7efc8d721d63a5bfe66e1e8b32c260f9b2b1fe69b999b58be46927f0645c684",
+    "excerpt": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/training_logs_20261113/fold1.training.log",
+    "epochs": 30
+  },
+  {
+    "fold": 2,
+    "source": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold2.9706928.out",
+    "full_stdout_sha256": "898ab23606247c709c59f6bb2aafb64e1226342ad0092a93cc10817368f5719e",
+    "excerpt": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/training_logs_20261113/fold2.training.log",
+    "epochs": 30
+  },
+  {
+    "fold": 3,
+    "source": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold3.9706929.out",
+    "full_stdout_sha256": "32793699a9678f947e2266f6b88f69b5e2bf8955f02bc05895c6b6fcce36f194",
+    "excerpt": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/training_logs_20261113/fold3.training.log",
+    "epochs": 30
+  },
+  {
+    "fold": 4,
+    "source": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/relaunch_20261112_startup1/fold4.9706930.out",
+    "full_stdout_sha256": "f74e2cb6576aebca0589e027bd13af8de3809b18c969532aa8496b2352c32197",
+    "excerpt": "/afs/cern.ch/user/c/cgupta/bhive_prod_20261112_sol/A/training_logs_20261113/fold4.training.log",
+    "epochs": 30
+  }
+]
